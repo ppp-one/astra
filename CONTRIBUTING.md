@@ -32,7 +32,7 @@ When contributing code to Astra, please follow these guidelines:
 
 ## Getting Help
 
-If you need any assistance or have questions about contributing to Astra, feel free to reach out to our development team in the issues tab. We are here to help!
+If you need any assistance or have questions about contributing to Astra, feel free to reach out to our development team at astra-dev@example.com. We are here to help!
 
 ## Code of Conduct
 
