@@ -2,13 +2,13 @@
 
 Astra is an open-source observatory control software designed for automating and managing the operations of a survey observatory. It is built to work seamlessly with ASCOM Alpaca.
 
+![Alt text](astra-art.png)
+
 ## Features
 
 - **Remote Control**: Astra enables remote control of observatory equipment, allowing you to operate the observatory from anywhere in your local network, or anywhere with an internet connection when using a VPN or a tunneling service such as ngrok.
 - **Automated Surveys**: You can schedule and execute automated survey observations using Astra. Define observation targets, parameters, start and end times, and let Astra handle the rest.
 - **Alpaca Integration**: Astra leverages the Alpyca python library to provide seamless integration with a wide range of astronomy equipment, permitting easy scalability to multiple telescopes, cameras, domes etc.
-
-![Alt text](astra-art.png)
 
 ## Getting Started
 
