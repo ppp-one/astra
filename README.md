@@ -20,7 +20,6 @@ Astra is an open-source observatory control software designed for automating and
 git clone https://github.com/ppp-one/astra.git
 cd astra
 conda env create -f environment.yml
-cd code
 ```
 
 ### Usage
@@ -32,7 +31,7 @@ cd code
 
 ```
 conda activate astra
-cd src
+cd code/src
 uvicorn main:app --reload --port 8000
 ```
 
