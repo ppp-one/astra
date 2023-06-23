@@ -15,7 +15,9 @@ from astropy.io import fits
 from astropy.time import Time
 from sqlite3worker import Sqlite3Worker  # https://github.com/dashawn888/sqlite3worker
 
-logging.basicConfig(format='%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
+logging.basicConfig(
+    format='%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 logging.Formatter.converter = time.gmtime
 
 def update_times(df, time_factor):
@@ -179,7 +181,11 @@ class Astra():
             if device_type != 'Misc':
                 for d in self.observatory[device_type]:
                     try:
-                        devices[device_type][d['device_name']] = AlpacaDevice(d['ip'], device_type, d['device_number'], d['device_name'], self.cursor)
+                        devices[device_type][d['device_name']] = AlpacaDevice(d['ip'], 
+                                                                              device_type, 
+                                                                              d['device_number'], 
+                                                                              d['device_name'], 
+                                                                              self.cursor)
                     except:
                         self.__log('error', f"Error loading {device_type} {d['device_name']}")
         
@@ -265,7 +271,6 @@ class Astra():
         th.start()
 
         self.threads.append({'type': 'watchdog', 'device_name': 'watchdog', 'thread': th, 'id' : -1})
-
 
     def watchdog(self):
         '''
@@ -442,7 +447,6 @@ class Astra():
             return telescope_parked, dome_parked, dome_shutter_closed
 
         return telescope_parked, dome_parked, dome_shutter_closed
-
 
     def read_schedule(self):
         '''

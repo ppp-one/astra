@@ -1,0 +1,33 @@
+Telescope:
+  - device_name: HPP
+    ip: 127.0.0.1:11111
+    device_number: 0
+    alt_limit: 20
+Focuser:
+  - device_name: focuser_HPP
+    ip: 127.0.0.1:11111
+    device_number: 0
+    focus_pos: 10000
+Camera:
+  - device_name: vis_cam_HPP
+    ip: 127.0.0.1:11111
+    device_number: 0
+    target_adu: [45000, 3000]
+    paired_devices: 
+      Telescope: HPP
+      Focuser: focuser_HPP
+      FilterWheel: vis_fw_HPP
+      Dome: dome_HPP
+      ObservingConditions: boltwood_HPP
+      SafetyMonitor: boltwood_HPP
+FilterWheel:
+  - device_name: vis_fw_HPP
+    ip: 127.0.0.1:11111 
+    device_number: 0
+SafetyMonitor:
+  - device_name: boltwood_HPP
+    ip: 127.0.0.1:11111
+    device_number: 0
+Misc:
+  Webcam:
+    rtsp: rtsp://username:password@192.168.1.108/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif

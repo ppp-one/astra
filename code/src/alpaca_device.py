@@ -126,7 +126,6 @@ class AlpacaDevice():
             self._poll_latest[method]["value"] = "null"
             self.__log('error', f'Loop error: {self.device_type}, {self.device_name}, {method}, {str(e)}')           
         
-        
     def start_poll(self, method, delay): 
         if method not in self._poll_list:
             Thread(target=self.loop, args=(method, delay)).start()

@@ -92,7 +92,6 @@ async def connect(observatory: str):
 
     return {"status": "success", "data": "null", "message": ""}
 
-
 @app.get("/api/disconnect/{observatory}")
 async def disconnect(observatory: str):
     obs = observatories[observatory]
@@ -112,7 +111,6 @@ async def schedule(observatory: str):
     schedule = schedule.where(pd.notnull(schedule), None)
 
     return schedule.to_dict(orient='records')
-
 
 @app.get("/api/db/polling/{observatory}/{device_type}")
 async def polling(observatory: str, device_type: str):
@@ -139,7 +137,6 @@ async def polling(observatory: str, device_type: str):
 
 
     return df.to_dict(orient='series')
-
 
 @app.websocket("/ws/log/{observatory}")
 async def websocket_db(websocket: WebSocket, observatory: str):
@@ -179,7 +176,6 @@ async def websocket_db(websocket: WebSocket, observatory: str):
         
         await asyncio.sleep(1)
 
-        
 @app.websocket("/ws/{observatory}")
 async def websocket_endpoint(websocket: WebSocket, observatory: str):
     await websocket.accept()
