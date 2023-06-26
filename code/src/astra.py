@@ -103,6 +103,8 @@ class Astra():
         # logging
         if level == 'info':
             logging.info(message)
+        elif level == 'debug':
+            logging.debug(message)
         elif level == 'warning':
             logging.warning(message)
         elif level == 'error':
@@ -370,6 +372,7 @@ class Astra():
 
                     rows = self.cursor.execute("SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND device_value = 'False' AND datetime > datetime('now', '-1 minutes')")
 
+                    print("watchdog schedule", rows)
                     if self.schedule.iloc[-1]['end_time'] > datetime.utcnow():
 
                         self.__log('info', f"Watchdog: {len(rows)} instances of weather unsafe found in last 1 minutes")
@@ -851,18 +854,24 @@ class Astra():
             time.sleep(0) # yield to other threads
             if r['status'] == "success":
                 if r['data'] is True:
-                    t0 = datetime.utcnow() # get rid of this?
+                    self.__log('info', f"Image ready from {row['device_name']} to download.")
+
+                    t0 = datetime.utcnow()
                     
                     # get last exposure start time
                     r = camera.get('LastExposureStartTime')
                     if r['status'] != "success":
                         raise ValueError(r)
+                    
+                    self.__log('info', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
 
                     dateobs = pd.to_datetime(r['data'])
 
                     # save image
+                    self.__log('info', f"Saving image from {row['device_name']}")
                     self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
 
+                    self.__log('info', f"Exposing {row['device_name']} again")
                     r = camera.get('StartExposure')
 
                     if r['status'] == "success":
@@ -1080,8 +1089,6 @@ class Astra():
         '''
         Save image to disk
         '''
-
-        t0 = datetime.utcnow()
 
         r = device.get('ImageArray')
 

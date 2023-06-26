@@ -11,7 +11,7 @@ import tempfile
 import pandas as pd
 from astra import Astra
 
-import uvicorn
+# import uvicorn
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
@@ -158,6 +158,13 @@ async def schedule(observatory: str):
     schedule = schedule.where(pd.notnull(schedule), None)
 
     return schedule.to_dict(orient='records')
+
+@app.get("/api/read_schedule/{observatory}")
+async def read_schedule(observatory: str):
+    obs = observatories[observatory]
+    obs.schedule = obs.read_schedule()
+
+    return {"status": "success", "data": "null", "message": ""}
 
 @app.get("/api/db/polling/{observatory}/{device_type}")
 async def polling(observatory: str, device_type: str):
@@ -480,7 +487,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
         log = []
 
-        images = glob('../images/*/*.fits')
+        # images = glob('../images/*/*.fits')
         # images.sort(key=os.path.getmtime)
         last_image = "https://picsum.photos/200"
 
@@ -508,5 +515,5 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             socket = False
         
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)

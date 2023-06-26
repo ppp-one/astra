@@ -53,6 +53,8 @@ class AlpacaDevice():
         # logging
         if level == 'info':
             logging.info(message)
+        elif level == 'debug':
+            logging.debug(message)
         elif level == 'warning':
             logging.warning(message)
         elif level == 'error':

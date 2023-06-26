@@ -18,16 +18,16 @@ Camera:
       Focuser: focuser_HPP
       FilterWheel: fw_HPP
       ObservingConditions: weather_HPP
-      SafetyMonitor: weather_HPP
+      SafetyMonitor: safety_HPP
 FilterWheel:
   - device_name: fw_HPP
     ip: 192.168.0.36:11111 
     device_number: 0
 ObservingConditions:
   - device_name: weather_HPP
-    ip: 10.211.55.3:11111
-    device_number: 1
+    ip: 192.168.0.36:11111
+    device_number: 0
 SafetyMonitor:
-  - device_name: weather_HPP
-    ip: 10.211.55.3:11111
+  - device_name: safety_HPP
+    ip: 192.168.0.36:11111
     device_number: 0
