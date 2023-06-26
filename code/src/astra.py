@@ -61,7 +61,7 @@ def update_times(df, time_factor):
 
 
 class Astra():
-    def __init__(self, config_filename : str):
+    def __init__(self, config_filename : str, debug : bool = False):
         # TODO: 
         # move to process?
         # add better logging
@@ -69,7 +69,12 @@ class Astra():
         # add types?
         # improve observatory safety logic
 
+        self.debug = debug
+
         self.db_name, self.cursor = self.create_db(config_filename)
+
+        if self.debug is True:
+            self.__log('warning', 'Astra is running in simulation mode')
 
         self.__log('info', 'Astra starting up')
 
@@ -78,12 +83,14 @@ class Astra():
 
         self.watchdog_running = False
         self.schedule_running = False
+        self.interrupt = False
         
         self.observatory = self.read_config(config_filename)
         self.observatory_name = config_filename.split('/')[-1].split('.')[0]
         self.devices = self.load_devices()
         self.schedule = self.read_schedule()
         self.fits_config = pd.read_csv('../config/fits_headers.csv')
+        self.last_image = None
 
         self.threads = []
 
@@ -319,7 +326,7 @@ class Astra():
         dome_parked = False
         dome_shutter_closed = False
         
-        while self.watchdog_running and self.error_free: # TODO: have ability to stop loop
+        while self.watchdog_running and self.error_free:
             
             if 'SafetyMonitor' in self.observatory:
                 sm_poll = safety_monitor.poll_latest()
@@ -458,6 +465,60 @@ class Astra():
 
         return telescope_parked, dome_parked, dome_shutter_closed
 
+    def toggle_interrupt(self):
+        '''
+        Handle user interrupt
+        '''
+
+        self.interrupt = True
+
+        self.__log('warning', 'User interrupt')
+
+        # stop watchdog
+        self.watchdog_running = False
+
+        # stop schedule
+        self.schedule_running = False        
+
+        ## abort all actions
+        if 'Telescope' in self.observatory:
+
+            # stop telescope slewing
+            th = Thread(target=self.monitor_run_action, args=('Telescope', 'Slewing', False, 'AbortSlew',), daemon=True)
+            th.start()
+
+            self.threads.append({'type': 'AbortSlew', 'device_name': 'all_telescopes', 'thread': th, 'id' : -3})
+
+            for d in self.devices['Telescope']:
+                device = self.devices['Telescope'][d]
+                device.set('Tracking', False)
+
+        if 'Dome' in self.observatory:
+            # stop dome slewing
+            th = Thread(target=self.monitor_run_action, args=('Dome', 'Slewing', False, 'AbortSlew',), daemon=True)
+            th.start()
+
+            self.threads.append({'type': 'AbortSlew', 'device_name': 'all_domes', 'thread': th, 'id' : -4})
+
+        if 'Camera' in self.observatory:
+            # stop camera exposure
+            th = Thread(target=self.monitor_run_action, args=('Camera', 'CameraState', 0, 'AbortExposure',), daemon=True)
+            th.start()
+
+            self.threads.append({'type': 'AbortSlew', 'device_name': 'all_cameras', 'thread': th, 'id' : -5})
+
+
+        # wait for all threads to finish
+        for t in self.threads:
+            if t['thread'].is_alive() is True:
+                if t['id'] in [-3, -4, -5]:
+                    time.sleep(1)
+            else:
+                self.threads.remove(t)
+
+        # reset interrupt
+        self.interrupt = False
+
     def read_schedule(self):
         '''
         Read the schedule, check for errors (e.g. device not in list/connected), return pandas dataframe
@@ -482,7 +543,11 @@ class Astra():
         schedule = schedule.sort_values(by=['start_time'])
 
         # for development
-        # schedule = update_times(schedule, 100)
+        if self.debug is True:
+            schedule = update_times(schedule, 100)
+
+        # make new column called repeatable, set to True
+        schedule['repeatable'] = True
         
         self.__log('info', 'Schedule read')
         return schedule
@@ -506,7 +571,7 @@ class Astra():
             # user intervention?
             # safety check
             # run if weather safe, or the action is calibration (bias, dark)
-            if self.weather_safe is True or (row['action_type'] in ['calibration']):
+            if (self.weather_safe is True) or (row['action_type'] in ['calibration']):
 
                 # loop through self.threads and remove the ones that are dead due to finishing or weather getting to them?
                 for j in self.threads:
@@ -529,7 +594,7 @@ class Astra():
                             #     self.__log('info', f"Waiting for {row['device_name']} {row['action_type']} to start")
                             time.sleep(1)
 
-                        elif (row['start_time'] <= t) and (row['end_time'] >= t):
+                        elif (row['start_time'] <= t) and (row['end_time'] >= t) and (row['repeatable'] is True):
 
                             th = Thread(target=self.run_action, args=(row,), daemon=True)
                             th.start()
@@ -541,14 +606,14 @@ class Astra():
                             # if last row, sleep until thread is finished to prevent from returning to start of schedule by watchdog
                             if i == self.schedule.index[-1]:
                                 self.__log('info', f"Waiting for {row['device_name']} {row['action_type']} to finish")
-                                while th.is_alive() and self.weather_safe and self.error_free:
+                                while th.is_alive() and self.weather_safe and self.error_free and (self.interrupt is False):
                                     print((row['end_time'] - datetime.utcnow()).total_seconds(), 'seconds until last action expected to finish')
                                     time.sleep(1)
                         else:
                             run_row = False
 
         self.schedule_running = False
-        self.__log('info', 'Schedule stopped')
+        self.__log('warning', 'Schedule stopped')
         
     def run_action(self, row):
         '''
@@ -624,7 +689,7 @@ class Astra():
         self.__log('info', f"Running prep_observatory for {paired_devices} {action_value}")
 
         # unpark and slew to target
-        if ('ra' in action_value) and ('dec' in action_value) and self.weather_safe and self.error_free:
+        if ('ra' in action_value) and ('dec' in action_value) and self.weather_safe and self.error_free and (self.interrupt is False):
             if 'Dome' in paired_devices:
                 dome = self.devices['Dome'][paired_devices['Dome']]
 
@@ -635,7 +700,7 @@ class Astra():
                     self.__log('warning', f"Error setting Dome {paired_devices['Dome']} to slave.")
                     # TODO: need to move dome manually???
 
-                if self.weather_safe and self.error_free:
+                if self.weather_safe and self.error_free and (self.interrupt is False):
                     # check dome open
                     self.__log('info', f"Checking Dome {paired_devices['Dome']} is open.")
                     r = self.monitor_run_action('Dome', 'ShutterStatus', 0, 'OpenShutter')
@@ -645,7 +710,7 @@ class Astra():
             if 'Telescope' in paired_devices:
                 telescope = self.devices['Telescope'][paired_devices['Telescope']]
 
-                if self.weather_safe and self.error_free:
+                if self.weather_safe and self.error_free and (self.interrupt is False):
                     # unpark telescope
                     self.__log('info', f"Unparking Telescope {paired_devices['Telescope']}")
                     r = telescope.get('Unpark')
@@ -681,7 +746,7 @@ class Astra():
                     else:
                         raise ValueError(r)
 
-                    while slewing is True and self.weather_safe and self.error_free and self.schedule_running and self.watchdog_running:
+                    while slewing is True and self.weather_safe and self.error_free and (self.interrupt is False) and self.schedule_running and self.watchdog_running:
                         self.__log('info', f"Telescope {paired_devices['Telescope']} slewing...")
 
                         if time.time() - start_time > 120: # 2 minutes hardcoded limit
@@ -756,7 +821,6 @@ class Astra():
 
         self.__log('info', f"Running calibration_sequence for {row['device_name']} {row['action_type']} {row['action_value']} {row['start_time']} {row['end_time']}")
 
-
         action_value, folder, hdr, paired_devices = self.pre_sequence(row)
         
         camera = self.devices[row['device_type']][row['device_name']]
@@ -769,7 +833,7 @@ class Astra():
 
         for i, exptime in enumerate(action_value['exptime']):
 
-            if (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.error_free:
+            if (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.error_free and (self.interrupt is False):
 
                 hdr['EXPTIME'] = exptime
 
@@ -788,36 +852,55 @@ class Astra():
                     raise ValueError(r)
             
                 count = 0
-                t0 = datetime.utcnow()
-                while count < action_value['n'][i] and (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.error_free:
+                while (count < action_value['n'][i]) and (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.error_free and (self.interrupt is False):
                     r = camera.get('ImageReady')
                     time.sleep(0) # yield to other threads
                     if r['status'] == "success":
                         if r['data'] is True:
                             
+                            self.__log('info', f"Image ready from {row['device_name']} to download.")
+
+                            t0 = datetime.utcnow()
+
                             # get last exposure start time
                             r = camera.get('LastExposureStartTime')
                             if r['status'] != "success":
                                 raise ValueError(r)
+                            
+                            self.__log('info', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
+
 
                             dateobs = pd.to_datetime(r['data'])
                             
                             # save image
+                            self.__log('info', f"Saving image from {row['device_name']}")
                             self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
 
-                            # start next exposure
-                            r = camera.get('StartExposure')
-
-                            if r['status'] == "success":
-                                r['data'](Duration = exptime, Light = False)
-                                self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
-                            else:
-                                raise ValueError(r)
-
                             count += 1
+
+                            if count < action_value['n'][i]:
+                                # start next exposure
+                                self.__log('info', f"Exposing {row['device_name']} again")
+                                r = camera.get('StartExposure')
+
+                                if r['status'] == "success":
+                                    r['data'](Duration = exptime, Light = False)
+                                    self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
+                                else:
+                                    raise ValueError(r)
+
                     else:
                         raise ValueError(r)
         
+        
+        # if all images were taken, set repeatable to False
+
+        # change row status in schedule to complete
+        # self.__log('info', f"Updating schedule status to complete for {row['device_name']} {row['action_type']} {row['action_value']} {row['start_time']} {row['end_time']}")
+   
+        # self.schedule.loc[(self.schedule.index == row.name), 'repeatable'] = False
+        
+
         self.__log('info', f"Calibration_sequence ended for {row['device_name']} {row['action_type']} {row['action_value']} {row['start_time']} {row['end_time']}")
 
     def object_sequence(self, row):
@@ -838,7 +921,7 @@ class Astra():
 
         r = camera.get('StartExposure')
 
-        if r['status'] == "success" and self.weather_safe and self.error_free:
+        if r['status'] == "success" and self.weather_safe and self.error_free and (self.interrupt is False):
             r['data'](Duration = action_value['exptime'], Light = True)
             self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
         else:
@@ -848,7 +931,7 @@ class Astra():
         # plate solve loop till centered?
         # guiding
 
-        while (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.weather_safe and self.error_free:            
+        while (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) and self.weather_safe and self.error_free and (self.interrupt is False):            
             
             r = camera.get('ImageReady') # have a timeout in else part?
             time.sleep(0) # yield to other threads
@@ -871,6 +954,7 @@ class Astra():
                     self.__log('info', f"Saving image from {row['device_name']}")
                     self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
 
+                    # start next exposure
                     self.__log('info', f"Exposing {row['device_name']} again")
                     r = camera.get('StartExposure')
 
@@ -1094,8 +1178,6 @@ class Astra():
 
         if r['status'] == "success":
 
-            self.__log('info', f"Image acquired in {datetime.utcnow() - t0}")
-
             img = np.array(r['data'])
             nda = self.img_transform(device, img, maxadu) ## TODO: make more efficient?
 
@@ -1106,13 +1188,20 @@ class Astra():
 
             hdu = fits.PrimaryHDU(nda, header=hdr)
 
-            filepath = f"../images/{folder}/{device.device_type}_{device.device_name}_{date.strftime('%Y%m%d_%H%M%S.%f')}.fits" ## TODO: add target and filter?
+            if hdr['IMAGETYP'] == 'Light':
+                filepath = f"../images/{folder}/{device.device_name}_{hdr['FILTER']}_{hdr['OBJECT']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+            else:
+                filepath = f"../images/{folder}/{device.device_name}_{hdr['IMGTYPE']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+
             hdu.writeto(filepath)
+
+            self.last_image = filepath
 
             ## add to database            
             dt = dateobs.strftime("%Y-%m-%d %H:%M:%S.%f")
             self.cursor.execute(f"INSERT INTO images VALUES ('{filepath}', '{device.device_name}', '{0}', '{dt}')")
-            self.__log('info', f"Image saved to {filepath}")
+            self.__log('info', f"Image saved as {filepath.split('/')[-1]}")
+            self.__log('info', f"Image acquired in {datetime.utcnow() - t0}")
         else:
             raise ValueError(r)
     

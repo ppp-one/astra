@@ -1,16 +1,16 @@
 Telescope:
   - device_name: HPP
-    ip: 192.168.0.36:11111
+    ip: 10.211.55.3:11111
     device_number: 0
     alt_limit: 20
 Focuser:
   - device_name: focuser_HPP
-    ip: 192.168.0.36:11111
+    ip: 10.211.55.3:11111
     device_number: 0
     focus_pos: 10000
 Camera:
   - device_name: camera_HPP
-    ip: 192.168.0.36:11111
+    ip: 10.211.55.3:11111
     device_number: 0
     target_adu: [45000, 3000]
     paired_devices: 
@@ -21,13 +21,13 @@ Camera:
       SafetyMonitor: safety_HPP
 FilterWheel:
   - device_name: fw_HPP
-    ip: 192.168.0.36:11111 
+    ip: 10.211.55.3:11111 
     device_number: 0
 ObservingConditions:
   - device_name: weather_HPP
-    ip: 192.168.0.36:11111
+    ip: 10.211.55.3:11111
     device_number: 0
 SafetyMonitor:
   - device_name: safety_HPP
-    ip: 192.168.0.36:11111
+    ip: 10.211.55.3:11111
     device_number: 0

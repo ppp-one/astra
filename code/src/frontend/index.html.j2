@@ -107,7 +107,7 @@
                                                                 
                                     <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="stop('{{observatory}}')">Stop watchdog</button>
 
-                                    <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="abort_slew('{{observatory}}')">ABORT SLEW</button>
+                                    <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="interrupt('{{observatory}}')">ABORT</button>
                                 </div>
                             </div>
                             
@@ -405,8 +405,8 @@
                 });
         }
 
-        function abort_slew(observatory) {
-            fetch('/api/abort_slew/' + observatory)
+        function interrupt(observatory) {
+            fetch('/api/interrupt/' + observatory)
                 .then(response => response.json())
                 .then(data => {
                         console.log(data);
@@ -465,14 +465,14 @@
                     logMessage.classList.add('px-3'); // add a class
                     logMessage.classList.add('py-1.5'); // add a class
                     logMessage.classList.add('grid'); // add a class
-                    logMessage.classList.add('grid-cols-3'); // add a class
+                    logMessage.classList.add('grid-cols-4'); // add a class
                     
                     if (item['level'] == 'warning') {
                         logMessage.classList.add('text-yellow-500'); // add a class
                     } else if (item['level'] == 'error') {
                         logMessage.classList.add('text-red-500'); // add a class
                     }
-                    logMessage.innerHTML = `<div class="col-span-1 proportional-nums tracking-wide">${item['datetime'].substring(10)}</div> <div class="col-span-2 italic">${item['message']}</div>`;
+                    logMessage.innerHTML = `<div class="col-span-1 proportional-nums tracking-wide">${item['datetime'].substring(10)}</div> <div class="col-span-3 italic">${item['message']}</div>`;
 
                     fragment.appendChild(logMessage);
                 });
@@ -490,8 +490,15 @@
         {% for observatory in observatories %}
 
             // connect to websockets
-            connectWebSocket('ws://' + window.location.host + '/ws/' + '{{observatory}}', '{{observatory}}', 'summary');
-            connectWebSocket('ws://' + window.location.host + '/ws/log/' + '{{observatory}}', '{{observatory}}', 'log');
+            if (window.location.protocol === "https:") {
+                console.log("Website accessed via HTTPS");
+                connectWebSocket('wss://' + window.location.host + '/ws/' + '{{observatory}}', '{{observatory}}', 'summary');
+                connectWebSocket('wss://' + window.location.host + '/ws/log/' + '{{observatory}}', '{{observatory}}', 'log');
+            } else {
+                console.log("Website accessed via HTTP");
+                connectWebSocket('ws://' + window.location.host + '/ws/' + '{{observatory}}', '{{observatory}}', 'summary');
+                connectWebSocket('ws://' + window.location.host + '/ws/log/' + '{{observatory}}', '{{observatory}}', 'log');
+            }
 
             
             // update schedule table
