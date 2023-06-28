@@ -1,4 +1,4 @@
 device_type,device_name,action_type,action_value,start_time,end_time
 Camera,camera_HPP,CoolerOn,True,2023-06-25 19:29:13,2023-06-26 05:37:00
 Camera,camera_HPP,SetCCDTemperature,-10,2023-06-25 19:29:13,2023-06-26 05:37:00
-Camera,camera_HPP,calibration,"{'exptime': [0,10], 'n': [3,3]}",2023-06-25 19:40:00,2023-06-26 05:37:00
+Camera,camera_HPP,calibration,"{'exptime': [0,10], 'n': [3,3]}",2023-06-25 19:40:00,2023-06-26 06:37:00

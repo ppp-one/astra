@@ -25,22 +25,30 @@ logging.Formatter.converter = time.gmtime
 
 frontend = Jinja2Templates(directory="frontend")
 observatories = {}
+webcamfeeds = {}
 fws = {}
 last_image = None
 last_image_jpg = None
-last_dateobs = None
+useful_headers = None
 debug = False
+truncate_schedule = False
 
 def load_observatories():
     global observatories # not sure if this is necessary
+    global webcamfeeds
     global fws
     global debug
 
     kill_observatories()
 
     for config_filename in glob('../config/*.yml'):
-        obs = Astra(config_filename, debug)
+        obs = Astra(config_filename, debug, truncate_schedule)
         observatories[obs.observatory_name] = obs
+
+        if 'Misc' in obs.observatory:
+            if 'Webcam' in obs.observatory['Misc']:
+                webcamfeeds[obs.observatory_name] = obs.observatory['Misc']['Webcam']
+
         obs.connect_all()
 
         if 'FilterWheel' in obs.devices:
@@ -59,19 +67,27 @@ def kill_observatories():
 
         observatories = {}
 
-def format_time(time : datetime.datetime):
-    # if time is not NaTType:
+def format_time(ftime : datetime.datetime):
+    # if ftime is not NaTType:
     try:
-        return time.strftime("%H:%M:%S")
+        return ftime.strftime("%H:%M:%S")
     except:
         return None
 
 def convert_fits_to_jpg(fits_file, observatory):
     # Open the FITS file
+    headers = {}
     with fits.open(fits_file) as hdulist:
         # Get the image data from the primary HDU
         image_data = hdulist[0].data
-        dateobs = hdulist[0].header['DATE-OBS']
+        headers['EXPTIME'] = hdulist[0].header['EXPTIME']
+        headers['DATE-OBS'] = hdulist[0].header['DATE-OBS']
+        headers['FILTER'] = hdulist[0].header['FILTER']
+        headers['IMGTYPE'] = hdulist[0].header['IMGTYPE']
+        if headers['IMGTYPE'] == 'Light':
+            headers['OBJECT'] = hdulist[0].header['OBJECT']
+
+
 
     # Normalize the image data to the 8-bit range (0-255)
     normalized_data = (image_data - image_data.min()) * (255.0 / (image_data.max() - image_data.min()))
@@ -87,7 +103,7 @@ def convert_fits_to_jpg(fits_file, observatory):
     filename = './frontend/' + fits_file.split('/')[-1].split('.')[0] + '.jpg'
     image.save(filename)
 
-    return filename, dateobs
+    return filename, headers
 
 
 @asynccontextmanager
@@ -104,7 +120,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def root(request: Request):
-    return frontend.TemplateResponse("index.html.j2", {"request": request, "observatories" : observatories.keys()})
+    return frontend.TemplateResponse("index.html.j2", {"request": request, "observatories" : observatories.keys(), "webcamfeeds" : webcamfeeds})
 
 @app.get('/favicon.svg', include_in_schema=False)
 async def favicon():
@@ -114,20 +130,17 @@ async def favicon():
 async def lastest_image(image: str):
     return FileResponse(f'./frontend/{image}')
 
-@app.get("/api/start/{observatory}")
+@app.get("/api/startwatchdog/{observatory}")
 async def start(observatory: str):
     obs = observatories[observatory]
     obs.start_watchdog()
 
     return {"status": "success", "data": "null", "message": ""}
 
-@app.get("/api/stop/{observatory}")
+@app.get("/api/stopwatchdog/{observatory}")
 async def stop(observatory: str):
     obs = observatories[observatory]
-    obs.schedule_running = False
     obs.watchdog_running = False
-
-    obs.error_free = True
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -326,7 +339,7 @@ async def websocket_weather(websocket: WebSocket, observatory: str):
         
 @app.websocket("/ws/{observatory}")
 async def websocket_endpoint(websocket: WebSocket, observatory: str):
-    global last_image, last_image_jpg, last_dateobs
+    global last_image, last_image_jpg, useful_headers
 
     await websocket.accept()
 
@@ -361,10 +374,10 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
         table0 = []
         table1 = [{"item": "error free" , "value" : obs.error_free},
-                  {"item": "watchdog" , "value" : "running" if obs.watchdog_running else "stopped"},
-                  {"item": "schedule" , "value" : "running" if obs.schedule_running else "stopped"},
                   {"item": "utc time" , "value" : datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")},
-                  {"item": "local time" , "value" : datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}]
+                  {"item": "local time" , "value" : datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")},
+                  {"item": "watchdog" , "value" : "running" if obs.watchdog_running else "stopped"},
+                  {"item": "schedule" , "value" : "running" if obs.schedule_running else "stopped"}]
 
         if 'Telescope' in obs.devices:
             # we want to know if slewing or tracking
@@ -578,18 +591,18 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
                 table0.append({"item": device_type, "name": device_name, "status": status, "valid": valid, "last_update": f'{last_update:.0f} s ago', "polled": polled})
 
-        if last_image_jpg is None:
-            # use placeholder image
-            last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
+        # if last_image_jpg is None:
+        #     # use placeholder image
+        #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
         # TODO: need to make it less CPU intensive if multiple clients
         if last_image is not obs.last_image:
             last_image = obs.last_image
-            last_image_jpg, last_dateobs = convert_fits_to_jpg(last_image, observatory)
+            last_image_jpg, useful_headers = convert_fits_to_jpg(last_image, observatory)
 
         data = {"table0" : table0,
                 "table1" : table1,
-                "last_image": {"url": last_image_jpg, "dateobs": last_dateobs}
+                "last_image": {"url": last_image_jpg, "useful_headers": useful_headers}
                 }
         
         # make temp image, say how many images have been made?
@@ -607,11 +620,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Run Astra')
     parser.add_argument('--debug', action='store_true', help='run in debug mode')
+    parser.add_argument('--truncate', action='store_true', help='run in truncate_schedule mode')
     args = parser.parse_args()
 
     if args.debug:
         debug = True
         logging.getLogger().setLevel(logging.DEBUG)
+
+    if args.truncate:
+        truncate_schedule = True
 
     # start the server
     log_level = "info" if not debug else "debug"

@@ -25,7 +25,7 @@
         m-4 p-4 space-y-4 bg-slate-900/90 shadow-slate-950/50 shadow-xl rounded-xl">
             
             {# title #}
-            <div class="flex-initial justify-left text-2xl">
+            <div id="title-{{ observatory }}" class="flex-initial justify-left text-2xl">
                 {{ observatory }}
             </div>
                 
@@ -63,18 +63,27 @@
                                 </tbody>
                             </table>
                             
-                            <div class="flex flex-row">
+                            <div class="flex flex-row justify-center items-center">
                             {# add image #}
-                                <div class="basis-1/2 mr-2">
-                                    last image
-                                    <img id="summary-last-image-{{ observatory }}" alt="lastest image" class="object-contain h-full w-full">
+                                <div class="flex justify-center basis-1/2 mr-2">
+                                        <img id="summary-last-image-{{ observatory }}" alt="lastest image" class="object-contain h-full w-full hidden">
+                                        <svg xmlns="http://www.w3.org/2000/svg" id="summary-last-image-placeholder-{{ observatory }}" viewBox="0 0 24 24" fill="currentColor" class="w-full p-12 opacity-20">
+                                            <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+                                        </svg>
+                                </div>
+
+                                <div class="basis-1/2 ml-2">
+                                    <div id="summary-last-image-info-{{ observatory }}" class="whitespace-break-spaces opacity-50">
+                                    </div>
                                 </div>
 
                             {# add webcam div #}
-                                <div class="basis-1/2 ml-2 ">
-                                    webcam
-                                    <img src="https://picsum.photos/200" alt="webcam placeholder image" class="object-contain h-full w-full">
-                                </div>
+                                {% if webcamfeeds != {} %}
+                                    <div class="basis-1/2 ml-2 ">
+                                        webcam
+                                        {# <img src="{{ webcamfeeds[observatory]['rtsp'] }}" alt="webcam placeholder image" class="object-contain h-full w-full"> #}
+                                    </div>
+                                {% endif %}
                             </div>
 
                         {% elif nav == 'Schedule' %}
@@ -108,12 +117,12 @@
 
                         {% elif nav == 'Controls' %}
                             <div class="flex flex-col flex-grow place-content-center items-center min-h-full my-auto">
-                                <div class="my-3">
-                                    <button type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onclick="start('{{observatory}}')">Start watchdog</button>
+                                <div class="my-4">
+                                    <button type="button" class="focus:outline-none text-white w-full bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-4 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onclick="startWatchdog('{{observatory}}')">Start watchdog</button>
                                                                 
-                                    <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="stop('{{observatory}}')">Stop watchdog</button>
+                                    <button type="button" class="focus:outline-none text-white w-full bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-4 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-900" onclick="stopWatchdog('{{observatory}}')">Stop watchdog</button>
 
-                                    <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="interrupt('{{observatory}}')">ABORT</button>
+                                    <button type="button" class="focus:outline-none text-white w-full bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-4 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onclick="interrupt('{{observatory}}')">ABORT</button>
                                 </div>
                             </div>
                             
@@ -395,16 +404,16 @@
 
         }
 
-        function start(observatory) {
-            fetch('/api/start/' + observatory)
+        function startWatchdog(observatory) {
+            fetch('/api/startwatchdog/' + observatory)
                 .then(response => response.json())
                 .then(data => {
                         console.log(data);
                 });
         }
         
-        function stop(observatory) {
-            fetch('/api/stop/' + observatory)
+        function stopWatchdog(observatory) {
+            fetch('/api/stopwatchdog/' + observatory)
                 .then(response => response.json())
                 .then(data => {
                         console.log(data);
@@ -455,18 +464,45 @@
         }
 
         function onMessageFunc(observatory, type, event) {
+            let message = JSON.parse(event.data);
             if (type == 'summary') {
-                updateTable("summary-table-0-" + observatory, JSON.parse(event.data)['table0'], {"item": "item", "status": "status", "last_update": "last update"});
-                updateTable("summary-table-1-" + observatory, JSON.parse(event.data)['table1'], {"item": "item", "value": "value"}, false);
+                updateTable("summary-table-0-" + observatory, message['table0'], {"item": "item", "status": "status", "last_update": "last update"});
+
+                // update title color if error found in astra
+                if (message['table1'][0]['item'] == "error free"){
+                    if (message['table1'][0]['value'] == false) {
+                        document.getElementById("title-" + observatory).classList.add('text-red-500');
+                    } else {
+                        document.getElementById("title-" + observatory).classList.remove('text-red-500');
+                    }
+                }
+
+                // remove first item of table1, error free status
+                message['table1'].shift();
+                updateTable("summary-table-1-" + observatory, message['table1'], {"item": "item", "value": "value"}, false);
+
 
                 // update last image
-                document.getElementById("summary-last-image-" + observatory).src = JSON.parse(event.data)['last_image']['url'];
+                let lastImage = message['last_image'];
+                if (lastImage['url'] != null) {
+                    document.getElementById("summary-last-image-" + observatory).classList.remove('hidden');
+                    document.getElementById("summary-last-image-placeholder-" + observatory).classList.add('hidden');
+                    document.getElementById("summary-last-image-" + observatory).src = lastImage['url'];
+
+                    document.getElementById("summary-last-image-info-" + observatory).innerHTML = syntaxHighlight(lastImage['useful_headers']);
+                } else {
+                    document.getElementById("summary-last-image-" + observatory).classList.add('hidden');
+                    document.getElementById("summary-last-image-placeholder-" + observatory).classList.remove('hidden');
+
+                    document.getElementById("summary-last-image-info-" + observatory).innerHTML = '';
+                }
+
+                
             } else if (type == 'log') {
                 let logDiv = document.getElementById("log-0-" + observatory);
                 let fragment = document.createDocumentFragment();
 
-                let content = JSON.parse(event.data)
-                let log = content['log'];
+                let log = message['log'];
                 log.forEach(function(item, index, array) {
                     let logMessage = document.createElement('div'); // create a p tag
                     logMessage.classList.add('px-3'); // add a class
@@ -491,8 +527,8 @@
                     div.scrollTop = div.scrollHeight;
                 }
 
-                if (scheduleLoadTime[observatory] < content['schedule_mtime']) {
-                    scheduleLoadTime[observatory] = content['schedule_mtime'];
+                if (scheduleLoadTime[observatory] < message['schedule_mtime']) {
+                    scheduleLoadTime[observatory] = message['schedule_mtime'];
                     updateSchedule(observatory);
                 }
 

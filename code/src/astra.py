@@ -58,7 +58,7 @@ def update_times(df, time_factor):
 
 
 class Astra():
-    def __init__(self, config_filename : str, debug : bool = False):
+    def __init__(self, config_filename : str, debug : bool = False, truncate_schedule : bool = False):
         # TODO: 
         # move to process?
         # add better logging
@@ -67,6 +67,7 @@ class Astra():
         # improve observatory safety logic
 
         self.debug = debug
+        self.truncate_schedule = truncate_schedule
 
         self.db_name, self.cursor = self.create_db(config_filename)
 
@@ -386,7 +387,10 @@ class Astra():
 
                     # read db, check if last 30 mins have been safe
 
-                    rows = self.cursor.execute("SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND device_value = 'False' AND datetime > datetime('now', '-1 minutes')")
+                    if self.truncate_schedule is True:
+                        rows = self.cursor.execute("SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND device_value = 'False' AND datetime > datetime('now', '-1 minutes')")
+                    else:
+                        rows = self.cursor.execute("SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND device_value = 'False' AND datetime > datetime('now', '-30 minutes')")
 
                     if self.schedule.iloc[-1]['end_time'] > datetime.utcnow():
 
@@ -558,10 +562,10 @@ class Astra():
             schedule = schedule.sort_values(by=['start_time'])
 
             # for development
-            if self.debug is True:
+            if self.truncate_schedule is True:
                 schedule = update_times(schedule, 100)
 
-            # make new column called repeatable, set to True
+            # make new column called repeatable, set to True, TODO: Make useable.
             schedule['repeatable'] = True
             
             self.__log('info', 'Schedule read')
@@ -625,10 +629,14 @@ class Astra():
 
                             # if last row, sleep until thread is finished to prevent from returning to start of schedule by watchdog
                             if i == self.schedule.index[-1]:
-                                self.__log('info', f"Waiting for {row['device_name']} {row['action_type']} to finish")
-                                while th.is_alive() and self.weather_safe and self.error_free and (self.interrupt is False):
-                                    print((row['end_time'] - datetime.utcnow()).total_seconds(), 'seconds until last action expected to finish')
-                                    time.sleep(1)
+                                self.__log('info', f"Waiting for last schedule item to finish: {row['device_name']} {row['action_type']}")
+                                while self.weather_safe and self.schedule_running and self.error_free and (self.interrupt is False):
+                                    t_until_end = (row['end_time'] - datetime.utcnow()).total_seconds()
+                                    if t_until_end > 0:
+                                        print(t_until_end, 'seconds until last action expected to finish')
+                                        time.sleep(1)
+                                    else:
+                                        break
                         else:
                             run_row = False
 
@@ -1204,7 +1212,6 @@ class Astra():
             
             nda = self.img_transform(device, img, maxadu) ## TODO: make more efficient?
             self.__log('debug', 'Image transformed, now saving to disk')
-
 
             hdr['DATE-OBS'] = (dateobs.strftime('%Y-%m-%dT%H:%M:%S.%f'), 'UTC date/time of exposure start')  
 
