@@ -137,8 +137,7 @@ def hdr_times(hdr, fits_config, location, target):
     mjd, hjd, bjd = time_conversion(jd, location, target)
     mjdend, hjdend, bjdend = time_conversion(jdend, location, target)
 
-
-    for i, row in fits_config[fits_config['fixed'] is False].iterrows():
+    for i, row in fits_config[fits_config['fixed'] == False].iterrows():  # noqa: E712
 
         if row['device_type'] == 'astra':
             match row['header']:
@@ -161,8 +160,7 @@ def hdr_times(hdr, fits_config, location, target):
                 case _:
                     if row['header'] not in hdr:
                         # display(row['header'])
-                        # print(row['header'], " Yikers. I don't know that one.")
-                        print(row['header'])
+                        print(row['header'], " Yikers. I don't know that one.")
     
     z = (90 - hdr['ALTITUDE']) * np.pi/180
     hdr['AIRMASS'] = (1.002432*np.cos(z)**2 + 0.148386*np.cos(z) + 0.0096467) /  (np.cos(z)**3 + 0.149864*np.cos(z)**2 + 0.0102963*np.cos(z) + 0.000303978) # https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)

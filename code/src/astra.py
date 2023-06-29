@@ -592,7 +592,6 @@ class Astra():
         self.schedule_running = True
         for i, row in self.schedule.iterrows():
 
-            # user intervention?
             # safety check
             # run if weather safe, or the action is calibration (bias, dark)
             if (self.weather_safe is True) or (row['action_type'] in ['calibration']):
@@ -629,7 +628,9 @@ class Astra():
 
                             # if last row, sleep until thread is finished to prevent from returning to start of schedule by watchdog
                             if i == self.schedule.index[-1]:
-                                self.__log('info', f"Waiting for last schedule item to finish: {row['device_name']} {row['action_type']}")
+                                while (th.is_alive() is True) and self.weather_safe and self.schedule_running and self.error_free and (self.interrupt is False):
+                                    time.sleep(1)
+                                self.__log('info', f"Waiting for last schedule item to reach endtime of {row['end_time']}: {row['device_name']} {row['action_type']}")
                                 while self.weather_safe and self.schedule_running and self.error_free and (self.interrupt is False):
                                     t_until_end = (row['end_time'] - datetime.utcnow()).total_seconds()
                                     if t_until_end > 0:
@@ -639,6 +640,12 @@ class Astra():
                                         break
                         else:
                             run_row = False
+
+        # run headers completion
+        # self.__log('info', 'Completing headers')
+        # th = Thread(target=self.final_headers, daemon=True)
+        # th.start()
+        # self.threads.append({'type': 'final_headers', 'device_name': 'astra', 'thread': th, 'id' : -6})
 
         self.schedule_running = False
         self.__log('warning', 'Schedule stopped')
@@ -886,7 +893,7 @@ class Astra():
                     if r['status'] == "success":
                         if r['data'] is True:
                             
-                            self.__log('info', f"Image ready from {row['device_name']} to download.")
+                            self.__log('debug', f"Image ready from {row['device_name']} to download.")
 
                             t0 = datetime.utcnow()
 
@@ -895,20 +902,20 @@ class Astra():
                             if r['status'] != "success":
                                 raise ValueError(r)
                             
-                            self.__log('info', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
+                            self.__log('debug', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
 
 
                             dateobs = pd.to_datetime(r['data'])
                             
                             # save image
-                            self.__log('info', f"Saving image from {row['device_name']}")
+                            self.__log('debug', f"Saving image from {row['device_name']}")
                             self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
 
                             count += 1
 
                             if count < action_value['n'][i]:
                                 # start next exposure
-                                self.__log('info', f"Exposing {row['device_name']} again")
+                                self.__log('debug', f"Exposing {row['device_name']} again")
                                 r = camera.get('StartExposure')
 
                                 if r['status'] == "success":
@@ -965,7 +972,7 @@ class Astra():
             time.sleep(0) # yield to other threads
             if r['status'] == "success":
                 if r['data'] is True:
-                    self.__log('info', f"Image ready from {row['device_name']} to download.")
+                    self.__log('debug', f"Image ready from {row['device_name']} to download.")
 
                     t0 = datetime.utcnow()
                     
@@ -974,16 +981,16 @@ class Astra():
                     if r['status'] != "success":
                         raise ValueError(r)
                     
-                    self.__log('info', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
+                    self.__log('debug', f"LastExposureStartTime from {row['device_name']} was {r['data']}")
 
                     dateobs = pd.to_datetime(r['data'])
 
                     # save image
-                    self.__log('info', f"Saving image from {row['device_name']}")
+                    self.__log('debug', f"Saving image from {row['device_name']}")
                     self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
 
                     # start next exposure
-                    self.__log('info', f"Exposing {row['device_name']} again")
+                    self.__log('debug', f"Exposing {row['device_name']} again")
                     r = camera.get('StartExposure')
 
                     if r['status'] == "success":
@@ -1353,7 +1360,10 @@ class Astra():
                 df_images_filt['date_obs'] = pd.to_datetime(df_images_filt['date_obs'], format='%Y-%m-%d %H:%M:%S.%f')
 
                 df_images_filt = df_images_filt.sort_values(by='date_obs').reset_index(drop=True)
-                df_images_filt['jd_obs'] = df_images_filt['date_obs'].apply(utils.to_jd)
+                df_images_filt['jd_obs'] = df_images_filt['date_obs'].apply(utils.to_jd).sort_values()
+
+                # add small time increment to avoid duplicate jd TODO: better fix needed
+                df_images_filt['jd_obs'] = df_images_filt['jd_obs'].reset_index().apply(lambda x : x + x['index'] * 1e-9, axis=1).drop('index', axis=1)['jd_obs']
 
                 ## get polled data from ascom devices
                 t0 = pd.to_datetime(df_images_filt['date_obs'].iloc[0]) - pd.Timedelta('10 sec') # right to use 10 sec?
@@ -1361,7 +1371,7 @@ class Astra():
                                                                                                         
                 q = f"""SELECT * FROM polling WHERE datetime BETWEEN "{str(t0)}" AND "{str(t1)}";"""
                 rows = self.cursor.execute(q)
-                df_poll = pd.DataFrame(rows, columns=['datetime', 'device_type', 'device_name', 'device_command', 'device_value', 'datetime'])
+                df_poll = pd.DataFrame(rows, columns=['device_type', 'device_name', 'device_command', 'device_value', 'datetime'])
                 df_poll['jd'] = pd.to_datetime(df_poll['datetime'], format='%Y-%m-%d %H:%M:%S.%f').apply(utils.to_jd)
 
                 ## find unique headers in polled commands
@@ -1385,11 +1395,13 @@ class Astra():
                     df_poll_filtered = df_poll_filtered.sort_values(by='jd')
                     df_poll_filtered = df_poll_filtered.set_index('jd')
 
-                    df_inp[row['header']] = utils.interpolate_dfs(df_images_filt['jd_obs'], df_poll_filtered['device_value'].astype(float))['device_value'].fillna(0)
+                    df_poll_filtered['device_value'] = df_poll_filtered['device_value'].replace({'True': 1.0, 'False': 0.0}).astype(float)
+
+                    df_inp[row['header']] = utils.interpolate_dfs(df_images_filt['jd_obs'], df_poll_filtered['device_value'])['device_value'].fillna(0)
 
                 ## update files
                 for i, row in df_images_filt.iterrows():
-                    with fits.open(row['filename'], mode='update') as filehandle:
+                    with fits.open(row[0], mode='update') as filehandle:
                         hdr = filehandle[0].header
                         for header in df_inp.columns:
                             hdr[header] = (df_inp.iloc[i][header], df_poll_unique[df_poll_unique['header'] == header]['comment'].values[0])
@@ -1400,7 +1412,9 @@ class Astra():
                         utils.hdr_times(hdr, self.fits_config, location, target)
                         filehandle[0].add_checksum()
 
-                        self.cursor.execute(f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filename']}"''')
+                        self.cursor.execute(f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row[0]}"''')
+        
+        self.__log('info', 'Completing headers... Done.')
 
     def monitor_run_action(self, device_type : str, monitor_command : str, desired_condition : any, run_command : str, timeout : float = 60):
         '''
