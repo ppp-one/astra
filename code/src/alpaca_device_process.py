@@ -165,8 +165,8 @@ class AlpacaDevice(Process):
             else:
                 return {"status" : "success", "data" : data, "message" : ""}
         except Exception as e:
-            self.queue.put(self.metadata, {"type" : "log", "data" : ('error', f'Get method error with data {str(data)}: {self.device_type}, {self.device_name}, {method}, {str(e)}')})
             if pipe:
+                self.queue.put(self.metadata, {"type" : "log", "data" : ('error', f'Get method error with data {str(data)}: {self.device_type}, {self.device_name}, {method}, {str(e)}')})
                 self.back_pipe.send({"status" : "error", "data" : "null", "message" : f"Get method error: {str(e)}"}) # check if valid, need args?
             else:
                 return {"status" : "error", "data" : "null", "message" : f"Get method error: {str(e)}"}
