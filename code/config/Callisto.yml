@@ -37,7 +37,11 @@ Camera:
     ip: 10.211.55.3:11111
     device_number: 0
     temperature: -40
-    target_adu: [45000, 3000]
+    flats:
+      target_adu: [45000, 3000]
+      bias_offset: 1000
+      lower_exptime_limit: 0.1
+      upper_exptime_limit: 10
     paired_devices: 
       Telescope: telescope_Callisto
       Focuser: focuser_Callisto
