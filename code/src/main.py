@@ -14,8 +14,10 @@ import time
 
 import uvicorn
 from fastapi import FastAPI, Request, WebSocket
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
+
+import httpx
 
 logging.basicConfig(
     format='%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s',
@@ -131,6 +133,70 @@ async def favicon():
 @app.get('/frontend/{image}', include_in_schema=False)
 async def lastest_image(image: str):
     return FileResponse(f'./frontend/{image}')
+
+@app.get("/video/{observatory}/{filename:path}", include_in_schema=False)
+async def get_video(request: Request, observatory, filename : str = None):
+    headers = request.headers
+    base_url = webcamfeeds[observatory]
+    target_url = f"{base_url}/{filename}"  # Replace with the actual URL of the WebRTC page
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(target_url, headers=headers)
+        content = response.text
+        status_code = response.status_code
+        headers = response.headers
+
+    return HTMLResponse(content, status_code=status_code, headers=headers)
+
+@app.options("/video/{observatory}/{filename:path}", include_in_schema=False)
+async def options_video(request: Request, observatory, filename : str = None):
+    headers = request.headers
+    base_url = webcamfeeds[observatory]
+    target_url = f"{base_url}/{filename}"  # Replace with the actual URL of the WebRTC page
+
+    async with httpx.AsyncClient() as client:
+        response = await client.options(target_url, headers=headers)
+        content = response.text
+        status_code = response.status_code
+        headers = response.headers
+
+    return HTMLResponse(content, status_code=status_code, headers=headers)
+
+@app.post("/video/{observatory}/{filename:path}", include_in_schema=False)
+async def post_video(request: Request, observatory, filename : str = None):
+    body = await request.body()
+    headers = request.headers
+    base_url = webcamfeeds[observatory]
+    target_url = f"{base_url}/{filename}"  # Replace with the actual URL of the WebRTC page
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(target_url, data=body, headers=headers)
+        content = response.text
+        status_code = response.status_code
+        headers = response.headers
+
+    return HTMLResponse(content, status_code=status_code, headers=headers)
+
+@app.patch("/video/{observatory}/{filename:path}", include_in_schema=False)
+async def patch_video(request: Request, observatory, filename : str = None):
+    body = await request.body()
+    headers = request.headers
+    base_url = webcamfeeds[observatory]
+    target_url = f"{base_url}/{filename}"  # Replace with the actual URL of the WebRTC page
+
+    async with httpx.AsyncClient() as client:
+        response = await client.patch(target_url, data=body, headers=headers)
+        content = response.text
+        status_code = response.status_code
+        headers = response.headers
+
+    return HTMLResponse(content, status_code=status_code, headers=headers)
+
+@app.get("/api/heartbeat/{observatory}")
+async def heartbeat(observatory: str):
+    obs = observatories[observatory]
+
+    return {"status": "success", "data": obs.heartbeat, "message": ""}
 
 @app.get("/api/startwatchdog/{observatory}")
 async def start(observatory: str):

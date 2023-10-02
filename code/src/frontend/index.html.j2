@@ -98,8 +98,8 @@
                             {# webcam feed #}
                                 <div class="basis-1/2 ml-2 ">
                                     {% if webcamfeeds != {} %}
-                                        webcam
-                                        {# <img src="{{ webcamfeeds[observatory]['rtsp'] }}" alt="webcam placeholder image" class="object-contain h-full w-full"> #}
+                                        {# webcam #}
+                                        <iframe src="/video/{{observatory}}/" scrolling="no"></iframe>
                                     {% endif %}
                                 </div>
                             </div>

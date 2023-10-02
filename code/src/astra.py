@@ -12,6 +12,7 @@ import utils
 from guiding import Guider
 import yaml
 import os
+import psutil
 from alpaca_device_process import AlpacaDevice
 from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.io import fits
@@ -75,6 +76,7 @@ class Astra():
         Attributes:
             debug (bool): whether Astra is running in debug mode.
             truncate_schedule (bool): whether the schedule is truncated to the current time.
+            heartbeat (dict): dictionary containing the heartbeat data of the astra process.
             threads (list): list of threads started by Astra.
             queue (Queue): a multiprocessing queue used to communicate between processes.
             queue_running (bool): whether the queue is running.
@@ -98,6 +100,8 @@ class Astra():
 
         self.debug = debug
         self.truncate_schedule = truncate_schedule
+
+        self.heartbeat = {}
 
         self.threads = []
         self.queue = Manager().Queue()
@@ -434,6 +438,16 @@ class Astra():
                     except Exception as e:
                         self.error_source.append({'device_type': device_type, 'device_name': device_name, 'error': str(e)})
                         self.__log('error', f"{device_type} {device_name} unresponsive")
+            
+            # update heartbeat
+            self.heartbeat['datetime'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+            self.heartbeat['error_free'] = self.error_free
+            self.heartbeat['error_source'] = self.error_source
+            self.heartbeat['weather_safe'] = self.weather_safe
+            self.heartbeat['schedule_running'] = self.schedule_running
+            self.heartbeat['interrupt'] = self.interrupt
+            self.heartbeat['cpu_percent'] = psutil.cpu_percent()
+            self.heartbeat['memory_percent'] = psutil.virtual_memory().percent
 
 
             if self.error_free is True:
