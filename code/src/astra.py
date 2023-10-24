@@ -21,7 +21,7 @@ from sqlite3worker import Sqlite3Worker  # https://github.com/dashawn888/sqlite3
 
 from multiprocessing import Manager
 
-ASTRA_VER = '0.1.0'
+ASTRA_VER = '0.2.0'
 
 def update_times(df, time_factor):
     '''
@@ -497,6 +497,8 @@ class Astra():
             self.heartbeat['interrupt'] = self.interrupt
             self.heartbeat['cpu_percent'] = psutil.cpu_percent()
             self.heartbeat['memory_percent'] = psutil.virtual_memory().percent
+            self.heartbeat['disk_percent'] = psutil.disk_usage('/').percent
+            self.heartbeat['threads'] = [{'type': i['type'], 'device_name': i['device_name'], 'id' : i['id']} for i in self.threads]
 
 
             if self.error_free is True:
@@ -1412,6 +1414,7 @@ class Astra():
 
         maxadu = camera.get('MaxADU')
         
+        self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
         camera.get('StartExposure')(Duration = action_value['exptime'], Light = True)
 
         pointing_complete = False
@@ -1445,25 +1448,25 @@ class Astra():
                         self.__log('info', f"Running pointing correction for {action_value['object']} with {row['device_name']}")
 
                         try:
-                            offset_ra, offset_dec, wcs = utils.point_correction(filepath, action_value['ra'], action_value['dec'])
+                            offset_ra, offset_dec, wcs, angular_separation = utils.point_correction(filepath, action_value['ra'], action_value['dec'])
                         except Exception as e:
                             self.__log('warning', f"Error running pointing correction for {action_value['object']} with {row['device_name']}: {str(e)}")
                             pointing_complete = True
 
                         if pointing_complete is False:
                             tel_index = [i for i, d in enumerate(self.observatory['Telescope']) if d['device_name'] == paired_devices['Telescope']][0]
-                            pointing_threshold = self.observatory['Telescope'][tel_index]['pointing_threshold'] / 60
+                            pointing_threshold = self.observatory['Telescope'][tel_index]['pointing_threshold'] / 60 # convert to degrees
 
-                            if (abs(offset_ra) < pointing_threshold) or (abs(offset_dec) < pointing_threshold):
-                                self.__log('info', f"No further pointing correction required. Correction of {offset_ra*60}\" {offset_dec*60}\" within threshold of {pointing_threshold*60}\"")
+                            if abs(angular_separation.deg) < pointing_threshold:
+                                self.__log('info', f"No further pointing correction required. Correction of {angular_separation.deg*60:.2f}\' within threshold of {pointing_threshold*60:.2f}\'")
                                 pointing_complete = True
                             else:
-                                self.__log('info', f"Pointing correction of {offset_ra*60}\" {offset_dec*60}\" required")
+                                self.__log('info', f"Pointing correction of {angular_separation.deg*60:.2f}\' required as it is outside threshold of {pointing_threshold*60:.2f}\'")
 
                                 # sync telescope to corrected coordinates, TODO: check if right +-
                                 telescope = self.devices['Telescope'][paired_devices['Telescope']]
                                 telescope.get('SyncToCoordinates')(RightAscension = 24*(action_value['ra'] + offset_ra)/360, Declination = action_value['dec'] + offset_dec)
-                                
+
                                 # re-slew to target
                                 self.setup_observatory(paired_devices, action_value)
                         
@@ -1491,6 +1494,7 @@ class Astra():
 
                 # start next exposure
                 self.__log('debug', f"Exposing {row['device_name']} again")
+                self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
                 camera.get('StartExposure')(Duration = action_value['exptime'], Light = True)
 
         # stop guiding at end of sequence
@@ -2089,14 +2093,16 @@ class Astra():
                             hdr = filehandle[0].header
                             for header in df_inp.columns:
                                 hdr[header] = (df_inp.iloc[i][header], df_poll_unique[df_poll_unique['header'] == header]['comment'].values[0])
-                                
+
+                            hdr['RA'] = hdr['RA'] * (360/24) # convert to degrees
+                             
                             location = EarthLocation(lat=hdr['LAT-OBS']*u.deg, lon=hdr['LONG-OBS']*u.deg, height=hdr['ALT-OBS']*u.m)
                             target = SkyCoord(hdr['RA'], hdr['DEC'], unit=(u.deg, u.deg), frame='icrs')
                             
                             utils.hdr_times(hdr, self.fits_config, location, target)
                             filehandle[0].add_checksum()
 
-                            self.cursor.execute(f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row[0]}"''')
+                            self.cursor.execute(f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"''')
             
             self.__log('info', 'Completing headers... Done.')
         

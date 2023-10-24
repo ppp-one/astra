@@ -232,6 +232,12 @@ def db_query(db: str, min_dec: float, max_dec: float, min_ra: float, max_ra: flo
 
     conn = sqlite3.connect(db)
 
+    if min_dec < -90:
+        min_dec = -90
+
+    if max_dec > 90:
+        max_dec = 90
+
     # Determine the relevant shard(s) based on the query parameters.
     arr = np.arange(np.floor(min_dec), np.ceil(max_dec) + 1, 1)
     relevant_shard_ids = set()
@@ -300,14 +306,15 @@ def gaia_db_query(
         dec = center.dec.deg
     else:
         ra, dec = center
-
+    
     if not isinstance(fov, u.Quantity):
         fov = fov * u.deg
 
     if fov.ndim == 1:
         ra_fov, dec_fov = fov.to(u.deg).value
     else:
-        ra_fov = dec_fov = fov.to(u.deg).value
+        ra_fov = fov[0].to(u.deg).value
+        dec_fov = fov[1].to(u.deg).value
 
     min_dec = dec - dec_fov/2
     max_dec = dec + dec_fov/2
@@ -322,8 +329,6 @@ def gaia_db_query(
 
     table.replace('', np.nan, inplace=True)
     table.dropna(inplace=True)
-    
-    print(table)
     
     # limit number of stars
     table = table[0:limit]
@@ -341,16 +346,10 @@ def gaia_db_query(
 
 def point_correction(filepath, ra, dec):
 
-    t0 = datetime.now()
-
     # open image
     with fits.open(filepath) as hdu:
         header = hdu[0].header 
         data = hdu[0].data
-
-    print("Image opened in", datetime.now() - t0)
-
-    t0 = datetime.now()
 
     # clean image
     sigma_clip = SigmaClip(sigma=3.0)
@@ -363,25 +362,17 @@ def point_correction(filepath, ra, dec):
     band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
     image_clean = med_clean - band_corr
 
-    print("Image cleaned in", datetime.now() - t0)
-
-    t0 = datetime.now()
-
-    # image fov
-    shape = image_clean.shape
-    pixel = np.arctan((header['XPIXSZ']*1e-6)/(header['FOCALLEN']*1e-3))*(180/np.pi)*3600 * u.arcsec
-    fov = np.max(shape)*pixel.to(u.deg).value
-
     # center of image, convert to ra, dec in degrees
     ra_unit = u.deg
     dec_unit = u.deg
 
     center = SkyCoord(ra, dec, unit=[ra_unit, dec_unit])
-    center = (center.ra.deg, center.dec.deg)
 
-    print("Image fov and center calculated in", datetime.now() - t0)
-
-    t0 = datetime.now()
+    # image fov
+    shape = image_clean.shape
+    plate_scale = np.arctan((header['XPIXSZ']*1e-6)/(header['FOCALLEN']*1e-3))*(180/np.pi) # deg/pixel
+    fovx = (1/np.abs(np.cos(center.dec.rad)))*shape[0] * plate_scale
+    fovy = shape[1] * plate_scale
 
     # detect stars in the image
     stars = twirl.find_peaks(image_clean, threshold=5)
@@ -398,27 +389,42 @@ def point_correction(filepath, ra, dec):
     
     # get gaia stars in the field of view
     dateobs = pd.to_datetime(header['DATE-OBS'])
-    gaias = gaia_db_query(center, 1 * fov, tmass=True, dateobs=dateobs)[0:gaia_limit]
-    # gaias = gaia_radecs(center, 1.41 * fov, tmass=True, dateobs=dateobs)[0:gaia_limit]
-
-    print("Stars detected and gaia stars retrieved in", datetime.now() - t0)
-
-    t0 = datetime.now()
+    gaias = gaia_db_query(center, (fovx, fovy), tmass=True, dateobs=dateobs)[0:gaia_limit]
 
     wcs = twirl.compute_wcs(stars, gaias)
     real_center = utils.pixel_to_skycoord(image_clean.shape[1]/2,image_clean.shape[0]/2, wcs)
-    offset = np.array([real_center.ra.deg - center[0], real_center.dec.deg - center[1]])
+    offset = np.array([real_center.ra.deg - center.ra.deg, real_center.dec.deg - center.dec.deg])
 
-    print("WCS calculated in", datetime.now() - t0)
+    angular_separation = center.separation(real_center)
 
-    t0 = datetime.now()
-
-    #  if offset is too large, consider plate solve failed
-    if np.max(np.abs(offset)) > np.max(fov):
-        raise Exception("Plate solve failed")
-    
     # convert gaia stars to pixel coordinates
     gaias_pixel = np.array(SkyCoord(gaias, unit="deg").to_pixel(wcs)).T
+
+    # import matplotlib.pyplot as plt
+    # import matplotlib
+    # matplotlib.use('agg')
+    # fig = plt.figure(figsize=(8,8))
+        
+
+    # med = np.median(image_clean)
+    # std = np.std(image_clean)
+    # plt.imshow(image_clean, cmap="Greys_r", vmax=3*std + med, vmin=med - 1*std)
+
+    # plt.scatter(*stars.T, s=80, facecolors='none', edgecolors='tab:blue')
+                
+    # plt.scatter(*gaias_pixel.T, s=120, facecolors='none', edgecolors='r')
+
+    # plt.plot(image_clean.shape[1]/2,image_clean.shape[0]/2, 'o')
+
+    # plt.plot(*utils.skycoord_to_pixel(SkyCoord(ra, dec, unit=[ra_unit, dec_unit]), wcs), 'o')
+
+    # fig.tight_layout()
+    # fig.savefig('pointing.jpg', dpi=300, format='jpg')
+
+
+    #  if offset is too large, consider plate solve failed
+    if abs(angular_separation.deg) > max(plate_scale*np.array(shape)):
+        raise Exception("Plate solve failed, offset larger than field of view")
 
     # iterate through gaia stars and find the closest star in the image
     count = 0
@@ -432,7 +438,5 @@ def point_correction(filepath, ra, dec):
     # if more than 4 stars match, consider plate solve successful
     if count < 4:
         raise Exception("Plate solve failed, not enough stars matched")
-    
-    print("Plate solve successful check in", datetime.now() - t0)
 
-    return offset[0], offset[1], wcs
+    return offset[0], offset[1], wcs, angular_separation 

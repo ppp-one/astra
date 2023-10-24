@@ -1,8 +1,8 @@
 Telescope:
   - device_name: telescope_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 10.211.55.3:11111
     device_number: 0
-    alt_limit: 20
+    alt_limit: -420
     pointing_threshold: 0.1 # arcmins
     guider:
       PIX2TIME: 
@@ -24,17 +24,17 @@ Telescope:
       WAIT_TIME: 10
 Focuser:
   - device_name: focuser_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 10.211.55.3:11111
     ip_old: localhost:8001
     device_number: 0
     focus_pos: 10000
 Dome:
   - device_name: dome_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 10.211.55.3:11111
     device_number: 0
 Camera:
   - device_name: camera_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 127.0.0.1:8080
     device_number: 0
     temperature: -20
     flats:
@@ -51,15 +51,15 @@ Camera:
       Dome: dome_SAINTEX
 FilterWheel:
   - device_name: fw_SAINTEX
-    ip: 127.0.0.1:80 
+    ip: 10.211.55.3:11111 
     device_number: 0
 ObservingConditions:
   - device_name: weather_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 10.211.55.3:11111
     device_number: 0
 SafetyMonitor:
   - device_name: safety_SAINTEX
-    ip: 127.0.0.1:80
+    ip: 10.211.55.3:11111
     device_number: 0
 Misc:
   # Webcam: http://localhost:8889/SAINTEX

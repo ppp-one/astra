@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from glob import glob
 from astropy.io import fits
 import os
-from PIL import Image
+import matplotlib.pyplot as plt
 
 import pandas as pd
 from astra import Astra
@@ -72,6 +72,8 @@ def format_time(ftime : datetime.datetime):
     except:
         return None
 
+from astropy.visualization import ZScaleInterval
+
 def convert_fits_to_jpg(fits_file, observatory):
     # Open the FITS file
     headers = {}
@@ -86,10 +88,8 @@ def convert_fits_to_jpg(fits_file, observatory):
             headers['OBJECT'] = hdulist[0].header['OBJECT']
 
     # Normalize the image data to the 8-bit range (0-255)
-    normalized_data = (image_data - image_data.min()) * (255.0 / (image_data.max() - image_data.min()))
-
-    # Create an image from the normalized data
-    image = Image.fromarray(normalized_data.astype('uint8'))
+    interval = ZScaleInterval(contrast=0.005)
+    vmin, vmax = interval.get_limits(image_data)
 
     # delete previous jpgs
     for file in glob(f'./frontend/*{observatory}*.jpg'):
@@ -97,7 +97,7 @@ def convert_fits_to_jpg(fits_file, observatory):
         
     # Save the jpg image
     filename = './frontend/' + fits_file.split('/')[-1].split('.')[0] + '.jpg'
-    image.save(filename)
+    plt.imsave(filename, image_data, format="jpg", cmap="gray", vmin=vmin, vmax=vmax)
 
     return filename, headers
 
@@ -492,7 +492,9 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
                 status = 'slewing' if slewing else 'tracking' if tracking else 'stopped'
                 dt = dt_tracking if tracking else dt_slewing if slewing else dt_tracking
-                
+
+                polled['RightAscension']['value'] = polled['RightAscension']['value'] * (360/24) # convert to degrees
+
                 last_update = (dt_now - dt).total_seconds()
 
                 valid = None

@@ -1,5 +1,2 @@
 device_type,device_name,action_type,action_value,start_time,end_time
-Camera,camera_SAINTEX,open,{},2023-06-25 19:29:13,2023-06-26 05:37:00
-Camera,camera_SAINTEX,object,"{'object': 'Sp1159-5247', 'filter' : 'Red', 'ra': 229.860, 'dec': -89.788, 'exptime': 1, 'guiding': False, 'pointing': False}",2023-06-25 19:35:13,2023-06-25 23:38:00
-Camera,camera_SAINTEX,close,{},2023-06-26 03:37:00,2023-06-26 05:37:00
-Camera,camera_SAINTEX,calibration,"{'exptime': [0,1,2,3], 'n': [10,10,10,10]}",2023-06-26 03:40:00,2023-06-26 05:37:00
+Camera,camera_SAINTEX,object,"{'object': 'Sp1159-5247', 'filter' : 'I+z', 'ra': 259.4090, 'dec': -84.83203, 'exptime': 8, 'guiding': False, 'pointing': True}",2023-06-25 19:35:13,2023-06-25 21:37:10
