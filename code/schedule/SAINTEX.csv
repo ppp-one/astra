@@ -1,2 +1,2 @@
 device_type,device_name,action_type,action_value,start_time,end_time
-Camera,camera_SAINTEX,flats,"{'filter' : ['I+z', 'i'], 'n': [100,100]}",2023-06-26 03:40:00,2023-06-26 15:37:00
+Camera,camera_SAINTEX,flats,"{'filter' : ['I+z', 'i'], 'n': [100,101]}",2023-06-26 03:40:00,2023-06-26 15:37:00

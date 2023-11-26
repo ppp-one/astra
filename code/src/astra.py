@@ -1244,7 +1244,7 @@ class Astra():
 
                     # slew to target
                     self.__log('info', f"Slewing Telescope {paired_devices['Telescope']} to {action_value['ra']} {action_value['dec']}")
-                    telescope.get('SlewToCoordinatesAsync')(RightAscension = 24*action_value['ra']/360, Declination = action_value['dec'])
+                    telescope.get('SlewToCoordinatesAsync', RightAscension = 24*action_value['ra']/360, Declination = action_value['dec'])
 
                     # wait for slew to finish
                     self.wait_for_slew(paired_devices)
@@ -1370,7 +1370,7 @@ class Astra():
                     hdr['IMGTYPE'] = 'Dark'
                 
                 self.__log('info', f"Exposing {count + 1}/{action_value['n'][i]} {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
-                camera.get('StartExposure')(Duration = exptime, Light = False)
+                camera.get('StartExposure', Duration = exptime, Light = False)
             
                 while (count < action_value['n'][i]) and self.check_conditions(row):
 
@@ -1395,7 +1395,7 @@ class Astra():
                         if count < action_value['n'][i]:
                             # start next exposure
                             self.__log('info', f"Exposing {count + 1}/{action_value['n'][i]} {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
-                            camera.get('StartExposure')(Duration = exptime, Light = False)
+                            camera.get('StartExposure', Duration = exptime, Light = False)
 
         self.__log('info', f"Calibration sequence ended for {row['device_name']}, starting {row['start_time']} and ending {row['end_time']}")
 
@@ -1437,7 +1437,7 @@ class Astra():
         maxadu = camera.get('MaxADU')
         
         self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
-        camera.get('StartExposure')(Duration = action_value['exptime'], Light = True)
+        camera.get('StartExposure', Duration = action_value['exptime'], Light = True)
 
         pointing_complete = False
         pointing_attempts = 0
@@ -1485,7 +1485,7 @@ class Astra():
 
                                 # sync telescope to corrected coordinates, TODO: check if right +-
                                 telescope = self.devices['Telescope'][paired_devices['Telescope']]
-                                telescope.get('SyncToCoordinates')(RightAscension = 24*(action_value['ra'] + offset_ra)/360, Declination = action_value['dec'] + offset_dec)
+                                telescope.get('SyncToCoordinates', RightAscension = 24*(action_value['ra'] + offset_ra)/360, Declination = action_value['dec'] + offset_dec)
 
                                 # re-slew to target
                                 self.setup_observatory(paired_devices, action_value)
@@ -1521,7 +1521,7 @@ class Astra():
                 # start next exposure
                 self.__log('debug', f"Exposing {row['device_name']} again")
                 self.__log('info', f"Exposing {row['device_name']} {hdr['IMGTYPE']} for exposure time {hdr['EXPTIME']} s")
-                camera.get('StartExposure')(Duration = action_value['exptime'], Light = True)
+                camera.get('StartExposure', Duration = action_value['exptime'], Light = True)
 
         # stop guiding at end of sequence
         if 'guiding' in action_value:
@@ -1631,7 +1631,7 @@ class Astra():
                 hdr['EXPTIME'] = exptime
                 hdr['FILTER'] = filter_name
 
-                camera.get('StartExposure')(Duration = exptime, Light = True)
+                camera.get('StartExposure', Duration = exptime, Light = True)
                 
                 t_last_move = datetime.utcnow()
                 while self.check_conditions(row) and (count < action_value['n'][i]):
@@ -1688,7 +1688,7 @@ class Astra():
                         if count < action_value['n'][i]:
                             # start next exposure
                             self.__log('debug', f"Exposing {row['device_name']} again")
-                            camera.get('StartExposure')(Duration = exptime, Light = True)
+                            camera.get('StartExposure', Duration = exptime, Light = True)
 
             else:
                 self.__log('info', "Moving on...")
@@ -1744,7 +1744,7 @@ class Astra():
                                         log_message = f"Setting Telescope {paired_devices['Telescope']} tracking to False")
 
                 # slew
-                telescope.get('SlewToAltAzAsync')(Azimuth=flat_position.az.deg, Altitude=flat_position.alt.deg)
+                telescope.get('SlewToAltAzAsync', Azimuth=flat_position.az.deg, Altitude=flat_position.alt.deg)
 
                 # wait for slew to finish
                 self.wait_for_slew(paired_devices)
@@ -1804,7 +1804,7 @@ class Astra():
                 exptime = lower_exptime_limit
 
             self.__log('info', f"Exposing subframe of {paired_devices['Camera']} for exposure time {exptime} s")
-            camera.get('StartExposure')(Duration = exptime, Light = True)
+            camera.get('StartExposure', Duration = exptime, Light = True)
             
             getting_exptime = True
             while self.check_conditions(row) and getting_exptime:
@@ -1828,11 +1828,11 @@ class Astra():
                             getting_exptime = False
                             # time.sleep(10)
                             # self.__log('info', f"Exposing subframe of {paired_devices['Camera']} for exposure time {lower_exptime_limit}s")
-                            # camera.get('StartExposure')(Duration = lower_exptime_limit, Light = True)
+                            # camera.get('StartExposure', Duration = lower_exptime_limit, Light = True)
                         else:
                             # start next exposure to check if correct?
                             self.__log('info', f"Exposing subframe of {paired_devices['Camera']} for exposure time {exptime}s")
-                            camera.get('StartExposure')(Duration = exptime, Light = True)
+                            camera.get('StartExposure', Duration = exptime, Light = True)
 
                     else:
                         getting_exptime = False
@@ -2208,7 +2208,7 @@ class Astra():
                     if math.isclose(status, desired_condition, rel_tol=0, abs_tol=abs_tol) is False:
                         if run_command_type == 'get':
                             self.__log("debug", f"Running get {run_command} on {device_type} {d}")
-                            device.get(run_command)()
+                            device.get(run_command, no_kwargs=True)
                         elif run_command_type == 'set':
                             self.__log("debug", f"Running set {run_command} on {device_type} {d}")
                             device.set(run_command, desired_condition)
@@ -2224,7 +2224,7 @@ class Astra():
                 if math.isclose(status, desired_condition, rel_tol=0, abs_tol=abs_tol) is False:
                     if run_command_type == 'get':
                         self.__log("debug", f"Running get {run_command} on {device_type} {device_name}")
-                        device.get(run_command)()
+                        device.get(run_command, no_kwargs=True)
                     elif run_command_type == 'set':
                         self.__log("debug", f"Running set {run_command} on {device_type} {device_name}")
                         device.set(run_command, desired_condition)

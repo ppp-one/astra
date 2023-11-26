@@ -47,10 +47,12 @@ class AscomDevice(Process):
         # Add device back since it doesn't exist in the pickle
         self.device = win32com.client.Dispatch(self.device_name)
 
-    def get(self, method):
+
+
+    def get(self, method, **kwargs):
         ## method getter
         with self.lock:
-            self.front_pipe.send(["get", {"method" : method}])
+            self.front_pipe.send(["get", {"method" : method, **kwargs}])
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
                 raise msg
@@ -146,7 +148,7 @@ class AscomDevice(Process):
 
     ## BACKEND METHODS
 
-    def get__(self, method, pipe=True):
+    def get__(self, method, pipe=True, **kwargs):
         ## method getter
         try:
             # permit 3 attempts
@@ -158,6 +160,14 @@ class AscomDevice(Process):
                 try:
                     if data is None:
                         data = getattr(self.device, method)
+
+                        # if kwargs, call method with kwargs
+                        if kwargs:
+                            if 'no_kwargs' in kwargs:
+                                data = data()
+                            else:
+                                data = data(**kwargs)
+
                         if self.debug:
                             self.queue.put((self.metadata, {"type" : "log", "data" : ("debug", f'Get method success: {self.device_type}, {self.device_name}, {method}')}))
                 except Exception as e:
@@ -169,6 +179,14 @@ class AscomDevice(Process):
 
             if data is None:
                 data = getattr(self.device, method)
+
+                # if kwargs, call method with kwargs
+                if kwargs:
+                    if 'no_kwargs' in kwargs:
+                        data = data()
+                    else:
+                        data = data(**kwargs)
+
                 if self.debug:
                     self.queue.put((self.metadata, {"type" : "log", "data" : ("debug", f'Get method success: {self.device_type}, {self.device_name}, {method}')}))
 
