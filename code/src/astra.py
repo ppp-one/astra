@@ -1368,7 +1368,7 @@ class Astra():
         self.__log(
             "info",
             f"Exposing {log_option_tmp}{row['device_name']} {hdr['IMAGETYP']} "
-            + "for exposure time {hdr['EXPTIME']} s",
+            f"for exposure time {hdr['EXPTIME']} s",
         )
 
         # Start exposure
@@ -1455,7 +1455,7 @@ class Astra():
                     self.__log(
                         'warning', 
                         f"Exposure loop broke at exposure {log_option} "
-                        "with an exposure time of {exptime} s for {row['device_name']}."
+                        f"with an exposure time of {exptime} s for {row['device_name']}."
                     )
                     break
 
