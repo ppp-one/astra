@@ -283,8 +283,7 @@ if __name__ == "__main__":
             pulseGuide(myScope, j, pulse_time)
             
             # take an image
-            check, image_id = newFilename(j, pulse_time,
-                                          image_id)
+            check, image_id = newFilename(j, pulse_time, image_id)
 
             takeImageWithMaxIm(myCamera, check)
 
@@ -333,9 +332,15 @@ if __name__ == "__main__":
 
     # print dict as yml
     for key in config:
-        print('{}:'.format(key))
         if isinstance(config[key], dict):
+            print('{}:'.format(key))
             for subkey in config[key]:
-                print('    {}: {}'.format(subkey, config[key][subkey]))
+                if isinstance(config[key][subkey], str):
+                    print('  \'{}\': {}'.format(subkey, config[key][subkey]))
+                else:
+                    print('  \'{}\': {}'.format(subkey, config[key][subkey]))
         else:
-            print('    {}'.format(config[key]))
+            if isinstance(config[key], str):
+                print('{}: \'{}\''.format(key, config[key]))
+            else:
+                print('{}: {}'.format(key, config[key]))
