@@ -1,6 +1,7 @@
 import logging
 # import traceback
 
+from typing import Optional
 import time
 from datetime import datetime
 from threading import Thread
@@ -1316,24 +1317,165 @@ class Astra():
             slewing = telescope.get('Slewing')
 
     def check_conditions(self, row : dict = None) -> bool:
-
+        base_conditions = (
+            self.error_free
+            and not self.interrupt
+            and self.schedule_running
+            and self.watchdog_running
+        )
         if row is None:
-            return self.weather_safe and self.error_free and (self.interrupt is False) \
-                and self.schedule_running and self.watchdog_running
+            return base_conditions and self.weather_safe
 
-        if row['action_type'] in ['open', 'object', 'flats', 'autofocus']:
-            return (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) \
-                and self.weather_safe and self.error_free and (self.interrupt is False) \
-                and self.schedule_running and self.watchdog_running
-        
-        elif row['action_type'] in ['calibration', 'close']:
-            return (row['start_time'] <= datetime.utcnow()) and (row['end_time'] >= datetime.utcnow()) \
-                and self.error_free and (self.interrupt is False) \
-                and self.schedule_running and self.watchdog_running
-        
+        time_conditions = (row["start_time"] <= datetime.utcnow() <= row["end_time"])
+
+        if row["action_type"] in ["open", "object", "flats", "autofocus"]:
+            return base_conditions and time_conditions and self.weather_safe
+        elif row["action_type"] in ["calibration", "close"]:
+            return base_conditions and time_conditions
         else:
             return False
-                    
+
+    def perform_exposure(
+        self, camera, exptime, row, hdr, use_light=True, log_option=None, maximal_sleep_time=0.01
+    ) -> bool:
+        """
+        Perform camera exposure, log information, and wait for the image to be ready.
+
+        Parameters:
+            use_light (bool, optional): Whether to use light during the exposure (default is True).
+            log_option (str or None, optional): Additional information for logging (default is None, adding nothing).
+            maximal_sleep_time (float, optional): The maximum sleep time in seconds during the waiting process (default is 0.01).
+
+        Returns:
+            bool: True if the exposure was successful, False otherwise.
+        """
+        # TODO consider waiting dynamically
+        # def wait_for_image_ready(exptime):
+        # """"
+        # Dynamical alternative to time.sleep(min(maximal_sleep_time, exptime / 10))
+        # """"
+        #     start_time_waiting = time.time()
+
+        #     while not camera.get('ImageReady') and self.check_conditions(row):
+        #         elapsed_time = time.time() - start_time_waiting
+
+        #         if elapsed_time/exptime > 0.9:
+        #             time.sleep(0.01)
+        #         else:
+        #             time.sleep(min(0.5, exptime*0.9/2))
+
+        # Yield to other threads
+        time.sleep(0)
+
+        # Log information about the exposure
+        log_option_tmp = "" if log_option is None else f"{log_option} "
+        self.__log(
+            "info",
+            f"Exposing {log_option_tmp}{row['device_name']} {hdr['IMAGETYP']} "
+            f"for exposure time {hdr['EXPTIME']} s",
+        )
+
+        # Start exposure
+        camera.get("StartExposure", Duration=exptime, Light=use_light)
+
+        # Wait for the image to be ready
+        exposure_successful = True
+        while not camera.get("ImageReady"):
+            if not self.check_conditions(row):
+                exposure_successful = False
+                break
+            time.sleep(min(maximal_sleep_time, exptime / 10))
+
+        if not exposure_successful:
+            self.__log("warning", "Exposure was unsuccessful, as check_conditions() returned False.")
+        else:
+            self.__log("debug", f"Image ready from {row['device_name']} to download.")            
+        
+        return exposure_successful
+
+    def get_last_exposure_start_time(self, camera, device_name):
+        # get last exposure start time
+        last_exposure_start_time = camera.get('LastExposureStartTime')
+        self.__log(
+            'debug',
+            f"LastExposureStartTime from {device_name} was {last_exposure_start_time}"
+        )
+        dateobs = pd.to_datetime(last_exposure_start_time)
+        return dateobs
+
+    def calibration_sequence_alternative(self, row : dict, paired_devices : dict) -> None:
+        '''
+        Run a bias/dark calibration sequence for a specific camera.
+
+        This function performs a calibration sequence for a camera, capturing bias and dark frames.
+        It operates based on the provided parameters and camera settings.
+
+        Parameters:
+            row (dict): A dictionary containing information about the camera and calibration settings.
+                - 'device_name' (str): The name of the camera device.
+                - 'start_time' (datetime): The start time for the calibration sequence.
+                - 'end_time' (datetime): The end time for the calibration sequence.
+                - 'device_type' (str): The type of the camera device.
+
+            paired_devices (dict): A dictionary of paired devices used in the calibration sequence.
+
+        Notes:
+            - The function logs information about the calibration sequence's progress.
+            - It captures bias and dark frames for different exposure times as specified in 'action_value'.
+            - The sequence will continue to run until one of the following conditions is met:
+                - The current time exceeds 'end_time'.
+                - An error occurs during execution.
+                - The sequence is manually interrupted.
+                - The schedule is stopped.
+                - The watchdog process is terminated.
+        '''
+        self.__log('info', f"Running calibration sequence for {row['device_name']}, starting {row['start_time']} and ending {row['end_time']}")
+
+        action_value, folder, hdr = self.pre_sequence(row, paired_devices)
+
+        camera = self.devices[row['device_type']][row['device_name']]
+
+        maxadu = camera.get('MaxADU')
+
+        for i, exptime in enumerate(action_value['exptime']):
+            if not self.check_conditions(row):
+                break
+
+            hdr['EXPTIME'] = exptime
+            if exptime == 0:
+                hdr['IMAGETYP'] = 'Bias'
+            else:
+                hdr['IMAGETYP'] = 'Dark'
+            
+            number_of_expsosures = action_value['n'][i]
+
+            for exposure in range(number_of_expsosures):
+                log_option = f'{exposure + 1}/{number_of_expsosures}'
+                if not self.perform_exposure(
+                    camera, exptime, row, hdr, use_light=False,
+                    maximal_sleep_time=0.01,
+                    log_option=log_option
+                ):
+                    self.__log(
+                        'warning', 
+                        f"Exposure loop broke at exposure {log_option} "
+                        f"with an exposure time of {exptime} s for {row['device_name']}."
+                    )
+                    break
+
+                t0 = datetime.utcnow()
+                dateobs = self.get_last_exposure_start_time(camera, row['device_name'])
+
+                # save image
+                self.__log('debug', f"Saving image from {row['device_name']}")
+                self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
+                
+        self.__log(
+            'info', 
+            f"Calibration sequence ended for {row['device_name']}, "
+            f"starting {row['start_time']} and ending {row['end_time']}"
+        )
+
     def calibration_sequence(self, row : dict, paired_devices : dict) -> None:
         '''
         Run a bias/dark calibration sequence for a specific camera.
