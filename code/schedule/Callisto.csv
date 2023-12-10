@@ -1,7 +1,2 @@
 device_type,device_name,action_type,action_value,start_time,end_time
-Camera,camera_Callisto,open,{},2023-06-25 19:29:13,2023-06-26 05:37:00
-Camera,camera_Callisto,flats,"{'filter' : ['I+z', 'i'], 'n': [100,100]}",2023-06-25 19:40:00,2023-06-25 20:10:00
-Camera,camera_Callisto,object,"{'object': 'Trappist-1_fake', 'filter' : 'I+z', 'ra': 346.622, 'dec': -5.041, 'exptime': 23, 'guiding': True, 'pointing': True}",2023-06-25 20:30:00,2023-06-25 23:38:00
-Camera,camera_Callisto,flats,"{'filter' : ['I+z', 'i'], 'n': [100,100]}",2023-06-26 03:40:00,2023-06-26 04:10:00
-Camera,camera_Callisto,close,{},2023-06-26 04:20:00,2023-06-26 05:37:00
-Camera,camera_Callisto,calibration,"{'exptime': [0,1,10,12,15,30,45,60,120], 'n': [10,10,10,10,10,10,10,10,10]}",2023-06-26 05:37:00,2023-06-26 06:37:00
+Camera,camera_Callisto,calibration,"{'exptime': [0,10], 'n': [10,10]}",2023-12-09 05:37:00,2023-12-09 22:37:00

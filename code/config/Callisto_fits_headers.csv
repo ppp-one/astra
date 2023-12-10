@@ -49,8 +49,6 @@ FALSE,str,TRUE,FW-DVER,FilterWheel,DriverVersion,FilterWheel driver version
 FALSE,float,FALSE,FOCUSPOS,Focuser,Position,
 FALSE,float,TRUE,FOCUSSSZ,Focuser,StepSize,Focuser step size in microns
 FALSE,float,FALSE,FOCUSTEM,Focuser,Temperature,
-FALSE,str,TRUE,FOC-DNAM,Focuser,Name,The short name of the Focuser driver
-FALSE,str,TRUE,FOC-DVER,Focuser,DriverVersion,Focuser driver version
 ,,,,,,
 TRUE,float,FALSE,RA,Telescope,RightAscension,Pointing (deg) (J2000.0)
 TRUE,float,FALSE,DEC,Telescope,Declination,Pointing (deg) (J2000.0)
@@ -72,7 +70,6 @@ FALSE,bool,FALSE,SLEWING,Telescope,Slewing,Slewing
 FALSE,float,FALSE,DOMEAZ,Dome,Azimuth,Dome azimuth (degrees)
 FALSE,int,FALSE,DOMESTAT,Dome,ShutterStatus,Status of the dome shutter
 FALSE,str,TRUE,DOM-DNAM,Dome,Name,The short name of the Dome driver
-FALSE,str,TRUE,DOM-DVER,Dome,DriverVersion,Dome driver version
 ,,,,,,
 FALSE,str,TRUE,IMAGETYP,astra,,Type of image
 ,,,,,,

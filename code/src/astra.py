@@ -345,8 +345,12 @@ class Astra():
         for device_type in self.devices:
             for device_name in self.devices[device_type]:
                 try:
-                    self.devices[device_type][device_name].set("Connected", True) ## slow?
-                    self.__log('info', f"{device_type} {device_name} connected")
+                    # SPECULOOS EDIT
+                    if device_type == 'Focuser':
+                        self.__log('warning', f"{device_type} {device_name} skipping connecting, because method not valid. - SPECULOOS specific")
+                    else:
+                        self.devices[device_type][device_name].set("Connected", True) ## slow?
+                        self.__log('info', f"{device_type} {device_name} connected")
                 except Exception as e:
                     self.error_source.append({'device_type': device_type, 'device_name': device_name, 'error': str(e)})
                     self.__log('error', f"Error connecting to {device_type} {device_name}: {str(e)}")
@@ -383,7 +387,7 @@ class Astra():
 
         # start watchdog once all devices connected
         time.sleep(1) # wait for devices to connect and start polling TODO: check one device's latest polling is valid before starting watchdog
-        self.start_watchdog()
+        # self.start_watchdog()
 
     def unload_all(self) -> None:
         '''
@@ -1083,6 +1087,20 @@ class Astra():
                 paired_devices = self.observatory['Camera'][cam_index]['paired_devices']
                 paired_devices['Camera'] = row['device_name']
 
+                # turn camera cooler on
+                self.monitor_action('Camera', 'CoolerOn', True, 'CoolerOn',
+                                    device_name = row['device_name'],
+                                    log_message = f"Turning on camera cooler for {row['device_name']}")
+                
+                # set temperature
+                set_temperature = self.observatory['Camera'][cam_index]['temperature']
+                self.monitor_action('Camera', 'CCDTemperature', set_temperature, 'SetCCDTemperature',
+                                    device_name = row['device_name'],
+                                    run_command_type='set',
+                                    abs_tol=1,
+                                    log_message = f"Setting camera {row['device_name']} temperature to {set_temperature}",
+                                    timeout = 60*30) # 30 minutes
+
             if 'object' == row['action_type']:
                 self.object_sequence(row, paired_devices)
                 
@@ -1094,20 +1112,6 @@ class Astra():
 
             elif 'open' == row['action_type']:
                 if 'Camera' in self.observatory:
-                    # turn camera cooler on
-                    self.monitor_action('Camera', 'CoolerOn', True, 'CoolerOn',
-                                        device_name = row['device_name'],
-                                        log_message = f"Turning on camera cooler for {row['device_name']}")
-                    
-                    # set temperature
-                    set_temperature = self.observatory['Camera'][cam_index]['temperature']
-                    self.monitor_action('Camera', 'CCDTemperature', set_temperature, 'SetCCDTemperature',
-                                        device_name = row['device_name'],
-                                        run_command_type='set',
-                                        abs_tol=0.5,
-                                        log_message = f"Setting camera {row['device_name']} temperature to {set_temperature}",
-                                        timeout = 60*30) # 30 minutes
-
                     # open dome and unpark telescope
                     self.open_observatory(paired_devices)
                 else:
