@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-from astropy.coordinates import AltAz, get_sun, SkyCoord
+from astropy.coordinates import AltAz, get_sun, SkyCoord, Angle
 from astropy.io import fits
 from astropy.stats import SigmaClip
 from astropy.time import Time
@@ -144,8 +144,11 @@ def time_conversion(jd, location, target):
     
     hjd = (time_inp + ltt_helio).value
     bjd = (time_inp.tdb + ltt_bary).value
+    lst = time_inp.sidereal_time('mean')
+    lstsec = lst.hour*3600
+    ha = Angle(((((lst - target.ra).hour +12) % 24) - 12)*u.hourangle).to_string(unit=u.hourangle, sep=' ') # MH - not zero padded but will do for now
 
-    return hjd, bjd
+    return hjd, bjd, lstsec, ha
 
 def hdr_times(hdr, fits_config, location, target):
     dateobs = pd.to_datetime(hdr['DATE-OBS'])
@@ -157,7 +160,7 @@ def hdr_times(hdr, fits_config, location, target):
     mjd = jd - 2400000.5
     mjdend = jdend - 2400000.5
 
-    hjd, bjd = time_conversion(jd, location, target)
+    hjd, bjd, lstsec, ha = time_conversion(jd, location, target)
 
     for i, row in fits_config[fits_config['fixed'] == False].iterrows():  # noqa: E712
 
@@ -176,7 +179,11 @@ def hdr_times(hdr, fits_config, location, target):
                 case 'MJD-END':
                     hdr[row['header']] = (mjdend, row['comment']) 
                 case 'DATE-END':
-                    hdr[row['header']] = (dateend.strftime('%Y-%m-%dT%H:%M:%S.%f'), row['comment']) 
+                    hdr[row['header']] = (dateend.strftime('%Y-%m-%dT%H:%M:%S.%f'), row['comment'])
+                case 'LST':
+                    hdr[row['header']] = (lstsec, row['comment'])
+                case 'HA':
+                    hdr[row['header']] = (ha, row['comment'])
                 case _:
                     pass
     
