@@ -21,9 +21,10 @@ from guiding import Guider
 import yaml
 import os
 import psutil
+from scipy import ndimage
 from alpaca_device_process import AlpacaDevice
 # from ascom_device_process import AscomDevice
-from astra_autofocus import AstraAutofocusDeviceManager
+from astra_autofocus import AstraAutofocusDeviceManager, SQL3DatabaseHandler
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.io import fits
 from astropy.time import Time
@@ -1164,6 +1165,9 @@ class Astra():
             elif 'flats' == row['action_type']:
                 self.flats_sequence(row, paired_devices)
 
+            elif 'autofocus' == row['action_type']:
+                self.autofocus(row, paired_devices)
+
             elif 'open' == row['action_type']:
                 if 'Camera' in self.observatory:
                     # open dome and unpark telescope
@@ -1470,6 +1474,38 @@ class Astra():
         return exposure_successful
     
     def determine_autofocus_calibration_field(self, row, action_value, hdr):
+        """ Determine the calibration field for the autofocus.
+
+        This function determines the calibration field for the autofocus. It uses the following
+        parameters from the action_value:
+            - 'gaia_tmass_db_path': The path to the Gaia-Tmass database.
+            - 'maximal_zenith_angle': The maximal zenith angle in degrees. Default is None.
+            - 'airmass_threshold': The airmass threshold. Default is 1.01.
+            - 'g_mag_range': The range of g magnitudes. Default is (0, 10).
+            - 'j_mag_range': The range of j magnitudes. Default is (0, 10).
+            - 'fov_height': The height of the field of view in argmins. Default is 11.666666 / 60.
+            - 'fov_width': The width of the field of view in argmins. Default is 11.666666 / 60.
+            - 'selection_method': The method for selecting the calibration field.
+
+        In broad terms, the function determines the zenith neighbourhood of the observatory
+        and selects a star from it. The selection method can be one of the following:
+            - 'single': Select the star closest to zenith within the desired magnitude range
+               that is alone in the fov.
+            - 'maximal': Select the star closest to zenith within the desired magnitude range
+               that has the maximal number of neighbours in the fov.
+            - 'any': Select the star closest to zenith within the desired magnitude range.
+
+        If the selection method is unsuccessful, the function will attempt to autofocus at zenith.
+
+        Returns:
+            SkyCoord: The coordinates of the calibration field.
+
+        Raises:
+            ValueError: If no observatory location is found in the header.
+            ValueError: check_conditions return false.
+
+        # TODO: Verify action values.
+        """
         # Find observatory location
         try:
             if not self.check_conditions(row=row):
@@ -1478,8 +1514,7 @@ class Astra():
                 lat=hdr["LAT-OBS"] * u.deg, lon=hdr["LONG-OBS"] * u.deg, height=hdr["ALT-OBS"] * u.m
             )
         except Exception as e:
-            self.__log("error", f"Error determining observatory location: {str(e)}.")
-            return False
+            raise ValueError("Error determining observatory location: {str(e)}.")
 
         # Determine autofocus calibration_field
         try:
@@ -1540,7 +1575,7 @@ class Astra():
             if not self.check_conditions(row=row):
                 raise ValueError("Autofocus aborted due to bad conditions.")            
 
-            # Find star closest to zenith with desired magnitude that is alone in a nbh of min_deg degrees
+            # Find the desired field of calibration
             znqr.sort_values(["zenith_angle", "n"], ascending=[True, True])
 
             selection_method = action_value.get("selection_method", "single")
@@ -1556,6 +1591,10 @@ class Astra():
                     "warning", f"Unknown selection_method: {selection_method}. Fall back to 'single'."
                 )
                 centre_coordinates = znqr.get_sky_coord_of_select_star(np.argmax(znqr.n == 1))
+
+            if centre_coordinates is None or not isinstance(centre_coordinates, SkyCoord):
+                raise ValueError("No suitable calibration field found.")
+
         except Exception as e:
             if not self.check_conditions(row=row):
                 raise ValueError("Autofocus aborted due to bad conditions.")            
@@ -1581,19 +1620,19 @@ class Astra():
         
         return centre_coordinates
 
-    def autofocus(self, row, paired_devices):
+    def autofocus(self, row, paired_devices) -> bool:
         """
         Perform autofocus.
 
         Parameters:
             row (dict): A dictionary containing information about the sequence action:
-
                 - 'device_name': The name of the device.
                 - 'action_type': The type of action (e.g., 'object').
                 - 'action_value': The action's value (e.g., a command or parameter).
-
-            hdr (dict): A header dictionary with relevant information for the sequence.
             paired_devices (dict): A dictionary specifying paired devices for the sequence.
+
+        Returns:
+            bool: True if the autofocus was successful, False otherwise.
         """
         def determine_focus_measure_operator(action_value):
             """Determine the focus measure operator from user input."""
@@ -1662,6 +1701,55 @@ class Astra():
                 )
             return extremum_estimator
 
+        def reduce_exposure_time(
+            autofocus_device_manager: AstraAutofocusDeviceManager,
+            exposure_time: float,
+            reduction_factor: float=2,
+            max_reduction_steps: int = 5,
+            minimal_exposure_time: float = 0.1,
+        ) -> float:
+            """ Reduce exposure time if necessary to avoid saturation. """
+            new_exposure_time = exposure_time
+            for _ in range(max_reduction_steps):
+                if new_exposure_time < minimal_exposure_time:
+                    self.__log(
+                        "warning",
+                        f"Minimal exposure time of {minimal_exposure_time} reached. "
+                        f"Cannot reduce exposure time further. Image might still be saturated.",
+                    )
+                    return new_exposure_time * reduction_factor
+
+                image = autofocus_device_manager.camera.perform_exposure(
+                    texp=new_exposure_time, use_light=True
+                )
+
+                clean = ndimage.median_filter(image, size=4, mode='mirror')
+                band_corr = np.median(clean, axis=1).reshape(-1, 1)
+                band_clean = clean - band_corr
+
+                if band_clean.max() > 0.9*autofocus_device_manager.camera.maxadu:
+                    new_exposure_time = new_exposure_time / reduction_factor
+                else:
+                    break
+
+            if band_clean.max() > 0.9*autofocus_device_manager.camera.maxadu:
+                self.__log(
+                    "warning",
+                    f"Reduced exposure time of {exposure_time} s is still saturating. "
+                )
+            elif new_exposure_time != exposure_time:
+                self.__log(
+                    "warning",
+                    f"Reduced exposure time from {exposure_time} to {new_exposure_time} "
+                    f"to avoid saturation.",
+                )
+
+            return new_exposure_time
+
+        # Add sql-database handler to include the logging from astrafocus in the database
+        db_handler = SQL3DatabaseHandler(self.cursor, logging.INFO)
+        logging.getLogger('astrafocus').addHandler(db_handler)
+
         self.__log("info", f"Running autofocus for {row['device_name']}")
         action_value, folder, hdr = self.pre_sequence(row, paired_devices)
         if not self.check_conditions(row=row):
@@ -1674,6 +1762,9 @@ class Astra():
             )
         except Exception as e:
             self.__log("error", f"Error determining autofocus calibration field: {str(e)}.")
+            self.error_source.append(
+                {'device_type': 'Autofocuser', 'device_name': paired_devices['Telescope'], 'error': str(e)}
+            )
             return False
 
         # Slew to calibration_field
@@ -1682,6 +1773,9 @@ class Astra():
         try:
             self.setup_observatory(paired_devices, action_value)
         except Exception as e:
+            self.error_source.append(
+                {'device_type': 'Autofocuser', 'device_name': paired_devices['Telescope'], 'error': str(e)}
+            )
             self.__log("error", f"Error slewing to autofocus calibration field: {str(e)}.")
             return False
 
@@ -1689,17 +1783,35 @@ class Astra():
         try:
             # Path to save pd.DataFrame containing the focus measure values for each exposure and
             # focus position
-            save_path = os.path.join('..', 'images', folder)
+            save_path = os.path.join('..', 'images', folder, 'autofocus')
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
 
-            autofocus_device_manager = AstraAutofocusDeviceManager.from_row(self, row, paired_devices)
+            autofocus_device_manager = AstraAutofocusDeviceManager.from_row(
+                self, folder=save_path, row=row, paired_devices=paired_devices
+            )
             focus_measure_operator = determine_focus_measure_operator(action_value)
+
+            # Reduce exposure time if necessary
+            if action_value.get("reduce_exposure_time", False):
+                # Clean image, CustomImageClass
+                exposure_time = reduce_exposure_time(
+                    autofocus_device_manager=autofocus_device_manager,
+                    exposure_time=action_value.get("exptime", 3.0),
+                    reduction_factor=2,
+                    max_reduction_steps=5,
+                    minimal_exposure_time=0.1,
+                )
+            else:
+                exposure_time = action_value.get("exptime", 3.0)
 
             autofocus_args = dict(
                 autofocus_device_manager=autofocus_device_manager,
+                search_range=action_value.get("search_range", None),  # None defaults to allowed focuser range
                 n_steps=action_value.get("n_steps", (30, 20)),
                 n_exposures=action_value.get("n_exposures", (1, 1)),
                 decrease_search_range=action_value.get("decrease_search_range", True),
-                exposure_time=action_value.get("exptime", 3.0),
+                exposure_time=exposure_time,
                 save_path=save_path,
                 secondary_focus_measure_operators={
                     "FFTTan2022": astrafmo.FFTFocusMeasureTan2022(),
@@ -1707,7 +1819,7 @@ class Astra():
                     "Tennegrad": astrafmo.TenengradFocusMeasure(),
                 },
             )
-            self.__log("info", f"Autofocus arguments: {autofocus_args}")
+            self.__log("debug", f"Autofocus arguments: {autofocus_args}")
             
             if issubclass(focus_measure_operator, astrasfmo.StarSizeFocusMeasure):
                 autofocuser = AnalyticResponseAutofocuser(
@@ -1723,13 +1835,19 @@ class Astra():
                     **autofocus_args
                 )
             
-            autofocuser.run()
+            # Run autofocus
+            if not self.check_conditions(row=row):
+                return False
+            success = autofocuser.run()
 
         except Exception as e:
+            self.error_source.append(
+                {'device_type': 'Autofocuser', 'device_name': paired_devices['Telescope'], 'error': str(e)}
+            )
             self.__log("error", f"Error running autofocus: {str(e)}")
             return False
 
-        return True
+        return success
 
     def get_last_exposure_start_time(self, camera, device_name):
         # get last exposure start time

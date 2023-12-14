@@ -1,22 +1,90 @@
+import logging
 import time
 from datetime import datetime
-from typing import Callable, Optional, Tuple, Union
+from typing import Optional
 
-import astropy
-import astropy.units as u
 import numpy as np
 from alpaca_device_process import AlpacaDevice
 from astrafocus.interface.camera import CameraInterface
 from astrafocus.interface.device_manager import AutofocusDeviceManager
 from astrafocus.interface.focuser import FocuserInterface
 from astrafocus.interface.telescope import TelescopeInterface
-from astrafocus.targeting.airmass_models import find_airmass_threshold_crossover
-from astrafocus.targeting.zenith_neighbourhood_query import ZenithNeighbourhoodQuery
 from astropy.coordinates import SkyCoord
 
 # from astra import Astra
 
+
 __all__ = ["AstraAutofocusDeviceManager"]
+
+
+class SQL3DatabaseHandler(logging.Handler):
+    """
+    Custom logging handler that writes log records to an SQLite3 database using a provided cursor.
+
+    Attributes:
+        cursor (Sqlite3Worker): The SQLite3 database cursor to execute SQL commands.
+        log_level (int): The log level to be used for the handler. Defaults to `logging.INFO`.
+
+    Note:
+        `logging.Handlers` are a fundamental part of the logging module and serve to direct log
+        messages to different outputs or storage locations, like your terminal, a file,
+        a database, etc. So they are the canonical object to be customized to fulfil this task.
+
+        The handler can either be added to the root logger or to a specific logger, providing
+        flexibility in the logging configuration.
+
+        So this is another class we should consider using in January 2024 :))
+    """
+
+    def __init__(self, cursor: "Sqlite3Worker", log_level: int = logging.INFO):
+        """
+        Initialize the SQL3DatabaseHandler.
+
+        Args:
+            cursor (Sqlite3Worker): The SQLite3 database cursor to execute SQL commands.
+            debug (bool): Flag indicating whether to include debug-level logs in the database.
+
+        It would be even more canonic to add the log level parameter to the constructor and
+        pass it to the super class, so that the log level can be set when instantiating the handler.
+        This would allow to use the same handler for different log levels,
+        e.g. to log only warnings and errors to the database.
+        """
+        super().__init__(level=log_level)
+        self.cursor = cursor
+        self.is_error_free = True
+
+    def emit(self, record: logging.LogRecord):
+        """
+        Emit a log record to the SQLite3 database.
+
+        Args:
+            record (logging.LogRecord): The log record to be emitted.
+
+        Note:
+            This method is required and defines how a log record is processed.
+            A `debug` attribute is superfluous as the logging module already filters by `log_level`.
+        """
+        dt_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        level = record.levelname
+        message = self.format(record)
+        self.cursor.execute(f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')")
+
+        if level == "error" and self.is_error_free:
+            self.is_error_free = False
+
+    # def close(self):
+    #     """
+    #     Close the SQLite3 database connection.
+
+    #     Called when script or program is exiting, either because it reached the end of its execution
+    #     or because it received a termination signal.
+    #     """
+    #     try:
+    #         self.cursor.connection.close()
+    #     except Exception as e:
+    #         logging.error(f"Error closing database connection: {e}")
+    #     finally:
+    #         super().close()
 
 
 class AstraCamera(CameraInterface):
@@ -64,7 +132,6 @@ class AstraCamera(CameraInterface):
             self.alpaca_device_camera, self.row["device_name"]
         )
 
-        # TODO Save image (disabled for now, to increase speed)
         self.astra.save_image(
             self.alpaca_device_camera, self.hdr, dateobs, t0, self.maxadu, self.folder
         )
@@ -203,8 +270,8 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         super().__init__(camera=astra_camera, focuser=astra_focuser, telescope=astra_telescope)
 
     @classmethod
-    def from_row(cls, astra, row, paired_devices):
-        action_value, folder, hdr = astra.pre_sequence(row, paired_devices)
+    def from_row(cls, astra, folder, row, paired_devices):
+        action_value, _, hdr = astra.pre_sequence(row, paired_devices)
 
         alpaca_device_camera = astra.devices["Camera"][row["device_name"]]
         alpaca_device_focuser = astra.devices["Focuser"][paired_devices["Focuser"]]
