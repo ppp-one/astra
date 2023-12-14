@@ -285,6 +285,7 @@ class AlpacaDevice(Process):
                     self._poll_latest[method]["datetime"] = dt
                     
                     time.sleep(delay)
+                time.sleep(0)
         except Exception as e:
             dt = datetime.utcnow()
             self._poll_latest[method]["datetime"] = dt

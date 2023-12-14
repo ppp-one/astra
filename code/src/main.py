@@ -577,6 +577,8 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     case _:
                         status = 'unknown'
 
+                status += f" ({polled['CCDTemperature']['value']:.2f} C)"
+
                 dt = polled['CameraState']['datetime']
 
                 last_update = (dt_now - dt).total_seconds()

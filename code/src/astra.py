@@ -396,7 +396,7 @@ class Astra():
 
         # start watchdog once all devices connected
         time.sleep(1) # wait for devices to connect and start polling TODO: check one device's latest polling is valid before starting watchdog
-        # self.start_watchdog()
+        self.start_watchdog()
 
     def pause_polls(self, device_types : list = None) -> None:
         """
@@ -408,9 +408,9 @@ class Astra():
         """
 
         if device_types is not None:
-            self.__log('info', f"Pausing polls for {device_types} if present")
+            self.__log('debug', f"Pausing polls for {device_types} if present")
         else:
-            self.__log('info', 'Pausing polls for all devices')
+            self.__log('debug', 'Pausing polls for all devices')
 
             device_types = self.devices.keys()
             
@@ -433,9 +433,9 @@ class Astra():
         """
 
         if device_types is not None:
-            self.__log('info', f"Resuming polls for {device_types} if present")
+            self.__log('debug', f"Resuming polls for {device_types} if present")
         else:
-            self.__log('info', 'Resuming polls for all devices')
+            self.__log('debug', 'Resuming polls for all devices')
 
             device_types = self.devices.keys()
             
@@ -583,43 +583,7 @@ class Astra():
                     except Exception as e:
                         self.error_source.append({'device_type': 'Schedule', 'device_name': 'schedule', 'error': str(e)})
                         self.__log('error', f"Error checking schedule: {str(e)}")
-                        continue
-
-                    # check telescope(s) altitude
-                    if 'Telescope' in self.observatory:
-                        for telescope_name in self.devices['Telescope']:
-                            telescope = self.devices['Telescope'][telescope_name]
-                            telescope_index = [i for i, d in enumerate(self.observatory['Telescope']) if d['device_name'] == telescope_name][0]
-
-                            if 'alt_limit' in self.observatory['Telescope'][telescope_index]:
-
-                                alt_limit = self.observatory['Telescope'][telescope_index]['alt_limit']
-
-                                t_poll = telescope.poll_latest()
-                                if t_poll['Altitude']['value'] <= alt_limit:
-                                    
-                                    self.error_source.append({'device_type': 'Telescope', 'device_name': telescope_name, 'error': f"Telescope {telescope_name} altitude {t_poll['Altitude']['value']} < {alt_limit}"})
-                                    self.__log('error', f"Telescope {telescope_name} altitude {t_poll['Altitude']['value']} < {alt_limit}")
-
-                                    # stop telescope slewing
-                                    self.monitor_action('Telescope', 'Slewing', False, 'AbortSlew',
-                                                        device_name = telescope_name,
-                                                        log_message = f"Stopping telescope {telescope_name} slewing")
-                                    
-
-                                    # stop tracking
-                                    self.monitor_action('Telescope', 'Tracking', False, 'Tracking',
-                                                        device_name = telescope_name,
-                                                        log_message = f"Stopping telescope {telescope_name} tracking")
-        
-                                    # stop guiding
-                                    try:
-                                        self.guider[telescope_name].running = False
-                                    except Exception as e:
-                                        self.error_source.append({'device_type': 'Guider', 'device_name': telescope_name, 'error': str(e)})
-                                        self.__log('error', f"Error stopping telescope {telescope_name} guiding: {str(e)}")
-                                        continue
-                                    
+                        continue                                    
                     
                     # check safety monitor
                     if 'SafetyMonitor' in self.observatory:
@@ -776,6 +740,25 @@ class Astra():
 
         # SPECULOOS EDIT
         self.pause_polls(['Dome', 'Telescope', 'Focuser'])
+
+        # SPECULOOS EDIT
+        if 'Telescope' in self.observatory:
+            for telescope_name in self.devices['Telescope']:
+                telescope = self.devices['Telescope'][telescope_name]
+
+                # check telescope status
+                valid, all_errors, messages = utils.check_astelos_error(telescope)
+
+                if valid and len(all_errors) > 0:
+
+                    self.__log('info', f"Attempting to acknowledge AsTelOS errors for {telescope_name}")
+                    ack, messages = utils.ack_astelos_error(telescope)
+
+                    if ack:
+                        self.__log('info', f"AsTelOS errors successfully acknowledged for {telescope_name}")
+                    else:
+                        self.error_source.append({'device_type': 'Telescope', 'device_name': telescope_name, 'error': "AsTelOS errors not successfully acknowledged"})
+                        self.__log('error', f"AsTelOS errors not successfully acknowledged for {telescope_name}: {messages}")
 
         if 'Dome' in self.observatory:
             if self.weather_safe and self.error_free and (self.interrupt is False):
@@ -1155,20 +1138,11 @@ class Astra():
                 cam_index = [i for i, d in enumerate(self.observatory['Camera']) if d['device_name'] == row['device_name']][0]
                 paired_devices = self.observatory['Camera'][cam_index]['paired_devices']
                 paired_devices['Camera'] = row['device_name']
-
-                # turn camera cooler on
-                self.monitor_action('Camera', 'CoolerOn', True, 'CoolerOn',
-                                    device_name = row['device_name'],
-                                    log_message = f"Turning on camera cooler for {row['device_name']}")
-                
-                # set temperature
                 set_temperature = self.observatory['Camera'][cam_index]['temperature']
-                self.monitor_action('Camera', 'CCDTemperature', set_temperature, 'SetCCDTemperature',
-                                    device_name = row['device_name'],
-                                    run_command_type='set',
-                                    abs_tol=1,
-                                    log_message = f"Setting camera {row['device_name']} temperature to {set_temperature}C with tolerance of 1C",
-                                    timeout = 60*30) # 30 minutes
+                temperature_tolerance = self.observatory['Camera'][cam_index]['temperature_tolerance']
+
+                if row['action_type'] not in ['close', 'open']:
+                    self.cool_camera(row, set_temperature, temperature_tolerance)
 
             if not self.check_conditions(row):
                 return
@@ -1186,6 +1160,7 @@ class Astra():
                 if 'Camera' in self.observatory:
                     # open dome and unpark telescope
                     self.open_observatory(paired_devices)
+                    self.cool_camera(row, set_temperature, temperature_tolerance)
                 else:
                     # open all dome(s) and unpark telescope(s)
                     self.open_observatory()
@@ -1194,6 +1169,7 @@ class Astra():
                 if 'Camera' in self.observatory:
                     # close dome and park telescope
                     self.close_observatory(paired_devices)
+                    self.cool_camera(row, set_temperature, temperature_tolerance)
                 else:
                     # close all dome(s) and park telescope(s)
                     self.close_observatory()
@@ -1233,7 +1209,23 @@ class Astra():
             # import traceback
             # print(traceback.format_exc())
             # self.__log('error', traceback.format_exc())
+
+    def cool_camera(self, row : dict, set_temperature : float, temperature_tolerance : float = 1) -> None:
+
+        # turn camera cooler on
+        self.monitor_action('Camera', 'CoolerOn', True, 'CoolerOn',
+                            device_name = row['device_name'],
+                            log_message = f"Turning on camera cooler for {row['device_name']}")
         
+        # set temperature
+        self.monitor_action('Camera', 'CCDTemperature', set_temperature, 'SetCCDTemperature',
+                            device_name = row['device_name'],
+                            run_command_type='set',
+                            abs_tol=temperature_tolerance,
+                            log_message = f"Setting camera {row['device_name']} temperature to {set_temperature}C with tolerance of {temperature_tolerance}C",
+                            timeout = 60*30) # 30 minutes
+
+
     def pre_sequence(self, row : dict, paired_devices :dict) -> tuple:
         '''
         Prepare the observatory and metadata for a sequence.
@@ -1274,7 +1266,7 @@ class Astra():
         if 'object' == row['action_type']:
             hdr['IMAGETYP'] = 'Light Frame'
         elif 'flats' == row['action_type']:
-            hdr['IMAGETYP'] = 'Flat Frame'
+            hdr['IMAGETYP'] = 'FLAT'
 
         self.__log('debug', f"Finished pre_sequence for {row['device_name']} {row['action_type']} {row['action_value']}")
 
@@ -2326,7 +2318,8 @@ class Astra():
                             hdr[row['header']] = (row['device_command'], row["comment"])
                             self.__log('error', f"Unknown data type: {row['dtype']}")
                 except ValueError:
-                    self.__log('error', "Invalid value for data type")
+                    self.error_source.append({'device_type': 'Headers', 'device_name': '', 'error': 'ValueError'})
+                    self.__log('error', f"Invalid value for data type: {row}")
 
         self.__log('info', "Base header created")
 

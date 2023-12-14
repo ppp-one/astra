@@ -2,7 +2,6 @@ Telescope:
   - device_name: telescope_Callisto
     ip: localhost:11111
     device_number: 0
-    alt_limit: -420
     pointing_threshold: 0.06 # arcmins
     guider:
       PIX2TIME:
@@ -32,6 +31,7 @@ Camera:
     ip: localhost:11111
     device_number: 0
     temperature: -60
+    temperature_tolerance: 1
     flats:
       target_adu: [31500, 10500]
       bias_offset: 300
@@ -61,5 +61,5 @@ SafetyMonitor:
     ip: localhost:11111
     device_number: 0
 Misc:
-  # Webcam: http://localhost:8888/inside
+  Webcam: http://localhost:8888/inside
   backup_time: '12:00'

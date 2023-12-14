@@ -1,6 +1,7 @@
 import math
 import os
 from datetime import datetime, timedelta
+import time
 
 import numpy as np
 import pandas as pd
@@ -444,3 +445,84 @@ def point_correction(filepath, ra, dec):
         raise Exception("Plate solve failed, not enough stars matched")
 
     return offset[0], offset[1], wcs, angular_separation 
+
+## SPECULOOS EDIT
+def check_astelos_error(telescope):
+    """
+    Check astelos telescope status list property
+    """
+
+    allowed_err = [	["ERR_DeviceError","axis (0) unexpectedly changed to powered on state","2","DOME[0]"],
+                            ["ERR_DeviceError","axis (0) unexpectedly changed to powered on state","2","DOME[1]"],
+                            ["ERR_DeviceError","axis (1) unexpectedly changed to powered on state","2","DOME[0]"],
+                            ["ERR_DeviceError","axis (1) unexpectedly changed to powered on state","2","DOME[1]"],
+                            ["ERR_DeviceError","axis #0\\| amplifier fault #07H\\| safe torque-off circuit fault","2","HA"],
+                            ["ERR_RunDevError","Working pressure suddenly lost","2","HA"],
+                            ["ERR_DeviceError","axis #0\\| amplifier fault #07H\\| safe torque-off circuit fault","2","DEC"],
+                            ["ERR_RunDevError","Working pressure suddenly lost","2","DEC"] ]
+
+    df_allowed = pd.DataFrame(allowed_err, columns = ['error', 'detail', 'level', 'component'])
+    df_list = pd.DataFrame(columns = ['error', 'detail', 'level', 'component'])
+
+    messages = telescope.get('CommandString', Command = "TELESCOPE.STATUS.LIST", Raw = True)
+    print(messages)
+    # structure = "<group>|<level>[:<component>|<level>[;<component>...]][:<error>|<detail>|<level>|<component>[;<error>...]][,<group>...]"
+
+    for message in messages.split(','):
+        parts = message.split(':')
+
+        # only look parts after "<group>|<level>"
+        for part in parts[1:]:
+            elements = part.split(';')
+
+            for element in elements:
+                error_detail = element.split('|')
+
+                if len(error_detail) == 4:
+                    if not error_detail[1].isdigit():
+                        error = error_detail[0]
+                        detail = error_detail[1]
+                        error_level = error_detail[2]
+                        component = error_detail[3]
+
+                        df_list = pd.concat([df_list, pd.DataFrame({'error': [error], 'detail': [detail], 'level': [error_level], 'component': [component]})], ignore_index=True)
+
+    # check all rows of df_list are in df_allowed
+    compare_df = pd.merge(df_list, df_allowed, how='left', indicator='exists')
+    exists = compare_df['exists'] == 'both'
+
+    # if all of exists is True
+    if exists.all():
+        return True, df_list, messages
+    else:
+        return False, df_list, messages
+
+def ack_astelos_error(telescope):
+    """
+    Acknowledge error if valid
+
+    """
+
+    start_time = time.time()
+
+    # check telescope status
+    valid, all_errors, messages = check_astelos_error(telescope)
+
+    while valid and len(all_errors) > 0:
+
+        # clear errors
+        telescope.get('CommandBlind', Command = "TELESCOPE.STATUS.CLEAR_ERROR=2", Raw = True)
+
+        time.sleep(1)
+
+        # check telescope status
+        valid, all_errors, messages = check_astelos_error(telescope)
+
+        if time.time() - start_time > 120: # 2 minutes hardcoded limit
+            raise TimeoutError('Astelos error acknowledgement timed out')
+        
+
+    if not valid:
+        return False, messages
+    
+    return True, messages
