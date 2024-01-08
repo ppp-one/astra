@@ -28,7 +28,7 @@ from multiprocessing import Manager
 sql3wlogger = logging.getLogger("sqlite3worker")
 sql3wlogger.setLevel(logging.INFO)
 
-ASTRA_VER = '0.2.0'
+ASTRA_VER = '0.2.1'
 
 def update_times(df, time_factor):
     '''
@@ -776,7 +776,7 @@ class Astra():
         # SPECULOOS EDIT
         self.pause_polls(['Dome', 'Telescope', 'Focuser'])
 
-        # SPECULOOS EDIT
+        # SPECULOOS EDIT  -- TODO: this should return a state before continuing
         self.astelos_check_and_ack_error()
 
         if 'Dome' in self.observatory:
@@ -1623,6 +1623,7 @@ class Astra():
                 while (count < action_value['n'][i]) and self.check_conditions(row):
 
                     r = camera.get('ImageReady')
+                    time.sleep(0.1) # add 0.1 s sleep to avoid spamming the camera and high cpu usage
                     time.sleep(0) # yield to other threads
                     if r is True:
                         self.__log('debug', f"Image ready from {row['device_name']} to download.")
@@ -1694,6 +1695,7 @@ class Astra():
         while self.check_conditions(row):           
  
             r = camera.get('ImageReady')
+            time.sleep(0.1) # add 0.1 s sleep to avoid spamming the camera and high cpu usage
             time.sleep(0) # yield to other threads
             if r is True:
             
@@ -1898,10 +1900,12 @@ class Astra():
                                                 startx, starty, target_adu, offset,
                                                 lower_exptime_limit, upper_exptime_limit)
                 
+                # TODO: check for conditions again before starting exposure
+
                 if exptime < lower_exptime_limit or exptime > upper_exptime_limit:
                     self.__log('info', "Moving on...")
                     continue
-
+                
                 hdr['EXPTIME'] = exptime
                 hdr['FILTER'] = filter_name
 
@@ -1911,6 +1915,7 @@ class Astra():
                 while self.check_conditions(row) and (count < action_value['n'][i]):
                     
                     r = camera.get('ImageReady')
+                    time.sleep(0.1) # add 0.1 s sleep to avoid spamming the camera and high cpu usage
                     time.sleep(0) # yield to other threads
                     if r is True:
                             
@@ -2087,6 +2092,7 @@ class Astra():
             while self.check_conditions(row) and getting_exptime:
                 
                 r = camera.get('ImageReady')
+                time.sleep(0.1) # add 0.1 s sleep to avoid spamming the camera and high cpu usage
                 time.sleep(0) # yield to other threads
                 if r is True:
 
@@ -2140,18 +2146,20 @@ class Astra():
 
                 
             # set camera back to original framing
-            self.monitor_action('Camera', 'NumX', numx, 'NumX',
-                                device_name = paired_devices['Camera'],
-                                log_message = f"Setting Camera {paired_devices['Camera']} NumX to {numx}")
-            self.monitor_action('Camera', 'NumY', numy, 'NumY',
-                                device_name = paired_devices['Camera'],
-                                log_message = f"Setting Camera {paired_devices['Camera']} NumY to {numy}")
             self.monitor_action('Camera', 'StartX', startx, 'StartX',
                                 device_name = paired_devices['Camera'],
                                 log_message = f"Setting Camera {paired_devices['Camera']} StartX to {startx}")
             self.monitor_action('Camera', 'StartY', starty, 'StartY',
                                 device_name = paired_devices['Camera'],
                                 log_message = f"Setting Camera {paired_devices['Camera']} StartY to {starty}")
+            self.monitor_action('Camera', 'NumX', numx, 'NumX',
+                                device_name = paired_devices['Camera'],
+                                log_message = f"Setting Camera {paired_devices['Camera']} NumX to {numx}")
+            self.monitor_action('Camera', 'NumY', numy, 'NumY',
+                                device_name = paired_devices['Camera'],
+                                log_message = f"Setting Camera {paired_devices['Camera']} NumY to {numy}")
+            
+            time.sleep(1) # wait for camera to settle
             
             return exptime
             
@@ -2565,7 +2573,7 @@ class Astra():
 
                     all_monitor_status = np.mean(monitor_status)
 
-                    time.sleep(0.1)
+                    time.sleep(0.5)
 
                     if time.time() - start_time > timeout:
                         break
