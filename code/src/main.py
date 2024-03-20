@@ -50,7 +50,7 @@ def load_observatories():
     config_files = glob(os.path.join(config_dir, '*.yml'))
 
     for config_filename in config_files:
-        obs = Astra(config_filename, debug, truncate_schedule)
+        obs = Astra(config_filename, debug, truncate_schedule, speculoos=True)
         observatories[obs.observatory_name] = obs
 
         if 'Misc' in obs.observatory:

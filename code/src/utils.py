@@ -509,7 +509,11 @@ def ack_astelos_error(telescope, valid, all_errors, messages):
     while valid and len(all_errors) > 0:
 
         # clear errors
-        telescope.get('CommandBlind', Command = "TELESCOPE.STATUS.CLEAR_ERROR=2", Raw = True)
+        for i, row in all_errors.iterrows():
+            telescope.get('CommandBlind', Command = f"TELESCOPE.STATUS.CLEAR_ERROR={row['level']}", Raw = True)
+            time.sleep(2)
+
+        # telescope.get('CommandBlind', Command = "TELESCOPE.STATUS.CLEAR_ERROR=2", Raw = True)
 
         time.sleep(5)
 
