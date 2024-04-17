@@ -29,7 +29,6 @@ dependencies = [
     "uvicorn",
     "fastapi",
     "pyyaml",
-
 ]
 
 [project.optional-dependencies]
