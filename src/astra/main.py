@@ -18,7 +18,7 @@ from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
-from astra import Astra
+from astra.astra_object import Astra
 
 # change base directory to code/src
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
