@@ -20,11 +20,20 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
 from astra import CONFIG
-from astra.astra_object import Astra
+from astra.observatory import Observatory
 
-# change base directory to code/src
-
+# global variables
 FRONTEND_PATH = Path(__file__).parent.parent.parent / "frontend"
+OBSERVATORIES = {}
+WEBCAMFEEDS = {}
+FWS = {}
+DEBUG = False
+FRONTEND = Jinja2Templates(directory=FRONTEND_PATH)
+LAST_IMAGE = None
+LAST_IMAGE_JPG = None
+USEFUL_HEADERS = None
+TRUNCATE_SCHEDULE = False
+
 
 logging.basicConfig(
     format="%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s",
@@ -35,41 +44,30 @@ logging.basicConfig(
 logging.Formatter.converter = time.gmtime
 
 
-frontend = Jinja2Templates(directory=FRONTEND_PATH)
-observatories = {}
-webcamfeeds = {}
-fws = {}
-last_image = None
-last_image_jpg = None
-useful_headers = None
-debug = False
-truncate_schedule = False
-
-
 def load_observatories():
-    global observatories  # not sure if this is necessary
-    global webcamfeeds
-    global fws
-    global debug
+    global OBSERVATORIES  # not sure if this is necessary
+    global WEBCAMFEEDS
+    global FWS
+    global DEBUG
 
     config_files = glob(str(CONFIG.folder_observatory / "*.yml"))
 
     for config_filename in config_files:
-        obs = Astra(config_filename, debug, truncate_schedule, speculoos=True)
-        observatories[obs.observatory_name] = obs
+        obs = Observatory(config_filename, DEBUG, TRUNCATE_SCHEDULE, speculoos=True)
+        OBSERVATORIES[obs.name] = obs
 
-        if "Misc" in obs.observatory:
-            if "Webcam" in obs.observatory["Misc"]:
-                webcamfeeds[obs.observatory_name] = obs.observatory["Misc"]["Webcam"]
+        if "Misc" in obs.config:
+            if "Webcam" in obs.config["Misc"]:
+                WEBCAMFEEDS[obs.name] = obs.config["Misc"]["Webcam"]
 
         obs.connect_all()
 
         if "FilterWheel" in obs.devices:
-            fws[obs.observatory_name] = {}
+            FWS[obs.name] = {}
             for fw_name in obs.devices["FilterWheel"].keys():
-                fws[obs.observatory_name][fw_name] = obs.devices["FilterWheel"][
-                    fw_name
-                ].get("Names")
+                FWS[obs.name][fw_name] = obs.devices["FilterWheel"][fw_name].get(
+                    "Names"
+                )
 
 
 def observatory_db(name):
@@ -134,12 +132,12 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def root(request: Request):
-    return frontend.TemplateResponse(
+    return FRONTEND.TemplateResponse(
         "index.html.j2",
         {
             "request": request,
-            "observatories": observatories.keys(),
-            "webcamfeeds": webcamfeeds,
+            "observatories": OBSERVATORIES.keys(),
+            "webcamfeeds": WEBCAMFEEDS,
         },
     )
 
@@ -162,7 +160,7 @@ async def lastest_image(image: str):
 @app.get("/video/{observatory}/{filename:path}", include_in_schema=False)
 async def get_video(request: Request, observatory, filename: str = None):
     headers = request.headers
-    base_url = webcamfeeds[observatory]
+    base_url = WEBCAMFEEDS[observatory]
     target_url = f"{base_url}/{filename}"
 
     async with httpx.AsyncClient() as client:
@@ -184,14 +182,14 @@ async def get_video(request: Request, observatory, filename: str = None):
 
 @app.get("/api/heartbeat/{observatory}")
 async def heartbeat(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     return {"status": "success", "data": obs.heartbeat, "message": ""}
 
 
 @app.get("/api/pausepolls/{observatory}")
 def pause_polls(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.pause_polls()
 
@@ -200,7 +198,7 @@ def pause_polls(observatory: str):
 
 @app.get("/api/resumepolls/{observatory}")
 def resume_polls(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.resume_polls()
 
@@ -209,7 +207,7 @@ def resume_polls(observatory: str):
 
 @app.get("/api/open/{observatory}")
 def open_observatory(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.open_observatory()
 
@@ -218,7 +216,7 @@ def open_observatory(observatory: str):
 
 @app.get("/api/close/{observatory}")
 def close_observatory(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.close_observatory()
 
@@ -227,7 +225,7 @@ def close_observatory(observatory: str):
 
 @app.get("/api/startwatchdog/{observatory}")
 async def start_watchdog(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     obs.error_free = True
     obs.error_source = []
     obs.start_watchdog()
@@ -237,7 +235,7 @@ async def start_watchdog(observatory: str):
 
 @app.get("/api/stopwatchdog/{observatory}")
 async def stop_watchdog(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     obs.watchdog_running = False
 
     return {"status": "success", "data": "null", "message": ""}
@@ -245,7 +243,7 @@ async def stop_watchdog(observatory: str):
 
 @app.get("/api/startschedule/{observatory}")
 async def start_schedule(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     obs.start_schedule()
 
     return {"status": "success", "data": "null", "message": ""}
@@ -253,7 +251,7 @@ async def start_schedule(observatory: str):
 
 @app.get("/api/stopschedule/{observatory}")
 async def stop_schedule(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     obs.schedule_running = False
 
     return {"status": "success", "data": "null", "message": ""}
@@ -261,7 +259,7 @@ async def stop_schedule(observatory: str):
 
 @app.get("/api/interrupt/{observatory}")
 async def interrupt(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.start_toggle_interrupt()
 
@@ -270,7 +268,7 @@ async def interrupt(observatory: str):
 
 @app.get("/api/ackastelos/{observatory}")
 async def ackastelos(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     obs.astelos_check_and_ack_error()
 
@@ -279,7 +277,7 @@ async def ackastelos(observatory: str):
 
 @app.get("/api/connect/{observatory}")
 async def connect(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     obs.connect_all()
 
     return {"status": "success", "data": "null", "message": ""}
@@ -287,7 +285,7 @@ async def connect(observatory: str):
 
 @app.get("/api/schedule/{observatory}")
 async def schedule(observatory: str):
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
     schedule = obs.schedule
 
     schedule["start_HHMMSS"] = schedule["start_time"].apply(format_time)
@@ -326,7 +324,7 @@ async def polling(observatory: str, device_type: str):
 @app.websocket("/ws/log/{observatory}")
 async def websocket_log(websocket: WebSocket, observatory: str):
     await websocket.accept()
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     db = observatory_db(observatory)
     q = """SELECT * FROM (SELECT * FROM log ORDER BY datetime DESC LIMIT 1000) a ORDER BY datetime ASC"""
@@ -458,11 +456,11 @@ async def websocket_weather(websocket: WebSocket, observatory: str):
 
 @app.websocket("/ws/{observatory}")
 async def websocket_endpoint(websocket: WebSocket, observatory: str):
-    global last_image, last_image_jpg, useful_headers
+    global LAST_IMAGE, LAST_IMAGE_JPG, USEFUL_HEADERS
 
     await websocket.accept()
 
-    obs = observatories[observatory]
+    obs = OBSERVATORIES[observatory]
 
     socket = True
     while socket:
@@ -636,11 +634,11 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     status = "moving"
                 else:
                     try:
-                        status = fws[observatory][device_name][pos]
+                        status = FWS[observatory][device_name][pos]
                     except:
                         print(
                             f"FilterWheel {device_name} position {pos} not found in fws dict",
-                            fws,
+                            FWS,
                         )
                         status = "unknown"
 
@@ -837,16 +835,16 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
         # TODO: need to make it less CPU intensive if multiple clients
-        if last_image is not obs.last_image:
-            last_image = obs.last_image
-            last_image_jpg, useful_headers = convert_fits_to_jpg(
-                last_image, observatory
+        if LAST_IMAGE is not obs.last_image:
+            LAST_IMAGE = obs.last_image
+            LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
+                LAST_IMAGE, observatory
             )
 
         data = {
             "table0": table0,
             "table1": table1,
-            "last_image": {"url": last_image_jpg, "useful_headers": useful_headers},
+            "last_image": {"url": LAST_IMAGE_JPG, "useful_headers": USEFUL_HEADERS},
         }
 
         # make temp image, say how many images have been made?
@@ -869,14 +867,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.debug:
-        debug = True
+        DEBUG = True
         logging.getLogger().setLevel(logging.DEBUG)
 
     if args.truncate:
-        truncate_schedule = True
+        TRUNCATE_SCHEDULE = True
 
     # start the server
-    log_level = "info" if not debug else "debug"
+    log_level = "info" if not DEBUG else "debug"
     uvicorn.run(
         app, host="0.0.0.0", port=8000, log_level=log_level, timeout_graceful_shutdown=0
     )

@@ -3,20 +3,22 @@ import math
 import os
 import sqlite3
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 from multiprocessing import Manager
+from pathlib import Path
 from threading import Thread
-from typing import Optional
 
 import astropy.units as u
 import numpy as np
 import pandas as pd
 import psutil
 import yaml
+
 # from ascom_device_process import AscomDevice
 from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.io import fits
 from astropy.time import Time
+
 # https://github.com/dashawn888/sqlite3worker
 from sqlite3worker import Sqlite3Worker
 
@@ -24,13 +26,8 @@ from astra import CONFIG, utils
 from astra.alpaca_device_process import AlpacaDevice
 from astra.guiding import Guider
 
-# import traceback
-
-
-sql3wlogger = logging.getLogger("sqlite3worker")
-sql3wlogger.setLevel(logging.INFO)
-
-ASTRA_VER = "0.2.4"
+SQL3WLOGGER = logging.getLogger("sqlite3worker")
+SQL3WLOGGER.setLevel(logging.INFO)
 
 
 def update_times(df, time_factor):
@@ -48,7 +45,7 @@ def update_times(df, time_factor):
         se_time_diff = end_time - start_time
         se_time_diff = se_time_diff / time_factor
 
-        new_start_time = datetime.utcnow()
+        new_start_time = datetime.now(UTC)
 
         if prev_end_time:
             ss_time_diff = start_time - prev_start_time
@@ -76,7 +73,7 @@ def update_times(df, time_factor):
     return pd.DataFrame(new_rows, columns=df.columns)
 
 
-class Astra:
+class Observatory:
     def __init__(
         self,
         config_filename: str,
@@ -115,7 +112,7 @@ class Astra:
             last_image (None): last image taken by Astra.
             guider (dict): dictionary containing the guider objects for each telescope.
         """
-        self.observatory_name = os.path.splitext(os.path.basename(config_filename))[0]
+        self.name = Path(config_filename).stem
 
         self.debug = debug
         self.truncate_schedule = truncate_schedule
@@ -149,45 +146,42 @@ class Astra:
         self.weather_safe = None
         self.time_to_safe = 0
 
+        self.config = self.read_yaml(config_filename)
+
         self.watchdog_running = False
         self.schedule_running = False
         self.interrupt = False
 
-        self.observatory = self.read_yaml(config_filename)
-
-        self.schedule_path = CONFIG.folder_schedule / f"{self.observatory_name}.csv"
+        self.schedule_path = CONFIG.folder_schedule / f"{self.name}.csv"
 
         self.schedule_mtime = os.path.getmtime(self.schedule_path)
         self.schedule = None
         self.schedule = self.read_schedule()
 
-        fits_config_path = (
-            CONFIG.folder_observatory / f"{self.observatory_name}_fits_headers.csv"
+        self.fits_config = pd.read_csv(
+            CONFIG.folder_observatory / f"{self.name}_fits_headers.csv"
         )
-        self.fits_config = pd.read_csv(fits_config_path)
 
         self.devices = self.load_devices()
         self.last_image = None
 
         self.run_backup = True
         self.backup_time = datetime.strptime(
-            self.observatory["Misc"]["backup_time"], "%H:%M"
+            self.config["Misc"]["backup_time"], "%H:%M"
         )
 
         # for each telescope, create a donuts guider
         self.guider = {}
-        if "Telescope" in self.observatory:
+        if "Telescope" in self.config:
             for device_name in self.devices["Telescope"]:
                 telescope = self.devices["Telescope"][device_name]
                 telescope_index = [
                     i
-                    for i, d in enumerate(self.observatory["Telescope"])
+                    for i, d in enumerate(self.config["Telescope"])
                     if d["device_name"] == device_name
                 ][0]
-                if "guider" in self.observatory["Telescope"][telescope_index]:
-                    guider_params = self.observatory["Telescope"][telescope_index][
-                        "guider"
-                    ]
+                if "guider" in self.config["Telescope"][telescope_index]:
+                    guider_params = self.config["Telescope"][telescope_index]["guider"]
                     self.guider[device_name] = Guider(
                         telescope, self.cursor, guider_params
                     )
@@ -220,7 +214,7 @@ class Astra:
         elif level == "critical":
             logging.critical(message)
 
-        dt_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        dt_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         if level == "debug" and self.debug is True:
             self.cursor.execute(
                 f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')"
@@ -238,7 +232,7 @@ class Astra:
             cursor (Sqlite3Worker): The cursor object for the newly created database.
         """
 
-        db_name = CONFIG.folder_log / f"{self.observatory_name}.db"
+        db_name = CONFIG.folder_log / f"{self.name}.db"
         cursor = Sqlite3Worker(db_name)
 
         db_command_0 = """CREATE TABLE IF NOT EXISTS polling (
@@ -285,8 +279,8 @@ class Astra:
 
                 # TODO: action
 
-            dt_str = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-            db_path = CONFIG.folder_log / f"{self.observatory_name}.db"
+            dt_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+            db_path = CONFIG.folder_log / f"{self.name}.db"
 
             # create backup directory if not exists
             archive_path = CONFIG.folder_log / "archive"
@@ -307,7 +301,7 @@ class Astra:
                         "..",
                         "log",
                         "archive",
-                        f"{self.observatory_name}_{table}_{dt_str}.csv",
+                        f"{self.name}_{table}_{dt_str}.csv",
                     ),
                     index=False,
                 )
@@ -363,10 +357,10 @@ class Astra:
         self.__log("info", "Loading devices")
 
         devices = {}
-        for device_type in self.observatory:
+        for device_type in self.config:
             devices[device_type] = {}
             if device_type != "Misc":
-                for d in self.observatory[device_type]:
+                for d in self.config[device_type]:
                     try:
                         devices[device_type][d["device_name"]] = AlpacaDevice(
                             d["ip"],
@@ -464,9 +458,9 @@ class Astra:
                             )
 
         delay = 1  # seconds
-        if "SafetyMonitor" in self.observatory:
+        if "SafetyMonitor" in self.config:
             device_type = "SafetyMonitor"
-            device_name = self.observatory[device_type][0]["device_name"]
+            device_name = self.config[device_type][0]["device_name"]
 
             device = self.devices[device_type][device_name]
             try:
@@ -650,9 +644,9 @@ class Astra:
         self.watchdog_running = True
 
         # initial safety monitor check
-        if "SafetyMonitor" in self.observatory:
+        if "SafetyMonitor" in self.config:
             try:
-                time_to_safe = self.observatory["SafetyMonitor"][0]["time_to_safe"]
+                time_to_safe = self.config["SafetyMonitor"][0]["time_to_safe"]
             except KeyError as e:
                 self.__log(
                     "warning",
@@ -663,7 +657,7 @@ class Astra:
             self.__log("info", "Safety monitor found")
 
             device_type = "SafetyMonitor"
-            sm_name = self.observatory[device_type][0]["device_name"]
+            sm_name = self.config[device_type][0]["device_name"]
 
             safety_monitor = self.devices[device_type][sm_name]
 
@@ -717,7 +711,7 @@ class Astra:
                         self.__log("error", f"{device_type} {device_name} unresponsive")
 
             # update heartbeat
-            self.heartbeat["datetime"] = datetime.utcnow().strftime(
+            self.heartbeat["datetime"] = datetime.now(UTC).strftime(
                 "%Y-%m-%d %H:%M:%S.%f"
             )[:-3]
             self.heartbeat["error_free"] = self.error_free
@@ -757,12 +751,12 @@ class Astra:
                         continue
 
                     # check safety monitor
-                    if "SafetyMonitor" in self.observatory:
+                    if "SafetyMonitor" in self.config:
                         sm_poll = safety_monitor.poll_latest()
 
                         # check if stale
                         last_update = (
-                            datetime.utcnow() - sm_poll["IsSafe"]["datetime"]
+                            datetime.now(UTC) - sm_poll["IsSafe"]["datetime"]
                         ).total_seconds()
 
                         if last_update > 3 and last_update < 30:
@@ -808,7 +802,7 @@ class Astra:
                         if self.truncate_schedule:
                             if len(rows) > 0:
                                 last_datetime = rows[-1][4]
-                                time_diff = datetime.utcnow() - pd.to_datetime(
+                                time_diff = datetime.now(UTC) - pd.to_datetime(
                                     last_datetime, format="%Y-%m-%d %H:%M:%S.%f"
                                 )
                                 self.time_to_safe = 1 - time_diff.total_seconds() / 60
@@ -817,7 +811,7 @@ class Astra:
                         else:
                             if len(rows) > 0:
                                 last_datetime = rows[-1][4]
-                                time_diff = datetime.utcnow() - pd.to_datetime(
+                                time_diff = datetime.now(UTC) - pd.to_datetime(
                                     last_datetime, format="%Y-%m-%d %H:%M:%S.%f"
                                 )
                                 self.time_to_safe = (
@@ -932,8 +926,8 @@ class Astra:
 
             # run backup once a day
             if (
-                datetime.utcnow().hour == self.backup_time.hour
-                and datetime.utcnow().minute == self.backup_time.minute
+                datetime.now(UTC).hour == self.backup_time.hour
+                and datetime.now(UTC).minute == self.backup_time.minute
             ):
                 if self.run_backup is True:
                     # run backup in separate thread
@@ -959,7 +953,7 @@ class Astra:
         self.__log("warning", "Watchdog stopped")
 
     def astelos_check_and_ack_error(self):
-        if "Telescope" in self.observatory:
+        if "Telescope" in self.config:
             for telescope_name in self.devices["Telescope"]:
                 telescope = self.devices["Telescope"][telescope_name]
 
@@ -1023,7 +1017,7 @@ class Astra:
             # SPECULOOS EDIT  -- TODO: this should return a state before continuing
             self.astelos_check_and_ack_error()
 
-        if "Dome" in self.observatory:
+        if "Dome" in self.config:
             if self.weather_safe and self.error_free and (self.interrupt is False):
                 # open dome shutter
                 if paired_devices is not None:
@@ -1048,7 +1042,7 @@ class Astra:
                     # SPECULOOS EDIT
                     self.astelos_check_and_ack_error()
 
-        if "Telescope" in self.observatory:
+        if "Telescope" in self.config:
             if self.weather_safe and self.error_free and (self.interrupt is False):
                 # unpark telescope
                 if paired_devices is not None:
@@ -1097,7 +1091,7 @@ class Astra:
             # SPECULOOS EDIT
             self.pause_polls(["Dome", "Telescope", "Focuser"])
 
-        if "Telescope" in self.observatory:
+        if "Telescope" in self.config:
             # stop guiding
             for d in self.devices["Telescope"]:
                 try:
@@ -1169,7 +1163,7 @@ class Astra:
                     log_message="Parking Telescope(s)",
                 )
 
-        if "Dome" in self.observatory:
+        if "Dome" in self.config:
             # park dome
             if paired_devices is not None:
                 self.monitor_action(
@@ -1256,7 +1250,7 @@ class Astra:
         self.schedule_running = False
 
         ## abort all actions
-        if "Telescope" in self.observatory:
+        if "Telescope" in self.config:
             # stop telescope slewing
             th = Thread(
                 target=self.monitor_action,
@@ -1315,7 +1309,7 @@ class Astra:
                     )
                     continue
 
-        if "Dome" in self.observatory:
+        if "Dome" in self.config:
             # stop dome slewing
             th = Thread(
                 target=self.monitor_action,
@@ -1338,7 +1332,7 @@ class Astra:
                 }
             )
 
-        if "Camera" in self.observatory:
+        if "Camera" in self.config:
             # stop camera exposure -- sometimes misses if camera is idle already between exposures
             th = Thread(
                 target=self.monitor_action,
@@ -1469,7 +1463,7 @@ class Astra:
             self.__log("warning", "Schedule cannot be started without watchdog running")
             return
 
-        if self.schedule.iloc[-1]["end_time"] < datetime.utcnow():
+        if self.schedule.iloc[-1]["end_time"] < datetime.now(UTC):
             self.__log("warning", "Schedule end time in the past")
             return
 
@@ -1556,7 +1550,7 @@ class Astra:
                         time.sleep(1)
 
             # exit while loop if reached end of schedule
-            if self.schedule.iloc[-1]["end_time"] < datetime.utcnow():
+            if self.schedule.iloc[-1]["end_time"] < datetime.now(UTC):
                 break
 
             time.sleep(1)
@@ -1602,13 +1596,13 @@ class Astra:
             if row["device_type"] == "Camera":
                 cam_index = [
                     i
-                    for i, d in enumerate(self.observatory["Camera"])
+                    for i, d in enumerate(self.config["Camera"])
                     if d["device_name"] == row["device_name"]
                 ][0]
-                paired_devices = self.observatory["Camera"][cam_index]["paired_devices"]
+                paired_devices = self.config["Camera"][cam_index]["paired_devices"]
                 paired_devices["Camera"] = row["device_name"]
-                set_temperature = self.observatory["Camera"][cam_index]["temperature"]
-                temperature_tolerance = self.observatory["Camera"][cam_index][
+                set_temperature = self.config["Camera"][cam_index]["temperature"]
+                temperature_tolerance = self.config["Camera"][cam_index][
                     "temperature_tolerance"
                 ]
 
@@ -1628,7 +1622,7 @@ class Astra:
                 self.flats_sequence(row, paired_devices)
 
             elif "open" == row["action_type"]:
-                if "Camera" in self.observatory:
+                if "Camera" in self.config:
                     # open dome and unpark telescope
                     self.open_observatory(paired_devices)
                     self.cool_camera(row, set_temperature, temperature_tolerance)
@@ -1637,7 +1631,7 @@ class Astra:
                     self.open_observatory()
 
             elif "close" == row["action_type"]:
-                if "Camera" in self.observatory:
+                if "Camera" in self.config:
                     # close dome and park telescope
                     self.close_observatory(paired_devices)
                     self.cool_camera(row, set_temperature, temperature_tolerance)
@@ -1929,7 +1923,7 @@ class Astra:
         if row is None:
             return base_conditions and self.weather_safe
 
-        time_conditions = row["start_time"] <= datetime.utcnow() <= row["end_time"]
+        time_conditions = row["start_time"] <= datetime.now(UTC) <= row["end_time"]
 
         if row["action_type"] in ["open", "object", "flats", "autofocus"]:
             return base_conditions and time_conditions and self.weather_safe
@@ -2083,7 +2077,7 @@ class Astra:
                     )
                     break
 
-                t0 = datetime.utcnow()
+                t0 = datetime.now(UTC)
                 dateobs = self.get_last_exposure_start_time(camera, row["device_name"])
 
                 # save image
@@ -2163,7 +2157,7 @@ class Astra:
                             f"Image ready from {row['device_name']} to download.",
                         )
 
-                        t0 = datetime.utcnow()
+                        t0 = datetime.now(UTC)
 
                         # get last exposure start time
                         r = camera.get("LastExposureStartTime")
@@ -2253,7 +2247,7 @@ class Astra:
                     "debug", f"Image ready from {row['device_name']} to download."
                 )
 
-                t0 = datetime.utcnow()
+                t0 = datetime.now(UTC)
 
                 # get last exposure start time
                 r = camera.get("LastExposureStartTime")
@@ -2300,11 +2294,11 @@ class Astra:
                         if pointing_complete is False:
                             tel_index = [
                                 i
-                                for i, d in enumerate(self.observatory["Telescope"])
+                                for i, d in enumerate(self.config["Telescope"])
                                 if d["device_name"] == paired_devices["Telescope"]
                             ][0]
                             pointing_threshold = (
-                                self.observatory["Telescope"][tel_index][
+                                self.config["Telescope"][tel_index][
                                     "pointing_threshold"
                                 ]
                                 / 60
@@ -2476,15 +2470,15 @@ class Astra:
         # target adu and camera offset needed for flat exposure time calculation
         cam_index = [
             i
-            for i, d in enumerate(self.observatory["Camera"])
+            for i, d in enumerate(self.config["Camera"])
             if d["device_name"] == row["device_name"]
         ][0]
-        target_adu = self.observatory["Camera"][cam_index]["flats"]["target_adu"]
-        offset = self.observatory["Camera"][cam_index]["flats"]["bias_offset"]
-        lower_exptime_limit = self.observatory["Camera"][cam_index]["flats"][
+        target_adu = self.config["Camera"][cam_index]["flats"]["target_adu"]
+        offset = self.config["Camera"][cam_index]["flats"]["bias_offset"]
+        lower_exptime_limit = self.config["Camera"][cam_index]["flats"][
             "lower_exptime_limit"
         ]
-        upper_exptime_limit = self.observatory["Camera"][cam_index]["flats"][
+        upper_exptime_limit = self.config["Camera"][cam_index]["flats"][
             "upper_exptime_limit"
         ]
 
@@ -2597,7 +2591,7 @@ class Astra:
                             f"Image ready from {row['device_name']} to download.",
                         )
 
-                        t0 = datetime.utcnow()
+                        t0 = datetime.now(UTC)
 
                         # get last exposure start time
                         r = camera.get("LastExposureStartTime")
@@ -3038,7 +3032,7 @@ class Astra:
             "UTC date/time of exposure start",
         )
 
-        date = datetime.utcnow()
+        date = datetime.now(UTC)
         hdr["DATE"] = (
             date.strftime("%Y-%m-%dT%H:%M:%S.%f"),
             "UTC date/time when this file was written",
@@ -3069,7 +3063,7 @@ class Astra:
             f"INSERT INTO images VALUES ('{filepath}', '{device.device_name}', '{0}', '{dt}')"
         )
         self.__log("info", f"Image saved as {os.path.basename(filepath)}")
-        self.__log("info", f"Image acquired in {datetime.utcnow() - t0}")
+        self.__log("info", f"Image acquired in {datetime.now(UTC) - t0}")
 
         return filepath
 
@@ -3228,12 +3222,10 @@ class Astra:
                     # get paired devices for camera
                     cam_index = [
                         i
-                        for i, d in enumerate(self.observatory["Camera"])
+                        for i, d in enumerate(self.config["Camera"])
                         if d["device_name"] == cam
                     ][0]
-                    paired_devices = self.observatory["Camera"][cam_index][
-                        "paired_devices"
-                    ]
+                    paired_devices = self.config["Camera"][cam_index]["paired_devices"]
                     paired_devices["Camera"] = cam
 
                     # convert date_obs to datetime type, sort by date_obs, and convert to jd
@@ -3440,7 +3432,7 @@ class Astra:
 
         self.__log("debug", f"run_command_type: {run_command_type}")
 
-        if device_type in self.observatory:
+        if device_type in self.config:
             monitor_status = []
             self.__log("debug", f"device_name: {device_name}")
             if device_name == "":

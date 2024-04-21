@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from astra.astra_object import Astra  # noqa: E402
+from astra.observatory import Observatory  # noqa: E402
 
 obs = None
 
@@ -29,7 +29,7 @@ def test_startup():
     """
     global obs
     try:
-        obs = Astra("/Users/peter/Github/astra/code/config/Callisto.yml")
+        obs = Observatory("/Users/peter/Github/astra/code/config/Callisto.yml")
         time.sleep(0.1)  # to permit sqlworker to catchup
         ## TODO: status property denoting initialisation
         assert True
@@ -110,7 +110,7 @@ def test_read_config():
     Tests reading the config file
     """
     # TODO: more thorough test
-    assert len(obs.observatory) > 0
+    assert len(obs.config) > 0
     assert obs.error_free is True
 
 
@@ -218,7 +218,7 @@ def _test_close_observatory():
     obs.close_observatory()
 
     # close with paired_devices
-    paired_devices = obs.observatory["Camera"][0]["paired_devices"]
+    paired_devices = obs.config["Camera"][0]["paired_devices"]
     obs.close_observatory(paired_devices)
 
     # TODO: more thorough test
@@ -240,7 +240,7 @@ def _test_open_observatory():
     obs.close_observatory()
 
     # open with paired_devices
-    paired_devices = obs.observatory["Camera"][0]["paired_devices"]
+    paired_devices = obs.config["Camera"][0]["paired_devices"]
     obs.open_observatory(paired_devices)
 
     # TODO: more thorough test
