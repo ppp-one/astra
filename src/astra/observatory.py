@@ -25,52 +25,10 @@ from sqlite3worker import Sqlite3Worker
 from astra import CONFIG, utils
 from astra.alpaca_device_process import AlpacaDevice
 from astra.guiding import Guider
+from astra.schedule import read_schedule
 
 SQL3WLOGGER = logging.getLogger("sqlite3worker")
 SQL3WLOGGER.setLevel(logging.INFO)
-
-
-def update_times(df, time_factor):
-    """
-    Update the start and end times to present day factored by the time factor
-    """
-
-    new_rows = []
-    prev_start_time = None
-    prev_end_time = None
-    prev_new_start_time = None
-    for i, row in df.iterrows():
-        device_type, device_name, action_type, action_value, start_time, end_time = row
-
-        se_time_diff = end_time - start_time
-        se_time_diff = se_time_diff / time_factor
-
-        new_start_time = datetime.now(UTC)
-
-        if prev_end_time:
-            ss_time_diff = start_time - prev_start_time
-            ss_time_diff = ss_time_diff / time_factor
-
-            new_start_time = prev_new_start_time + ss_time_diff
-
-        new_end_time = new_start_time + se_time_diff
-
-        new_row = [
-            device_type,
-            device_name,
-            action_type,
-            action_value,
-            new_start_time,
-            new_end_time,
-        ]
-        new_rows.append(new_row)
-
-        prev_start_time = start_time
-        prev_end_time = end_time
-
-        prev_new_start_time = new_start_time
-
-    return pd.DataFrame(new_rows, columns=df.columns)
 
 
 class Observatory:
@@ -153,10 +111,7 @@ class Observatory:
         self.interrupt = False
 
         self.schedule_path = CONFIG.folder_schedule / f"{self.name}.csv"
-
-        self.schedule_mtime = os.path.getmtime(self.schedule_path)
-        self.schedule = None
-        self.schedule = self.read_schedule()
+        self.schedule_mtime = self.get_schedule_mtime()
 
         self.fits_config = pd.read_csv(
             CONFIG.folder_observatory / f"{self.name}_fits_headers.csv"
@@ -732,7 +687,7 @@ class Observatory:
                 try:
                     # check if schedule file updated
                     try:
-                        schedule_mtime = os.path.getmtime(self.schedule_path)
+                        schedule_mtime = self.get_schedule_mtime()
 
                         if (schedule_mtime > self.schedule_mtime) and (
                             self.schedule_running is False
@@ -1374,6 +1329,32 @@ class Observatory:
         # reset interrupt
         self.interrupt = False
 
+    def discover_schedule(self) -> None:
+        """
+        Discover the schedule files available
+        """
+
+        schedule_files_csv = list(CONFIG.folder_schedule.glob(f"{self.name}.csv"))
+        schedule_files_yaml = list(CONFIG.folder_schedule.glob(f"{self.name}.y*ml"))
+
+        if len(schedule_files_csv) > 0 and len(schedule_files_yaml) > 0:
+            raise ValueError(
+                f"Only one of {self.name}.csv or {self.name}.y*ml is expected in {CONFIG.folder_schedule}"
+            )
+
+        elif len(schedule_files_csv) == 0 and len(schedule_files_yaml) == 0:
+            raise FileNotFoundError(
+                f"No schedule files found in {CONFIG.folder_schedule}"
+            )
+
+        elif len(schedule_files_csv) > 0:
+            self.schedule_path = schedule_files_csv[0]
+        else:
+            self.schedule_path = schedule_files_yaml[0]
+
+        self.schedule_mtime = self.get_schedule_mtime()
+        self.__log("info", f"Schedule file found: {self.schedule_path}")
+
     def read_schedule(self) -> pd.DataFrame:
         """
         Read the schedule CSV file and return it as a pandas DataFrame.
@@ -1382,7 +1363,6 @@ class Observatory:
             pd.DataFrame: A DataFrame containing the schedule data, with columns 'start_time' and 'end_time'.
 
         Raises:
-            FileNotFoundError: If the schedule CSV file does not exist.
             Exception: If an error occurs during reading.
 
         Notes:
@@ -1393,7 +1373,7 @@ class Observatory:
         # TODO: schedule validity checker, add schedule as string to log?
 
         try:
-            schedule_mtime = os.path.getmtime(self.schedule_path)
+            schedule_mtime = self.get_schedule_mtime()
 
             if (schedule_mtime > self.schedule_mtime) or (self.schedule is None):
                 if self.schedule_running is True:
@@ -1404,37 +1384,15 @@ class Observatory:
 
                 self.__log("info", "Reading schedule")
 
-                schedule = pd.read_csv(self.schedule_path)
-                schedule["start_time"] = pd.to_datetime(schedule.start_time)
-                schedule["end_time"] = pd.to_datetime(schedule.end_time)
+                # this is a safety but should never happen
+                if not self.schedule_path.exists():
+                    self.__log("warning", f"Not schedule found at {self.schedule_path}")
 
-                # Sort the schedule by start_time
-                schedule = schedule.sort_values(by=["start_time"])
-
-                # For development: Truncate the schedule if self.truncate_schedule is True
-                if self.truncate_schedule is True:
-                    schedule = update_times(schedule, 10)
-
-                schedule["completed"] = False
-
-                self.__log("info", "Schedule read")
-
-                self.schedule_mtime = schedule_mtime
-
-                return schedule
+                else:
+                    return read_schedule(self.schedule_path)
             else:
                 return self.schedule
 
-        except FileNotFoundError:
-            self.error_source.append(
-                {
-                    "device_type": "Schedule",
-                    "device_name": "",
-                    "error": "Schedule CSV file not found.",
-                }
-            )
-            self.__log("error", "Schedule CSV file not found.")
-            raise
         except Exception as e:
             self.error_source.append(
                 {
@@ -1480,6 +1438,19 @@ class Observatory:
                 "id": "schedule",
             }
         )
+
+    def get_schedule_mtime(self) -> float:
+        """
+        Get the timestamp of the schedule file. If the file does not exist, return 0.
+
+        Returns:
+            float: The timestamp of the schedule file.
+
+        """
+        if not self.schedule_path.exists():
+            return 0
+        else:
+            return os.path.getmtime(self.schedule_path)
 
     def run_schedule(self) -> None:
         """
