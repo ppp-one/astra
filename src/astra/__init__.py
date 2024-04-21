@@ -2,4 +2,4 @@ from astra.config import Config
 
 CONFIG = Config()
 
-from astra.astra_object import Astra
+from astra.observatory import Observatory
