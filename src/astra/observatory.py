@@ -1757,6 +1757,7 @@ class Observatory:
         self,
         camera,
         exptime,
+        exposure_n,
         maxadu,
         row,
         hdr,
@@ -1859,9 +1860,11 @@ class Observatory:
             image_array = camera.get("ImageArray")
             imginfo = camera.get("ImageArrayInfo")
 
+            # TODO: make a cleaner selection of config
+            save_config = self.config["Camera"]
             # save image
             filepath = save_image(
-                image_array, imginfo, maxadu, hdr, camera.device_name, dateobs, folder
+                image_array, imginfo, maxadu, hdr, camera.device_name, dateobs, folder, exposure_n, save_config
             )
 
             self.logger.info(f"Image saved as {os.path.basename(filepath)}")
@@ -1933,6 +1936,7 @@ class Observatory:
                     hdr,
                     folder,
                     log_option=log_option,
+                    exposure
                 )
 
                 if not success:
@@ -2245,8 +2249,12 @@ class Observatory:
 
                         # save image
                         self.logger.debug(f"Saving image from {row['device_name']}")
+
+                        # TODO: make a cleaner selection of config
+                        save_config = self.config["Camera"]
+
                         filename = self.save_image(
-                            camera, hdr, dateobs, t0, maxadu, folder
+                            camera, hdr, dateobs, t0, maxadu, folder, count, save_config
                         )
 
                         # move telescope to flat position

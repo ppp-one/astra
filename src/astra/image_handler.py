@@ -79,6 +79,8 @@ def save_image(
     device_name: str,
     dateobs: datetime,
     folder: str,
+    image_sequence_n: int,
+    save_config: dict
 ) -> str:
     """
     Save an image to disk.
@@ -118,15 +120,89 @@ def save_image(
     hdu = fits.PrimaryHDU(nda, header=hdr)
 
     # create filename
-    filter_name = hdr["FILTER"].replace("'", "")
-    if hdr["IMAGETYP"] == "Light Frame":
-        filename = f"{device_name}_{filter_name}_{hdr['OBJECT']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
-    elif hdr["IMAGETYP"] in ["Bias Frame", "Dark Frame"]:
-        filename = f"{device_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+    filter_name_clean = hdr['FILTER'].replace("'", '')
+    filter_name = hdr['FILTER']
+
+    exptime = hdr['EXPTIME']
+
+    timestamp = date.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+    timestamp_date = date.strftime('%Y%m%d')
+    timestamp_time = date.strftime('%H%M%S')
+    image_type = hdr['IMAGETYPE']
+
+    if image_type == 'Light Frame':
+        if 'raw_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['raw_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{filter_clean}_{exptime}_{timestamp}.fits'
+
+        exptime = hdr['EXPTIME']
+        obj_name = hdr['OBJECT']
+
+        filename = filename_pattern.format(device=device_name,
+                                           filter=filter_name,
+                                           filter_clean=filter_name_clean,
+                                           object_name=obj_name,
+                                           exptime=exptime,
+                                           imagetype=image_type,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
+    elif image_type == ['Bias Frame']:
+        if 'bias_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['bias_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+
+        filename = filename_pattern.format(device=device_name,
+                                           filter=filter_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
+    elif image_type == ['Dark Frame']:
+        if 'dark_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['dark_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+
+        filename = filename_pattern.format(device=device_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
     else:
-        filename = f"{device_name}_{filter_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+        # Flat
+        if 'dark_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['flat_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+
+        # TODO: STX also has flats marked "Dusk" or "Dawn" depending on when the flat is taken
+        dusk_dawn = 'Dusk'
+
+        filename = filename_pattern.format(device=device_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n,
+                                           duskdawn=dusk_dawn)
 
     filepath = CONFIG.folder_images / folder / filename
+    # Make directory if not existing
+    filepath.parent.mkdir(exists_ok=True, parents=True)
 
     # save FITS file
     hdu.writeto(filepath)
