@@ -82,7 +82,7 @@ class Guider:
 
         # set up the image glob string
         # create reference directory if not exists
-        self.reference_dir = CONFIG.folder_images / "autoguider_ref"
+        self.reference_dir = CONFIG.paths.folder_images / "autoguider_ref"
         self.reference_dir.mkdir(parents=True, exist_ok=True)
 
         # pulseGuide conversions

@@ -138,7 +138,7 @@ def save_image(
         str: The file path to the saved image.
 
     """
-    calibrate_guiding_path = CONFIG.folder_images / "calibrate_guiding"
+    calibrate_guiding_path = CONFIG.paths.folder_images / "calibrate_guiding"
 
     if not calibrate_guiding_path.exists():
         print("Creating directory: {}".format(calibrate_guiding_path))
@@ -267,7 +267,7 @@ def newFilename(direction, pulse_time, image_id):
     """
     filename = "step_{:03d}_d{}_{}ms.fits".format(image_id, direction, pulse_time)
 
-    filepath = CONFIG.folder_images / "calibrate_guiding" / filename
+    filepath = CONFIG.paths.folder_images / "calibrate_guiding" / filename
 
     image_id += 1
     return filepath, image_id

@@ -18,17 +18,18 @@ Astra schedules can be defined as a yaml file located in `assets/schedule` with 
 
 For example:
 
-`Callisto.yaml`
+`Callisto.yml`
+
 ```yaml
 - open:
-    start_time: '2024-01-11 23:31:40.915'
-    end_time: '2024-01-12 10:07:40.253'
+    start_time: "2024-01-11 23:31:40.915"
+    end_time: "2024-01-12 10:07:40.253"
 
 - flats:
-    filter: ['I+z']
+    filter: ["I+z"]
     n: [10]
-    start_time: '2024-01-11 23:31:40.915'
-    end_time: '2024-01-12 00:16:20.020'
+    start_time: "2024-01-11 23:31:40.915"
+    end_time: "2024-01-12 00:16:20.020"
 
 - object:
     object: Sp0711-3824
@@ -38,8 +39,8 @@ For example:
     exptime: 13
     guiding: true
     pointing: false
-    start_time: '2024-01-12 00:16:20.020'
-    end_time: '2024-01-12 04:49:20.020'
+    start_time: "2024-01-12 00:16:20.020"
+    end_time: "2024-01-12 04:49:20.020"
 
 - object:
     object: Sp0853-0329
@@ -49,32 +50,34 @@ For example:
     exptime: 21
     guiding: true
     pointing: false
-    start_time: '2024-01-12 04:51:20.020'
-    end_time: '2024-01-12 09:23:00.030'
+    start_time: "2024-01-12 04:51:20.020"
+    end_time: "2024-01-12 09:23:00.030"
 
 - flats:
-    filter: 'I+z'
+    filter: "I+z"
     n: 10
-    start_time: '2024-01-12 09:23:00.030'
-    end_time: '2024-01-12 10:07:40.253'
+    start_time: "2024-01-12 09:23:00.030"
+    end_time: "2024-01-12 10:07:40.253"
 
 - close:
-    start_time: '2024-01-12 10:07:40.253'
-    end_time: '2024-01-12 10:12:40.253'
-  
+    start_time: "2024-01-12 10:07:40.253"
+    end_time: "2024-01-12 10:12:40.253"
+
 - calibration:
-    exptime: [0,10,13,15,21,30,60,120]
-    n: [10,10,10,10,10,10,10,10]
-    start_time: '2024-01-12 10:12:40.253'
-    end_time: '2024-01-12 10:37:40.253'
+    exptime: [0, 10, 13, 15, 21, 30, 60, 120]
+    n: [10, 10, 10, 10, 10, 10, 10, 10]
+    start_time: "2024-01-12 10:12:40.253"
+    end_time: "2024-01-12 10:37:40.253"
 ```
 
-*TODO: describe each action and possible parameters*
+_TODO: describe each action and possible parameters_
 
 ## (original) CSV format
+
 The original way of defining schedules in Astra is to use a csv file located in `assets/schedule` with the following syntax:
 
 `Callito.csv`
+
 ```csv
 device_type,device_name,action_type,action_value,start_time,end_time
 Camera,camera_Callisto,open,{},2024-01-11 23:31:40.915,2024-01-12 10:07:40.253

@@ -32,12 +32,12 @@ conda env create -f <operating system>-environment.yml
 
 ### Usage
 
-1. Have Alpaca compliant equipment or [simulators](https://github.com/ASCOMInitiative/ASCOM.Alpaca.Simulators) active in your local network. 
+1. Have Alpaca compliant equipment or [simulators](https://github.com/ASCOMInitiative/ASCOM.Alpaca.Simulators) active in your local network.
 2. Edit the config file `config/<observatory-name>.yml` to specify the observatory parameters and equipment's connection with Alpaca. See `config/Callisto.yml` as an example.
-3. Adjust `config/<observatory-name>_fits_headers.csv` to your needs, specifically look at the rows with `astra_fixed`. See `config/Callisto_fits_headers.csv` as an example.
-3. Have a schedule file `schedule/<observatory-name>.csv` ready to be used. See `schedule/Callisto.csv` as an example.
-4. Remove any unused `.yml` files in the `config` folder, and `.csv` files in the schedule folder. Otherwise, Astra will pick them up.
-5. Then run the following commands to start Astra:
+3. Adjust `config/<observatory-name>_fits_header_config.csv` to your needs, specifically look at the rows with `astra_fixed`. See `config/Callisto_fits_header_config.csv` as an example.
+4. Have a schedule file `schedule/<observatory-name>.csv` ready to be used. See `schedule/Callisto.csv` as an example.
+5. Remove any unused `.yml` files in the `config` folder, and `.csv` files in the schedule folder. Otherwise, Astra will pick them up.
+6. Then run the following commands to start Astra:
 
 ```
 conda activate astra

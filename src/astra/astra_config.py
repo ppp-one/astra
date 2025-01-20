@@ -1,114 +1,173 @@
 from datetime import datetime
 from pathlib import Path
-
+from typing import Optional, List
 import yaml
+from dataclasses import dataclass
+
+
+@dataclass
+class ConfigPaths:
+    """Container for all configuration and asset paths."""
+
+    folder_config: Path
+    file_config: Path
+    folder_assets: Path
+    folder_observatory: Path
+    folder_schedule: Path
+    folder_log: Path
+    folder_images: Path
+    file_log: Path
 
 
 class Config:
     """
-    Configuration class for astra. It loads the astra_config file and creates the
-    assets folder if they do not exist.
+    Configuration manager for Astra.
+
+    Handles loading configuration settings, managing asset folders, and maintaining
+    observatory-specific settings. Uses a YAML configuration file and creates necessary
+    directory structures.
     """
 
-    folder_config: str = Path(__file__).parent.parent
-    """folder where astra config file is located"""
-
-    file_config: str = folder_config / "astra_config.yaml"
-    """config file path"""
-
-    folder_assets: None
-    """folder where working sub-folders like schedule, log... are located"""
+    TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+    REQUIRED_FOLDERS = ["logs", "schedules", "observatory_config", "images"]
+    DEFAULT_ASSETS_PATH = Path(__file__).parent.parent.parent / "assets"
 
     def __init__(self):
-        self.folder_config.mkdir(exist_ok=True)
-        self.config = self.load_config()
-        self.str_time_format = "%Y-%m-%d %H:%M:%S"
-        self.check_assets_folders("logs", "schedules", "observatory_config", "images")
+        """Initialize the configuration manager."""
+        self.paths = self._initialize_paths()
+        self.paths.folder_config.mkdir(exist_ok=True)
+        self.config = self._load_config()
+        self._setup_asset_folders()
 
-    @property
-    def folder_observatory(self):
-        """Folder where telescope configuration are stored."""
-        return self.folder_assets / "observatory_config"
+    def _initialize_paths(self) -> ConfigPaths:
+        """Initialize all path objects."""
+        folder_config = Path(__file__).parent.parent
+        folder_assets = Path(
+            self.DEFAULT_ASSETS_PATH
+        )  # Will be updated after config load
 
-    @property
-    def folder_schedule(self):
-        """Folder where schedule files are stored."""
-        return self.folder_assets / "schedules"
+        return ConfigPaths(
+            folder_config=folder_config,
+            file_config=folder_config / "astra_config.yml",
+            folder_assets=folder_assets,
+            folder_observatory=folder_assets / "observatory_config",
+            folder_schedule=folder_assets / "schedules",
+            folder_log=folder_assets / "logs",
+            folder_images=folder_assets / "images",
+            file_log=folder_assets / "logs" / "astra.log",
+        )
 
-    @property
-    def folder_log(self):
-        """Folder where log files are stored."""
-        return self.folder_assets / "logs"
+    def _load_config(self) -> dict:
+        """Load or create the configuration file."""
+        if not self.paths.file_config.exists():
+            return self._create_initial_config()
 
-    @property
-    def folder_images(self):
-        """Folder where image files are stored."""
-        return self.folder_assets / "images"
+        with open(self.paths.file_config, "r") as file:
+            config = yaml.safe_load(file)
 
-    @property
-    def file_log(self):
-        """Log file path."""
-        return self.folder_log / "astra.log"
+        # Update folder_assets path after loading config
+        self.paths.folder_assets = Path(config["folder_assets"])
+        return config
 
-    def check_assets_folders(self, *names, exist_ok=True):
-        """Check if the assets folders exist, if not create them, i.e.
-        telescope, schedule, log. Base folder is defined in the config file as
-        ``folder_assets``.
+    def _create_initial_config(self) -> dict:
+        """Create initial configuration through user prompts."""
+        print("\nWelcome to Astra! Please provide the following information:\n")
 
-        Parameters
-        ----------
-        exist_ok : bool, optional
-            If True, do not raise an exception if the folder already exists.
-            Default is True.
-        """
-        self.folder_assets = Path(self.config["folder_assets"])
-        self.folder_assets.mkdir(exist_ok=exist_ok)
+        folder_assets = self._prompt_assets_path()
+        gaia_db = self._prompt_gaia_db()
+        observatory_name = input("\nPlease enter the name of the observatory: ").strip()
 
-        for folder in names:
-            if not (self.folder_assets / folder).exists():
-                (self.folder_assets / folder).mkdir()
-                print(f"Created folder {self.folder_assets / folder}")
+        config = {
+            "folder_assets": str(folder_assets),
+            "gaia_db": gaia_db,
+            "observatory_name": observatory_name,
+            "user_approved": False,
+        }
 
-        # write onto log file (create if not exist)
-        with open(self.file_log, "a") as file:
-            file.write("")
+        with open(self.paths.file_config, "w") as file:
+            yaml.dump(config, file)
+            print(f"\nCreated config file: {self.paths.file_config}")
 
-    def check_config_file(self, exist_ok=True):
-        """Check if the config file exists, if not create it.
+        return config
 
-        Parameters
-        ----------
-        exist_ok : bool, optional
-            If True, do not raise an exception if the file already exists.
-            Default is True.
+    def _prompt_assets_path(self) -> Path:
+        """Prompt user for assets folder location."""
+        while True:
+            use_default = (
+                input(f"Use default assets path ({self.DEFAULT_ASSETS_PATH})? [y/n]: ")
+                .strip()
+                .lower()
+            )
 
-        Raises
-        ------
-        FileExistsError
-            If the file already exists and `exist_ok` is False.
-        """
-        if not self.file_config.exists():
-            if not exist_ok:
-                raise FileExistsError("Config file already exists")
+            if use_default == "y":
+                return self.DEFAULT_ASSETS_PATH
+            elif use_default == "n":
+                custom_path = Path(input("Please enter the desired path: ").strip())
+                if custom_path.exists():
+                    return custom_path
+                print("Error: Path does not exist. Please create it first.")
             else:
-                config = {
-                    "folder_assets": str(
-                        Path(__file__).parent.parent.parent / "assets"
-                    ),
-                    "gaia_db": None,
-                }
+                print("Please enter 'y' or 'n'.")
 
-                with open(self.file_config, "w") as file:
-                    yaml.dump(config, file)
-                    print(f"Created config file {self.file_config}")
+    def _prompt_gaia_db(self) -> Optional[str]:
+        """Prompt user for Gaia DB location."""
+        while True:
+            use_local = input("\nUse local Gaia DB? [y/n]: ").strip().lower()
 
-    def load_config(self):
-        """Load the config file."""
-        self.check_config_file()
+            if use_local == "y":
+                db_path = Path(input("Please enter the path to Gaia DB: ").strip())
+                if db_path.exists():
+                    return str(db_path)
+                print("Error: File does not exist. Please provide a valid path.")
+            elif use_local == "n":
+                return None
+            else:
+                print("Please enter 'y' or 'n'.")
 
-        with open(self.file_config, "r") as file:
-            return yaml.safe_load(file)
+    def _setup_asset_folders(self) -> None:
+        """Set up all required asset folders."""
+        self.paths.folder_assets.mkdir(exist_ok=True)
 
-    def as_datetime(self, string):
-        """Convert a string to a datetime object."""
-        return datetime.strptime(string, self.str_time_format)
+        for folder_name in self.REQUIRED_FOLDERS:
+            folder = self.paths.folder_assets / folder_name
+            if not folder.exists():
+                folder.mkdir()
+
+                if folder_name == "observatory_config":
+                    self._copy_template_configs(folder)
+
+                print(f"Created folder: {folder}")
+
+        if not self.config["user_approved"]:
+            self._show_setup_message()
+
+    def _copy_template_configs(self, target_folder: Path) -> None:
+        """Copy template configuration files to the observatory config folder."""
+        template_folder = Path(__file__).parent.parent / "template_configs"
+        if not template_folder.exists():
+            return
+
+        observatory_name = self.config["observatory_name"]
+        for template in template_folder.iterdir():
+            new_name = template.name
+            if template.suffix == ".csv":
+                new_name = f"{observatory_name}_fits_header_config.csv"
+            elif template.suffix == ".yml":
+                new_name = f"{observatory_name}_config.yml"
+
+            destination = target_folder / new_name
+            destination.write_bytes(template.read_bytes())
+
+    def _show_setup_message(self) -> None:
+        """Display setup completion message."""
+        print(f"\nPlease:")
+        print(
+            f"1. Edit the observatory config files in {self.paths.folder_observatory}"
+        )
+        print(f"2. Set 'user_approved: true' in {self.paths.file_config}")
+        print("before proceeding.\n")
+        exit()
+
+    def as_datetime(self, date_string: str) -> datetime:
+        """Convert a string to a datetime object using the configured format."""
+        return datetime.strptime(date_string, self.TIME_FORMAT)

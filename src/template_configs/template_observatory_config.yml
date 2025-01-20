@@ -57,26 +57,23 @@ ObservingConditions:
     device_number: 0
     closing_limits:
       Humidity:
-        - min: 0
-          max: 70
+        - max: 70
           max_safe_duration: 30
-        - min: 0
-          max: 80
+        - max: 80
           max_safe_duration: 150
-        - min: 0
-          max: 90
+        - max: 90
           max_safe_duration: 300
       WindSpeed:
-        - min: 0
-          max: 10
+        - max: 10
           max_safe_duration: 30
       SkyTemperature:
-        - min: -999
-          max: -30
+        - max: -30
           max_safe_duration: 30
-        - min: -999
-          max: -20
+        - max: -20
           max_safe_duration: 150
+      SkyBrightness:
+        - max: 1000
+          max_safe_duration: 30
 SafetyMonitor:
   - device_name: safety_observatoryname
     ip: localhost

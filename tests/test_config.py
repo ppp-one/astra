@@ -4,4 +4,4 @@ import pytest
 def test_import_astra():
     import astra
 
-    astra.CONFIG.file_config
+    astra.CONFIG.paths.file_config

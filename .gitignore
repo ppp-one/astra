@@ -1,6 +1,6 @@
 temp
 assets
-astra_config.yaml
+astra_config.yml
 
 # images
 *.fits

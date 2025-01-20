@@ -63,7 +63,7 @@ class Observatory:
         """
 
         # set observatory name
-        self.name = Path(config_filename).stem
+        self.name = Path(config_filename).stem.replace("_config", "")
 
         # create database
         self.cursor = self.create_db()
@@ -83,7 +83,7 @@ class Observatory:
         # read observatory config files
         self.config = self.read_config(config_filename)
         self.fits_config = pd.read_csv(
-            CONFIG.folder_observatory / f"{self.name}_fits_headers.csv"
+            CONFIG.paths.folder_observatory / f"{self.name}_fits_header_config.csv"
         )
 
         # runnning threads list
@@ -124,7 +124,7 @@ class Observatory:
         self.schedule_running = False
 
         # schedule paths
-        self.schedule_path = CONFIG.folder_schedule / f"{self.name}.csv"
+        self.schedule_path = CONFIG.paths.folder_schedule / f"{self.name}.csv"
         self.schedule_mtime = self.get_schedule_mtime()
 
         # load devices
@@ -160,7 +160,7 @@ class Observatory:
             cursor (Sqlite3Worker): The cursor object for the newly created database.
         """
 
-        db_name = CONFIG.folder_log / f"{self.name}.db"
+        db_name = CONFIG.paths.folder_log / f"{self.name}.db"
         cursor = Sqlite3Worker(db_name)
 
         db_command_0 = """CREATE TABLE IF NOT EXISTS polling (
@@ -208,10 +208,10 @@ class Observatory:
                 # TODO: action
 
             dt_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-            db_path = CONFIG.folder_log / f"{self.name}.db"
+            db_path = CONFIG.paths.folder_log / f"{self.name}.db"
 
             # create backup directory if not exists
-            archive_path = CONFIG.folder_log / "archive"
+            archive_path = CONFIG.paths.folder_log / "archive"
             archive_path.mkdir(exist_ok=True)
 
             tables = ["polling", "log"]
@@ -788,9 +788,6 @@ class Observatory:
         longest_max_safe_duration = 0
         if "ObservingConditions" in self.config and "Dome" in self.config:
 
-            # check if observatory closed
-            # open = heartbeat? or direct query?
-
             # check current weather or history?
 
             if "closing_limits" in self.config["ObservingConditions"][0]:
@@ -801,16 +798,33 @@ class Observatory:
                     for limit in limits:
 
                         max_safe_duration = limit["max_safe_duration"]
-                        min_limit = limit["min"]
-                        max_limit = limit["max"]
+                        min_limit = limit.get("min", None)
+                        max_limit = limit.get("max", None)
 
-                        q = f"""
-                        SELECT COUNT(*), MAX(datetime) FROM polling 
-                        WHERE device_type = 'ObservingConditions' 
-                        AND device_command = '{parameter}' 
-                        AND (CAST(device_value AS FLOAT) < {min_limit} OR CAST(device_value AS FLOAT) > {max_limit})
-                        AND datetime > datetime('now', '-{max_safe_duration} minutes')
-                        """
+                        if min_limit is not None and max_limit is not None:
+                            q = f"""
+                            SELECT COUNT(*), MAX(datetime) FROM polling 
+                            WHERE device_type = 'ObservingConditions' 
+                            AND device_command = '{parameter}' 
+                            AND (CAST(device_value AS FLOAT) < {min_limit} OR CAST(device_value AS FLOAT) > {max_limit})
+                            AND datetime > datetime('now', '-{max_safe_duration} minutes')
+                            """
+                        elif min_limit is not None:
+                            q = f"""
+                            SELECT COUNT(*), MAX(datetime) FROM polling 
+                            WHERE device_type = 'ObservingConditions' 
+                            AND device_command = '{parameter}' 
+                            AND CAST(device_value AS FLOAT) < {min_limit}
+                            AND datetime > datetime('now', '-{max_safe_duration} minutes')
+                            """
+                        elif max_limit is not None:
+                            q = f"""
+                            SELECT COUNT(*), MAX(datetime) FROM polling 
+                            WHERE device_type = 'ObservingConditions' 
+                            AND device_command = '{parameter}' 
+                            AND CAST(device_value AS FLOAT) > {max_limit}
+                            AND datetime > datetime('now', '-{max_safe_duration} minutes')
+                            """
 
                         rows = self.cursor.execute(q)
 

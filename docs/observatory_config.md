@@ -2,7 +2,7 @@
 
 ## Observatory configuration
 
-`{CONFIG.folder_assets}/observatory/Calisto.yaml`
+`{CONFIG.paths.folder_assets}/observatory/Calisto.yml`
 
 ```yaml
 Telescope:
@@ -12,21 +12,21 @@ Telescope:
     pointing_threshold: 0.06 # arcmins
     guider:
       PIX2TIME:
-        '+x': 69.32860207831231
-        '-x': 69.05795081331794
-        '+y': 69.32860207831231
-        '-y': 69.32860207831231
-      RA_AXIS: 'y'
+        "+x": 69.32860207831231
+        "-x": 69.05795081331794
+        "+y": 69.32860207831231
+        "-y": 69.32860207831231
+      RA_AXIS: "y"
       DIRECTIONS:
-        '+x': North
-        '-x': South
-        '+y': East
-        '-y': West
+        "+x": North
+        "-x": South
+        "+y": East
+        "-y": West
       PID_COEFFS:
-        'x': {'p': 0.70, 'i': 0.02, 'd': 0.0}
-        'y': {'p': 0.50, 'i': 0.02, 'd': 0.0}
-        'set_x': 0.0
-        'set_y': 0.0
+        "x": { "p": 0.70, "i": 0.02, "d": 0.0 }
+        "y": { "p": 0.50, "i": 0.02, "d": 0.0 }
+        "set_x": 0.0
+        "set_y": 0.0
       WAIT_TIME: 10
 Focuser:
   - device_name: focuser_Callisto
@@ -44,7 +44,7 @@ Camera:
       bias_offset: 300
       lower_exptime_limit: 6
       upper_exptime_limit: 60
-    paired_devices: 
+    paired_devices:
       Telescope: telescope_Callisto
       Focuser: focuser_Callisto
       Dome: dome_Callisto
@@ -57,7 +57,7 @@ Dome:
     device_number: 0
 FilterWheel:
   - device_name: fw_Callisto
-    ip: localhost:11111 
+    ip: localhost:11111
     device_number: 0
 ObservingConditions:
   - device_name: weather_Callisto
@@ -70,12 +70,12 @@ SafetyMonitor:
     time_to_safe: 30
 Misc:
   # Webcam: http://172.16.0.198:8888/inside
-  backup_time: '12:00'
+  backup_time: "12:00"
 ```
 
 # FITS headers configuration
 
-`{CONFIG.folder_assets}/observatory/Calisto_fits_headers.yaml`
+`{CONFIG.paths.folder_assets}/observatory/Calisto_fits_header_config.yml`
 
 ```csv
 ESO_mandatory,dtype,fixed,header,device_type,device_command,comment,

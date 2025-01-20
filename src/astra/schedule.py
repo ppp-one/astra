@@ -376,17 +376,17 @@ def process_schedule(filename, observatory_name=None, truncate=False) -> pd.Data
 #     Discover the schedule files available
 #     """
 
-#     schedule_files_csv = list(CONFIG.folder_schedule.glob(f"{self.name}.csv"))
-#     schedule_files_yaml = list(CONFIG.folder_schedule.glob(f"{self.name}.y*ml"))
+#     schedule_files_csv = list(CONFIG.paths.folder_schedule.glob(f"{self.name}.csv"))
+#     schedule_files_yaml = list(CONFIG.paths.folder_schedule.glob(f"{self.name}.y*ml"))
 
 #     if len(schedule_files_csv) > 0 and len(schedule_files_yaml) > 0:
 #         raise ValueError(
-#             f"Only one of {self.name}.csv or {self.name}.y*ml is expected in {CONFIG.folder_schedule}"
+#             f"Only one of {self.name}.csv or {self.name}.y*ml is expected in {CONFIG.paths.folder_schedule}"
 #         )
 
 #     elif len(schedule_files_csv) == 0 and len(schedule_files_yaml) == 0:
 #         raise FileNotFoundError(
-#             f"No schedule files found in {CONFIG.folder_schedule}"
+#             f"No schedule files found in {CONFIG.paths.folder_schedule}"
 #         )
 
 #     elif len(schedule_files_csv) > 0:

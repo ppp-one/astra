@@ -23,6 +23,9 @@ from fastapi.templating import Jinja2Templates
 from astra import CONFIG
 from astra.observatory import Observatory
 
+# silence httpx logging
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 # global variables
 FRONTEND_PATH = Path(__file__).parent / "frontend"
 OBSERVATORIES = {}
@@ -41,7 +44,7 @@ def load_observatories():
     global WEBCAMFEEDS
     global FWS
 
-    config_files = glob(str(CONFIG.folder_observatory / "*.yaml"))
+    config_files = glob(str(CONFIG.paths.folder_observatory / "*_config.yml"))
 
     for config_filename in config_files:
         obs = Observatory(config_filename, TRUNCATE_SCHEDULE, speculoos=False)
@@ -62,7 +65,7 @@ def load_observatories():
 
 
 def observatory_db(name):
-    db = sqlite3.connect(CONFIG.folder_log / f"{name}.db")
+    db = sqlite3.connect(CONFIG.paths.folder_log / f"{name}.db")
     return db
 
 
@@ -121,31 +124,26 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/")
-async def root(request: Request):
-    return FRONTEND.TemplateResponse(
-        "index.html.j2",
-        {
-            "request": request,
-            "observatories": OBSERVATORIES.keys(),
-            "webcamfeeds": WEBCAMFEEDS,
-        },
-    )
-
-
-@app.get("/favicon.svg", include_in_schema=False)
-async def favicon():
-    return FileResponse(str(FRONTEND_PATH / "favicon.svg"))
-
-
-@app.get("/js/{file}", include_in_schema=False)
-async def js(file: str):
-    return FileResponse(str(FRONTEND_PATH / "js" / file))
-
-
-@app.get("/frontend/{image}", include_in_schema=False)
-async def lastest_image(image: str):
-    return FileResponse(str(FRONTEND_PATH / image))
+@app.get("/{path:path}", include_in_schema=False)
+async def serve_files(request: Request, path: str = ""):
+    if path == "":
+        return FRONTEND.TemplateResponse(
+            "index.html.j2",
+            {
+                "request": request,
+                "observatories": list(OBSERVATORIES.keys()),
+                "webcamfeeds": WEBCAMFEEDS,
+            },
+            request=request,
+        )
+    elif path == "favicon.svg":
+        return FileResponse(str(FRONTEND_PATH / "favicon.svg"))
+    elif path.startswith("js/"):
+        return FileResponse(str(FRONTEND_PATH / path))
+    elif path.startswith("frontend/"):
+        return FileResponse(str(FRONTEND_PATH / path[len("frontend/") :]))
+    else:
+        return HTMLResponse(status_code=404, content="Not Found")
 
 
 @app.get("/video/{observatory}/{filename:path}", include_in_schema=False)
@@ -176,24 +174,6 @@ async def heartbeat(observatory: str):
     obs = OBSERVATORIES[observatory]
 
     return {"status": "success", "data": obs.heartbeat, "message": ""}
-
-
-@app.get("/api/pausepolls/{observatory}")
-def pause_polls(observatory: str):
-    obs = OBSERVATORIES[observatory]
-
-    obs.pause_polls()
-
-    return {"status": "success", "data": "null", "message": ""}
-
-
-@app.get("/api/resumepolls/{observatory}")
-def resume_polls(observatory: str):
-    obs = OBSERVATORIES[observatory]
-
-    obs.resume_polls()
-
-    return {"status": "success", "data": "null", "message": ""}
 
 
 @app.get("/api/open/{observatory}")
@@ -244,23 +224,6 @@ async def start_schedule(observatory: str):
 async def stop_schedule(observatory: str):
     obs = OBSERVATORIES[observatory]
     obs.schedule_running = False
-
-    return {"status": "success", "data": "null", "message": ""}
-
-
-@app.get("/api/ackastelos/{observatory}")
-async def ackastelos(observatory: str):
-    obs = OBSERVATORIES[observatory]
-
-    obs.astelos_check_and_ack_error()
-
-    return {"status": "success", "data": "null", "message": ""}
-
-
-@app.get("/api/connect/{observatory}")
-async def connect(observatory: str):
-    obs = OBSERVATORIES[observatory]
-    obs.connect_all()
 
     return {"status": "success", "data": "null", "message": ""}
 
