@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 import time
 from datetime import datetime
+from datetime import time as dttime
 from threading import Thread
 
 import astropy.units as u
@@ -15,6 +16,8 @@ from guiding import Guider
 import yaml
 import os
 import psutil
+import pathlib
+
 from alpaca_device_process import AlpacaDevice
 # from ascom_device_process import AscomDevice
 from astropy.coordinates import EarthLocation, SkyCoord
@@ -135,6 +138,16 @@ class Astra():
         self.watchdog_running = False
         self.schedule_running = False
         self.interrupt = False
+
+        self.config = {'raw_filename_pattern': 'Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence:03d}-{filter_orig}.fts',
+                       'raw_filename_pattern_glob': 'Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence}-{filter_orig}.fts',
+                       'bias_filename_pattern': 'Bias/{timestamp_date}-{timestamp_time}-Bias-S001-R001-C{sequence:03d}-NoFilt.fts',
+                       'dark_filename_pattern': 'Dark/{timestamp_date}-{timestamp_time}-Dark-S001-R001-C{sequence:03d}-NoFilt.fts',
+                       'flat_filename_pattern': 'Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-C{sequence:03d}.fts',
+                       'duskdawn_cutoff': '08:00'}
+
+        # self.config = {'duskdawn_cutoff': '08:00'}
+        
         
         self.observatory = self.read_config(config_filename)      
 
@@ -1438,7 +1451,7 @@ class Astra():
             return False
 
     def perform_exposure(
-        self, camera, exptime, row, hdr, use_light=True, log_option=None, maximal_sleep_time=0.01
+            self, camera, exptime, exposure_n, row, hdr, use_light=True, log_option=None, maximal_sleep_time=0.01
     ) -> bool:
         """
         Perform camera exposure, log information, and wait for the image to be ready.
@@ -1538,7 +1551,7 @@ class Astra():
         camera = self.devices[row['device_type']][row['device_name']]
 
         maxadu = camera.get('MaxADU')
-
+        exposure_count = 0
         for i, exptime in enumerate(action_value['exptime']):
             if not self.check_conditions(row):
                 break
@@ -1570,8 +1583,8 @@ class Astra():
 
                 # save image
                 self.__log('debug', f"Saving image from {row['device_name']}")
-                self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
-                
+                self.save_image(camera, hdr, dateobs, t0, maxadu, folder, exposure_count, self.config)
+                exposure_count += 1
         self.__log(
             'info', 
             f"Calibration sequence ended for {row['device_name']}, "
@@ -1613,7 +1626,7 @@ class Astra():
         camera = self.devices[row['device_type']][row['device_name']]
 
         maxadu = camera.get('MaxADU')
-
+        exposure_count = 0
         for i, exptime in enumerate(action_value['exptime']):
 
             count = 0
@@ -1646,7 +1659,8 @@ class Astra():
                         
                         # save image
                         self.__log('debug', f"Saving image from {row['device_name']}")
-                        self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
+                        self.save_image(camera, hdr, dateobs, t0, maxadu, folder, exposure_count, self.config)
+                        exposure_count += 1
 
                         count += 1
 
@@ -1701,6 +1715,7 @@ class Astra():
         pointing_attempts = 0
         guiding = False
 
+        exposure_count = 0
         while self.check_conditions(row):           
  
             r = camera.get('ImageReady')
@@ -1719,7 +1734,8 @@ class Astra():
                 
                 # save image
                 self.__log('debug', f"Saving image from {row['device_name']}")
-                filepath = self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
+                filepath = self.save_image(camera, hdr, dateobs, t0, maxadu, folder, exposure_count, self.config)
+                exposure_count+=1
                 
                 # pointing correction if not already done
                 if 'pointing' in action_value and pointing_complete is False:
@@ -1767,9 +1783,38 @@ class Astra():
                         
                         self.__log('info', f"Starting guiding for {paired_devices['Telescope']}")
                         
-                        filter_name = action_value['filter'].replace("'", "")
-                        glob_str = os.path.join("..", "images", folder, 
-                                                f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']}_*.fits")
+                        
+
+                        if 'raw_filename_pattern_glob' in self.config:
+                            # read filename config from config file
+                            filename_pattern = self.config['raw_filename_pattern_glob']
+                        else:
+                            # use default filename
+                            filename_pattern = '{device}_{filter_clean}_{exptime}_{timestamp}.fits'
+
+                        filter_name_clean = action_value['filter'].replace("'", "")
+                        filter_name = action_value['filter']
+                        exptime = action_value['exptime']
+                        obj_name = action_value['object']
+                        device_name = row['device_name']
+                    
+                        filename = filename_pattern.format(device=device_name,
+                                                           filter_orig=filter_name,
+                                                           filter_clean=filter_name_clean,
+                                                           object_name=obj_name,
+                                                           exptime=exptime,
+                                                           imagetype="*",
+                                                           timestamp="*",
+                                                           timestamp_date="*",
+                                                           timestamp_time="*",
+                                                           sequence="*")
+                        filepath = pathlib.Path('..') / 'images' / folder / filename
+                        
+                        glob_str = str(filepath)
+
+
+                        # glob_str = os.path.join("..", "images", folder, 
+                        #                         f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']}_*.fits")
                         
                         th = Thread(target=self.guider[paired_devices['Telescope']].guider_loop, args=(camera.device_name, glob_str,), daemon=True)
                         th.start()
@@ -1890,6 +1935,7 @@ class Astra():
                 time.sleep(1)
         
         # start taking flats
+        exposure_count = 0
         for i, filter_name in enumerate(action_value['filter']):
             
             count = 0
@@ -1939,8 +1985,8 @@ class Astra():
                         
                         # save image
                         self.__log('debug', f"Saving image from {row['device_name']}")
-                        filename = self.save_image(camera, hdr, dateobs, t0, maxadu, folder)
-
+                        filename = self.save_image(camera, hdr, dateobs, t0, maxadu, folder, exposure_count, self.config)
+                        exposure_count += 1
                         # move telescope to flat position
                         self.flats_position(obs_location, paired_devices, row)
                             
@@ -2218,7 +2264,11 @@ class Astra():
 
         return nda
         
-    def save_image(self, device : AlpacaDevice, hdr : fits.Header, dateobs : datetime, t0 : datetime, maxadu : int, folder : str) -> str:
+    def save_image(self, device : AlpacaDevice, hdr : fits.Header, dateobs : datetime, t0 : datetime, maxadu : int,
+                   folder : str,
+                   image_sequence_n: int,
+                   save_config: dict
+                   ) -> str:
         '''
         Save an image to disk.
 
@@ -2260,16 +2310,105 @@ class Astra():
 
         hdu = fits.PrimaryHDU(nda, header=hdr)
 
-        filter_name = hdr['FILTER'].replace("'", "")
+        filter_name_clean = hdr['FILTER'].replace("'", "")
+        filter_name = hdr['FILTER']
 
-        if hdr['IMAGETYP'] == 'Light Frame':
-            filename = f"{device.device_name}_{filter_name}_{hdr['OBJECT']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
-        elif hdr['IMAGETYP'] in ['Bias Frame', 'Dark Frame']:
-            filename = f"{device.device_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
-        else:
-            filename = f"{device.device_name}_{filter_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+        timestamp = date.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+        timestamp_date = date.strftime('%Y%m%d')
+        timestamp_time = date.strftime('%H%M%S')
+        image_type = hdr['IMAGETYP']
+
+        device_name = device.device_name
         
-        filepath = os.path.join('..', 'images', folder, filename)
+        if image_type == 'Light Frame':
+            if 'raw_filename_pattern' in save_config:
+                # read filename config from config file
+                filename_pattern = save_config['raw_filename_pattern']
+            else:
+                # use default filename
+                filename_pattern = '{device}_{filter_clean}_{exptime}_{timestamp}.fits'
+        
+            exptime = hdr['EXPTIME']
+            obj_name = hdr['OBJECT']
+            
+            filename = filename_pattern.format(device=device_name,
+                                               filter_orig=filter_name,
+                                               filter_clean=filter_name_clean,
+                                               object_name=obj_name,
+                                               exptime=exptime,
+                                               imagetype=image_type,
+                                               timestamp=timestamp,
+                                               timestamp_date=timestamp_date,
+                                               timestamp_time=timestamp_time,
+                                               sequence=image_sequence_n)
+        elif image_type == 'Bias Frame':
+            if 'bias_filename_pattern' in save_config:
+                # read filename config from config file
+                filename_pattern = save_config['bias_filename_pattern']
+            else:
+                # use default filename
+                filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+
+            exptime = hdr['EXPTIME']
+                            
+            filename = filename_pattern.format(device=device_name,
+                                               exptime=exptime,
+                                               imagetype=image_type,
+                                               timestamp=timestamp,
+                                               timestamp_date=timestamp_date,
+                                               timestamp_time=timestamp_time,
+                                               sequence=image_sequence_n)
+        elif image_type == 'Dark Frame':
+            if 'dark_filename_pattern' in save_config:
+                # read filename config from config file
+                filename_pattern = save_config['dark_filename_pattern']
+            else:
+                # use default filename
+                filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+                
+            exptime = hdr['EXPTIME']
+                
+            filename = filename_pattern.format(device=device_name,
+                                               exptime=exptime,
+                                               imagetype=image_type,
+                                               timestamp=timestamp,
+                                               timestamp_date=timestamp_date,
+                                               timestamp_time=timestamp_time,
+                                               sequence=image_sequence_n)
+        else:
+            # Flat
+            if 'flat_filename_pattern' in save_config:
+                # read filename config from config file
+                filename_pattern = save_config['flat_filename_pattern']
+            else:
+                # use default filename
+                filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
+                
+                # TODO: STX also has flats marked "Dusk" or "Dawn" depending on when the flat is taken
+                # need a clean way to set it for observatories with uncouth offsets to UTC
+
+            exptime = hdr['EXPTIME']
+
+            dusk_dawn = 'Dusk'
+            if date.time() < dttime.fromisoformat(self.config['duskdawn_cutoff']):
+                dusk_dawn = 'Dawn'
+                
+                
+            filename = filename_pattern.format(device=device_name,
+                                               filter_orig=filter_name,
+                                               filter_clean=filter_name_clean,
+                                               exptime=exptime,
+                                               imagetype=image_type,
+                                               timestamp=timestamp,
+                                               timestamp_date=timestamp_date,
+                                               timestamp_time=timestamp_time,
+                                               sequence=image_sequence_n,
+                                               duskdawn=dusk_dawn)
+        
+        
+        filepath = pathlib.Path('..') / 'images' / folder / filename
+        # Make directory if not existing
+        filepath.parent.mkdir(exist_ok=True, parents=True)
 
         self.__log('debug', 'Writing to disk')
         hdu.writeto(filepath)
