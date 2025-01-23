@@ -742,8 +742,6 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             "last_image": {"url": LAST_IMAGE_JPG, "useful_headers": USEFUL_HEADERS},
         }
 
-        obs.logger.info("Sending data to websocket")
-
         # make temp image, say how many images have been made?
         try:
             await websocket.send_json(data)
