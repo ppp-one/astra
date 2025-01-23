@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/js/tailwind-3.3.5.js"></script>
-    <script src="/js/plotly-2.20.0.min.js" charset="utf-8"></script>
     <script src="/js/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
@@ -308,17 +307,31 @@
             json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
                 var cls = 'number';
+
                 if (/^"/.test(match)) {
                     if (/:$/.test(match)) {
                         cls = 'key';
                     } else {
-                        cls = 'string';
+                        cls = 'string italic text-blue-300';
                     }
                 } else if (/true|false/.test(match)) {
-                    cls = 'boolean';
+                    cls = 'boolean italic';
+                    if (/true/.test(match)) {
+                        cls += ' text-green-500/50';
+                    } else if (/false/.test(match)) {
+                        cls += ' text-red-500/50';
+                    }
                 } else if (/null/.test(match)) {
-                    cls = 'null';
+                    cls = 'null italic text-red-500';
                 }
+
+                if (cls == 'number') {
+                    cls += ' italic text-blue-300'
+                    match = parseFloat(match).toFixed(3);
+                }
+
+                match = match.replace(/"/g, ''); // remove quotes
+
                 return '<span class="' + cls + '">' + match + '</span>';
             });
         }
@@ -396,7 +409,25 @@
                 row.addEventListener('mouseover', (e) => {
                     popup.classList.remove('hidden');
                     popup.classList.add('block');
-                    popup.innerHTML = syntaxHighlight(data[e.target.parentNode.key]);
+                    let text = syntaxHighlight(data[e.target.parentNode.key]);
+
+
+                    // Split the text into lines
+                    let lines = text.split('\n');
+
+                    // Check if there are 10 or more lines
+                    if (lines.length >= 16) {
+                        // Split the lines into two groups for the columns
+                        let mid = Math.ceil(lines.length / 2);
+                        let firstColumn = lines.slice(0, mid).join('\n');
+                        let secondColumn = lines.slice(mid).join('\n');
+
+                        // Wrap the content in divs and add Tailwind classes
+                        popup.innerHTML = `<div class="columns-2 gap-8 align-top"><div>${firstColumn}</div><div>${secondColumn}</div></div>`;
+                    } else {
+                        // If less than 10 lines, just set the text
+                        popup.innerHTML = text;
+                    }
                     movePopup(e);
                 });
 

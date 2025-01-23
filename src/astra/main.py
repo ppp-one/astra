@@ -754,6 +754,7 @@ async def serve_files(request: Request, path: str = ""):
 if __name__ == "__main__":
     import argparse
 
+    # TODO: add speculoos tag
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument("--debug", action="store_true", help="run in debug mode")
     parser.add_argument(
