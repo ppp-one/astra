@@ -499,7 +499,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("running updateWeatherChart")
-                    plotWeather(data, observatory, update, popup);
+                    plotWeather(data, observatory, update);
                 })
                 .then(() => {
 
