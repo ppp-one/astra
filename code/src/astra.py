@@ -3,7 +3,7 @@ import logging
 
 from typing import Optional
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import time as dttime
 from threading import Thread
 
@@ -139,14 +139,14 @@ class Astra():
         self.schedule_running = False
         self.interrupt = False
 
+        # Local hardcoded filename config for SaintEx, for proof of concept testing on real hardware. Can be integrated 
+        # into 0.3 with it's config file infrastructure if this works.
         self.config = {'raw_filename_pattern': 'Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence:03d}-{filter_orig}.fts',
                        'raw_filename_pattern_glob': 'Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence}-{filter_orig}.fts',
                        'bias_filename_pattern': 'Bias/{timestamp_date}-{timestamp_time}-Bias-S001-R001-C{sequence:03d}-NoFilt.fts',
                        'dark_filename_pattern': 'Dark/{timestamp_date}-{timestamp_time}-Dark-S001-R001-C{sequence:03d}-NoFilt.fts',
                        'flat_filename_pattern': 'Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-C{sequence:03d}.fts',
-                       'duskdawn_cutoff': '08:00'}
-
-        # self.config = {'duskdawn_cutoff': '08:00'}
+                       'UTC_offset_hours': '-8'}
         
         
         self.observatory = self.read_config(config_filename)      
@@ -1460,7 +1460,8 @@ class Astra():
             use_light (bool, optional): Whether to use light during the exposure (default is True).
             log_option (str or None, optional): Additional information for logging (default is None, adding nothing).
             maximal_sleep_time (float, optional): The maximum sleep time in seconds during the waiting process (default is 0.01).
-
+            exposure_n (int): numbering of this exposure in this list of exposures, for filename numbering
+        
         Returns:
             bool: True if the exposure was successful, False otherwise.
         """
@@ -1784,7 +1785,7 @@ class Astra():
                         self.__log('info', f"Starting guiding for {paired_devices['Telescope']}")
                         
                         
-
+                        # build filename from pattern
                         if 'raw_filename_pattern_glob' in self.config:
                             # read filename config from config file
                             filename_pattern = self.config['raw_filename_pattern_glob']
@@ -1792,12 +1793,15 @@ class Astra():
                             # use default filename
                             filename_pattern = '{device}_{filter_clean}_{exptime}_{timestamp}.fits'
 
+                        # get values to insert into pattern
                         filter_name_clean = action_value['filter'].replace("'", "")
                         filter_name = action_value['filter']
                         exptime = action_value['exptime']
                         obj_name = action_value['object']
                         device_name = row['device_name']
-                    
+
+                        # fill in pattern
+                        # this is used as a glob to find image files, so fill in with "*"
                         filename = filename_pattern.format(device=device_name,
                                                            filter_orig=filter_name,
                                                            filter_clean=filter_name_clean,
@@ -1808,14 +1812,13 @@ class Astra():
                                                            timestamp_date="*",
                                                            timestamp_time="*",
                                                            sequence="*")
+                        # create path
                         filepath = pathlib.Path('..') / 'images' / folder / filename
                         
+                        # get glob as string
                         glob_str = str(filepath)
 
-
-                        # glob_str = os.path.join("..", "images", folder, 
-                        #                         f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']}_*.fits")
-                        
+                        # launch guider loop
                         th = Thread(target=self.guider[paired_devices['Telescope']].guider_loop, args=(camera.device_name, glob_str,), daemon=True)
                         th.start()
 
@@ -2310,6 +2313,9 @@ class Astra():
 
         hdu = fits.PrimaryHDU(nda, header=hdr)
 
+        # build filename
+
+        # get values to fill filename with
         filter_name_clean = hdr['FILTER'].replace("'", "")
         filter_name = hdr['FILTER']
 
@@ -2319,7 +2325,8 @@ class Astra():
         image_type = hdr['IMAGETYP']
 
         device_name = device.device_name
-        
+
+        # fill filename pattern from config
         if image_type == 'Light Frame':
             if 'raw_filename_pattern' in save_config:
                 # read filename config from config file
@@ -2384,14 +2391,16 @@ class Astra():
                 # use default filename
                 filename_pattern = '{device}_{imagetype}_{exptime}_{timestamp}.fits'
                 
-                # TODO: STX also has flats marked "Dusk" or "Dawn" depending on when the flat is taken
-                # need a clean way to set it for observatories with uncouth offsets to UTC
+        
+        
 
             exptime = hdr['EXPTIME']
 
-            dusk_dawn = 'Dusk'
-            if date.time() < dttime.fromisoformat(self.config['duskdawn_cutoff']):
-                dusk_dawn = 'Dawn'
+            # STX has flats marked "Dusk" or "Dawn" depending on when the flat is taken, compute local time of image
+            # from UTC to check if it's a dusk or dawn flat
+            dusk_dawn = 'Dawn'
+            if date.time() + timedelta(hours=int(self.config['UTC_offset_hours'])).time() > dttime(hour=12):
+                dusk_dawn = 'Dusk'
                 
                 
             filename = filename_pattern.format(device=device_name,
