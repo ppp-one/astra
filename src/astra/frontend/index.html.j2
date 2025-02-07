@@ -779,7 +779,7 @@
                     // console.log("b", scrollPos, visibleHeight, scrollPos + visibleHeight, divHeight, scrollPos + visibleHeight - divHeight);
 
                     // if the div is scrolled to the bottom
-                    if (scrollPos + visibleHeight + 100 >= divHeight && log.length > 0) {
+                    if (scrollPos + visibleHeight + 300 >= divHeight && log.length > 0) {
                         div.scrollTop = div.scrollHeight;
                     }
 
@@ -825,6 +825,7 @@
                 }
 
                 if (scheduleLoadTime[observatory] < message['schedule_mtime']) {
+                    console.log("updating schedule");
                     scheduleLoadTime[observatory] = message['schedule_mtime'];
                     updateSchedule(observatory);
                 }

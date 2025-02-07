@@ -66,8 +66,8 @@ def process_schedule(filename, truncate=False) -> pd.DataFrame:
         raise ValueError(f"Unsupported file format: {schedule_path.suffix}")
 
     # at this point schedule must be a DataFrame
-    schedule["start_time"] = pd.to_datetime(schedule.start_time)
-    schedule["end_time"] = pd.to_datetime(schedule.end_time)
+    schedule["start_time"] = pd.to_datetime(schedule.start_time, utc=True)
+    schedule["end_time"] = pd.to_datetime(schedule.end_time, utc=True)
 
     # Sort the schedule by start_time
     schedule = schedule.sort_values(by=["start_time"])

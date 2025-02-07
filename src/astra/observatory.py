@@ -16,6 +16,7 @@ import yaml
 from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.io import fits
 from astropy.time import Time
+
 # https://github.com/dashawn888/sqlite3worker
 from sqlite3worker import Sqlite3Worker
 
@@ -123,12 +124,17 @@ class Observatory:
         self.watchdog_running = False
         self.schedule_running = False
 
-        # schedule paths
+        # schedule
         self.schedule_path = CONFIG.paths.schedules / f"{self.name}.csv"
         self.schedule_mtime = self.get_schedule_mtime()
+        self.schedule = None
+        if self.schedule_mtime != 0:
+            self.schedule = self.read_schedule()
 
         # load devices
-        self.monitor_action_queue = {}  # queue for monitoring/running actions per device_name
+        self.monitor_action_queue = (
+            {}
+        )  # queue for monitoring/running actions per device_name
         self.devices = self.load_devices()
         self.last_image = None
 
@@ -1305,6 +1311,7 @@ class Observatory:
                     )
 
                 self.logger.info("Reading schedule")
+                self.schedule_mtime = schedule_mtime
 
                 return process_schedule(
                     self.schedule_path,
