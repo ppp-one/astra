@@ -210,7 +210,7 @@ async def stop_schedule(observatory: str):
 
 
 @app.get("/api/cool_camera/{observatory}/{device_name}")
-async def cool_camera(observatory: str, device_name: str):
+def cool_camera(observatory: str, device_name: str):
     obs = OBSERVATORIES[observatory]
 
     row = {"device_name": device_name}
