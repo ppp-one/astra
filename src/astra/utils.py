@@ -13,9 +13,13 @@ from astropy.io import fits
 from astropy.stats import SigmaClip
 from astropy.time import Time
 from astropy.units import Quantity
-from astropy.wcs import utils
+from astropy.wcs.utils import WCS, pixel_to_skycoord
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
+
+from astra import Config
+
+CONFIG = Config()
 
 
 ## for final fits header
@@ -344,7 +348,7 @@ def gaia_db_query(
     min_ra = ra - ra_fov / 2
     max_ra = ra + ra_fov / 2
 
-    table = db_query("pointing.db", min_dec, max_dec, min_ra, max_ra)
+    table = db_query(CONFIG.gaia_db, min_dec, max_dec, min_ra, max_ra)
     if tmass:
         table = table.sort_values(by=["j_m"]).reset_index(drop=True)
     else:
@@ -368,7 +372,7 @@ def gaia_db_query(
     return np.array([table["ra"].values, table["dec"].values]).T
 
 
-def pointing(filepath, ra, dec):
+def pointing(filepath: str, ra: float, dec: float) -> Tuple[float, float, WCS, float]:
     # open image
     with fits.open(filepath) as hdu:
         header = hdu[0].header
@@ -425,7 +429,7 @@ def pointing(filepath, ra, dec):
     ]
 
     wcs = twirl.compute_wcs(stars, gaias)
-    real_center = utils.pixel_to_skycoord(
+    real_center = pixel_to_skycoord(
         image_clean.shape[1] / 2, image_clean.shape[0] / 2, wcs
     )
     offset = np.array(
@@ -436,26 +440,6 @@ def pointing(filepath, ra, dec):
 
     # convert gaia stars to pixel coordinates
     gaias_pixel = np.array(SkyCoord(gaias, unit="deg").to_pixel(wcs)).T
-
-    # import matplotlib.pyplot as plt
-    # import matplotlib
-    # matplotlib.use('agg')
-    # fig = plt.figure(figsize=(8,8))
-
-    # med = np.median(image_clean)
-    # std = np.std(image_clean)
-    # plt.imshow(image_clean, cmap="Greys_r", vmax=3*std + med, vmin=med - 1*std)
-
-    # plt.scatter(*stars.T, s=80, facecolors='none', edgecolors='tab:blue')
-
-    # plt.scatter(*gaias_pixel.T, s=120, facecolors='none', edgecolors='r')
-
-    # plt.plot(image_clean.shape[1]/2,image_clean.shape[0]/2, 'o')
-
-    # plt.plot(*utils.skycoord_to_pixel(SkyCoord(ra, dec, unit=[ra_unit, dec_unit]), wcs), 'o')
-
-    # fig.tight_layout()
-    # fig.savefig('pointing.jpg', dpi=300, format='jpg')
 
     #  if offset is too large, consider plate solve failed
     if abs(angular_separation.deg) > max(plate_scale * np.array(shape)):

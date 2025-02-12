@@ -1592,7 +1592,7 @@ class Observatory:
             weather_sensitive=False,
         )  # 30 minutes
 
-    def pre_sequence(self, row: dict, paired_devices: dict) -> tuple:
+    def pre_sequence(self, row: dict, paired_devices: dict) -> tuple[dict, str, dict]:
         """
         Prepare the observatory and metadata for a sequence.
 
@@ -1820,7 +1820,7 @@ class Observatory:
 
     def perform_exposure(
         self,
-        camera,
+        camera: AlpacaDevice,
         exptime,
         maxadu,
         row,
@@ -1829,6 +1829,7 @@ class Observatory:
         use_light=True,
         log_option=None,
         maximal_sleep_time=0.1,
+        wcs=None,
     ) -> bool:
         """
         Perform camera exposure, log information, and wait for the image to be ready.
@@ -1880,12 +1881,12 @@ class Observatory:
         )
 
         # Start exposure
+        exposure_start_time = time.time()
+        exposure_end_time = time.time()
         camera.get("StartExposure", Duration=exptime, Light=use_light)
 
         # Wait for the image to be ready
         exposure_successful = True
-        exposure_start_time = time.time()
-        exposure_end_time = time.time()
 
         while not camera.get("ImageReady"):
             if not self.check_conditions(row):
@@ -1925,7 +1926,14 @@ class Observatory:
 
             # save image
             filepath = save_image(
-                image_array, imginfo, maxadu, hdr, camera.device_name, dateobs, folder
+                image_array,
+                imginfo,
+                maxadu,
+                hdr,
+                camera.device_name,
+                dateobs,
+                folder,
+                wcs,
             )
 
             self.logger.info(f"Image saved as {os.path.basename(filepath)}")
@@ -1967,13 +1975,14 @@ class Observatory:
         else:
             exptime_list = [action_value["exptime"]]
             if "n" in action_value:
-                n_exposures_list = [action_value["n"]]
+                n_exposures_list = [int(action_value["n"])]
             else:
-                n_exposures_list = [1e6]  # hacky
+                n_exposures_list = [int(1e6)]  # hacky
 
         pointing_complete = False
         pointing_attempts = 0
         guiding = False
+        wcs = None
 
         for i, exptime in enumerate(exptime_list):
             if not self.check_conditions(row):
@@ -1995,6 +2004,7 @@ class Observatory:
                     hdr,
                     folder,
                     log_option=log_option,
+                    wcs=wcs,
                 )
 
                 if not success:
@@ -2002,11 +2012,21 @@ class Observatory:
 
                 # pointing correction if not already done
                 if action_value.get("pointing") and pointing_complete is False:
-                    pointing_complete = self.pointing_correction(
+                    pointing_complete, wcs = self.pointing_correction(
                         row, action_value, filepath, paired_devices
                     )
 
                     pointing_attempts += 1
+
+                    if wcs is not None:
+                        with fits.open(filepath, mode="update") as hdul:
+                            hdul[0].header.update(wcs.to_header())
+                            hdul.flush()
+
+                    if pointing_complete is False:
+                        wcs = (
+                            None  # to not contaminate the next image if pointing fails
+                        )
 
                     if pointing_attempts > 3 and pointing_complete is False:
                         self.logger.warning(
@@ -2023,7 +2043,9 @@ class Observatory:
                     and guiding is False
                     and pointing_complete is True
                 ):
-                    guiding = self.start_guider(paired_devices)
+                    guiding = self.start_guider(
+                        row, action_value, folder, paired_devices
+                    )
 
         # stop guiding at end of sequence
         if action_value.get("guiding"):
@@ -2044,6 +2066,8 @@ class Observatory:
         self.logger.info(
             f"Running pointing correction for {action_value['object']} with {row['device_name']}"
         )
+
+        wcs = None
 
         try:
             offset_ra, offset_dec, wcs, angular_separation = utils.pointing(
@@ -2087,16 +2111,38 @@ class Observatory:
 
             # sync telescope to corrected coordinates
             telescope = self.devices["Telescope"][paired_devices["Telescope"]]
-            telescope.get(
-                "SyncToCoordinates",
-                RightAscension=24 * (action_value["ra"] + offset_ra) / 360,
-                Declination=action_value["dec"] + offset_dec,
-            )
 
-            # re-slew to target
-            self.setup_observatory(paired_devices, action_value)
+            new_ra = action_value["ra"] + offset_ra
+            new_dec = action_value["dec"] + offset_dec
 
-            return pointing_complete
+            # SPECULOOS EDIT
+            if self.speculoos:
+                # slew to target
+                self.logger.info(
+                    f"Slewing Telescope {paired_devices['Telescope']} to corrected position: {new_ra} {new_dec}"
+                )
+                telescope.get(
+                    "SlewToCoordinatesAsync",
+                    RightAscension=24 * new_ra / 360,
+                    Declination=new_dec,
+                )
+
+                time.sleep(1)
+
+                # wait for slew to finish
+                self.wait_for_slew(paired_devices)
+
+            else:
+                telescope.get(
+                    "SyncToCoordinates",
+                    RightAscension=24 * (new_ra) / 360,
+                    Declination=new_dec,
+                )
+
+                # re-slew to target
+                self.setup_observatory(paired_devices, action_value)
+
+            return pointing_complete, wcs
 
     def start_guider(
         self, row: dict, action_value: dict, folder: str, paired_devices: dict
@@ -2112,7 +2158,7 @@ class Observatory:
             "images",
             folder,
             f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']}_*.fits",
-        )
+        )  # be careful with if custom naming is used
 
         th = Thread(
             target=self.guider[paired_devices["Telescope"]].guider_loop,

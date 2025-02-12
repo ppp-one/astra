@@ -135,7 +135,7 @@ class Config:
 
         if unchanged_files:
             message = (
-                "Warning: Observatory config files have note been modified "
+                "Warning: Observatory config files have not been modified "
                 " from default templates. Please update the following files "
                 "with your observatory's information:\n"
                 f"{self.paths.observatory_config}"

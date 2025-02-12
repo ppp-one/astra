@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from alpaca.camera import ImageMetadata
 from astropy.io import fits
+from astropy.wcs.utils import WCS
 
 from astra import Config
 
@@ -81,6 +82,7 @@ def save_image(
     device_name: str,
     dateobs: datetime,
     folder: str,
+    wcs: WCS = None,
 ) -> str:
     """
     Save an image to disk.
@@ -115,6 +117,10 @@ def save_image(
         date.strftime("%Y-%m-%dT%H:%M:%S.%f"),
         "UTC date/time when this file was written",
     )
+
+    # add WCS information
+    if wcs:
+        hdr.extend(wcs.to_header(), update=True)
 
     # create FITS HDU
     hdu = fits.PrimaryHDU(nda, header=hdr)
