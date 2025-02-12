@@ -55,6 +55,8 @@ class CustomImageClass(Image):
         sigma_clip = SigmaClip(sigma=3.0)
         bkg_estimator = MedianBackground()
 
+        self.raw_image = self.raw_image.astype(np.int16)
+
         bkg = Background2D(
             self.raw_image,
             (32, 32),
