@@ -38,6 +38,7 @@ LAST_IMAGE = None
 LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_SCHEDULE = False
+SPECULOOS = False
 
 
 def load_observatories():
@@ -50,7 +51,7 @@ def load_observatories():
     )  # should we use CONFIG.config['observatory_name'] here instead?
 
     for config_filename in config_files:
-        obs = Observatory(config_filename, TRUNCATE_SCHEDULE, speculoos=False)
+        obs = Observatory(config_filename, TRUNCATE_SCHEDULE, speculoos=SPECULOOS)
         OBSERVATORIES[obs.name] = obs
 
         if "Misc" in obs.config:
@@ -858,6 +859,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--truncate", action="store_true", help="run in truncate_schedule mode"
     )
+    parser.add_argument(
+        "--speculoos", action="store_true", help="run in speculoos mode"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -874,6 +878,9 @@ if __name__ == "__main__":
 
     if args.truncate:
         TRUNCATE_SCHEDULE = True
+
+    if args.speculoos:
+        SPECULOOS = True
 
     # start the server
     log_level = "info" if not DEBUG else "debug"
