@@ -462,7 +462,7 @@ def pointing(filepath: str, ra: float, dec: float) -> Tuple[float, float, WCS, f
 
 
 ## SPECULOOS EDIT
-def check_astelos_error(telescope):
+def check_astelos_error(telescope, close=False):
     """
     Check astelos telescope status list property
     """
@@ -508,6 +508,12 @@ def check_astelos_error(telescope):
         ["ERR_RunDevError", "Working pressure suddenly lost", "2", "DEC"],
         ["ERR_DeviceWarn", "Malformed telegram from GPS", "4", "LOCAL"],
     ]
+    if close:
+        slit_error = [
+            ["ERR_DeviceError", "axis (1)\\| BOTH LIMITS (code=128)", "2", "DOME[0]"],
+            ["ERR_DeviceError", "axis (1)\\| BOTH LIMITS (code=128)", "2", "DOME[1]"],
+        ]
+        allowed_err.extend(slit_error)
 
     df_allowed = pd.DataFrame(
         allowed_err, columns=["error", "detail", "level", "component"]

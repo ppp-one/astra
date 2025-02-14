@@ -943,13 +943,15 @@ class Observatory:
         self.heartbeat["polling"] = polled_list
         self.heartbeat["monitor-action-queue"] = self.monitor_action_queue
 
-    def speculoos_check_and_ack_error(self):
+    def speculoos_check_and_ack_error(self, close=False) -> None:
         if "Telescope" in self.config:
             for telescope_name in self.devices["Telescope"]:
                 telescope = self.devices["Telescope"][telescope_name]
 
                 # check telescope status
-                valid, all_errors, messages = utils.check_astelos_error(telescope)
+                valid, all_errors, messages = utils.check_astelos_error(
+                    telescope, close=close
+                )
 
                 if valid and len(all_errors) > 0:
                     self.logger.info(
@@ -1123,6 +1125,9 @@ class Observatory:
         if self.speculoos:
             # SPECULOOS EDIT
             self.pause_polls(["Dome", "Telescope", "Focuser"])
+
+            # SPECULOOS EDIT  -- TODO: this should return a state before continuing (is this not satisfied by error_free?)
+            self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
             # stop telescope guiding and slewing
