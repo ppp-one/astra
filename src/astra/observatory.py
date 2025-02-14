@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import psutil
 import yaml
-from astropy.coordinates import EarthLocation, SkyCoord
+from astropy.coordinates import EarthLocation, SkyCoord, AltAz, get_body
 from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
@@ -1508,6 +1508,9 @@ class Observatory:
             elif "flats" == row["action_type"]:
                 self.flats_sequence(row, paired_devices)
 
+            elif "pointing_model" == row["action_type"]:
+                self.pointing_model_sequence(row, paired_devices)
+
             elif "open" == row["action_type"]:
                 if "Camera" in self.config:
                     # open dome and unpark telescope
@@ -1593,7 +1596,9 @@ class Observatory:
             weather_sensitive=False,
         )  # 30 minutes
 
-    def pre_sequence(self, row: dict, paired_devices: dict) -> tuple[dict, str, dict]:
+    def pre_sequence(
+        self, row: dict, paired_devices: dict, create_folder: bool = True
+    ) -> tuple[dict, str, dict]:
         """
         Prepare the observatory and metadata for a sequence.
 
@@ -1632,11 +1637,12 @@ class Observatory:
         hdr = self.base_header(paired_devices, action_value)
 
         # create image directory
-        folder = create_image_dir(
-            self.schedule.iloc[0]["start_time"],
-            hdr.get("LONG-OBS"),
-            action_value.get("dir"),
-        )
+        if create_folder:
+            folder = create_image_dir(
+                self.schedule.iloc[0]["start_time"],
+                hdr.get("LONG-OBS"),
+                action_value.get("dir"),
+            )
 
         if "object" == row["action_type"]:
             hdr["IMAGETYP"] = "Light Frame"
@@ -1807,7 +1813,13 @@ class Observatory:
 
         time_conditions = row["start_time"] <= datetime.now(UTC) <= row["end_time"]
 
-        if row["action_type"] in ["open", "object", "flats", "autofocus"]:
+        if row["action_type"] in [
+            "open",
+            "object",
+            "flats",
+            "autofocus",
+            "pointing_model",
+        ]:
             return base_conditions and time_conditions and self.weather_safe
         elif row["action_type"] in [
             "calibration",
@@ -2058,8 +2070,129 @@ class Observatory:
             f"starting {row['start_time']} and ending {row['end_time']}",
         )
 
+    def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
+        """
+        Run a pointing model sequence for a specific camera.
+        """
+
+        self.logger.info(
+            f"Running {row['action_type']} sequence for {row['device_name']}, "
+            f"starting {row['start_time']} and ending {row['end_time']}"
+        )
+
+        action_value, folder, hdr = self.pre_sequence(
+            row, paired_devices, create_folder=False
+        )
+
+        # create pointing_model folder
+        folder = CONFIG.paths.images / "pointing_model"
+        folder.mkdir(exist_ok=True)
+
+        # number of points
+        N = action_value.get("n", 20)
+
+        # set exptime to 1 if not specified
+        exptime = action_value.get("exptime", 1)  # default to 1 second
+
+        # get camera
+        camera = self.devices[row["device_type"]][row["device_name"]]
+        maxadu = camera.get("MaxADU")
+
+        # get location
+        obs_lat = hdr["LAT-OBS"]
+        obs_lon = hdr["LONG-OBS"]
+        obs_alt = hdr["ALT-OBS"]
+        obs_location = EarthLocation(
+            lat=obs_lat * u.deg, lon=obs_lon * u.deg, height=obs_alt * u.m
+        )
+        MOON_LIMIT = 20 * u.deg  # pointing distance to the moon in degrees
+
+        # Generate points (spiral from zenith to 30 deg above horizon)
+        num_turns = np.sqrt(N / 2)
+        t_linear = np.linspace(0, 1, N)  # Generate base points
+        ts = t_linear**0.5  # increase spacing towards zenith
+        t_shift = 0
+
+        # open dome and unpark telescope
+        self.open_observatory(paired_devices)
+
+        counter = 0
+        while counter < N and self.check_conditions(row):
+            t = ts[counter] + t_shift
+            # 30 degree horizon limit, and 85 degree zenith limit (telescope weird at exactly 90)
+            alt = 85 - (55 * t)
+            if alt < 30:
+                alt = 30
+            az = (360 * num_turns * t) % 360
+
+            # Get current moon position
+            observing_time = Time(datetime.now(UTC))
+            moon_altaz = get_body(
+                "moon", observing_time
+            ).transform_to(  # Alternative method
+                AltAz(obstime=observing_time, location=obs_location)
+            )
+
+            # Convert coordinates to equatorial
+            target_altaz = SkyCoord(
+                alt=alt * u.deg,
+                az=az * u.deg,
+                frame=AltAz(obstime=observing_time, location=obs_location),
+            )
+            target_radec = target_altaz.transform_to("icrs")
+
+            # Calculate separation from moon
+            moon_separation = moon_altaz.separation(target_altaz)
+
+            if moon_separation <= MOON_LIMIT:
+                # iteratively shift point if too close to moon
+                t_shift += 0.01
+                continue
+            else:
+                t_shift = 0
+
+            # move telescope to target
+            action_value["ra"] = target_radec.ra.deg
+            action_value["dec"] = target_radec.dec.deg
+            self.setup_observatory(paired_devices, action_value)
+
+            # perform exposure
+            success, filepath = self.perform_exposure(
+                camera,
+                exptime,
+                maxadu,
+                row,
+                hdr,
+                folder,
+                log_option=None,
+            )
+
+            if not success:
+                break
+
+            # pointing correction, sync and no slew
+            pointing_complete, wcs_solve = self.pointing_correction(
+                row, action_value, filepath, paired_devices, sync=True, slew=False
+            )
+
+            # update header with wcs
+            if wcs_solve is not None:
+                with fits.open(filepath, mode="update") as hdul:
+                    hdul[0].header.update(wcs_solve.to_header())
+                    hdul.flush()
+
+            wcs_solve = None
+
+            counter += 1
+
     def pointing_correction(
-        self, row: dict, action_value: dict, filepath: str, paired_devices: dict
+        self,
+        row: dict,
+        action_value: dict,
+        filepath: str,
+        paired_devices: dict,
+        sync: bool = False,
+        slew: bool = True,
     ) -> tuple[bool, WCS | None]:
         """
         Perform a pointing correction
@@ -2095,6 +2228,9 @@ class Observatory:
             self.config["Telescope"][tel_index]["pointing_threshold"] / 60
         )
 
+        if slew is False:
+            pointing_threshold = 0
+
         if abs(angular_separation.deg) < pointing_threshold:
             self.logger.info(
                 f"No further pointing correction required. "
@@ -2114,36 +2250,38 @@ class Observatory:
 
             pointing_complete = False
 
-            # sync telescope to corrected coordinates
+            # telescope
             telescope = self.devices["Telescope"][paired_devices["Telescope"]]
 
-            new_ra = action_value["ra"] - offset_ra
-            new_dec = action_value["dec"] - offset_dec
+            if sync:
+                telescope.get(
+                    "SyncToCoordinates",
+                    RightAscension=24 * (action_value["ra"] + offset_ra) / 360,
+                    Declination=action_value["dec"] + offset_dec,
+                )
 
-            # slew to target
-            self.logger.info(
-                f"Slewing Telescope {paired_devices['Telescope']} to corrected position: {new_ra} {new_dec}"
-            )
-            telescope.get(
-                "SlewToCoordinatesAsync",
-                RightAscension=24 * new_ra / 360,
-                Declination=new_dec,
-            )
+                if slew:
+                    # re-slew to target
+                    self.setup_observatory(paired_devices, action_value)
+            else:
+                new_ra = action_value["ra"] - offset_ra
+                new_dec = action_value["dec"] - offset_dec
 
-            time.sleep(1)
+                if slew:
+                    # slew to target
+                    self.logger.info(
+                        f"Slewing Telescope {paired_devices['Telescope']} to corrected position: {new_ra} {new_dec}"
+                    )
+                    telescope.get(
+                        "SlewToCoordinatesAsync",
+                        RightAscension=24 * new_ra / 360,
+                        Declination=new_dec,
+                    )
 
-            # wait for slew to finish
-            self.wait_for_slew(paired_devices)
+                    time.sleep(1)
 
-            # if doing pointing model
-            #     telescope.get(
-            #         "SyncToCoordinates",
-            #         RightAscension=24 * (action_value["ra"] + offset_ra) / 360,
-            #         Declination=naction_value["dec"] + offset_dec,
-            #     )
-
-            #     # re-slew to target
-            #     self.setup_observatory(paired_devices, action_value)
+                    # wait for slew to finish
+                    self.wait_for_slew(paired_devices)
 
             return (pointing_complete, wcs_solve)
 
