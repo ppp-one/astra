@@ -708,21 +708,16 @@ class Observatory:
 
                     # multiple devices have errors
                     if len(device_names) > 1:
-                        self.logger.error(
-                            f"Multiple devices have errors: {device_names}. Panic."
-                        )
+                        self.logger.error("Multiple devices have errors. Panic.")
+                        for error_source in self.error_source:
+                            self.logger.error(
+                                f"Device {error_source['device_type']} {error_source['device_name']} has error: {error_source['error']}"
+                            )
                         # TODO: Panic mode
                     elif len(device_names) == 1 and len(device_types) == 1:
                         self.logger.warning(
                             f"Device {device_types[0]} {device_names[0]} has errors."
                         )
-                        if self.speculoos:
-                            # if not dome or telescope, park
-                            if device_types[0] not in ["Dome", "Telescope"]:
-                                self.logger.warning(
-                                    f"Closing observatory due to error in {device_types[0]} {device_names[0]}"
-                                )
-                                self.close_observatory(error_sensitive=False)
                         # only one device has errors
                         # match device_types[0]:
                         #     case "SafetyMonitor":
@@ -760,6 +755,33 @@ class Observatory:
                         #         pass
                         #     case _:
                         #         pass
+
+                    if self.speculoos:
+                        # if not dome or telescope, park
+                        if (
+                            "Dome" not in device_types
+                            and "Telescope" not in device_types
+                        ):
+                            self.logger.warning(
+                                f"(SPECULOOS EDIT): Closing observatory due to no errors in Dome or Telescope"
+                            )
+                            self.close_observatory(error_sensitive=False)
+
+                        elif "Dome" not in device_types and "Telescope" in device_types:
+                            self.logger.warning(
+                                f"(SPECULOOS EDIT): Closing Dome due to no errors in Dome, but errors in Telescope"
+                            )
+                            for device_name in self.devices["Dome"]:
+                                self.monitor_action(
+                                    "Dome",
+                                    "ShutterStatus",
+                                    1,
+                                    "CloseShutter",
+                                    device_name=device_name,
+                                    log_message=f"Closing Dome shutter of {device_name}",
+                                    weather_sensitive=False,
+                                    error_sensitive=False,
+                                )
                 except Exception as e:
                     self.logger.error(f"Error during error handling: {str(e)}")
                     # TODO: Panic mode
