@@ -1983,9 +1983,6 @@ class Observatory:
                 f"Image acquired in {(time.time() - exposure_end_time):.3f} s from when ImageReady was read True"
             )
             self.logger.info(
-                f"Image acquired in {(time.time() - exposure_start_time):.3f} s from when StartExposure was called"
-            )
-            self.logger.info(
                 f"Image acquired in {(time.time() - exposure_start_time - exptime):.3f} s from when exposure integration should have ended"
             )
 
@@ -2559,7 +2556,7 @@ class Observatory:
             else:
                 if take_flats is False:
                     self.logger.info(
-                        f"Not the right time to take flats for {row['device_name']}, sun at {sun_altaz.alt.degree} degrees and {'rising' if sun_rising else 'setting'}"
+                        f"Not the right time to take flats for {row['device_name']}, sun at {sun_altaz.alt.degree:.2f} degrees and {'rising' if sun_rising else 'setting'}"
                     )
 
                 self.logger.info("Moving on...")
@@ -2725,7 +2722,7 @@ class Observatory:
                             )
                             if sun_rising is True:
                                 self.logger.info(
-                                    f"Sun is rising, waiting 10s to try again. Sun is at {sun_altaz.alt.degree} degrees."
+                                    f"Sun is rising, waiting 10s to try again. Sun is at {sun_altaz.alt.degree:.2f} degrees."
                                 )
                                 time.sleep(10)
                                 exptime = upper_exptime_limit
@@ -2737,7 +2734,7 @@ class Observatory:
                                 )
                             else:
                                 self.logger.info(
-                                    f"Sun is setting. Sun at {sun_altaz.alt.degree} degrees."
+                                    f"Sun is setting. Sun at {sun_altaz.alt.degree:.2f} degrees."
                                 )
                                 getting_exptime = False
 
@@ -2748,7 +2745,7 @@ class Observatory:
 
                             if sun_rising is False:
                                 self.logger.info(
-                                    f"Sun is setting, waiting 10s to try again. Sun is at {sun_altaz.alt.degree} degrees."
+                                    f"Sun is setting, waiting 10s to try again. Sun is at {sun_altaz.alt.degree:.2f} degrees."
                                 )
                                 time.sleep(10)
                                 exptime = lower_exptime_limit
@@ -2760,7 +2757,7 @@ class Observatory:
                                 )
                             else:
                                 self.logger.info(
-                                    f"Sun is rising. Sun at {sun_altaz.alt.degree} degrees."
+                                    f"Sun is rising. Sun at {sun_altaz.alt.degree:.2f} degrees."
                                 )
                                 getting_exptime = False
 

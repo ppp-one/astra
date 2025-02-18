@@ -74,7 +74,7 @@ def process_schedule(filename, truncate=False) -> pd.DataFrame:
 
     # for development: Truncate the schedule if self.truncate_schedule is True
     if truncate:
-        schedule = update_times(schedule, 10)
+        schedule = update_times(schedule, 25)
 
     schedule["completed"] = False
 
