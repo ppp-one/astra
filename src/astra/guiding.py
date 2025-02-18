@@ -656,7 +656,7 @@ class Guider:
 
                 # if no new images, wait for a bit
                 else:
-                    time.sleep(wait_time)
+                    time.sleep(max(wait_time, 30))
 
         # return None values if self.running is False
         return None, None, None, None

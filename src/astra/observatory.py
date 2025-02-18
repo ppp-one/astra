@@ -567,6 +567,7 @@ class Observatory:
                         ):
                             self.logger.warning("Schedule updated")
                             self.schedule = self.read_schedule()
+                            # self.start_schedule() # for robotic switch: start schedule if not running
                     except Exception as e:
                         self.error_source.append(
                             {
