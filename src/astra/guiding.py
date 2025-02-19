@@ -74,12 +74,15 @@ class CustomImageClass(Image):
 
 
 class Guider:
-    def __init__(self, telescope, cursor, params):
+    def __init__(
+        self, telescope: object, cursor: object, logger: logging.Logger, params: dict
+    ):
         # TODO: camera angle?
 
         # pass in objects from astra
         self.telescope = telescope
         self.cursor = cursor
+        self.logger = logger
 
         # set up the database
         self.create_tables()  # this is assuming we're using the same db.  Should we have a separate one for guiding?
@@ -104,8 +107,8 @@ class Guider:
             elif params["DIRECTIONS"][direction] == "West":
                 self.DIRECTIONS[direction] = GuideDirections.guideWest
             else:
-                self.__log(
-                    "error", f"Invalid guide direction {self.DIRECTIONS[direction]}"
+                self.logger.error(
+                    f"Invalid guide direction {self.DIRECTIONS[direction]}"
                 )
 
         # RA axis alignment along x or y? TODO: can be inferred from telescope direction
@@ -182,39 +185,6 @@ class Guider:
                 """
 
         self.cursor.execute(db_command_2)
-
-    def __log(self, level: str, message: str):
-        """
-        Log a message to the database
-
-        log levels: info, warning, error, critical
-        """
-
-        # make message safe for sql
-        message = message.replace("'", "''")
-
-        # logging
-        if level == "info":
-            logging.info(message)
-        elif level == "debug" and self.debug is True:
-            logging.debug(message)
-        elif level == "warning":
-            logging.warning(message)
-        elif level == "error":
-            self.error_free = False
-            logging.error(message, exc_info=True)
-        elif level == "critical":
-            logging.critical(message)
-
-        dt_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        if level == "debug" and self.debug is True:
-            self.cursor.execute(
-                f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')"
-            )
-        elif level != "debug":
-            self.cursor.execute(
-                f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')"
-            )
 
     def logShiftsToDb(self, qry_args):
         """
@@ -504,7 +474,6 @@ class Guider:
             return True, pidx, pidy, sigma_x, sigma_y
         else:
             self.logMessageToDb(camera_name, "Telescope NOT connected!")
-            self.logMessageToDb(camera_name, "Please connect Telescope via ACP!")
             self.logMessageToDb(camera_name, "Ignoring corrections!")
             return False, 0.0, 0.0, 0.0, 0.0
 
@@ -664,7 +633,7 @@ class Guider:
     def guider_loop(self, camera_name, glob_str, wait_time=10):
         self.running = True
 
-        self.__log("info", f"Starting guider loop for: {glob_str} images")
+        self.logger.info(f"Starting guider loop for: {glob_str} images")
 
         try:
             while self.running:
@@ -915,9 +884,9 @@ class Guider:
                         n_images = len(templist)
         except Exception as e:
             self.running = False
-            self.__log("error", f"Error in guide loop: {str(e)}")
+            self.logger.error(f"Error in guide loop: {str(e)}")
 
-        self.__log("info", f"Stopping guider loop for: {glob_str} images")
+        self.logger.info(f"Stopping guider loop for: {glob_str} images")
 
 
 """

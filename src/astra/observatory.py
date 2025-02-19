@@ -152,7 +152,7 @@ class Observatory:
                 if "guider" in self.config["Telescope"][telescope_index]:
                     guider_params = self.config["Telescope"][telescope_index]["guider"]
                     self.guider[device_name] = Guider(
-                        telescope, self.cursor, guider_params
+                        telescope, self.cursor, self.logger, guider_params
                     )
 
         self.logger.info("Astra initialized")
