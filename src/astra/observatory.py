@@ -1150,7 +1150,7 @@ class Observatory:
             self.pause_polls(["Dome", "Telescope", "Focuser"])
 
             # SPECULOOS EDIT  -- TODO: this should return a state before continuing (is this not satisfied by error_free?)
-            self.speculoos_check_and_ack_error(close=True)
+            # self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
             # stop telescope guiding and slewing
