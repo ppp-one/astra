@@ -543,6 +543,7 @@ class Observatory:
             sm_name = self.config[device_type][0]["device_name"]
             safety_monitor = self.devices[device_type][sm_name]
         else:
+            max_safe_duration = 0
             self.logger.warning("No safety monitor found")
 
         # observatory weather_log_warning flag, used to prevent multiple logging of weather unsafe
@@ -701,6 +702,16 @@ class Observatory:
                     )
                     time.sleep(30)
 
+                    if len(self.error_source) == 0:
+                        self.logger.warning("No error sources found in error_source.")
+                        self.error_source.append(
+                            {
+                                "device_type": "error_source",
+                                "device_name": "error_source",
+                                "error": "No error sources found in error_source",
+                            }
+                        )
+
                     # make pandas dataframe of error_source
                     df = pd.DataFrame(self.error_source)
 
@@ -784,7 +795,11 @@ class Observatory:
                                     error_sensitive=False,
                                 )
                 except Exception as e:
-                    self.logger.error(f"Error during error handling: {str(e)}")
+                    self.logger.error(
+                        f"Error during error handling: {str(e)}",
+                        exc_info=True,
+                        stack_info=True,
+                    )
                     # TODO: Panic mode
 
                 break  # exit watchdog loop
@@ -832,7 +847,7 @@ class Observatory:
                 for parameter in closing_limits:
                     limits = closing_limits[parameter]
                     for limit in limits:
-                        max_safe_duration = limit["max_safe_duration"]
+                        max_safe_duration = limit.get("max_safe_duration", 0)
                         lower_limit = limit.get("lower", None)
                         upper_limit = limit.get("upper", None)
 
@@ -1150,6 +1165,12 @@ class Observatory:
             self.pause_polls(["Dome", "Telescope", "Focuser"])
 
             # SPECULOOS EDIT  -- TODO: this should return a state before continuing (is this not satisfied by error_free?)
+            # check if dome already closed:
+            # for device_type in self.devices:
+            # polled_list[device_type] = {}
+
+            # for device_name in self.devices[device_type]:
+
             # self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
@@ -2335,7 +2356,7 @@ class Observatory:
             "..",
             "images",
             folder,
-            f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']}_*.fits",
+            f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']:.3f}_*.fits",
         )  # be careful with if custom naming is used
 
         th = Thread(

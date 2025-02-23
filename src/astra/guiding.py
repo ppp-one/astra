@@ -892,7 +892,9 @@ class Guider:
                         n_images = len(templist)
         except Exception as e:
             self.running = False
-            self.logger.error(f"Error in guide loop: {str(e)}")
+            self.logger.error(
+                f"Error in guide loop: {str(e)}", exc_info=True, stack_info=True
+            )
 
         self.logger.info(f"Stopping guider loop for: {glob_str} images")
 
