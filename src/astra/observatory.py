@@ -1365,11 +1365,17 @@ class Observatory:
                 self.logger.info("Reading schedule")
                 self.schedule_mtime = schedule_mtime
 
-                return process_schedule(
-                    self.schedule_path,
-                    truncate=self.truncate_schedule,
-                )
-
+                try:
+                    schedule = process_schedule(
+                        self.schedule_path,
+                        truncate=self.truncate_schedule,
+                    )
+                    return schedule
+                except Exception as e:
+                    self.logger.warning(
+                        f"Warning: Issue processing schedule: {e}, please try again"
+                    )
+                    return None
             else:
                 return self.schedule
 
