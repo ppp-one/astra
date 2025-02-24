@@ -15,6 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
+    "astrafocus @ git@github.com:dgegen/astrafocus.git",
     "astropy",
     "photutils",
     "scipy==1.10.1",
