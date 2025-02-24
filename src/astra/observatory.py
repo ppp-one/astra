@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import psutil
 import yaml
-from astropy.coordinates import EarthLocation, SkyCoord, AltAz, get_body
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
@@ -23,6 +23,7 @@ from sqlite3worker import Sqlite3Worker
 
 from astra import ASTRA_VER, Config, utils
 from astra.alpaca_device_process import AlpacaDevice
+from astra.autofocus import Autofocuser
 from astra.guiding import Guider
 from astra.image_handler import create_image_dir, save_image
 from astra.logging_handler import LoggingHandler
@@ -133,9 +134,7 @@ class Observatory:
             self.schedule = self.read_schedule()
 
         # load devices
-        self.monitor_action_queue = (
-            {}
-        )  # queue for monitoring/running actions per device_name
+        self.monitor_action_queue = {}  # queue for monitoring/running actions per device_name
         self.devices = self.load_devices()
         self.last_image = None
 
@@ -1361,7 +1360,6 @@ class Observatory:
             schedule_mtime = self.get_schedule_mtime()
 
             if (schedule_mtime > self.schedule_mtime) or (self.schedule is None):
-
                 if self.schedule_running is True:
                     self.logger.warning(
                         "Schedule updating while the previous schedule is running. This will not take effect until the new schedule is run."
@@ -1568,6 +1566,9 @@ class Observatory:
             if "object" == row["action_type"]:
                 self.image_sequence(row, paired_devices)
 
+            elif "autofocus" == row["action_type"]:
+                self.autofocus_sequence(row, paired_devices)
+
             elif "calibration" == row["action_type"]:
                 self.image_sequence(row, paired_devices)
 
@@ -1761,7 +1762,6 @@ class Observatory:
             and self.check_conditions()
         ):
             if "Telescope" in paired_devices:
-
                 # open dome and unpark telescope -- this will open all domes if not in paired_devices...?
                 self.open_observatory(paired_devices)
 
@@ -2394,6 +2394,57 @@ class Observatory:
 
         return True
 
+    def autofocus_sequence(self, row, paired_devices) -> bool:
+        """
+        Perform autofocus.
+
+        Parameters:
+            row (dict): A dictionary containing information about the sequence action:
+                - 'device_name': The name of the device.
+                - 'action_type': The type of action (e.g., 'object').
+                - 'action_value': The action's value (e.g., a command or parameter).
+            paired_devices (dict): A dictionary specifying paired devices for the sequence.
+
+        Returns:
+            bool: True if the autofocus was successful, False otherwise.
+        """
+        self.logger.info(f"Running autofocus for {row['device_name']}")
+        try:
+            action_value, _, hdr = self.pre_sequence(row, paired_devices)
+            if not self.check_conditions(row=row):
+                return False
+
+            autofocuser = Autofocuser(
+                astra=self,
+                row=row,
+                paired_devices=paired_devices,
+                action_value=action_value,
+                hdr=hdr,
+            )
+            autofocuser.determine_autofocus_calibration_field()
+            autofocuser.slew_to_calibration_field()
+            autofocuser.setup()
+
+            success = autofocuser.run()
+
+            autofocuser.make_summary_plot()
+            autofocuser.create_result_file()
+
+        except Exception as e:
+            success = False
+            self.logger.exception(
+                f"Error running autofocus for {row['device_name']}. Exception {str(e)}"
+            )
+            self.error_source.append(
+                {
+                    "device_type": "Camera",
+                    "device_name": row["device_name"],
+                    "error": f"Error running autofocus for {row['device_name']}",
+                }
+            )
+
+        return success
+
     def flats_sequence(self, row: dict, paired_devices: dict) -> None:
         """
         Performs a flats sequence.
@@ -2539,7 +2590,6 @@ class Observatory:
                 hdr["FILTER"] = filter_name
 
                 while self.check_conditions(row) and (count < action_value["n"][i]):
-
                     log_option = f"{count + 1}/{action_value['n'][i]}"
 
                     success, filepath = self.perform_exposure(
@@ -2555,7 +2605,6 @@ class Observatory:
                     if not success:
                         break
                     else:
-
                         # move telescope to flat position
                         self.flats_position(obs_location, paired_devices, row)
 
@@ -2637,7 +2686,6 @@ class Observatory:
                     time.sleep(1)
 
             if self.check_conditions(row) and take_flats:
-
                 target_altaz = SkyCoord(
                     alt=75 * u.deg,
                     az=sun_altaz.az + 180 * u.degree,
