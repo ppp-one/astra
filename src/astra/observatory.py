@@ -1974,15 +1974,15 @@ class Observatory:
                 exposure_successful = False
                 break
 
-            if (exposure_end_time - exposure_start_time) > 3 * exptime + 60:
+            if (exposure_end_time - exposure_start_time) > 3 * exptime + 180:
                 self.logger.error(
-                    f"Exposure timed out after 3*{exptime:.3f} + 60 seconds for {row['device_name']}."
+                    f"Exposure timed out after 3*{exptime:.3f} + 180 seconds for {row['device_name']}."
                 )
                 self.error_source.append(
                     {
                         "device_type": "Camera",
                         "device_name": row["device_name"],
-                        "error": f"Exposure timed out after 3*{exptime:.3f} + 60 seconds",
+                        "error": f"Exposure timed out after 3*{exptime:.3f} + 180 seconds",
                     }
                 )
                 exposure_successful = False
