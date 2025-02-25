@@ -2100,6 +2100,9 @@ class Observatory:
                         row, action_value, filepath, paired_devices
                     )
 
+                    if self.speculoos:
+                        time.sleep(exptime*3) # for spirit
+
                     pointing_attempts += 1
 
                     if wcs_solve is not None:
@@ -2249,6 +2252,9 @@ class Observatory:
             pointing_complete, wcs_solve = self.pointing_correction(
                 row, action_value, filepath, paired_devices, sync=True, slew=False
             )
+
+            if self.speculoos:
+                time.sleep(exptime*3) # for spirit
 
             # update header with wcs
             if wcs_solve is not None:

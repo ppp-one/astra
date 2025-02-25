@@ -394,6 +394,7 @@ def pointing(filepath: str, ra: float, dec: float) -> Tuple[float, float, WCS, f
     med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
     band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
     image_clean = med_clean - band_corr
+    image_clean = np.clip(image_clean, 0, None)
 
     # center of image, convert to ra, dec in degrees
     ra_unit = u.deg
@@ -410,7 +411,7 @@ def pointing(filepath: str, ra: float, dec: float) -> Tuple[float, float, WCS, f
     fovy = shape[1] * plate_scale
 
     # detect stars in the image
-    stars = twirl.find_peaks(image_clean, threshold=5)
+    stars = twirl.find_peaks(image_clean, threshold=3)
 
     gaia_limit = len(stars) * 2
     star_limit = len(stars)

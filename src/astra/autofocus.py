@@ -239,6 +239,7 @@ class AstraFocuser(FocuserInterface):
                 raise ValueError("Focuser move aborted due to bad conditions.")
             time.sleep(0.1)
 
+        time.sleep(3) # settle time
         return None
 
     def get_current_position(self):

@@ -36,10 +36,10 @@ class CustomImageClass(Image):
         self.raw_image = band_clean
 
 
-TELESCOPE_IP = "localhost"
+TELESCOPE_IP = "localhost:11111"
 TELESCOPE_DEVICE_NUMBER = 0
 
-CAMERA_IP = "localhost:8080"
+CAMERA_IP = "172.16.0.198:11111"
 CAMERA_DEVICE_NUMBER = 0
 
 

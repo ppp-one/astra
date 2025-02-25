@@ -70,7 +70,7 @@ class CustomImageClass(Image):
         band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
         image_clean = med_clean - band_corr
 
-        self.raw_image = image_clean
+        self.raw_image = np.clip(image_clean, 0 , None)
 
 
 class Guider:
