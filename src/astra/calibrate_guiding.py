@@ -45,7 +45,6 @@ class GuidingCalibrator:
             / "calibrate_guiding"
             / datetime.now(UTC).strftime("%Y%m%d")
         ),
-        calibration_coordinates=None,
         pulse_time: float = 5000,
         exptime: float = 5,
         settle_time: float = 10,
@@ -57,11 +56,11 @@ class GuidingCalibrator:
         self.action_value = action_value
         self.hdr = hdr
         self.save_path = save_path
-        self.calibration_coordinates = calibration_coordinates
         self.pulse_time = action_value.get("pulse_time", pulse_time)
         self.exptime = action_value.get("exptime", exptime)
         self.settle_time = action_value.get("settle_time", settle_time)
         self.number_of_cycles = action_value.get("number_of_cycles", number_of_cycles)
+        self._calibration_coordinates = None
         self._directions = defaultdict(list)
         self._scales = defaultdict(list)
         self._calibration_config = {}
@@ -72,12 +71,8 @@ class GuidingCalibrator:
         save_path.mkdir(parents=True, exist_ok=True)
 
     def run(self):
-        if not self.calibration_coordinates:
-            self.determine_guider_calibration_field()
-        self._slew_telescope(
-            ra=self.calibration_coordinates.ra.deg,
-            dec=self.calibration_coordinates.dec.deg,
-        )
+        self.determine_guider_calibration_field()
+        self.slew_to_calibration_field()
         self.perform_calibration_cycles()
         self.complete_calibration_config()
         self.save_calibration_config()
@@ -119,7 +114,7 @@ class GuidingCalibrator:
             self.astra_observatory.logger.info(
                 "Using user-specified calibration coordinates for autofocus."
             )
-            self.calibration_coordinates = SkyCoord(
+            self._calibration_coordinates = SkyCoord(
                 ra=float(action_value["ra"]) * u.deg,
                 dec=float(action_value["dec"]) * u.deg,
             )
@@ -171,7 +166,6 @@ class GuidingCalibrator:
 
             self.astra_observatory.logger.info(
                 "Zenith was determined to be at "
-                f"{zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs}. "
                 f"RA: {zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.ra.value:.8f} deg, "
                 f"DEC: {zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.dec.value:.8f} deg."
             )
@@ -254,7 +248,13 @@ class GuidingCalibrator:
                     "This is likely due to an error in the observatory location in the header."
                 )
 
-        self.calibration_coordinates = centre_coordinates
+        self._calibration_coordinates = centre_coordinates
+
+    def slew_to_calibration_field(self):
+        self._slew_telescope(
+            ra=self._calibration_coordinates.ra.deg,
+            dec=self._calibration_coordinates.dec.deg,
+        )
 
     def perform_calibration_cycles(self):
         """Nudge camera in direction U, D, L, R to determine its scale and orientation."""
@@ -263,7 +263,7 @@ class GuidingCalibrator:
 
         for i in range(self.number_of_cycles):
             self.astra_observatory.logger.info(
-                f"Starting cycle {i} of {self.number_of_cycles}."
+                f"=== Starting cycle {i} of {self.number_of_cycles} ==="
             )
             for direction in [
                 GuideDirections.guideNorth,
@@ -278,17 +278,18 @@ class GuidingCalibrator:
                 shift = donuts_ref.measure_shift(image_path)
                 direction_literal, magnitude = self._determine_shift_direction(shift)
 
-                self._directions[direction_literal].append(direction_literal)
-                self._scales[direction_literal].append(magnitude)
+                direction_name = direction.name.removeprefix('guide')  # North, South, East, West
+                self._directions[direction_name].append(direction_literal)
+                self._scales[direction_name].append(magnitude)
                 self.astra_observatory.logger.info(
-                    f"Shift {direction.name} is in direction {direction_literal} "
-                    "of {magnitude} pixels."
+                    f"Shift {direction_name} results in direction {direction_literal} "
+                    f"of {magnitude} pixels."
                 )
 
                 donuts_ref = self._apply_donuts(image_path)
 
         self.astra_observatory.logger.info("Calibration cycles complete.")
-        self.astra_observatory.logger.debug(
+        self.astra_observatory.logger.info(
             f"Directions: {self._directions}", f"Scales: {self._scales}"
         )
 
@@ -300,30 +301,20 @@ class GuidingCalibrator:
         }
 
         self.astra_observatory.logger.info("Checking directions...")
-        for direction_index, direction in enumerate(self._directions):
-            # check that the directions are the same every time for each orientation
-            if len(set(self._directions[direction])) != 1:
+        for direction_name in self._directions:
+            # Check that the directions are the same every time for each orientation
+            if len(set(self._directions[direction_name])) != 1:
                 raise ValueError(
                     "Directions must be the same across all cycles. "
-                    f"Direction number {direction_index} has {self._directions[direction]}."
+                    f"Direction number {direction_name} has {self._directions[direction_name]}."
                 )
 
-            direction_literal = self._directions[direction][0]
-            if direction == 0:
-                direction_name = "North"
-            elif direction == 1:
-                direction_name = "South"
-            elif direction == 2:
-                direction_name = "East"
+            direction_literal = self._directions[direction_name][0]
+            if direction_name == "East":
                 calibration_config["RA_AXIS"] = "x" if "x" in direction_literal else "y"
-            elif direction == 3:
-                direction_name = "West"
-            else:
-                direction_name = "Invalid direction"
-                logging.warning("Invalid direction")
 
-            calibration_config["PIX2TIME"][direction_literal] = (
-                float(self.pulse_time / np.average(self._scales[direction]))
+            calibration_config["PIX2TIME"][direction_literal] = float(
+                self.pulse_time / np.average(self._scales[direction_name])
             )
             calibration_config["DIRECTIONS"][direction_literal] = direction_name
 
@@ -342,6 +333,7 @@ class GuidingCalibrator:
             self._calibration_config
         )
         observatory_config.save()
+        self.astra_observatory.logger.info("Observatory config updated.")
 
     @staticmethod
     def _determine_shift_direction(shift):
