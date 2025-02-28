@@ -3247,30 +3247,39 @@ class Observatory:
 
                 # update files
                 for i, row in df_images_filt.iterrows():
-                    with fits.open(row["filepath"], mode="update") as filehandle:
-                        hdr = filehandle[0].header
-                        for header in df_inp.columns:
-                            hdr[header] = (
-                                df_inp.iloc[i][header],
-                                df_poll_unique[df_poll_unique["header"] == header][
-                                    "comment"
-                                ].values[0],
+                    try:
+                        with fits.open(row["filepath"], mode="update") as filehandle:
+                            hdr = filehandle[0].header
+                            for header in df_inp.columns:
+                                hdr[header] = (
+                                    df_inp.iloc[i][header],
+                                    df_poll_unique[df_poll_unique["header"] == header][
+                                        "comment"
+                                    ].values[0],
+                                )
+
+                            hdr["RA"] = hdr["RA"] * (360 / 24)  # convert to degrees
+
+                            location = EarthLocation(
+                                lat=hdr["LAT-OBS"] * u.deg,
+                                lon=hdr["LONG-OBS"] * u.deg,
+                                height=hdr["ALT-OBS"] * u.m,
+                            )
+                            target = SkyCoord(
+                                hdr["RA"], hdr["DEC"], unit=(u.deg, u.deg), frame="icrs"
                             )
 
-                        hdr["RA"] = hdr["RA"] * (360 / 24)  # convert to degrees
+                            utils.hdr_times(hdr, self.fits_config, location, target)
+                            filehandle[0].add_checksum()
 
-                        location = EarthLocation(
-                            lat=hdr["LAT-OBS"] * u.deg,
-                            lon=hdr["LONG-OBS"] * u.deg,
-                            height=hdr["ALT-OBS"] * u.m,
+                            self.cursor.execute(
+                                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
+                            )
+                    except FileNotFoundError:
+                        self.logger.warning(
+                            f"Error completing headers: {row['filepath']}"
                         )
-                        target = SkyCoord(
-                            hdr["RA"], hdr["DEC"], unit=(u.deg, u.deg), frame="icrs"
-                        )
-
-                        utils.hdr_times(hdr, self.fits_config, location, target)
-                        filehandle[0].add_checksum()
-
+                    finally:
                         self.cursor.execute(
                             f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
                         )
