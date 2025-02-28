@@ -1,5 +1,6 @@
 import filecmp
-from datetime import datetime
+import os
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -206,7 +207,7 @@ class AssetPaths:
 class _ConfigInitialiser:
     """Initialises the configuration settings for Astra."""
 
-    DEFAULT_ASSETS_PATH = Path.home() / 'Documents' / "astra"
+    DEFAULT_ASSETS_PATH = Path.home() / "Documents" / "astra"
 
     @staticmethod
     def run(
@@ -306,3 +307,64 @@ class _ConfigInitialiser:
 
         if gaia_db is not None and not Path(gaia_db).exists():
             raise FileNotFoundError(f"File {gaia_db} does not exist.")
+
+
+class ObservatoryConfig(dict):
+    """
+    Examples
+    --------
+    >>> from astra.config import ObservatoryConfig
+    >>> observatory_config = ObservatoryConfig.from_config()
+    """
+
+    def __init__(self, config_path: str | Path, observatory_name: str):
+        self.config_path = (
+            config_path if isinstance(config_path, Path) else Path(config_path)
+        )
+        self.observatory_name = observatory_name
+        self.load()
+
+    @property
+    def file_path(self) -> Path:
+        """Returns the path to the observatory configuration yaml file."""
+        return self.config_path / f"{self.observatory_name}_config.yml"
+
+    def load(self):
+        """Loads the observatory configuration file."""
+        with open(self.file_path, "r") as file:
+            config = yaml.safe_load(file)
+        self.update(config)
+
+    def save(self, file_path: str | Path | None = None):
+        """Saves the observatory configuration file."""
+        config = dict(self)
+        file_path = self.file_path if file_path is None else file_path
+        self.save_backup()
+        with open(file_path, "w") as file:
+            yaml.dump(config, file)
+
+    def save_backup(self):
+        """Creates a backup of the observatory configuration file."""
+        datetime_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+        backup_path = (
+            self.config_path
+            / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
+        )
+        os.rename(self.file_path, backup_path)
+
+    def backup_file_path(self, datetime_str: str) -> Path:
+        """Returns the file path of a backup of the observatory configuration file."""
+        return (
+            self.config_path
+            / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
+        )
+
+    @classmethod
+    def from_config(cls, config: Optional[Config] = None):
+        if config is None:
+            config = Config()
+
+        if not isinstance(config, Config):
+            raise TypeError(f"Expected Config, got {type(config)}")
+
+        return cls(config.paths.observatory_config, config.observatory_name)

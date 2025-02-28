@@ -2,7 +2,6 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 from alpaca.camera import ImageMetadata
 from astropy.io import fits
 from astropy.wcs.utils import WCS
@@ -38,7 +37,9 @@ def create_image_dir(
     return folder
 
 
-def img_transform(img: np.array, maxadu: int, imginfo: ImageMetadata) -> np.array:
+def transform_image_to_array(
+    image: list[int] | np.ndarray, maxadu: int, image_info: ImageMetadata
+) -> np.ndarray:
     """
     This function takes in a device object, an image object, and a maximum ADU
     value and returns a numpy array of the correct shape for astropy.io.fits.
@@ -51,41 +52,42 @@ def img_transform(img: np.array, maxadu: int, imginfo: ImageMetadata) -> np.arra
     Returns:
         nda (np.array): A numpy array of the correct shape for astropy.io.fits.
     """
+    if not isinstance(image, np.ndarray):
+        image = np.array(image)
 
     # Determine the image data type
-    if imginfo.ImageElementType == 0 or imginfo.ImageElementType == 1:
+    if image_info.ImageElementType == 0 or image_info.ImageElementType == 1:
         imgDataType = np.uint16
-    elif imginfo.ImageElementType == 2:
+    elif image_info.ImageElementType == 2:
         if maxadu <= 65535:
             imgDataType = np.uint16  # Required for BZERO & BSCALE to be written
         else:
             imgDataType = np.int32
-    elif imginfo.ImageElementType == 3:
+    elif image_info.ImageElementType == 3:
         imgDataType = np.float64
     else:
-        raise ValueError(f"Unknown ImageElementType: {imginfo.ImageElementType}")
+        raise ValueError(f"Unknown ImageElementType: {image_info.ImageElementType}")
 
     # Make a numpy array of the correct shape for astropy.io.fits
-    if imginfo.Rank == 2:
-        nda = np.array(img, dtype=imgDataType).transpose()
+    if image_info.Rank == 2:
+        image_array = np.array(image, dtype=imgDataType).transpose()
     else:
-        nda = np.array(img, dtype=imgDataType).transpose(2, 1, 0)
+        image_array = np.array(image, dtype=imgDataType).transpose(2, 1, 0)
 
-    return nda
+    return image_array
 
 
 def save_image(
-    image_array: list[int],
-    imginfo: ImageMetadata,
+    image: list[int] | np.ndarray,
+    image_info: ImageMetadata,
     maxadu: int,
     hdr: fits.Header,
     device_name: str,
     dateobs: datetime,
     folder: str,
     wcs: WCS = None,
-) -> str:
-    """
-    Save an image to disk.
+) -> Path:
+    """Save an image to disk.
 
     This function retrieves an image from an Alpaca device, transforms it, and saves it to disk in FITS format.
     The filename is generated based on device information and the image's characteristics.
@@ -103,8 +105,9 @@ def save_image(
     """
 
     # transform image to numpy array
-    img = np.array(image_array)
-    nda = img_transform(img, maxadu, imginfo)  ## TODO: make more efficient?
+    image_array = transform_image_to_array(
+        image, maxadu=maxadu, image_info=image_info
+    )  ## TODO: make more efficient?
 
     # update FITS header
     hdr["DATE-OBS"] = (
@@ -123,7 +126,7 @@ def save_image(
         hdr.extend(wcs.to_header(), update=True)
 
     # create FITS HDU
-    hdu = fits.PrimaryHDU(nda, header=hdr)
+    hdu = fits.PrimaryHDU(image_array, header=hdr)
 
     # create filename
     filter_name = hdr["FILTER"].replace("'", "")

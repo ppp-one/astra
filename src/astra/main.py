@@ -76,7 +76,6 @@ def observatory_db(name):
 
 
 def clean_up():
-
     for obs in OBSERVATORIES.values():
         # Get all the devices
         for device_type in obs.devices:
@@ -497,15 +496,15 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     dt = (
                         dt_tracking
                         if tracking
-                        else dt_slewing if slewing else dt_tracking
+                        else dt_slewing
+                        if slewing
+                        else dt_tracking
                     )
 
                     try:
                         polled["RightAscension"]["value"] = polled["RightAscension"][
                             "value"
-                        ] * (
-                            360 / 24
-                        )  # convert to degrees
+                        ] * (360 / 24)  # convert to degrees
                     except:
                         pass
 
@@ -827,6 +826,24 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         except:
             print("main socket closed")
             socket = False
+
+
+@app.get("/autofocus", include_in_schema=False)
+async def autofocus(request: Request):
+    """ TODO: Implement
+    Pass the csv file and the fits file_names
+    Call fits files in the csv file
+    """
+    return FRONTEND.TemplateResponse(
+        "autofocus.html.j2",
+        {
+            "request": request,
+            # "observatories": list(OBSERVATORIES.keys()),
+            # "webcamfeeds": WEBCAMFEEDS,
+            # "configs": {obs.name: obs.config for obs in OBSERVATORIES.values()},
+        },
+        request=request,
+    )
 
 
 @app.get("/{path:path}", include_in_schema=False)

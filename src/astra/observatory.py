@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 from multiprocessing import Manager
 from pathlib import Path
 from threading import Thread
+from typing import Tuple
 
 import astropy.units as u
 import numpy as np
@@ -17,13 +18,13 @@ from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
-
 # https://github.com/dashawn888/sqlite3worker
 from sqlite3worker import Sqlite3Worker
 
 from astra import ASTRA_VER, Config, utils
 from astra.alpaca_device_process import AlpacaDevice
 from astra.autofocus import Autofocuser
+from astra.calibrate_guiding import GuidingCalibrator
 from astra.guiding import Guider
 from astra.image_handler import create_image_dir, save_image
 from astra.logging_handler import LoggingHandler
@@ -134,9 +135,7 @@ class Observatory:
             self.schedule = self.read_schedule()
 
         # load devices
-        self.monitor_action_queue = (
-            {}
-        )  # queue for monitoring/running actions per device_name
+        self.monitor_action_queue = {}  # queue for monitoring/running actions per device_name
         self.devices = self.load_devices()
         self.last_image = None
 
@@ -1574,6 +1573,9 @@ class Observatory:
             elif "autofocus" == row["action_type"]:
                 self.autofocus_sequence(row, paired_devices)
 
+            elif "calibrate_guiding" == row["action_type"]:
+                self.guiding_calibration_sequence(row, paired_devices)
+
             elif "calibration" == row["action_type"]:
                 self.image_sequence(row, paired_devices)
 
@@ -1891,6 +1893,7 @@ class Observatory:
             "object",
             "flats",
             "autofocus",
+            "calibrate_guiding",
             "pointing_model",
         ]:
             return base_conditions and time_conditions and self.weather_safe
@@ -1916,7 +1919,7 @@ class Observatory:
         log_option=None,
         maximal_sleep_time=0.1,
         wcs=None,
-    ) -> bool:
+    ) -> Tuple[bool, Path | None]:
         """
         Perform camera exposure, log information, and wait for the image to be ready.
 
@@ -2007,13 +2010,13 @@ class Observatory:
             dateobs = pd.to_datetime(last_exposure_start_time)
 
             # get image array and info
-            image_array = camera.get("ImageArray")
-            imginfo = camera.get("ImageArrayInfo")
+            image = camera.get("ImageArray")
+            image_info = camera.get("ImageArrayInfo")
 
             # save image
             filepath = save_image(
-                image_array,
-                imginfo,
+                image,
+                image_info,
                 maxadu,
                 hdr,
                 camera.device_name,
@@ -2405,6 +2408,51 @@ class Observatory:
 
         return True
 
+    def guiding_calibration_sequence(self, row, paired_devices) -> bool:
+        """
+        Perform guding calibration.
+
+        Parameters:
+            row (dict): A dictionary containing information about the sequence action:
+                - 'device_name': The name of the device.
+                - 'action_type': The type of action (e.g., 'object').
+                - 'action_value': The action's value (e.g., a command or parameter).
+            paired_devices (dict): A dictionary specifying paired devices for the sequence.
+
+        Returns:
+            bool: True if the guiding calibration was successful, False otherwise.
+        """
+        self.logger.info(f"Running guiding calibration for {row['device_name']}")
+        try:
+            action_value, _, hdr = self.pre_sequence(row, paired_devices)
+            if not self.check_conditions(row=row):
+                return False
+
+            guiding_calibrator = GuidingCalibrator(
+                astra_observatory=self,
+                row=row,
+                paired_devices=paired_devices,
+                action_value=action_value,
+                hdr=hdr,
+            )
+            guiding_calibrator.run()
+            success = True
+
+        except Exception as e:
+            success = False
+            self.logger.exception(
+                f"Error running guiding calibration for {row['device_name']}. Exception {str(e)}"
+            )
+            self.error_source.append(
+                {
+                    "device_type": "Camera",
+                    "device_name": row["device_name"],
+                    "error": f"Error running guiding calibration for {row['device_name']}",
+                }
+            )
+
+        return success
+
     def autofocus_sequence(self, row, paired_devices) -> bool:
         """
         Perform autofocus.
@@ -2725,7 +2773,7 @@ class Observatory:
         offset: float,
         lower_exptime_limit: float,
         upper_exptime_limit: float,
-        exptime: float = None,
+        exptime: float | None = None,
     ) -> float:
         """
         Set the exposure time for flat field calibration images.
@@ -3056,169 +3104,169 @@ class Observatory:
                 rows, columns=["filepath", "camera_name", "complete_hdr", "date_obs"]
             )
 
-            if df_images.shape[0] > 0:
-                # loop through cameras (usually just one)
-                for cam in df_images["camera_name"].unique():
-                    # filter image dataframe by camera
-                    df_images_filt = df_images[df_images["camera_name"] == cam]
+            if df_images.empty:
+                self.logger.debug("No headers to complete, as there are no images.")
+                return
 
-                    # get paired devices for camera
-                    cam_index = self.get_cam_index(cam)
-                    paired_devices = self.config["Camera"][cam_index]["paired_devices"]
-                    paired_devices["Camera"] = cam
+            # loop through cameras (usually just one)
+            for cam in df_images["camera_name"].unique():
+                # filter image dataframe by camera
+                df_images_filt = df_images[df_images["camera_name"] == cam]
 
-                    # convert date_obs to datetime type, sort by date_obs, and convert to jd
-                    df_images_filt["date_obs"] = pd.to_datetime(
-                        df_images_filt["date_obs"], format="%Y-%m-%d %H:%M:%S.%f"
+                # get paired devices for camera
+                cam_index = self.get_cam_index(cam)
+                paired_devices = self.config["Camera"][cam_index]["paired_devices"]
+                paired_devices["Camera"] = cam
+
+                # convert date_obs to datetime type, sort by date_obs, and convert to jd
+                df_images_filt["date_obs"] = pd.to_datetime(
+                    df_images_filt["date_obs"], format="%Y-%m-%d %H:%M:%S.%f"
+                )
+                df_images_filt = df_images_filt.sort_values(by="date_obs").reset_index(
+                    drop=True
+                )
+                df_images_filt["jd_obs"] = (
+                    df_images_filt["date_obs"].apply(utils.to_jd).sort_values()
+                )
+
+                # add small time increment to avoid duplicate jd, this adds 0.0864 ms to each image that has duplicate jd_obs
+                while df_images_filt["jd_obs"].duplicated().sum() > 0:
+                    df_images_filt["jd_obs"] = df_images_filt["jd_obs"].mask(
+                        df_images_filt["jd_obs"].duplicated(),
+                        df_images_filt["jd_obs"] + 1e-9,
                     )
-                    df_images_filt = df_images_filt.sort_values(
-                        by="date_obs"
-                    ).reset_index(drop=True)
-                    df_images_filt["jd_obs"] = (
-                        df_images_filt["date_obs"].apply(utils.to_jd).sort_values()
-                    )
 
-                    # add small time increment to avoid duplicate jd, this adds 0.0864 ms to each image that has duplicate jd_obs
-                    while df_images_filt["jd_obs"].duplicated().sum() > 0:
-                        df_images_filt["jd_obs"] = df_images_filt["jd_obs"].mask(
-                            df_images_filt["jd_obs"].duplicated(),
-                            df_images_filt["jd_obs"] + 1e-9,
-                        )
+                df_images_filt = df_images_filt.sort_values(by="jd_obs").reset_index()
 
-                    df_images_filt = df_images_filt.sort_values(
-                        by="jd_obs"
-                    ).reset_index()
+                # get polled data from ascom devices +- 10 seconds of first and last image
+                t0 = pd.to_datetime(df_images_filt["date_obs"].iloc[0]) - pd.Timedelta(
+                    "10 sec"
+                )
+                t1 = pd.to_datetime(df_images_filt["date_obs"].iloc[-1]) + pd.Timedelta(
+                    "10 sec"
+                )
 
-                    # get polled data from ascom devices +- 10 seconds of first and last image
-                    t0 = pd.to_datetime(
-                        df_images_filt["date_obs"].iloc[0]
-                    ) - pd.Timedelta("10 sec")
-                    t1 = pd.to_datetime(
-                        df_images_filt["date_obs"].iloc[-1]
-                    ) + pd.Timedelta("10 sec")
+                q = f"""SELECT * FROM polling WHERE datetime BETWEEN "{str(t0)}" AND "{str(t1)}";"""
+                rows = self.cursor.execute(q)
+                df_poll = pd.DataFrame(
+                    rows,
+                    columns=[
+                        "device_type",
+                        "device_name",
+                        "device_command",
+                        "device_value",
+                        "datetime",
+                    ],
+                )
+                df_poll["jd"] = pd.to_datetime(
+                    df_poll["datetime"], format="%Y-%m-%d %H:%M:%S.%f"
+                ).apply(utils.to_jd)
 
-                    q = f"""SELECT * FROM polling WHERE datetime BETWEEN "{str(t0)}" AND "{str(t1)}";"""
-                    rows = self.cursor.execute(q)
-                    df_poll = pd.DataFrame(
-                        rows,
-                        columns=[
-                            "device_type",
-                            "device_name",
-                            "device_command",
-                            "device_value",
-                            "datetime",
-                        ],
-                    )
-                    df_poll["jd"] = pd.to_datetime(
-                        df_poll["datetime"], format="%Y-%m-%d %H:%M:%S.%f"
-                    ).apply(utils.to_jd)
+                # find unique headers in polled commands
+                df_poll_unique = df_poll[
+                    ["device_type", "device_name", "device_command"]
+                ].drop_duplicates()
 
-                    # find unique headers in polled commands
-                    df_poll_unique = df_poll[
-                        ["device_type", "device_name", "device_command"]
-                    ].drop_duplicates()
-
-                    # drop row that have device_type and device_command that are not in fits_config to avoid errors later
-                    df_poll_unique = df_poll_unique[
-                        df_poll_unique.apply(
-                            lambda x: (
-                                x["device_type"]
-                                in self.fits_config["device_type"].values
-                            )
-                            and (
-                                x["device_command"]
-                                in self.fits_config["device_command"].values
-                            ),
-                            axis=1,
-                        )
-                    ]
-
-                    # get header and comment from fits_config
-                    df_poll_unique["header"] = df_poll_unique.apply(
+                # drop row that have device_type and device_command that are not in fits_config to avoid errors later
+                df_poll_unique = df_poll_unique[
+                    df_poll_unique.apply(
                         lambda x: (
-                            self.fits_config[
-                                (self.fits_config["device_type"] == x["device_type"])
-                                & (
-                                    self.fits_config["device_command"]
-                                    == x["device_command"]
-                                )
-                            ]["header"].values[0]
+                            x["device_type"] in self.fits_config["device_type"].values
+                        )
+                        and (
+                            x["device_command"]
+                            in self.fits_config["device_command"].values
                         ),
                         axis=1,
                     )
-                    df_poll_unique["comment"] = df_poll_unique.apply(
-                        lambda x: (
-                            self.fits_config[
-                                (self.fits_config["device_type"] == x["device_type"])
-                                & (
-                                    self.fits_config["device_command"]
-                                    == x["device_command"]
-                                )
-                            ]["comment"].values[0]
-                        ),
-                        axis=1,
-                    )
+                ]
 
-                    # keep rows that only have device_name in paired_devices
-                    df_poll_unique = df_poll_unique[
-                        df_poll_unique["device_name"].isin(paired_devices.values())
+                # get header and comment from fits_config
+                df_poll_unique["header"] = df_poll_unique.apply(
+                    lambda x: (
+                        self.fits_config[
+                            (self.fits_config["device_type"] == x["device_type"])
+                            & (
+                                self.fits_config["device_command"]
+                                == x["device_command"]
+                            )
+                        ]["header"].values[0]
+                    ),
+                    axis=1,
+                )
+                df_poll_unique["comment"] = df_poll_unique.apply(
+                    lambda x: (
+                        self.fits_config[
+                            (self.fits_config["device_type"] == x["device_type"])
+                            & (
+                                self.fits_config["device_command"]
+                                == x["device_command"]
+                            )
+                        ]["comment"].values[0]
+                    ),
+                    axis=1,
+                )
+
+                # keep rows that only have device_name in paired_devices
+                df_poll_unique = df_poll_unique[
+                    df_poll_unique["device_name"].isin(paired_devices.values())
+                ]
+
+                # form interpolated dataframe
+                df_inp = pd.DataFrame(
+                    columns=df_poll_unique["header"], index=df_images_filt["jd_obs"]
+                )
+
+                # interpolate polled data onto image times
+                for i, row in df_poll_unique.iterrows():
+                    df_poll_filtered = df_poll[
+                        (df_poll["device_type"] == row["device_type"])
+                        & (df_poll["device_name"] == row["device_name"])
+                        & (df_poll["device_command"] == row["device_command"])
                     ]
 
-                    # form interpolated dataframe
-                    df_inp = pd.DataFrame(
-                        columns=df_poll_unique["header"], index=df_images_filt["jd_obs"]
+                    df_poll_filtered = df_poll_filtered.sort_values(by="jd")
+                    df_poll_filtered = df_poll_filtered.set_index("jd")
+
+                    df_poll_filtered["device_value"] = (
+                        df_poll_filtered["device_value"]
+                        .replace({"True": 1.0, "False": 0.0})
+                        .astype(float)
                     )
 
-                    # interpolate polled data onto image times
-                    for i, row in df_poll_unique.iterrows():
-                        df_poll_filtered = df_poll[
-                            (df_poll["device_type"] == row["device_type"])
-                            & (df_poll["device_name"] == row["device_name"])
-                            & (df_poll["device_command"] == row["device_command"])
-                        ]
+                    df_inp[row["header"]] = utils.interpolate_dfs(
+                        df_images_filt["jd_obs"], df_poll_filtered["device_value"]
+                    )["device_value"].fillna(0)
 
-                        df_poll_filtered = df_poll_filtered.sort_values(by="jd")
-                        df_poll_filtered = df_poll_filtered.set_index("jd")
+                # update files
+                for i, row in df_images_filt.iterrows():
+                    with fits.open(row["filepath"], mode="update") as filehandle:
+                        hdr = filehandle[0].header
+                        for header in df_inp.columns:
+                            hdr[header] = (
+                                df_inp.iloc[i][header],
+                                df_poll_unique[df_poll_unique["header"] == header][
+                                    "comment"
+                                ].values[0],
+                            )
 
-                        df_poll_filtered["device_value"] = (
-                            df_poll_filtered["device_value"]
-                            .replace({"True": 1.0, "False": 0.0})
-                            .astype(float)
+                        hdr["RA"] = hdr["RA"] * (360 / 24)  # convert to degrees
+
+                        location = EarthLocation(
+                            lat=hdr["LAT-OBS"] * u.deg,
+                            lon=hdr["LONG-OBS"] * u.deg,
+                            height=hdr["ALT-OBS"] * u.m,
+                        )
+                        target = SkyCoord(
+                            hdr["RA"], hdr["DEC"], unit=(u.deg, u.deg), frame="icrs"
                         )
 
-                        df_inp[row["header"]] = utils.interpolate_dfs(
-                            df_images_filt["jd_obs"], df_poll_filtered["device_value"]
-                        )["device_value"].fillna(0)
+                        utils.hdr_times(hdr, self.fits_config, location, target)
+                        filehandle[0].add_checksum()
 
-                    # update files
-                    for i, row in df_images_filt.iterrows():
-                        with fits.open(row["filepath"], mode="update") as filehandle:
-                            hdr = filehandle[0].header
-                            for header in df_inp.columns:
-                                hdr[header] = (
-                                    df_inp.iloc[i][header],
-                                    df_poll_unique[df_poll_unique["header"] == header][
-                                        "comment"
-                                    ].values[0],
-                                )
-
-                            hdr["RA"] = hdr["RA"] * (360 / 24)  # convert to degrees
-
-                            location = EarthLocation(
-                                lat=hdr["LAT-OBS"] * u.deg,
-                                lon=hdr["LONG-OBS"] * u.deg,
-                                height=hdr["ALT-OBS"] * u.m,
-                            )
-                            target = SkyCoord(
-                                hdr["RA"], hdr["DEC"], unit=(u.deg, u.deg), frame="icrs"
-                            )
-
-                            utils.hdr_times(hdr, self.fits_config, location, target)
-                            filehandle[0].add_checksum()
-
-                            self.cursor.execute(
-                                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
-                            )
+                        self.cursor.execute(
+                            f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
+                        )
 
             self.logger.info("Completing headers... Done.")
 
@@ -3413,4 +3461,6 @@ class Observatory:
                     }
                 )
                 self.logger.error(f"Queue get error: {str(e)}")
+                self.queue_running = False
+                self.queue_running = False
                 self.queue_running = False

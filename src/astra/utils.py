@@ -198,13 +198,19 @@ def hdr_times(hdr, fits_config, location, target):
                 pass
 
     z = (90 - hdr["ALTITUDE"]) * np.pi / 180
-    hdr["AIRMASS"] = (1.002432 * np.cos(z) ** 2 + 0.148386 * np.cos(z) + 0.0096467) / (
-        np.cos(z) ** 3 + 0.149864 * np.cos(z) ** 2 + 0.0102963 * np.cos(z) + 0.000303978
+    hdr["AIRMASS"] = (
+        (1.002432 * np.cos(z) ** 2 + 0.148386 * np.cos(z) + 0.0096467)
+        / (
+            np.cos(z) ** 3
+            + 0.149864 * np.cos(z) ** 2
+            + 0.0102963 * np.cos(z)
+            + 0.000303978
+        )
     )  # https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)
 
 
 ## for flat fielding
-def is_sun_rising(obs_location):
+def is_sun_rising(obs_location) -> Tuple[bool, bool, AltAz]:
     # sun's position now
     obs_time0 = Time.now()
     sun_position0 = get_sun(obs_time0)
@@ -576,7 +582,6 @@ def ack_astelos_error(telescope, valid, all_errors, messages):
     start_time = time.time()
 
     while valid and len(all_errors) > 0:
-
         # derive system eror level
         sys_level = int(np.sum(np.unique(np.array(all_errors.level))))
 

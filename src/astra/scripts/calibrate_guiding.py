@@ -9,23 +9,32 @@ determine the camera orientation and pulseGuide conversion
 factors
 """
 
+import logging
 import time
 from collections import defaultdict
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Tuple
 
 import astropy.io.fits as fits
 import numpy as np
-from alpaca.camera import *
-from alpaca.exceptions import *
-from alpaca.telescope import *
-from alpaca.telescope import GuideDirections
+from alpaca.camera import Camera
+from alpaca.dome import Dome
+from alpaca.telescope import GuideDirections, Telescope
 from donuts import Donuts
 from donuts.image import Image
 from scipy.ndimage import median_filter
-from datetime import datetime, UTC
 
 from astra import Config
 
+logging.basicConfig(level=logging.INFO)
+
 CONFIG = Config()
+OBSERVATORY_CONFIG = CONFIG.load_observatory_config()
+
+GUIDING_CALLIBRATION_DIR = (
+    CONFIG.paths.images / "calibrate_guiding" / datetime.now().strftime("%Y%m%d")
+)
 
 
 class CustomImageClass(Image):
@@ -36,59 +45,135 @@ class CustomImageClass(Image):
         self.raw_image = band_clean
 
 
-TELESCOPE_IP = "localhost:11111"
-TELESCOPE_DEVICE_NUMBER = 0
+TELESCOPE_IP = OBSERVATORY_CONFIG["Telescope"][0]["ip"]
+TELESCOPE_DEVICE_NUMBER = OBSERVATORY_CONFIG["Telescope"][0]["device_number"]
 
-CAMERA_IP = "172.16.0.198:11111"
-CAMERA_DEVICE_NUMBER = 0
+CAMERA_IP = OBSERVATORY_CONFIG["Camera"][0]["ip"]
+CAMERA_DEVICE_NUMBER = OBSERVATORY_CONFIG["Camera"][0]["device_number"]
+
+DOME_IP = OBSERVATORY_CONFIG["Dome"][0]["ip"]
+DOME_DEVICE_NUMBER = OBSERVATORY_CONFIG["Dome"][0]["device_number"]
 
 
 def connect_telescope():
-    """
-    A reusable way to connect to ACP telescope
-    """
-    print("Connecting to telescope...")
-    myScope = Telescope(TELESCOPE_IP, TELESCOPE_DEVICE_NUMBER)
+    """A reusable way to connect to ACP telescope"""
+    logging.info(
+        f"Connecting to telescope at {TELESCOPE_IP} "
+        f"with device number {TELESCOPE_DEVICE_NUMBER}..."
+    )
+    my_telescope = Telescope(TELESCOPE_IP, TELESCOPE_DEVICE_NUMBER)
     try:
-        myScope.Connected = True
-        SCOPE_READY = myScope.Connected
-        myScope.Unpark()
-        myScope.Tracking = True
-        print("Telescope connected")
-    except:
-        print("WARNING: CANNOT CONNECT TO TELESCOPE")
-        SCOPE_READY = False
-    return myScope, SCOPE_READY
+        my_telescope.Connected = True
+        TELESCOPE_READY = my_telescope.Connected
+        my_telescope.Unpark()
+        my_telescope.Tracking = True
+        logging.info("Telescope connected")
+    except Exception as exc:
+        logging.warning(f"Cannot connect to telescope {exc}")
+        TELESCOPE_READY = False
+    return my_telescope, TELESCOPE_READY
 
 
 def connect_camera():
-    """
-    A reusable way of checking camera connection
+    """A reusable way of checking camera connection
 
     The camera needs treated slightly differently. We
     have to try connecting before we can tell if
     connected or not. Annoying!
     """
-    print("Connecting to camera...")
-    myCamera = Camera(CAMERA_IP, CAMERA_DEVICE_NUMBER)
+    logging.info(
+        f"Connecting to camera at {CAMERA_IP} with device number {CAMERA_DEVICE_NUMBER}..."
+    )
+    my_camera = Camera(CAMERA_IP, CAMERA_DEVICE_NUMBER)
     try:
-        myCamera.Connected = True
+        my_camera.Connected = True
         CAMERA_READY = True
-        print("Camera connected")
+        logging.info("Camera connected")
     except AttributeError:
-        print("WARNING: CANNOT CONNECT TO CAMERA")
+        logging.warning("Cannot connect to camera.")
         CAMERA_READY = False
-    return myCamera, CAMERA_READY
+    return my_camera, CAMERA_READY
 
 
-def perform_exposure(camera_object: Camera, image_path, exptime=5, t_settle=10):
+def connect_dome():
+    """A reusable way of checking dome connection
+
+    The dome needs treated slightly differently. We
+    have to try connecting before we can tell if
+    connected or not. Annoying!
+    """
+    logging.info(
+        f"Connecting to dome at {DOME_IP} with device number {DOME_DEVICE_NUMBER}..."
+    )
+    my_dome = Dome(DOME_IP, DOME_DEVICE_NUMBER)
+    try:
+        my_dome.Connected = True
+        DOME_READY = True
+        logging.info("Dome connected")
+    except AttributeError:
+        logging.warning("Cannot connect to dome.")
+        DOME_READY = False
+    return my_dome, DOME_READY
+
+
+def print_yaml_item(key, value, indent=0):
+    """Prints a key-value pair in YAML format with proper indentation."""
+    indentation = " " * indent
+    if isinstance(value, dict):
+        print(f"{indentation}{key}:")
+        for subkey, subvalue in value.items():
+            print_yaml_item(subkey, subvalue, indent + 2)
+    else:
+        if isinstance(value, str):
+            print(f"{indentation}{key}: '{value}'")
+        else:
+            print(f"{indentation}{key}: {value}")
+
+
+def open_dome(dome: Dome):
+    logging.info("Opening dome...")
+    dome.OpenShutter()
+    while True:
+        if dome.ShutterStatus.value == 0:
+            logging.info("The dome is fully opened.")
+            break
+        elif dome.ShutterStatus.value == 1:
+            logging.debug("The dome is opening...")
+        time.sleep(1)
+
+
+def slew_telescope_one_hour_east_of_sidereal_meridian(telescope: Telescope):
+    local_sidereal_time = telescope.SiderealTime
+    target_right_ascension = local_sidereal_time - 1
+
+    logging.info(f"Local sidereal time: {local_sidereal_time:.2f} hours")
+    logging.info(
+        f"Slewing one hour east to coordinates: RA = {target_right_ascension:.2f} hours, "
+        f"Dec = {0} degrees..."
+    )
+
+    telescope.SlewToCoordinatesAsync(
+        RightAscension=local_sidereal_time - 1, Declination=0
+    )
+    while telescope.Slewing:
+        logging.debug("Slewing...")
+        logging.debug("RA:", telescope.RightAscension)
+        logging.debug("Dec:", telescope.Declination)
+        logging.debug("Alt:", telescope.Altitude)
+        logging.debug("Az:", telescope.Azimuth)
+        time.sleep(1)
+
+
+def perform_exposure(
+    camera_object: Camera, image_path: Path, exptime: float = 5, t_settle=10
+):
     """
     Take an image with MaxImDL
     """
-    print("Waiting {}s to settle...".format(t_settle))
+    logging.info(f"Waiting {t_settle} s to settle...")
     time.sleep(t_settle)
 
-    print("Taking image...")
+    logging.info("Taking image...")
     dateobs = datetime.now(UTC)
     maxadu = camera_object.MaxADU
 
@@ -96,7 +181,7 @@ def perform_exposure(camera_object: Camera, image_path, exptime=5, t_settle=10):
 
     while not camera_object.ImageReady:
         time.sleep(0.1)
-    print("Image ready...")
+    logging.info("Image ready...")
 
     hdr = fits.Header()
     hdr["FILTER"] = ("none", "Filter name")
@@ -105,12 +190,12 @@ def perform_exposure(camera_object: Camera, image_path, exptime=5, t_settle=10):
 
     save_image(camera_object, hdr, dateobs, maxadu, image_path)
 
-    print("{} saved...".format(image_path))
+    logging.info(f"{image_path} saved...")
 
 
 def save_image(
-    device: Camera, hdr: fits.Header, dateobs: datetime, maxadu: int, filename: str
-) -> str:
+    device: Camera, hdr: fits.Header, dateobs: datetime, maxadu: int, filename: Path
+):
     """
     Save an image to disk.
 
@@ -134,18 +219,16 @@ def save_image(
         str: The file path to the saved image.
 
     """
-    calibrate_guiding_path = CONFIG.paths.images / "calibrate_guiding"
-
-    if not calibrate_guiding_path.exists():
-        print("Creating directory: {}".format(calibrate_guiding_path))
-        calibrate_guiding_path.mkdir(parents=True)
-        print("Directory created")
+    if not GUIDING_CALLIBRATION_DIR.exists():
+        logging.info(f"Creating directory: {GUIDING_CALLIBRATION_DIR}")
+        GUIDING_CALLIBRATION_DIR.mkdir(parents=True)
+        logging.info("Directory created")
 
     arr = device.ImageArray
 
     img = np.array(arr)
 
-    nda = img_transform(device, img, maxadu)  ## TODO: make more efficient?
+    nda = transform_image_to_array(device, img, maxadu)  ## TODO: make more efficient?
 
     hdr["DATE-OBS"] = (
         dateobs.strftime("%Y-%m-%dT%H:%M:%S.%f"),
@@ -160,10 +243,12 @@ def save_image(
 
     hdu = fits.PrimaryHDU(nda, header=hdr)
 
-    hdu.writeto(calibrate_guiding_path / filename.name)
+    hdu.writeto(GUIDING_CALLIBRATION_DIR / filename.name)
 
 
-def img_transform(device: Camera, img: np.array, maxadu: int) -> np.array:
+def transform_image_to_array(
+    device: Camera, img: np.ndarray, maxadu: int
+) -> np.ndarray:
     """
     This function takes in a device object, an image object, and a maximum ADU
     value and returns a numpy array of the correct shape for astropy.io.fits.
@@ -177,23 +262,23 @@ def img_transform(device: Camera, img: np.array, maxadu: int) -> np.array:
         nda (np.array): A numpy array of the correct shape for astropy.io.fits.
     """
 
-    imginfo = device.ImageArrayInfo
+    image_info = device.ImageArrayInfo
 
     # Determine the image data type
-    if imginfo.ImageElementType == 0 or imginfo.ImageElementType == 1:
+    if image_info.ImageElementType == 0 or image_info.ImageElementType == 1:
         imgDataType = np.uint16
-    elif imginfo.ImageElementType == 2:
+    elif image_info.ImageElementType == 2:
         if maxadu <= 65535:
             imgDataType = np.uint16  # Required for BZERO & BSCALE to be written
         else:
             imgDataType = np.int32
-    elif imginfo.ImageElementType == 3:
+    elif image_info.ImageElementType == 3:
         imgDataType = np.float64
     else:
-        raise ValueError(f"Unknown ImageElementType: {imginfo.ImageElementType}")
+        raise ValueError(f"Unknown ImageElementType: {image_info.ImageElementType}")
 
     # Make a numpy array of he correct shape for astropy.io.fits
-    if imginfo.Rank == 2:
+    if image_info.Rank == 2:
         nda = np.array(img, dtype=imgDataType).transpose()
     else:
         nda = np.array(img, dtype=imgDataType).transpose(2, 1, 0)
@@ -206,7 +291,7 @@ def pulseGuide(scope: Telescope, direction_int, duration):
     Move the telescope along a given direction
     for the specified amount of time
     """
-    print("Pulse guiding {} for {}ms".format(direction_int, duration))
+    logging.info(f"Pulse guiding {direction_int} for {duration} ms")
 
     if direction_int == 0:
         direction = GuideDirections.guideNorth
@@ -217,22 +302,22 @@ def pulseGuide(scope: Telescope, direction_int, duration):
     elif direction_int == 3:
         direction = GuideDirections.guideWest
     else:
-        print("Invalid direction")
+        logging.error("Invalid direction")
 
-    print("Pulse guiding {} for {}ms".format(direction, duration))
+    logging.info(f"Pulse guiding {direction} for {duration} ms")
 
     scope.PulseGuide(direction, duration)
-    while scope.IsPulseGuiding == True:
-        # print('Pulse guiding...')
+    while scope.IsPulseGuiding:
+        logging.debug("Pulse guiding...")
         time.sleep(0.1)
 
-    while scope.Slewing == True:
-        print("Slewing...")
+    while scope.Slewing:
+        logging.debug("Slewing...")
         time.sleep(0.1)
 
     ra = (scope.RightAscension / 24) * 360
     dec = scope.Declination
-    print(ra, dec)
+    logging.info(f"RA: {ra:.8f} deg, DEC: {dec:.8f} deg")
 
 
 def determineShiftDirectionMagnitude(shft):
@@ -257,13 +342,13 @@ def determineShiftDirectionMagnitude(shft):
     return direction, magnitude
 
 
-def newFilename(direction, pulse_time, image_id):
+def newFilename(direction, pulse_time, image_id) -> Tuple[Path, int]:
     """
     Generate new FITS image name
     """
     filename = "step_{:03d}_d{}_{}ms.fits".format(image_id, direction, pulse_time)
 
-    filepath = CONFIG.paths.images / "calibrate_guiding" / filename
+    filepath = GUIDING_CALLIBRATION_DIR / filename
 
     image_id += 1
     return filepath, image_id
@@ -278,34 +363,24 @@ if __name__ == "__main__":
     image_id = 0
 
     # connect to hardware
-    myScope, SCOPE_READY = connect_telescope()
-    myCamera, CAMERA_READY = connect_camera()
+    my_telescope, TELESCOPE_READY = connect_telescope()
+    my_camera, CAMERA_READY = connect_camera()
+    my_dome, DOME_READY = connect_dome()
+
+    open_dome(my_dome)
 
     # turn tracking on
-    myScope.Tracking = True
+    my_telescope.Tracking = True
     time.sleep(5)
 
-    # slew to 1 hour east of meridian and 0 deg Dec
-    local_sidereal_time = myScope.SiderealTime
-    print("Local sidereal time:", local_sidereal_time)
-    myScope.SlewToCoordinatesAsync(
-        RightAscension=local_sidereal_time - 1, Declination=0
-    )
-
-    while myScope.Slewing:
-        print("Slewing...")
-        print("RA:", myScope.RightAscension)
-        print("Dec:", myScope.Declination)
-        print("Alt:", myScope.Altitude)
-        print("Az:", myScope.Azimuth)
-        time.sleep(1)
+    slew_telescope_one_hour_east_of_sidereal_meridian(my_telescope)
 
     # start the calibration run
-    print("Starting calibration run...")
+    logging.info("Starting calibration run...")
     ref_image, image_id = newFilename("R", 0, image_id)
-    perform_exposure(myCamera, ref_image)
+    perform_exposure(my_camera, ref_image)
 
-    # set up donuts with this reference point. Assume default params for now
+    # Set up donuts with this reference point. Assume default params for now
     donuts_ref = Donuts(
         ref_image,
         normalise=False,
@@ -316,22 +391,25 @@ if __name__ == "__main__":
 
     # loop over 10 cycles of the U, D, L, R nudging to determine
     # the scale and orientation of the camera
-    for i in range(10):
-        # loop pver 4 directions, 0 to 3
+    # number_of_cycles = 10
+    number_of_cycles = 1
+    for i in range(number_of_cycles):
+        # loop over 4 directions, 0 to 3
+        logging.info(f"Starting cycle {i} of {number_of_cycles}.")
         for j in range(4):
             # pulse guide the telescope
-            pulseGuide(myScope, j, pulse_time)
+            pulseGuide(my_telescope, j, pulse_time)
 
             # take an image
             check, image_id = newFilename(j, pulse_time, image_id)
 
-            perform_exposure(myCamera, check)
+            perform_exposure(my_camera, check)
 
             # now measure the shift
             shift = donuts_ref.measure_shift(check)
             direction, magnitude = determineShiftDirectionMagnitude(shift)
 
-            print(direction, magnitude)
+            logging.info(f"Shift in direction {direction} of {magnitude} pixels")
             DIRECTION_STORE[j].append(direction)
             SCALE_STORE[j].append(magnitude)
 
@@ -351,11 +429,17 @@ if __name__ == "__main__":
         "RA_AXIS": None,
         "DIRECTIONS": {"+x": None, "-x": None, "+y": None, "-y": None},
     }
+    logging.info(f"Gathered directions {DIRECTION_STORE}")
+    logging.info(f"Gathered scales {SCALE_STORE}")
 
-    print("Configuration:", end="\n\n")
+    logging.info("Checking directions...")
 
     for i, dir in enumerate(DIRECTION_STORE):
-        assert len(set(DIRECTION_STORE[dir])) == 1
+        if len(set(DIRECTION_STORE[dir])) != 1:
+            raise ValueError(
+                "DIRECTION_STORE should all be in the same direction for each key. "
+                f"Key {i} has {DIRECTION_STORE[dir]}."
+            )
 
         xy = DIRECTION_STORE[dir][0]
         if dir == 0:
@@ -372,22 +456,13 @@ if __name__ == "__main__":
             direction = "West"
         else:
             direction = "Invalid direction"
-            print("Invalid direction")
+            logging.warning("Invalid direction")
 
         config["PIX2TIME"][xy] = pulse_time / np.average(SCALE_STORE[dir])
         config["DIRECTIONS"][xy] = direction
 
-    # print dict as yml
-    for key in config:
-        if isinstance(config[key], dict):
-            print("{}:".format(key))
-            for subkey in config[key]:
-                if isinstance(config[key][subkey], str):
-                    print("  '{}': {}".format(subkey, config[key][subkey]))
-                else:
-                    print("  '{}': {}".format(subkey, config[key][subkey]))
-        else:
-            if isinstance(config[key], str):
-                print("{}: '{}'".format(key, config[key]))
-            else:
-                print("{}: {}".format(key, config[key]))
+    logging.info("Directions are consistent")
+
+    logging.info("Printing Configuration...")
+    for key, value in config.items():
+        print_yaml_item(key, value)

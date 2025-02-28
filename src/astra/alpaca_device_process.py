@@ -56,6 +56,7 @@ class AlpacaDevice(Process):
             "device_number": device_number,
             "device_name": device_name,
         }
+        self._poll_delays = {}  # Pairs of 'method': delay # TODO: implement
 
         self._poll_list = []
         self._poll_latest = {}
