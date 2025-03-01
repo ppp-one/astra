@@ -2435,8 +2435,7 @@ class Observatory:
                 action_value=action_value,
                 hdr=hdr,
             )
-            guiding_calibrator.determine_guider_calibration_field()
-            guiding_calibrator.slew_to_calibration_field()
+            guiding_calibrator.slew_telescope_one_hour_east_of_sidereal_meridian()
             guiding_calibrator.perform_calibration_cycles()
             guiding_calibrator.complete_calibration_config()
             guiding_calibrator.save_calibration_config()
