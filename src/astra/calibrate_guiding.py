@@ -60,7 +60,6 @@ class GuidingCalibrator:
         self.exptime = action_value.get("exptime", exptime)
         self.settle_time = action_value.get("settle_time", settle_time)
         self.number_of_cycles = action_value.get("number_of_cycles", number_of_cycles)
-        self._calibration_coordinates = None
         self._directions = defaultdict(list)
         self._scales = defaultdict(list)
         self._calibration_config = {}
@@ -71,190 +70,36 @@ class GuidingCalibrator:
         save_path.mkdir(parents=True, exist_ok=True)
 
     def run(self):
-        self.determine_guider_calibration_field()
-        self.slew_to_calibration_field()
+        self.slew_telescope_one_hour_east_of_sidereal_meridian()
         self.perform_calibration_cycles()
         self.complete_calibration_config()
         self.save_calibration_config()
         self.update_observatory_config()
 
-    def determine_guider_calibration_field(self):
-        """Determine the calibration field for the guider calibration field.
+    def slew_telescope_one_hour_east_of_sidereal_meridian(self):
+        local_sidereal_time = self._telescope.get("SiderealTime")
+        target_right_ascension = local_sidereal_time - 1
 
-        It uses the following parameters from the action_value:
-            - 'gaia_tmass_db_path': The path to the Gaia-Tmass database.
-            - 'maximal_zenith_angle': The maximal zenith angle in degrees. Default is None.
-            - 'airmass_threshold': The airmass threshold. Default is 1.01.
-            - 'g_mag_range': The range of g magnitudes. Default is (0, 10).
-            - 'j_mag_range': The range of j magnitudes. Default is (0, 10).
-            - 'fov_height': The height of the field of view in argmins. Default is 11.666666 / 60.
-            - 'fov_width': The width of the field of view in argmins. Default is 11.666666 / 60.
-            - 'selection_method': The method for selecting the calibration field.
-
-        In broad terms, the function determines the zenith neighbourhood of the observatory
-        and selects a star from it. The selection method can be one of the following:
-            - 'single': Select the star closest to zenith within the desired magnitude range
-               that is alone in the fov.
-            - 'maximal': Select the star closest to zenith within the desired magnitude range
-               that has the maximal number of neighbours in the fov.
-            - 'any': Select the star closest to zenith within the desired magnitude range.
-
-        If the selection method is unsuccessful, the function will attempt
-        to calibrate the guider at zenith.
-
-        Raises:
-            ValueError: If no observatory location is found in the header.
-            ValueError: check_conditions return false.
-
-        """
-        # Find observatory location
-        row, action_value, hdr = self.row, self.action_value, self.hdr
-
-        if "ra" in action_value and "dec" in action_value:
-            self.astra_observatory.logger.info(
-                "Using user-specified calibration coordinates for autofocus."
-            )
-            self._calibration_coordinates = SkyCoord(
-                ra=float(action_value["ra"]) * u.deg,
-                dec=float(action_value["dec"]) * u.deg,
-            )
-            return
-
-        self.astra_observatory.logger.info("Determining guider calibration field.")
-        try:
-            if not self.astra_observatory.check_conditions(row=row):
-                raise ValueError("Autofocus aborted due to bad conditions.")
-            observatory_location = EarthLocation(
-                lat=hdr["LAT-OBS"] * u.deg,
-                lon=hdr["LONG-OBS"] * u.deg,
-                height=hdr["ALT-OBS"] * u.m,
-            )
-            self.astra_observatory.logger.info(
-                f"Observatory location determined to be at {observatory_location}."
-            )
-        except Exception as e:
-            raise ValueError(f"Error determining observatory location: {str(e)}.")
-
-        try:
-            if not CONFIG.gaia_db.exists() or not action_value.get("use_gaia", True):
-                raise ValueError("gaia_tmass_db_path not specified in config.")
-
-            maximal_zenith_angle = action_value.get("maximal_zenith_angle", None)
-            if action_value.get("maximal_zenith_angle", None) is None:
-                maximal_zenith_angle = (
-                    find_airmass_threshold_crossover(
-                        airmass_threshold=action_value.get("airmass_threshold", 1.01)
-                    )
-                    * 180
-                    / np.pi
-                    * u.deg
-                )
-            self.astra_observatory.logger.info(
-                f"Computing coordinates for the guider calibration target with maximal zenith angle of "
-                f"{maximal_zenith_angle}."
-                # f"and selection method '{selection_method}'."
-            )
-
-            zenith_neighbourhood_query = (
-                ZenithNeighbourhoodQuery.create_from_location_and_angle(
-                    db_path=str(CONFIG.gaia_db),
-                    observatory_location=observatory_location,
-                    observation_time=action_value.get("observation_time", None),
-                    maximal_zenith_angle=maximal_zenith_angle,
-                )
-            )
-
-            self.astra_observatory.logger.info(
-                "Zenith was determined to be at "
-                f"RA: {zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.ra.value:.8f} deg, "
-                f"DEC: {zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.dec.value:.8f} deg."
-            )
-
-            znqr_full = zenith_neighbourhood_query.query_shardwise(n_sub_div=20)
-            self.astra_observatory.logger.info(
-                f"Retrieved {len(znqr_full)} stars in the neighbourhood of the zenith from the database.",
-            )
-
-            znqr = znqr_full.mask_by_magnitude(
-                g_mag_range=action_value.get("g_mag_range", (0, 10)),
-                j_mag_range=action_value.get("j_mag_range", (0, 10)),
-            )
-            self.astra_observatory.logger.info(
-                f"Retrieved {len(znqr)} stars in the neighbourhood of the zenith from the database "
-                "within the desired magnitude ranges.",
-            )
-            if not self.astra_observatory.check_conditions(row=row):
-                raise ValueError("Guiding calibration aborted due to bad conditions.")
-
-            # Determine the number of stars that would be on the ccd
-            # if the telescope was centred on a given star
-            znqr.determine_stars_in_neighbourhood(
-                height=action_value.get("fov_height", 11.666666 / 60),
-                width=action_value.get("fov_width", 11.666666 / 60),
-            )
-            if not self.astra_observatory.check_conditions(row=row):
-                raise ValueError("Guiding calibration aborted due to bad conditions.")
-
-            # Find the desired field of calibration
-            znqr.sort_values(["zenith_angle", "n"], ascending=[True, True])
-
-            selection_method = action_value.get("selection_method", "maximal")
-            if selection_method == "single":
-                centre_coordinates = znqr.get_sky_coord_of_select_star(
-                    np.argmax(znqr.n == 1)
-                )
-            elif selection_method == "maximal":
-                centre_coordinates = znqr.get_sky_coord_of_select_star(
-                    np.argmax(znqr.n)
-                )
-            elif selection_method == "any":
-                centre_coordinates = znqr.get_sky_coord_of_select_star(0)
-            else:
-                self.astra_observatory.logger.warning(
-                    f"Unknown selection_method: {selection_method}. Fall back to 'single'."
-                )
-                centre_coordinates = znqr.get_sky_coord_of_select_star(
-                    np.argmax(znqr.n == 1)
-                )
-
-            if centre_coordinates is None or not isinstance(
-                centre_coordinates, SkyCoord
-            ):
-                raise ValueError("No suitable calibration field found.")
-
-        except Exception as e:
-            if not self.astra_observatory.check_conditions(row=row):
-                raise ValueError("Guider calibration aborted due to bad conditions.")
-            self.astra_observatory.logger.warning(
-                f"Error determining guider calibration target coordinates: {str(e)}. "
-                "Attempt to calibrate guider at zenith.",
-            )
-            # Try to calibrate the guider at zenith.
-            try:
-                centre_coordinates = SkyCoord(
-                    AltAz(
-                        obstime=Time.now(),
-                        location=observatory_location,
-                        alt=90 * u.deg,
-                        az=0 * u.deg,
-                    )
-                ).icrs
-                self.astra_observatory.logger.info(
-                    "Guider calibration target coordinates set to zenith."
-                )
-            except Exception as e:
-                raise ValueError(
-                    f"Error determining zenith: {str(e)}."
-                    "This is likely due to an error in the observatory location in the header."
-                )
-
-        self._calibration_coordinates = centre_coordinates
-
-    def slew_to_calibration_field(self):
-        self._slew_telescope(
-            ra=self._calibration_coordinates.ra.deg,
-            dec=self._calibration_coordinates.dec.deg,
+        self.astra_observatory.logger.info(
+            f"Local sidereal time: {local_sidereal_time:.2f} hours."
+            f"Slewing one hour east to: RA = {target_right_ascension:.2f} hours, "
+            "Dec = 0 degrees..."
         )
+
+        try:
+            self._telescope.get(
+                "SlewToCoordinatesAsync",
+                RightAscension=target_right_ascension,
+                Declination=0,
+            )
+            time.sleep(1)
+
+            # Wait for slew to finish
+            self.astra_observatory.wait_for_slew(self.paired_devices)
+
+        except Exception as e:
+            raise ValueError(f"Failed to slew telescope: {e}")
+
 
     def perform_calibration_cycles(self):
         """Nudge camera in direction U, D, L, R to determine its scale and orientation."""
@@ -278,7 +123,9 @@ class GuidingCalibrator:
                 shift = donuts_ref.measure_shift(image_path)
                 direction_literal, magnitude = self._determine_shift_direction(shift)
 
-                direction_name = direction.name.removeprefix('guide')  # North, South, East, West
+                direction_name = direction.name.removeprefix(
+                    "guide"
+                )  # North, South, East, West
                 self._directions[direction_name].append(direction_literal)
                 self._scales[direction_name].append(magnitude)
                 self.astra_observatory.logger.info(
@@ -290,7 +137,7 @@ class GuidingCalibrator:
 
         self.astra_observatory.logger.info("Calibration cycles complete.")
         self.astra_observatory.logger.info(
-            f"Directions: {self._directions}", f"Scales: {self._scales}"
+            f"Directions: {str(self._directions)}; Scales: {str(self._scales)}"
         )
 
     def complete_calibration_config(self):
@@ -389,36 +236,6 @@ class GuidingCalibrator:
             downweight_edges=False,
             image_class=CustomImageClass,
         )
-
-    def _slew_telescope(self, ra, dec, **kwargs):
-        self.action_value["ra"] = ra
-        self.action_value["dec"] = dec
-        try:
-            self.astra_observatory.setup_observatory(
-                self.paired_devices, self.action_value
-            )
-        except Exception as e:
-            self.astra_observatory.error_source.append(
-                {
-                    "device_type": "GuidingCalibrator",
-                    "device_name": self.paired_devices["Telescope"],
-                    "error": str(e),
-                }
-            )
-
-    def _slew_telescope_one_hour_east_of_sidereal_meridian(self):
-        local_sidereal_time = self._telescope.get("SiderealTime")
-        target_right_ascension = local_sidereal_time - 1
-
-        self.astra_observatory.logger.info(
-            f"Local sidereal time: {local_sidereal_time:.2f} hours"
-        )
-        self.astra_observatory.logger.info(
-            f"Slewing one hour east to coordinates: RA = {target_right_ascension:.2f} hours, "
-            f"Dec = {0} degrees..."
-        )
-
-        self._slew_telescope(ra=target_right_ascension, dec=0)
 
     def _perform_exposure(self):
         self.astra_observatory.logger.info(f"Waiting {self.settle_time} s to settle...")
