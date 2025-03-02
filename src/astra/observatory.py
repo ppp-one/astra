@@ -28,6 +28,7 @@ from astra.calibrate_guiding import GuidingCalibrator
 from astra.guiding import Guider
 from astra.image_handler import create_image_dir, save_image
 from astra.logging_handler import LoggingHandler
+from astra.pointer import PointingCorrectionHandler
 from astra.schedule import process_schedule
 
 SQL3WLOGGER = logging.getLogger("sqlite3worker")
@@ -2155,6 +2156,12 @@ class Observatory:
     def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
         """
         Run a pointing model sequence for a specific camera.
+
+        The function generates a series of points in a spiral pattern from the zenith
+        down to a specified altitude above the horizon (30 degrees by default).
+        For each of these points (unless they are too close to the mooon), an exposure is performed
+        and afterwards a pointing correction based on the captured image is performed, updating
+        the header information of the exposure.
         """
 
         self.logger.info(
@@ -2283,19 +2290,18 @@ class Observatory:
         sync: bool = False,
         slew: bool = True,
     ) -> tuple[bool, WCS | None]:
-        """
-        Perform a pointing correction
-        """
+        """Perform a pointing correction"""
         self.logger.info(
             f"Running pointing correction for {action_value['object']} with {row['device_name']}"
         )
-
-        wcs_solve = None
-
         try:
-            offset_ra, offset_dec, wcs_solve, angular_separation = utils.pointing(
-                filepath, action_value["ra"], action_value["dec"]
+            pointing_corrector_handler = PointingCorrectionHandler.from_fits_file(
+                filepath, target_ra=action_value["ra"], target_dec=action_value["dec"]
             )
+            pointing_correction = pointing_corrector_handler.pointing_correction
+            # offset_ra, offset_dec, wcs_solve, angular_separation = utils.pointing(
+            #     filepath, action_value["ra"], action_value["dec"]
+            # )
 
         except Exception as e:
             self.logger.warning(
@@ -2303,7 +2309,7 @@ class Observatory:
                 f" with {row['device_name']}: {str(e)}"
             )
             pointing_complete = True
-            return (pointing_complete, wcs_solve)
+            return (pointing_complete, None)
 
         # get telescope index
         tel_index = [
@@ -2320,59 +2326,66 @@ class Observatory:
         if slew is False:
             pointing_threshold = 0
 
-        if abs(angular_separation.deg) < pointing_threshold:
+        angular_separation = pointing_correction.angular_separation
+        if abs(angular_separation) < pointing_threshold:
             self.logger.info(
                 f"No further pointing correction required. "
-                f"Correction of {angular_separation.deg*60:.2f}' "
+                f"Correction of {angular_separation*60:.2f}' "
                 f"within threshold of {pointing_threshold*60:.2f}'"
             )
             pointing_complete = True
 
-            return (pointing_complete, wcs_solve)
-        else:
-            self.logger.info(
-                f"Pointing correction of {angular_separation.deg*60:.2f}' "
-                f"required as it is outside threshold of {pointing_threshold*60:.2f}'"
+            return (
+                pointing_complete,
+                pointing_corrector_handler.image_star_mapping.wcs,
             )
-            self.logger.info(f"RA shift: {offset_ra}")
-            self.logger.info(f"DEC shift: {offset_dec}")
 
-            pointing_complete = False
+        self.logger.info(
+            f"Pointing correction of {angular_separation*60:.2f}' "
+            f"required as it is outside threshold of {pointing_threshold*60:.2f}'"
+        )
+        self.logger.info(f"RA shift: {pointing_correction.offset_ra}")
+        self.logger.info(f"DEC shift: {pointing_correction.offset_dec}")
 
-            # telescope
-            telescope = self.devices["Telescope"][paired_devices["Telescope"]]
+        pointing_complete = False
 
-            if sync:
+        # telescope
+        telescope = self.devices["Telescope"][paired_devices["Telescope"]]
+
+        if sync:
+            telescope.get(
+                "SyncToCoordinates",
+                RightAscension=24
+                * (action_value["ra"] + pointing_correction.offset_ra)
+                / 360,
+                Declination=action_value["dec"] + pointing_correction.offset_dec,
+            )
+
+            if slew:
+                # re-slew to target
+                self.setup_observatory(paired_devices, action_value)
+        else:
+            # new_ra = action_value["ra"] - (real_center.ra - action_value["ra"])
+            new_ra = pointing_correction.proxy_ra
+            new_dec = pointing_correction.proxy_dec
+
+            if slew:
+                # slew to target
+                self.logger.info(
+                    f"Slewing Telescope {paired_devices['Telescope']} to corrected position: {new_ra} {new_dec}"
+                )
                 telescope.get(
-                    "SyncToCoordinates",
-                    RightAscension=24 * (action_value["ra"] + offset_ra) / 360,
-                    Declination=action_value["dec"] + offset_dec,
+                    "SlewToCoordinatesAsync",
+                    RightAscension=24 * new_ra / 360,
+                    Declination=new_dec,
                 )
 
-                if slew:
-                    # re-slew to target
-                    self.setup_observatory(paired_devices, action_value)
-            else:
-                new_ra = action_value["ra"] - offset_ra
-                new_dec = action_value["dec"] - offset_dec
+                time.sleep(1)
 
-                if slew:
-                    # slew to target
-                    self.logger.info(
-                        f"Slewing Telescope {paired_devices['Telescope']} to corrected position: {new_ra} {new_dec}"
-                    )
-                    telescope.get(
-                        "SlewToCoordinatesAsync",
-                        RightAscension=24 * new_ra / 360,
-                        Declination=new_dec,
-                    )
+                # wait for slew to finish
+                self.wait_for_slew(paired_devices)
 
-                    time.sleep(1)
-
-                    # wait for slew to finish
-                    self.wait_for_slew(paired_devices)
-
-            return (pointing_complete, wcs_solve)
+        return (pointing_complete, pointing_corrector_handler.image_star_mapping.wcs)
 
     def start_guider(
         self, row: dict, action_value: dict, folder: str, paired_devices: dict
@@ -2958,9 +2971,17 @@ class Observatory:
             int: The index of the camera device in the configuration file.
 
         """
-        cam_index = [
-            i for i, d in enumerate(self.config["Camera"]) if d["device_name"] == cam
-        ][0]
+        try:
+            cam_index = [
+                i
+                for i, d in enumerate(self.config["Camera"])
+                if d["device_name"] == cam
+            ][0]
+        except IndexError:
+            cam_index = 0
+            self.logger.error(
+                f"Camera {cam} read from schedule could not be found in the observatory config."
+            )
         return cam_index
 
     def base_header(self, paired_devices: dict, action_value: dict) -> fits.Header:
@@ -3476,6 +3497,4 @@ class Observatory:
                     }
                 )
                 self.logger.error(f"Queue get error: {str(e)}")
-                self.queue_running = False
-                self.queue_running = False
                 self.queue_running = False

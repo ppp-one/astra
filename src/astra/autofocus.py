@@ -461,7 +461,8 @@ class Autofocuser:
                 "Tennegrad": astrafmo.TenengradFocusMeasure(),
             },
             focus_measure_operator_kwargs={
-                "star_find_threshold": action_value.get("star_find_threshold", 5.0)
+                "star_find_threshold": action_value.get("star_find_threshold", 5.0),
+                "fwhm": action_value.get("fwhm", 8),
             },
             keep_images=True,
         )
