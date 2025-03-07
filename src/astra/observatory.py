@@ -3133,7 +3133,7 @@ class Observatory:
             )
 
             if df_images.empty:
-                self.logger.debug("No headers to complete, as there are no images.")
+                self.logger.info("No headers to complete, as there are no images.")
                 return
 
             # loop through cameras (usually just one)
