@@ -1,22 +1,16 @@
-import logging
 import time
 from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 
-import astropy.units as u
 import numpy as np
 import yaml
 from alpaca.telescope import GuideDirections
-from astrafocus.targeting.airmass_models import \
-    find_airmass_threshold_crossover
-from astrafocus.targeting.zenith_neighbourhood_query import \
-    ZenithNeighbourhoodQuery
-from astropy.coordinates import AltAz, EarthLocation, SkyCoord
-from astropy.time import Time
 from donuts import Donuts
 from donuts.image import Image
-from scipy.ndimage import median_filter
+from photutils.background import Background2D, MedianBackground
+from scipy import ndimage
+from astropy.stats import SigmaClip
 
 from astra.config import Config, ObservatoryConfig
 
@@ -26,10 +20,25 @@ OBSERVATORY_CONFIG = ObservatoryConfig.from_config(CONFIG)
 
 class CustomImageClass(Image):
     def preconstruct_hook(self):
-        clean = median_filter(self.raw_image, size=4, mode="mirror")
-        band_corr = np.median(clean, axis=1).reshape(-1, 1)
-        band_clean = clean - band_corr
-        self.raw_image = band_clean
+        sigma_clip = SigmaClip(sigma=3.0)
+        bkg_estimator = MedianBackground()
+
+        self.raw_image = self.raw_image.astype(np.int16)
+
+        bkg = Background2D(
+            self.raw_image,
+            (32, 32),
+            filter_size=(3, 3),
+            sigma_clip=sigma_clip,
+            bkg_estimator=bkg_estimator,
+        )
+        bkg_clean = self.raw_image - bkg.background
+
+        med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
+        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
+        image_clean = med_clean - band_corr
+
+        self.raw_image = np.clip(image_clean, 1, None)
 
 
 class GuidingCalibrator:
@@ -100,7 +109,6 @@ class GuidingCalibrator:
         except Exception as e:
             raise ValueError(f"Failed to slew telescope: {e}")
 
-
     def perform_calibration_cycles(self):
         """Nudge camera in direction U, D, L, R to determine its scale and orientation."""
         image_path = self._perform_exposure()
@@ -108,7 +116,7 @@ class GuidingCalibrator:
 
         for i in range(self.number_of_cycles):
             self.astra_observatory.logger.info(
-                f"=== Starting cycle {i} of {self.number_of_cycles} ==="
+                f"=== Starting cycle {i+1} of {self.number_of_cycles} ==="
             )
             for direction in [
                 GuideDirections.guideNorth,
@@ -211,7 +219,7 @@ class GuidingCalibrator:
             raise ValueError("Invalid direction")
 
         self.astra_observatory.logger.info(
-            f"Pulse guiding {guide_direction} for {duration} ms"
+            f"Pulse guiding {guide_direction.name} for {duration} ms"
         )
 
         self._telescope.get("PulseGuide")(guide_direction, duration)
@@ -232,7 +240,7 @@ class GuidingCalibrator:
         return Donuts(
             image_path,
             normalise=False,
-            subtract_bkg=True,
+            subtract_bkg=False,
             downweight_edges=False,
             image_class=CustomImageClass,
         )

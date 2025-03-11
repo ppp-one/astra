@@ -70,7 +70,7 @@ class CustomImageClass(Image):
         band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
         image_clean = med_clean - band_corr
 
-        self.raw_image = np.clip(image_clean, 0 , None)
+        self.raw_image = np.clip(image_clean, 1, None)
 
 
 class Guider:
@@ -692,7 +692,7 @@ class Guider:
                 donuts_ref = Donuts(
                     ref_file,
                     normalise=False,
-                    subtract_bkg=True,
+                    subtract_bkg=False,
                     downweight_edges=False,
                     image_class=CustomImageClass,
                 )
