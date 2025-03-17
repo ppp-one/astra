@@ -1189,7 +1189,11 @@ class Observatory:
             # stop telescope guiding and slewing
             if paired_devices is not None:
                 try:
-                    self.guider[paired_devices["Telescope"]].running = False
+                    if self.guider[paired_devices["Telescope"]].running:
+                        self.logger.info(
+                            f"Stopping telescope {paired_devices['Telescope']} guiding"
+                        )
+                        self.guider[paired_devices["Telescope"]].running = False
                 except Exception as e:
                     self.error_source.append(
                         {
@@ -1215,7 +1219,11 @@ class Observatory:
             else:
                 for device_name in self.devices["Telescope"]:
                     try:
-                        self.guider[device_name].running = False
+                        if self.guider[device_name].running:
+                            self.logger.info(
+                                f"Stopping telescope {device_name} guiding"
+                            )
+                            self.guider[device_name].running = False
                     except Exception as e:
                         self.error_source.append(
                             {
@@ -1632,6 +1640,13 @@ class Observatory:
                     row["action_type"] in ["calibration", "close"]
                 ) or self.weather_safe:
                     self.schedule.loc[row.name, "completed"] = True
+
+            self.logger.info(
+                f"{row['action_type']} sequence ended for {row['device_name']}"
+            )
+            self.logger.info(
+                f"{row['action_type']} sequence had a planned start time of {row['start_time']} and end time of {row['end_time']}"
+            )
 
         except Exception as e:
             self.schedule_running = False
@@ -2159,13 +2174,11 @@ class Observatory:
 
         # stop guiding at end of sequence
         if action_value.get("guiding"):
-            self.logger.info(f"Stopping guiding for {paired_devices['Telescope']}")
-            self.guider[paired_devices["Telescope"]].running = False
-
-        self.logger.info(
-            f"{row['action_type']} sequence ended for {row['device_name']}, "
-            f"starting {row['start_time']} and ending {row['end_time']}",
-        )
+            if self.guider[paired_devices["Telescope"]].running:
+                self.logger.info(
+                    f"Stopping telescope {paired_devices['Telescope']} guiding"
+                )
+                self.guider[paired_devices["Telescope"]].running = False
 
     def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
         """
@@ -2739,10 +2752,6 @@ class Observatory:
 
                 self.logger.info("Moving on...")
                 break
-
-        self.logger.info(
-            f"Flat sequence ended for {row['device_name']}, starting {row['start_time']} and ending {row['end_time']}"
-        )
 
     def flats_position(
         self, obs_location: EarthLocation, paired_devices: dict, row: dict
