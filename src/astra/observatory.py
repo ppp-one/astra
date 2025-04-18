@@ -223,7 +223,7 @@ class Observatory:
             archive_path = CONFIG.paths.logs / "archive"
             archive_path.mkdir(exist_ok=True)
 
-            tables = ["polling", "log", "autoguider_log_new", "autoguider_info_log"]
+            tables = ["polling", "log", "autoguider_log", "autoguider_info_log"]
             # 'images', 'autoguider_ref'
 
             db = sqlite3.connect(db_path)

@@ -68,7 +68,7 @@ def test_create_db():
         ("images",),
         ("log",),
         ("autoguider_ref",),
-        ("autoguider_log_new",),
+        ("autoguider_log",),
         ("autoguider_info_log",),
         ("sqlite_sequence",),
     ]
