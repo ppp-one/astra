@@ -47,11 +47,20 @@ html_title = f"{html_short_title}"
 # html_logo = "../../astra-art.png"
 html_favicon = "../../astra-art.png"
 
+html_context = {
+    "default_mode": "light",
+}
+
 html_theme_options = {
     "repository_url": "https://github.com/ppp-one/astra",
     "use_repository_button": True,
     "use_fullscreen_button": False,
+    "use_download_button": False,
+    "home_page_in_toc": True,
+    "show_navbar_depth": 2,
+    "navbar_end": ["navbar-icon-links"],
 }
+
 
 # Auto-generate API documentation
 autodoc_member_order = "bysource"

@@ -4,7 +4,7 @@ User Guide
 This section provides detailed guidance on using Astra for observatory automation.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Topics:
 
    configuration

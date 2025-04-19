@@ -3,12 +3,20 @@
     --mystnb-source-margin-color: darkgrey;
     --pst-color-secondary: var(--pst-color-primary) !important;
     --pst-color-link-hover: var(--pst-color-primary) !important;
+    color-scheme: light;
+    /* Force light mode */
 }
 
 html {
     --pst-color-secondary: var(--pst-color-primary) !important;
     --pst-color-inline-code: #e5448b !important;
     --pst-color-inline-code-links: var(--pst-color-primary) !important;
+    color-scheme: light;
+    /* Force light mode */
+}
+
+button.theme-switch-button {
+    display: none !important;
 }
 
 /* Headings */
@@ -153,3 +161,9 @@ nav.bd-links li>a:hover {
 /* nav.bd-links .current > a {
 box-shadow: none;
 } */
+
+/* Add space below centered images */
+img.align-center {
+    margin-bottom: 1.5em;
+    /* Adjust value as needed */
+}

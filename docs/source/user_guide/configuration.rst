@@ -6,40 +6,21 @@ Observatory Configuration
 
 Astra requires a configuration file in YAML format for each observatory you want to operate. This file defines all the devices, their settings, and how they interact with each other.
 
-Basic Structure
-~~~~~~~~~~~~~
-
-The configuration file is organized by device types, with each device having its own configuration block:
-
-.. code-block:: yaml
-
-    # Base configuration section (required)
-    Misc:
-      backup_time: "03:00"  # Daily backup time
-    
-    # Device sections (add devices as needed)
-    Telescope:
-      - device_name: "Main Telescope"
-        # Telescope specific configuration...
-    
-    Camera:
-      - device_name: "Main Camera"
-        # Camera specific configuration...
-    
-    # ... Other device types ...
-
 Device Types
 ~~~~~~~~~~~
 
 Astra supports the following device types, all conforming to the ASCOM Alpaca standard:
 
-- **Telescope**: Mount control
-- **Camera**: Imaging sensor
-- **FilterWheel**: Filter selection
-- **Focuser**: Focus control
-- **Dome**: Observatory dome or roof
-- **SafetyMonitor**: Weather and safety monitoring
-- **ObservingConditions**: Environmental monitoring
+- Camera
+- CoverCalibrator
+- Dome
+- FilterWheel
+- Focuser
+- ObservingConditions
+- Rotator
+- SafetyMonitor
+- Switch
+- Telescope
 
 Device Configuration
 ~~~~~~~~~~~~~~~~~~~
@@ -78,12 +59,12 @@ No additional parameters required beyond the common parameters.
 Focuser Parameters
 ^^^^^^^^^^^^^^^
 
-- ``temperature_compensation``: Enable/disable temperature compensation (boolean)
+No additional parameters required beyond the common parameters.
 
 Dome Parameters
 ^^^^^^^^^^^
 
-- ``slaved``: Whether the dome should automatically follow the telescope (boolean)
+No additional parameters required beyond the common parameters.
 
 SafetyMonitor Parameters
 ^^^^^^^^^^^^^^^^^^

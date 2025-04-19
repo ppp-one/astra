@@ -7,8 +7,12 @@ Prerequisites
 Before installing Astra, ensure you have the following prerequisites:
 
 * Python 3.11 or higher
-* ASCOM Platform (for Windows) or ASCOM Alpaca-compatible devices
+* ASCOM Alpaca-compatible devices or simulators
 * Git (for installation from source)
+* *Optional*: `Gaia-2MASS sqlite catalogue <https://drive.google.com/file/d/1xg23KtKkl_0b0zLuDpouUjTh3klyae2c/view>`_ (18 GB)
+   * Catalogue of 300M Gaia stars cross matched with 2MASS, proper motion included (see `here <https://github.com/ppp-one/gaia-tmass-sqlite>`_ for details)
+   * This is required for plate solving and autofocus field selection features.
+   * Please place it somewhere accessible, you'll require its path during Astra's first start up.
 
 Installation Steps
 -----------------
@@ -20,32 +24,28 @@ Installation Steps
        git clone https://github.com/ppp-one/astra.git
        cd astra
 
-2. Create a virtual environment with conda:
+2. Create a virtual environment with conda or venv:
 
-   .. code-block:: bash
+   * Using conda:
+
+     .. code-block:: bash
 
        conda create -n astra python=3.11
        conda activate astra
 
-3. Install Astra in development mode:
+   * Using venv:
+   
+     .. code-block:: bash
+
+       python -m venv astra
+       source astra/bin/activate  # On Windows use: astra\Scripts\activate
+
+3. Install Astra in local mode:
 
    .. code-block:: bash
 
-       pip install -e .
+        pip install -e .
 
-This will install Astra and all its dependencies.
+   To include optional dependencies (e.g., for development or documentation), append extras like `[dev]`, `[docs]`, or `[all]`.
 
-Running Astra
------------
-
-To run Astra:
-
-1. Ensure your Alpaca-compatible equipment (or simulators) is active on your network
-2. Run the following command:
-
-   .. code-block:: bash
-
-       python src/astra/main.py
-
-3. Follow the terminal instructions
-4. Open a web browser and navigate to http://localhost:8000/ to access the Astra interface
+This will install Astra and all its python dependencies.

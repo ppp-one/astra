@@ -136,10 +136,10 @@ class Config:
 
         if unchanged_files:
             message = (
-                "Warning: Observatory config files have not been modified "
-                " from default templates. Please update the following files "
-                "with your observatory's information:\n"
-                f"{self.paths.observatory_config}"
+                "\nWarning: Observatory config files have not been modified "
+                "from default templates. Please update the following files "
+                "with your observatory's information in:\n\n"
+                f"{self.paths.observatory_config}\n"
             )
             if allow_default:
                 print(message)
@@ -207,7 +207,7 @@ class AssetPaths:
 class _ConfigInitialiser:
     """Initialises the configuration settings for Astra."""
 
-    DEFAULT_ASSETS_PATH = Path.home() / "Documents" / "astra"
+    DEFAULT_ASSETS_PATH = Path.home() / "Documents" / "Astra"
 
     @staticmethod
     def run(
