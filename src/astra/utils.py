@@ -324,6 +324,8 @@ def check_astelos_error(telescope, close=False):
         slit_error = [
             ["ERR_DeviceError", "axis (1)\\| BOTH LIMITS (code=128)", "2", "DOME[0]"],
             ["ERR_DeviceError", "axis (1)\\| BOTH LIMITS (code=128)", "2", "DOME[1]"],
+            ["ERR_DeviceError", "axis (1)\\| EXTERN (code=32)", "2", "DOME[0]"],
+            ["ERR_DeviceError", "axis (1)\\| EXTERN (code=32)", "2", "DOME[1]"],
         ]
         allowed_err.extend(slit_error)
 
@@ -381,7 +383,7 @@ def check_astelos_error(telescope, close=False):
         return False, df_list, messages
 
 
-def ack_astelos_error(telescope, valid, all_errors, messages):
+def ack_astelos_error(telescope, valid, all_errors, messages, close=False):
     """
     Acknowledge error if valid
 
@@ -401,11 +403,8 @@ def ack_astelos_error(telescope, valid, all_errors, messages):
         )
         time.sleep(2)
 
-        # telescope.get('CommandBlind', Command = "TELESCOPE.STATUS.CLEAR_ERROR=2", Raw = True)
-        # time.sleep(5)
-
         # check telescope status
-        valid, all_errors, messages = check_astelos_error(telescope)
+        valid, all_errors, messages = check_astelos_error(telescope, close=close)
 
         if time.time() - start_time > 120:  # 2 minutes hardcoded limit
             raise TimeoutError("Astelos error acknowledgement timed out")

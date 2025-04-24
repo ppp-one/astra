@@ -1003,7 +1003,7 @@ class Observatory:
                         f"Attempting to acknowledge AsTelOS errors for {telescope_name}: {messages}"
                     )
                     ack, messages = utils.ack_astelos_error(
-                        telescope, valid, all_errors, messages
+                        telescope, valid, all_errors, messages, close=close
                     )
 
                     if ack:
