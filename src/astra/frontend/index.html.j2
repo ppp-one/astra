@@ -48,7 +48,7 @@
             {# title #}
             <div class="flex flex-row flex-initial text-3xl font-bold align-bottom">
                 <div class="flex-initial justify-left">
-                    <div id="title-{{ observatory }}">
+                    <div id="title--{{ observatory }}">
                         {{ observatory }}
                     </div>
                 </div>
@@ -56,9 +56,9 @@
                 <div class="grow">
                     <div class="flex flex-row-reverse h-full items-center">
 
-                        <label for="robotic-switch-{{ observatory }}" class="flex items-center cursor-pointer m-2">
+                        <label for="robotic-switch--{{ observatory }}" class="flex items-center cursor-pointer m-2">
                             <div class="relative">
-                                <input type="checkbox" id="robotic-switch-{{ observatory }}" class="sr-only peer">
+                                <input type="checkbox" id="robotic-switch--{{ observatory }}" class="sr-only peer">
                                 <div
                                     class="w-10 h-6 bg-slate-600 rounded-full shadow-inner  transition-colors duration-300">
                                 </div>
@@ -79,7 +79,7 @@
                         <div title="Schedule">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-6 h-6 transition ease-in-out duration-150"
-                                id="schedule-icon-{{ observatory }}">
+                                id="schedule-icon--{{ observatory }}">
                                 <path
                                     d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
                                 <path fill-rule="evenodd"
@@ -91,7 +91,7 @@
                         <div title="Weather">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"
                                 class="w-6 h-6 mr-2 transition ease-in-out duration-150"
-                                id="weather-safe-icon-{{ observatory }}">
+                                id="weather-safe-icon--{{ observatory }}">
                                 <path
                                     d="M288 0c17.7 0 32 14.3 32 32V49.7C451.8 63.4 557.7 161 573.9 285.9c2 15.6-17.3 24.4-27.8 12.7C532.1 283 504.8 272 480 272c-38.7 0-71 27.5-78.4 64.1c-1.7 8.7-8.7 15.9-17.6 15.9s-15.8-7.2-17.6-15.9C359 299.5 326.7 272 288 272s-71 27.5-78.4 64.1c-1.7 8.7-8.7 15.9-17.6 15.9s-15.8-7.2-17.6-15.9C167 299.5 134.7 272 96 272c-24.8 0-52.1 11-66.1 26.7C19.4 310.4 .1 301.5 2.1 285.9C18.3 161 124.2 63.4 256 49.7V32c0-17.7 14.3-32 32-32zm0 304c12.3 0 23.5 4.6 32 12.2V430.6c0 45-36.5 81.4-81.4 81.4c-30.8 0-59-17.4-72.8-45l-2.3-4.7c-7.9-15.8-1.5-35 14.3-42.9s35-1.5 42.9 14.3l2.3 4.7c3 5.9 9 9.6 15.6 9.6c9.6 0 17.4-7.8 17.4-17.4V316.2c8.5-7.6 19.7-12.2 32-12.2z" />
                             </svg>
@@ -100,7 +100,7 @@
                         <div title="Watchdog">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-6 h-6 m-2 transition ease-in-out duration-150"
-                                id="watchdog-icon-{{ observatory }}">
+                                id="watchdog-icon--{{ observatory }}">
                                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
                                 <path fill-rule="evenodd"
                                     d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
@@ -109,7 +109,7 @@
                         </div>
 
 
-                        <div title="UTC time" id="time-{{observatory}}" class="font-mono text-sm text-gray-500 m-2">
+                        <div title="UTC time" id="time--{{observatory}}" class="font-mono text-sm text-gray-500 m-2">
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
             <div class="flex-initial">
                 <nav class="flex flex-wrap justify-between">
                     {% for nav in navigation %}
-                    <div id="{{nav | lower}}-{{ observatory }}"
+                    <div id="{{nav | lower}}--{{ observatory }}"
                         class="flex-initial p-2 text-center hover:text-slate-200 cursor-pointer {{ 'underline' if loop.first else '' }}"
                         onclick="navClick(this)">
                         {{ nav }}
@@ -129,13 +129,13 @@
             </div>
 
             {# content #}
-            <div id="content-{{ observatory }}" class="flex-initial justify-center font-light overflow-auto">
+            <div id="content--{{ observatory }}" class="flex-initial justify-center font-light overflow-auto">
                 {% for nav in navigation %}
-                <div id="{{nav | lower}}-content-{{ observatory }}"
+                <div id="{{nav | lower}}-content--{{ observatory }}"
                     class="{{ '' if loop.first else 'hidden' }} w-full space-y-4 flex flex-col h-full">
                     {% if nav == 'Summary'%}
 
-                    <table id="summary-table-0-{{ observatory }}"
+                    <table id="summary-table-0--{{ observatory }}"
                         class="text-left w-full table-auto rounded-lg bg-gray-600/20">
                         <thead>
                         </thead>
@@ -143,7 +143,7 @@
                         </tbody>
                     </table>
 
-                    <table id="summary-table-1-{{ observatory }}"
+                    <table id="summary-table-1--{{ observatory }}"
                         class="text-left w-full table-auto rounded-lg bg-gray-600/20">
                         <thead>
                         </thead>
@@ -153,12 +153,12 @@
 
                     <div class="flex flex-row justify-center items-center">
                         {# lastest image #}
-                        <a id="summary-last-image-parent-{{ observatory }}"
+                        <a id="summary-last-image-parent--{{ observatory }}"
                             class="flex justify-center basis-1/2 mr-2 relative">
-                            <img id="summary-last-image-{{ observatory }}" alt="lastest image"
+                            <img id="summary-last-image--{{ observatory }}" alt="lastest image"
                                 class="object-contain h-full w-full hidden">
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                id="summary-last-image-placeholder-{{ observatory }}" viewBox="0 0 24 24"
+                                id="summary-last-image-placeholder--{{ observatory }}" viewBox="0 0 24 24"
                                 fill="currentColor" class="w-full p-12 opacity-20">
                                 <path fill-rule="evenodd"
                                     d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
@@ -166,7 +166,7 @@
                             </svg>
                             <div
                                 class="flex opacity-0 hover:opacity-80 bg-black duration-100 absolute h-full w-full text-white justify-center items-center">
-                                <div id="summary-last-image-text-{{ observatory }}"
+                                <div id="summary-last-image-text--{{ observatory }}"
                                     class="whitespace-break-spaces md:text-base text-xs text-wrap truncate">
                                 </div>
                             </div>
@@ -185,7 +185,7 @@
                     <div class="flex flex-col space-y-4 h-full">
 
                         <div class="flex-none basis-1/4 overflow-auto">
-                            <table id="schedule-table-0-{{ observatory }}"
+                            <table id="schedule-table-0--{{ observatory }}"
                                 class="text-left w-full table-auto rounded-lg bg-gray-600/20">
                                 <thead>
                                 </thead>
@@ -194,9 +194,9 @@
                             </table>
                         </div>
 
-                        <div id="log-0-{{ observatory }}-parent"
+                        <div id="log-0--{{ observatory }}-parent"
                             class="flex flex-row h-full w-full rounded-lg bg-gray-600/20 overflow-y-scroll overflow-x-clip">
-                            <div id="log-0-{{ observatory }}" class="text-left flex-grow text-sm">
+                            <div id="log-0--{{ observatory }}" class="text-left flex-grow text-sm">
                             </div>
                         </div>
 
@@ -205,8 +205,8 @@
                     {% elif nav == 'Weather' %}
 
                     <div class="flex-none flex flex-col h-full">
-                        <div id="weather-latest-{{observatory}}"></div>
-                        <div class="w-full" id="weather-chart-{{observatory}}"></div>
+                        <div id="weather-latest--{{observatory}}"></div>
+                        <div class="w-full" id="weather-chart--{{observatory}}"></div>
                     </div>
 
                     {% elif nav == 'Controls' %}
@@ -335,22 +335,22 @@
 
             // remove underline from other elements
             {% for nav in navigation %}
-            document.getElementById("{{nav | lower}}-" + element.id.split("-")[1]).classList.remove("underline")
+            document.getElementById("{{nav | lower}}--" + element.id.split("--")[1]).classList.remove("underline")
             {% endfor %}
             // underline the clicked element
             document.getElementById(element.id).classList.add("underline")
 
             // hide all content
             {% for nav in navigation %}
-            document.getElementById("{{nav | lower}}-content-" + element.id.split("-")[1]).classList.add("hidden")
+            document.getElementById("{{nav | lower}}-content--" + element.id.split("--")[1]).classList.add("hidden")
             {% endfor %}
 
             // show the content for the clicked element
-            document.getElementById(element.id.split("-")[0] + "-content-" + element.id.split("-")[1]).classList.remove("hidden")
+            document.getElementById(element.id.split("--")[0] + "-content--" + element.id.split("--")[1]).classList.remove("hidden")
 
-            let div = document.getElementById("content-" + element.id.split("-")[1])
-            if (element.id.split("-")[0] == 'log') {
-                let divLog = document.getElementById("log-0-" + element.id.split("-")[1] + "-parent");
+            let div = document.getElementById("content--" + element.id.split("--")[1])
+            if (element.id.split("--")[0] == 'log') {
+                let divLog = document.getElementById("log-0--" + element.id.split("--")[1] + "-parent");
                 divLog.scrollTop = divLog.scrollHeight;
             } else {
                 div.scrollTop = 0;
@@ -483,7 +483,7 @@
             fetch('/api/schedule/' + observatory)
                 .then(response => response.json())
                 .then(data => {
-                    updateTable("schedule-table-0-" + observatory, data, { "action_type": "action", "start_HHMMSS": "start", "end_HHMMSS": "end" }, true, false);
+                    updateTable("schedule-table-0--" + observatory, data, { "action_type": "action", "start_HHMMSS": "start", "end_HHMMSS": "end" }, true, false);
                 });
 
         }
@@ -607,28 +607,28 @@
         function onMessageFunc(observatory, type, event) {
             let message = JSON.parse(event.data);
             if (type == 'summary') {
-                updateTable("summary-table-0-" + observatory, message['table0'], { "item": "item", "status": "status", "last_update": "last update" });
+                updateTable("summary-table-0--" + observatory, message['table0'], { "item": "item", "status": "status", "last_update": "last update" });
 
                 // update title color if error found in astra
                 if (message['table1'][0]['item'] == "error free") {
                     if (message['table1'][0]['value'] == false) {
-                        document.getElementById("title-" + observatory).classList.add('text-red-700');
+                        document.getElementById("title--" + observatory).classList.add('text-red-700');
                     } else {
-                        document.getElementById("title-" + observatory).classList.remove('text-red-700');
+                        document.getElementById("title--" + observatory).classList.remove('text-red-700');
                     }
                 }
 
                 // update utc time
                 if (message['table1'][1]['item'] == "utc time") {
 
-                    document.getElementById("time-" + observatory).innerText = message['table1'][1]['value'].substring(10);
+                    document.getElementById("time--" + observatory).innerText = message['table1'][1]['value'].substring(10);
 
                 }
 
                 // update watchdog icon
                 if (message['table1'][2]['item'] == "watchdog") {
 
-                    let watchdog_icon = document.getElementById("watchdog-icon-" + observatory);
+                    let watchdog_icon = document.getElementById("watchdog-icon--" + observatory);
 
                     if (message['table1'][2]['value'] == "stopped") {
                         watchdog_icon.classList.add('text-red-700');
@@ -647,7 +647,7 @@
                 // update schedule icon
                 if (message['table1'][3]['item'] == "schedule") {
 
-                    let schedule_icon = document.getElementById("schedule-icon-" + observatory);
+                    let schedule_icon = document.getElementById("schedule-icon--" + observatory);
                     if (message['table1'][3]['value'] == "stopped") {
                         schedule_icon.classList.add('text-gray-500');
                         schedule_icon.classList.add('hover:text-gray-400')
@@ -668,12 +668,12 @@
                 // update robotic switch toggle
                 if (message['table1'][4]['item'] == "robotic switch") {
 
-                    let robotic_switch = document.getElementById("robotic-switch-icon-" + observatory);
+                    let robotic_switch = document.getElementById("robotic-switch-icon--" + observatory);
 
                     if (message['table1'][4]['value'] == "on") {
-                        document.getElementById('robotic-switch-' + observatory).checked = true;
+                        document.getElementById('robotic-switch--' + observatory).checked = true;
                     } else {
-                        document.getElementById('robotic-switch-' + observatory).checked = false;
+                        document.getElementById('robotic-switch--' + observatory).checked = false;
                     }
 
                 }
@@ -681,7 +681,7 @@
                 // update weather safe icon
                 if (message['table1'][5]['item'] == "weather safe") {
 
-                    let weather_safe_icon = document.getElementById("weather-safe-icon-" + observatory);
+                    let weather_safe_icon = document.getElementById("weather-safe-icon--" + observatory);
 
                     if (message['table1'][5]['value'] == "unsafe") {
                         weather_safe_icon.classList.add('text-red-700');
@@ -703,7 +703,7 @@
                 if (message['table1'][7]['item'] == "threads") {
 
                     let threads = message['table1'][7]['threads'];
-                    let table = document.getElementById("schedule-table-0-" + observatory);
+                    let table = document.getElementById("schedule-table-0--" + observatory);
                     let rows = table.getElementsByTagName("tr");
 
                     for (let i = 0; i < rows.length; i++) {
@@ -729,28 +729,28 @@
                     }
                 }
 
-                updateTable("summary-table-1-" + observatory, message['table1'], { "item": "item", "value": "value" }, false);
+                updateTable("summary-table-1--" + observatory, message['table1'], { "item": "item", "value": "value" }, false);
 
                 // update last image
-                let lastImageDiv = document.getElementById("summary-last-image-parent-" + observatory);
+                let lastImageDiv = document.getElementById("summary-last-image-parent--" + observatory);
                 let lastImage = message['last_image'];
                 if (lastImage['url'] != null) {
-                    document.getElementById("summary-last-image-" + observatory).classList.remove('hidden');
-                    document.getElementById("summary-last-image-placeholder-" + observatory).classList.add('hidden');
-                    document.getElementById("summary-last-image-" + observatory).src = lastImage['url'];
-                    document.getElementById("summary-last-image-text-" + observatory).innerHTML = syntaxHighlight(lastImage['useful_headers']);
+                    document.getElementById("summary-last-image--" + observatory).classList.remove('hidden');
+                    document.getElementById("summary-last-image-placeholder--" + observatory).classList.add('hidden');
+                    document.getElementById("summary-last-image--" + observatory).src = lastImage['url'];
+                    document.getElementById("summary-last-image-text--" + observatory).innerHTML = syntaxHighlight(lastImage['useful_headers']);
                     lastImageDiv.href = lastImage['url'];
 
                 } else {
-                    document.getElementById("summary-last-image-" + observatory).classList.add('hidden');
-                    document.getElementById("summary-last-image-placeholder-" + observatory).classList.remove('hidden');
-                    document.getElementById("summary-last-image-text-" + observatory).innerHTML = syntaxHighlight({ 'image': 'no image found' });
+                    document.getElementById("summary-last-image--" + observatory).classList.add('hidden');
+                    document.getElementById("summary-last-image-placeholder--" + observatory).classList.remove('hidden');
+                    document.getElementById("summary-last-image-text--" + observatory).innerHTML = syntaxHighlight({ 'image': 'no image found' });
                     lastImageDiv.href = '#';
                 }
 
 
             } else if (type == 'log') {
-                let logDiv = document.getElementById("log-0-" + observatory);
+                let logDiv = document.getElementById("log-0--" + observatory);
                 let fragment = document.createDocumentFragment();
 
                 let log = message['log'];
@@ -761,7 +761,7 @@
                     logMessage.classList.add('grid'); // add a class
                     logMessage.classList.add('grid-cols-3'); // add a class
 
-                    logMessage.id = "message-" + observatory;
+                    logMessage.id = "message--" + observatory;
                     logMessage.setAttribute("data-level", item['level']);
 
                     if (item['level'] == 'warning') {
@@ -775,10 +775,10 @@
                 });
                 logDiv.appendChild(fragment);
 
-                let nav_element = document.getElementById("log-" + observatory);
+                let nav_element = document.getElementById("log--" + observatory);
                 if (nav_element.classList.contains('underline')) {
-                    let div = document.getElementById("log-0-" + observatory + "-parent");
-                    let divChild = document.getElementById("log-0-" + observatory);
+                    let div = document.getElementById("log-0--" + observatory + "-parent");
+                    let divChild = document.getElementById("log-0--" + observatory);
 
                     // get current scroll position
                     let scrollPos = div.scrollTop;
@@ -811,7 +811,7 @@
                                     logMessage.classList.add('grid'); // add a class
                                     logMessage.classList.add('grid-cols-3'); // add a class
 
-                                    logMessage.id = "message-" + observatory;
+                                    logMessage.id = "message--" + observatory;
                                     logMessage.setAttribute("data-level", item['level']);
 
                                     if (item['level'] == 'warning') {
@@ -847,7 +847,7 @@
 
         {% for observatory in observatories %}
 
-        document.getElementById('robotic-switch-{{ observatory }}').addEventListener('change', function () {
+        document.getElementById('robotic-switch--{{ observatory }}').addEventListener('change', function () {
 
             // add alert and confirm and improve styling
             if (this.checked) {

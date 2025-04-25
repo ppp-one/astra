@@ -81,7 +81,7 @@ function plotWeather(data, observatory, update) {
     const weather_data = data['data'];
     const weather_safety_limits = data['safety_limits'];
 
-    const width = document.getElementById(`content-${observatory}`).clientWidth;
+    const width = document.getElementById(`content--${observatory}`).clientWidth;
     const fixed_width = 320;
     const height = Math.max(width, fixed_width) * 0.4;
     const percent_to_show = 10;
@@ -144,9 +144,9 @@ function plotWeather(data, observatory, update) {
     });
 
 
-    document.getElementById(`weather-latest-${observatory}`).innerHTML = `
+    document.getElementById(`weather-latest--${observatory}`).innerHTML = `
         <div class="flex-initial overflow-x-scroll">
-        <table class="table-auto w-full proportional-nums font-variant-numeric rounded-lg bg-gray-600/20" id="weather-table-${observatory}" title="Last refreshed: ${new Date().toISOString().slice(0, 19).replace("T", " ")}">
+        <table class="table-auto w-full proportional-nums font-variant-numeric rounded-lg bg-gray-600/20" id="weather-table--${observatory}" title="Last refreshed: ${new Date().toISOString().slice(0, 19).replace("T", " ")}">
         <thead>
             <tr class="border-b-2 border-b-slate-500">
                 <td class="py-1.5 px-3" style="text-align: left;">Parameter</td>
@@ -223,7 +223,7 @@ function plotWeather(data, observatory, update) {
                         : "";
 
                 return `<tr class="${index != weather_parameters.length - 1 ? 'border-b border-b-slate-500' : ""} cursor-pointer"
-                            onclick="window.location.href='#plot-${parameter}-${observatory}';">
+                            onclick="window.location.href='#plot-${parameter}--${observatory}';">
                             <td class="py-1.5 px-3" style="text-align: left; ${colorStyleLink}">${parameter}</td>
                             <td class="py-1.5 px-3" style="${colorStyleLink} text-align: left;">${weather_safety_limits[parameter].unit
                     }</td>
@@ -308,7 +308,7 @@ function plotWeather(data, observatory, update) {
         fixed_width,
         height
     ) => {
-        const plotContainer = document.getElementById(`weather-chart-${observatory}`);
+        const plotContainer = document.getElementById(`weather-chart--${observatory}`);
 
         weather_parameters.forEach((parameter) => {
             if (parameter === "WindDirection" || parameter === "datetime") return;
@@ -373,13 +373,13 @@ function plotWeather(data, observatory, update) {
             }
 
             const plot = Plot.plot(baseConfig);
-            const existingPlotContainer = document.getElementById(`plot-${parameter}-${observatory}`);
+            const existingPlotContainer = document.getElementById(`plot-${parameter}--${observatory}`);
             if (update && existingPlotContainer) {
                 existingPlotContainer.innerHTML = '';
                 existingPlotContainer.appendChild(plot);
             } else {
                 const newPlotContainer = document.createElement("div");
-                newPlotContainer.id = `plot-${parameter}-${observatory}`;
+                newPlotContainer.id = `plot-${parameter}--${observatory}`;
                 newPlotContainer.appendChild(plot);
                 plotContainer.appendChild(newPlotContainer);
             }
@@ -575,14 +575,14 @@ function plotWeather(data, observatory, update) {
         });
 
         // const plot = Plot.plot(baseConfig);
-        const plotContainer = document.getElementById(`weather-chart-${observatory}`);
-        const existingPlotContainer = document.getElementById(`plot-WindDirection-${observatory}`);
+        const plotContainer = document.getElementById(`weather-chart--${observatory}`);
+        const existingPlotContainer = document.getElementById(`plot-WindDirection--${observatory}`);
         if (update && existingPlotContainer) {
             existingPlotContainer.innerHTML = '';
             existingPlotContainer.appendChild(plot_winddir);
         } else {
             const newPlotContainer = document.createElement("div");
-            newPlotContainer.id = `plot-WindDirection-${observatory}`;
+            newPlotContainer.id = `plot-WindDirection--${observatory}`;
             newPlotContainer.appendChild(plot_winddir);
             plotContainer.appendChild(newPlotContainer);
         }
