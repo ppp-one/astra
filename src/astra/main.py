@@ -190,6 +190,10 @@ def close_observatory(observatory: str):
 
     obs.logger.info(f"User initiated closing of observatory from web interface")
 
+    if obs.schedule_running:
+        obs.logger.info(f"Stopping schedule for safety.")
+        obs.stop_schedule()
+
     val = obs.close_observatory()
 
     if val:
