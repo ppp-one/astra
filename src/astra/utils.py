@@ -313,7 +313,7 @@ def check_astelos_error(telescope, close=False):
         ["ERR_RunDevError", "Working pressure suddenly lost", "2", "HA"],
         [
             "ERR_DeviceError",
-            "axis #0\\| amplifier fault #07H\\| safe torque-off circuit fault",
+            "axis #1\\| amplifier fault #07H\\| safe torque-off circuit fault",
             "2",
             "DEC",
         ],
