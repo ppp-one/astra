@@ -13,85 +13,31 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from astrafocus.autofocuser import (AnalyticResponseAutofocuser,
-                                    NonParametricResponseAutofocuser)
+from astrafocus.autofocuser import (
+    AnalyticResponseAutofocuser,
+    NonParametricResponseAutofocuser,
+)
 from astrafocus.interface.camera import CameraInterface
 from astrafocus.interface.device_manager import AutofocusDeviceManager
 from astrafocus.interface.focuser import FocuserInterface
 from astrafocus.interface.telescope import TelescopeInterface
-from astrafocus.targeting.airmass_models import \
-    find_airmass_threshold_crossover
-from astrafocus.targeting.zenith_neighbourhood_query import \
-    ZenithNeighbourhoodQuery
+
+# from astrafocus.interface import CameraInterface, AutofocusDeviceManager, FocuserInterface, TelescopeInterface
+from astrafocus.targeting.airmass_models import find_airmass_threshold_crossover
+from astrafocus.targeting.zenith_neighbourhood_query import ZenithNeighbourhoodQuery
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from scipy import ndimage
 from scipy.ndimage import median_filter
 
 from astra.alpaca_device_process import AlpacaDevice
-from astra.config import Config
+from astra.config import Config, ObservatoryConfig
+from astra.logging_handler import LoggingHandler
+from astra.paired_devices import PairedDevices
 
 CONFIG = Config()
 
-__all__ = ["AstraAutofocusDeviceManager", "SQL3DatabaseHandler"]
-
-
-class SQL3DatabaseHandler(logging.Handler):
-    """
-    Custom logging handler that writes log records to an SQLite3 database using a provided cursor.
-
-    Attributes:
-        cursor (Sqlite3Worker): The SQLite3 database cursor to execute SQL commands.
-        log_level (int): The log level to be used for the handler. Defaults to `logging.INFO`.
-
-    Note:
-        `logging.Handlers` are a fundamental part of the logging module and serve to direct log
-        messages to different outputs or storage locations, like your terminal, a file,
-        a database, etc. So they are the canonical object to be customized to fulfil this task.
-
-        The handler can either be added to the root logger or to a specific logger, providing
-        flexibility in the logging configuration.
-
-        So this is another class we should consider using in January 2024 :))
-    """
-
-    def __init__(self, cursor: "Sqlite3Worker", log_level: int = logging.INFO):
-        """
-        Initialize the SQL3DatabaseHandler.
-
-        Args:
-            cursor (Sqlite3Worker): The SQLite3 database cursor to execute SQL commands.
-            debug (bool): Flag indicating whether to include debug-level logs in the database.
-
-        It would be even more canonic to add the log level parameter to the constructor and
-        pass it to the super class, so that the log level can be set when instantiating the handler.
-        This would allow to use the same handler for different log levels,
-        e.g. to log only warnings and errors to the database.
-        """
-        super().__init__(level=log_level)
-        self.cursor = cursor
-        self.is_error_free = True
-
-    def emit(self, record: logging.LogRecord):
-        """
-        Emit a log record to the SQLite3 database.
-
-        Args:
-            record (logging.LogRecord): The log record to be emitted.
-
-        Note:
-            This method is required and defines how a log record is processed.
-            A `debug` attribute is superfluous as the logging module already filters by `log_level`.
-        """
-        dt_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        level = record.levelname
-        message = self.format(record)
-        self.cursor.execute(
-            f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')"
-        )
-
-        if level == "error" and self.is_error_free:
-            self.is_error_free = False
+__all__ = ["AstraAutofocusDeviceManager", "Autofocuser"]
 
 
 class AstraCamera(CameraInterface):
@@ -217,7 +163,9 @@ class AstraCamera(CameraInterface):
 
 
 class AstraFocuser(FocuserInterface):
-    def __init__(self, astra, alpaca_device_focuser: AlpacaDevice, row: dict):
+    def __init__(
+        self, astra, alpaca_device_focuser: AlpacaDevice, row: Optional[dict] = None
+    ):
         if not alpaca_device_focuser.get("Absolute"):
             raise ValueError("Focuser must be absolute for autofocusing to work.")
 
@@ -233,9 +181,11 @@ class AstraFocuser(FocuserInterface):
         """
         Calling this function should take as long as it takes to move the focuser to the desired position.
         """
+        new_position = self._project_to_allowed_range(new_position)
+
         self.alpaca_device_focuser.get("Move", Position=new_position)
         while self.alpaca_device_focuser.get("IsMoving"):
-            if not self.astra.check_conditions(self.row):
+            if self.row is not None and not self.astra.check_conditions(self.row):
                 raise ValueError("Focuser move aborted due to bad conditions.")
             time.sleep(0.1)
 
@@ -244,6 +194,23 @@ class AstraFocuser(FocuserInterface):
 
     def get_current_position(self):
         return self.alpaca_device_focuser.get("Position")
+
+    def _project_to_allowed_range(self, new_position: int) -> int:
+        """Project the given position to the allowed range of the focuser."""
+        if self.allowed_range[0] is not None and new_position < self.allowed_range[0]:
+            new_position = self.allowed_range[0]
+            self.astra.logger.warning(
+                f"Requested focuser position {new_position} is below the allowed range. "
+                f"Moving focuser to {self.allowed_range[0]} instead."
+            )
+        if self.allowed_range[1] is not None and new_position > self.allowed_range[1]:
+            new_position = self.allowed_range[1]
+            self.astra.logger.warning(
+                f"Requested focuser position {new_position} is above the allowed range. "
+                f"Moving focuser to MaxStep {self.allowed_range[1]} instead."
+            )
+
+        return new_position
 
 
 class AstraTelescope(TelescopeInterface):
@@ -347,12 +314,82 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         return self.astra.check_conditions(row=self.row)
 
 
+class Defocuser:
+    def __init__(
+        self,
+        astra: "Astra",
+        paired_devices: PairedDevices,
+        row: Optional[dict] = None,
+    ):
+        self.astra = astra
+        self.row = row
+        self.paired_devices = paired_devices
+
+        self._focuser = AstraFocuser(
+            astra=astra,
+            alpaca_device_focuser=paired_devices.focuser,
+            row=row,
+        )
+        self.best_focus_position = self.load_best_focus_position_from_config()
+
+    @property
+    def focuser_name(self) -> str:
+        return self.paired_devices["Focuser"]
+
+    def load_best_focus_position_from_config(self):
+        focuser_config = self.paired_devices.get_device_config("Focuser")
+        if focuser_config is None or "focus_position" not in focuser_config:
+            self.astra.logger.warning(
+                "No best focus position found in focuser configuration. "
+                "Using current position as best focus position."
+                f" Focuser: {self.focuser_name}"
+                f"focuser_config: {focuser_config}"
+            )
+            raise ValueError("Focuser configuration not found in paired devices.")
+
+        return focuser_config["focus_position"]
+
+    @property
+    def current_position(self):
+        return self._focuser.get_current_position()
+
+    def defocus(self, position: int):
+        if position == self.current_position:
+            self.astra.logger.debug(
+                f"Focuser {self.focuser_name} already at position "
+                f"{position}. No change of focus needed."
+            )
+            return
+
+        current_position = self._focuser.get_current_position()
+        shift = position - current_position
+        self.astra.logger.info(
+            f"Defocusing by {shift} steps from current position {current_position} "
+            f"to new position {position}."
+        )
+
+        self._focuser.move_focuser_to_position(position)
+
+    def refocus(self):
+        if self.current_position == self.best_focus_position:
+            self.astra.logger.debug(
+                f"Focuser {self.focuser_name} already at best "
+                f"focus position {self.best_focus_position}. No refocusing needed."
+            )
+            return
+        self.astra.logger.info(
+            f"Refocusing from current position {self._focuser.get_current_position()} "
+            f"to the best focus position: {self.best_focus_position}."
+        )
+        self._focuser.move_focuser_to_position(self.best_focus_position)
+
+
 class Autofocuser:
     def __init__(
         self,
         astra: "Astra",
         row,
-        paired_devices: dict,
+        paired_devices: PairedDevices,
         action_value: dict,
         hdr,
         save_path: Path | None = None,
@@ -375,6 +412,13 @@ class Autofocuser:
         self.success = success
 
         self._initialise_logging()
+
+    @property
+    def best_focus_position(self):
+        """Return the best focus position found by the autofocuser."""
+        if self.autofocuser is None:
+            raise ValueError("Autofocuser has not been set up yet.")
+        return self.autofocuser.best_focus_position
 
     def run(self):
         if not self.success or not self.astra.check_conditions(row=self.row):
@@ -445,11 +489,26 @@ class Autofocuser:
         else:
             exposure_time = action_value.get("exptime", 3.0)
 
+        search_range = action_value.get("search_range", None)
+        search_range_is_relative = action_value.get("search_range_is_relative", False)
+        initial_focus_position = None
+        if search_range_is_relative and search_range is not None:
+            initial_focus_position = self.paired_devices.get_device_config(
+                "Focuser"
+            ).get("focus_position", None)
+            if initial_focus_position is None:
+                initial_focus_position = (
+                    autofocus_device_manager.focuser.get_current_position()
+                )
+                self.astra.logger.info(
+                    "No best focus position found in focuser configuration. "
+                    f"Using current position {initial_focus_position} "
+                    "to define autofocus search range instead."
+                )
+
         autofocus_args = dict(
             autofocus_device_manager=autofocus_device_manager,
-            search_range=action_value.get(
-                "search_range", None
-            ),  # None defaults to allowed focuser range
+            search_range=search_range,  # None defaults to allowed focuser range
             n_steps=action_value.get("n_steps", (30, 20)),
             n_exposures=action_value.get("n_exposures", (1, 1)),
             decrease_search_range=action_value.get("decrease_search_range", True),
@@ -464,6 +523,8 @@ class Autofocuser:
                 "star_find_threshold": action_value.get("star_find_threshold", 5.0),
                 "fwhm": action_value.get("fwhm", 8),
             },
+            search_range_is_relative=search_range_is_relative,
+            initial_position=initial_focus_position,
             keep_images=True,
         )
         self.astra.logger.debug(f"Autofocus arguments: {autofocus_args}")
@@ -474,6 +535,9 @@ class Autofocuser:
                 percent_to_cut=action_value.get("percent_to_cut", 60),
                 **autofocus_args,
             )
+            self.astra.logger.info(
+                f"Using the focus_measure_operator {focus_measure_operator_name} "
+            )
         else:
             extremum_estimator = self.determine_extremum_estimator()
             autofocuser = NonParametricResponseAutofocuser(
@@ -482,6 +546,8 @@ class Autofocuser:
                 **autofocus_args,
             )
             self.astra.logger.info(f"Using the extremum_estimator {extremum_estimator}")
+
+        self.astra.logger.debug(f"Using autofocuser {autofocuser}.")
 
         self.autofocuser = autofocuser
 
@@ -615,27 +681,35 @@ class Autofocuser:
 
             zenith_neighbourhood_query = (
                 ZenithNeighbourhoodQuery.create_from_location_and_angle(
-                    db_path=str(CONFIG.gaia_db),  # action_value["gaia_tmass_db_path"],
+                    db_path=str(CONFIG.gaia_db),
                     observatory_location=observatory_location,
                     observation_time=action_value.get("observation_time", None),
                     maximal_zenith_angle=maximal_zenith_angle,
+                    maximal_number_of_stars=action_value.get(
+                        "maximal_number_of_stars", 100_000
+                    ),
                 )
             )
 
             self.astra.logger.info(
                 "Zenith was determined to be at "
-                f"{zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs}."
+                f"{zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs!r}."
+                # f"ra={zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.ra.value}, "
+                # f"dec={zenith_neighbourhood_query.zenith_neighbourhood.zenith.icrs.dec.value}."
             )
 
-            znqr_full = zenith_neighbourhood_query.query_shardwise(n_sub_div=20)
-            self.astra.logger.info(
-                f"Retrieved {len(znqr_full)} stars in the neighbourhood of the zenith from the database.",
+            min_phot_g_mean_mag, max_phot_g_mean_max = action_value.get(
+                "g_mag_range", (0, 10)
+            )
+            min_j_m, max_j_m = action_value.get("j_mag_range", (0, 10))
+            znqr = zenith_neighbourhood_query.query_shardwise(
+                n_sub_div=20,
+                min_phot_g_mean_mag=min_phot_g_mean_mag,
+                max_phot_g_mean_mag=max_phot_g_mean_max,
+                min_j_m=min_j_m,
+                max_j_m=max_j_m,
             )
 
-            znqr = znqr_full.mask_by_magnitude(
-                g_mag_range=action_value.get("g_mag_range", (0, 10)),
-                j_mag_range=action_value.get("j_mag_range", (0, 10)),
-            )
             self.astra.logger.info(
                 f"Retrieved {len(znqr)} stars in the neighbourhood of the zenith from the database "
                 "within the desired magnitude ranges.",
@@ -709,7 +783,9 @@ class Autofocuser:
         if not self.success:
             return False
 
-        self.astra.logger.info(str(self.calibration_coordinates))
+        self.astra.logger.debug(
+            f"Slewing to autofocus calibration field: {self.calibration_coordinates!r}"
+        )
         self.action_value["ra"] = self.calibration_coordinates.ra.deg
         self.action_value["dec"] = self.calibration_coordinates.dec.deg
         try:
@@ -774,7 +850,7 @@ class Autofocuser:
         extremum_estimator = action_value.get("extremum_estimator", "LOWESS")
         if not isinstance(extremum_estimator, str):
             self.astra.logger.warning(
-                f"Unknown extremum_estimator: {extremum_estimator}." " Using LOWESS.",
+                f"Unknown extremum_estimator: {extremum_estimator}. Using LOWESS.",
             )
 
         if extremum_estimator.lower() in ["lowess", "loess"]:
@@ -792,7 +868,7 @@ class Autofocuser:
             )
         else:
             self.astra.logger.warning(
-                f"Unknown extremum_estimator: {extremum_estimator}." " Using LOWESS.",
+                f"Unknown extremum_estimator: {extremum_estimator}. Using LOWESS.",
             )
             extremum_estimator = astrafee.LOWESSExtremumEstimator(
                 frac=action_value.get("frac", 0.4), it=action_value.get("it", 5)
@@ -869,7 +945,7 @@ class Autofocuser:
         """
         try:
             if self.save_path is None:
-                self.astra.logging.error(
+                self.astra.logger.error(
                     "Skipping creation of summary plot, as save_path is unspecified."
                 )
                 return
@@ -890,7 +966,7 @@ class Autofocuser:
             ax.set_ylabel(f"Focus measure ({self.focus_measure_operator_name})")
 
             ax.axvline(
-                self.autofocuser.best_focus_position,
+                self.best_focus_position,
                 color="red",
                 ls="--",
                 zorder=-1,
@@ -910,12 +986,16 @@ class Autofocuser:
             )
             return
 
-        result_file_path = self.save_path / "result.txt"
+        focus_record = sorted(
+            [item for item in os.listdir(self.save_path) if item.endswith(".csv")]
+        )[-1]
+        timestr = focus_record.split("_")[0]
+        if not timestr:
+            timestr = datetime.now().strftime("%Y%m%d_%H%M%S")
+        result_file_path = self.save_path / f"{timestr}_result.txt"
         try:
             with open(result_file_path, "w") as result_file:
-                result_file.write(
-                    f"Best focus position: {self.autofocuser.best_focus_position}\n"
-                )
+                result_file.write(f"Best focus position: {self.best_focus_position}\n")
                 result_file.write(
                     f"Focus measure operator: {self.focus_measure_operator_name}\n"
                 )
@@ -924,8 +1004,9 @@ class Autofocuser:
             self.astra.logger.exception(f"Error creating log file: {str(e)}")
 
     def _initialise_logging(self):
-        db_handler = SQL3DatabaseHandler(self.astra.cursor, logging.INFO)
-        logging.getLogger("astrafocus").addHandler(db_handler)
+        if logging.getLogger("astrafocus").hasHandlers():
+            logging.getLogger("astrafocus").handlers.clear()
+        logging.getLogger("astrafocus").addHandler(LoggingHandler(self.astra))
 
     def _check_conditions(self):
         if not self.astra.check_conditions(row=self.row):
@@ -933,3 +1014,14 @@ class Autofocuser:
             self.success = False
 
         return self.success
+
+    def save_best_focus_position(self):
+        if not self.success or not self.action_value.get("save", True):
+            return
+
+        camera_index = self.astra.get_cam_index(self.row["device_name"])
+        observatory_config = ObservatoryConfig.from_config(CONFIG)
+        observatory_config["Focuser"][camera_index]["focus_position"] = (
+            self.best_focus_position
+        )
+        observatory_config.save()

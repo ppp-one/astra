@@ -269,7 +269,6 @@ async def stop_watchdog(observatory: str):
 
 @app.get("/api/roboticswitch/{observatory}")
 async def roboticswitch(observatory: str):
-
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated robotic switch from web interface")
@@ -516,15 +515,15 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     dt = (
                         dt_tracking
                         if tracking
-                        else dt_slewing if slewing else dt_tracking
+                        else dt_slewing
+                        if slewing
+                        else dt_tracking
                     )
 
                     try:
                         polled["RightAscension"]["value"] = polled["RightAscension"][
                             "value"
-                        ] * (
-                            360 / 24
-                        )  # convert to degrees
+                        ] * (360 / 24)  # convert to degrees
                     except:
                         pass
 
