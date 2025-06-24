@@ -1201,7 +1201,7 @@ class Observatory:
                         self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
-            # stop telescope guiding and slewing
+            # telescope guiding and slewing
             if paired_devices is not None:
                 try:
                     if self.guider[paired_devices["Telescope"]].running:
@@ -2252,6 +2252,17 @@ class Observatory:
                     f"Stopping telescope {paired_devices['Telescope']} guiding"
                 )
                 self.guider[paired_devices["Telescope"]].running = False
+                
+        # Stop telescope tracking
+        if "Telescope" in paired_devices:
+            self.monitor_action(
+                "Telescope",
+                "Tracking",
+                False,
+                "Tracking",
+                device_name=paired_devices["Telescope"],
+                log_message=f"Stopping telescope tracking for {paired_devices['Telescope']}",
+            )
 
     def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
         """
@@ -2272,6 +2283,7 @@ class Observatory:
         action_value, folder, hdr = self.pre_sequence(
             row, paired_devices, create_folder=False
         )
+
 
         action_value["object"] = "pointing_model"
 
@@ -2380,6 +2392,7 @@ class Observatory:
             wcs_solve = None
 
             counter += 1
+
 
     def pointing_correction(
         self,
