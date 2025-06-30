@@ -1161,7 +1161,7 @@ class Observatory:
                     self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
-            # stop telescope guiding and slewing
+            # telescope guiding and slewing
             device_names = (
                 [paired_devices["Telescope"]] if paired_devices else self.devices["Telescope"]
             )
@@ -1190,35 +1190,29 @@ class Observatory:
                     error_sensitive=error_sensitive,
                 )
 
-            # stop telescope tracking
-            if paired_devices is not None:
-                device_names = (
-                    [paired_devices["Telescope"]] if paired_devices else self.devices["Telescope"]
+                # stop telescope tracking
+                self.monitor_action(
+                    "Telescope",
+                    "Tracking",
+                    False,
+                    "Tracking",
+                    device_name=device_name,
+                    log_message=f"Stopping telescope {device_name} tracking",
+                    weather_sensitive=False,
+                    error_sensitive=error_sensitive,
                 )
-                for device_name in device_names:
-                    self.monitor_action(
-                        "Telescope",
-                        "Tracking",
-                        False,
-                        "Tracking",
-                        device_name=device_name,
-                        log_message=f"Stopping telescope {device_name} tracking",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
 
                 # park telescope
-                for device_name in device_names:
-                    self.monitor_action(
-                        "Telescope",
-                        "AtPark",
-                        True,
-                        "Park",
-                        device_name=device_name,
-                        log_message=f"Parking telescope {device_name}",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
+                self.monitor_action(
+                    "Telescope",
+                    "AtPark",
+                    True,
+                    "Park",
+                    device_name=device_name,
+                    log_message=f"Parking telescope {device_name}",
+                    weather_sensitive=False,
+                    error_sensitive=error_sensitive,
+                )
 
         if "Dome" in self.config:
             # park dome
@@ -1235,8 +1229,7 @@ class Observatory:
                     error_sensitive=error_sensitive,
                 )
 
-            # close dome shutter
-            for device_name in device_names:
+                # close dome shutter
                 self.monitor_action(
                     "Dome",
                     "ShutterStatus",
@@ -2149,6 +2142,17 @@ class Observatory:
             if self.guider[paired_devices["Telescope"]].running:
                 self.logger.info(f"Stopping telescope {paired_devices['Telescope']} guiding")
                 self.guider[paired_devices["Telescope"]].running = False
+                
+        # stop telescope tracking at end of sequence
+        if "Telescope" in paired_devices:
+            self.monitor_action(
+                "Telescope",
+                "Tracking",
+                False,
+                "Tracking",
+                device_name=paired_devices["Telescope"],
+                log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
+            )
 
     def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
         """
@@ -2167,6 +2171,7 @@ class Observatory:
         )
 
         action_value, folder, hdr = self.pre_sequence(row, paired_devices, create_folder=False)
+
 
         action_value["object"] = "pointing_model"
 
@@ -2271,6 +2276,7 @@ class Observatory:
             wcs_solve = None
 
             counter += 1
+
 
     def pointing_correction(
         self,
