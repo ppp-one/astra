@@ -322,6 +322,7 @@ class ObservatoryConfig(dict):
             config_path if isinstance(config_path, Path) else Path(config_path)
         )
         self.observatory_name = observatory_name
+        self._config_last_modified = None
         self.load()
 
     @property
@@ -334,6 +335,13 @@ class ObservatoryConfig(dict):
         with open(self.file_path, "r") as file:
             config = yaml.safe_load(file)
         self.update(config)
+        self._config_last_modified = self.file_path.stat().st_mtime
+
+    def reload(self):
+        """Reloads the observatory configuration file."""
+        if self.is_outdated():
+            self.load()
+        return self
 
     def save(self, file_path: str | Path | None = None):
         """Saves the observatory configuration file."""
@@ -345,19 +353,22 @@ class ObservatoryConfig(dict):
 
     def save_backup(self):
         """Creates a backup of the observatory configuration file."""
-        datetime_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-        backup_path = (
-            self.config_path
-            / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
-        )
+        backup_path = self.backup_file_path()
         os.rename(self.file_path, backup_path)
 
-    def backup_file_path(self, datetime_str: str) -> Path:
+    def backup_file_path(self, datetime_str: str = "") -> Path:
         """Returns the file path of a backup of the observatory configuration file."""
-        return (
-            self.config_path
-            / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
-        )
+        if not datetime_str:
+            datetime_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+        backup_dir = self.config_path / "backups"
+        backup_dir.mkdir(exist_ok=True)
+        return backup_dir / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
+
+    def is_outdated(self) -> bool:
+        current_mod_time = self.file_path.stat().st_mtime
+        if self._config_last_modified is None:
+            return True
+        return current_mod_time != self._config_last_modified
 
     @classmethod
     def from_config(cls, config: Optional[Config] = None):

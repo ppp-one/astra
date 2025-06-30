@@ -18,22 +18,21 @@ from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
-
-# https://github.com/dashawn888/sqlite3worker
 from sqlite3worker import Sqlite3Worker
 
 from astra import ASTRA_VER, Config, utils
 from astra.alpaca_device_process import AlpacaDevice
-from astra.autofocus import Autofocuser
+from astra.autofocus import Autofocuser, Defocuser
 from astra.calibrate_guiding import GuidingCalibrator
+from astra.config import ObservatoryConfig
 from astra.guiding import Guider
 from astra.image_handler import create_image_dir, save_image
 from astra.logging_handler import LoggingHandler
+from astra.paired_devices import PairedDevices
 from astra.pointer import PointingCorrectionHandler
 from astra.schedule import process_schedule
 
-SQL3WLOGGER = logging.getLogger("sqlite3worker")
-SQL3WLOGGER.setLevel(logging.INFO)
+logging.getLogger("sqlite3worker").setLevel(logging.INFO)
 CONFIG = Config()
 
 # TODO (set 2024-07-20):
@@ -87,12 +86,13 @@ class Observatory:
             self.logger.warning("Astra is running in debug mode")
 
         # read observatory config files
-        self.config = self.read_config(config_filename)
+        # self._config = self.read_config(config_filename)
+        self._config = ObservatoryConfig.from_config(CONFIG)
         self.fits_config = pd.read_csv(
             CONFIG.paths.observatory_config / f"{self.name}_fits_header_config.csv"
         )
 
-        # runnning threads list
+        # running threads list
         self.threads = []
 
         # queue for multiprocessing
@@ -161,6 +161,16 @@ class Observatory:
                     )
 
         self.logger.info("Astra initialized")
+
+    @property
+    def config(self) -> ObservatoryConfig:
+        if self._config.is_outdated():
+            self.logger.info("Config file modified, reloading.")
+            self._config.load()
+
+            # TODO restart devices
+
+        return self._config
 
     def create_db(self) -> Sqlite3Worker:
         """
@@ -1200,38 +1210,36 @@ class Observatory:
             self.pause_polls(["Dome", "Telescope", "Focuser"])
 
             # acknowledge errors if dome not closed, if any
-            if paired_devices is not None:
-                # acknowledge errors if dome not closed, if any
-                dome = self.devices["Dome"][paired_devices["Dome"]]
+            device_names = (
+                [paired_devices["Dome"]] if paired_devices else self.devices["Dome"]
+            )
+            for device_name in device_names:
+                dome = self.devices["Dome"][device_name]
                 ShutterStatus = dome.get("ShutterStatus")
                 if ShutterStatus == 0:  # open
                     self.speculoos_check_and_ack_error(close=True)
-            else:
-                for device_name in self.devices["Dome"]:
-                    dome = self.devices["Dome"][device_name]
-                    ShutterStatus = dome.get("ShutterStatus")
-                    if ShutterStatus == 0:  # open
-                        self.speculoos_check_and_ack_error(close=True)
 
         if "Telescope" in self.config:
-            # stop telescope guiding and slewing
-            if paired_devices is not None:
+            # telescope guiding and slewing
+            device_names = (
+                [paired_devices["Telescope"]]
+                if paired_devices
+                else self.devices["Telescope"]
+            )
+            for device_name in device_names:
                 try:
-                    if self.guider[paired_devices["Telescope"]].running:
-                        self.logger.info(
-                            f"Stopping telescope {paired_devices['Telescope']} guiding"
-                        )
-                        self.guider[paired_devices["Telescope"]].running = False
+                    if self.guider[device_name].running:
+                        self.guider[device_name].running = False
                 except Exception as e:
                     self.error_source.append(
                         {
                             "device_type": "Guider",
-                            "device_name": paired_devices["Telescope"],
+                            "device_name": device_name,
                             "error": str(e),
                         }
                     )
                     self.logger.error(
-                        f"Error stopping telescope {paired_devices['Telescope']} guiding: {str(e)}"
+                        f"Error stopping telescope {device_name} guiding: {str(e)}"
                     )
 
                 self.monitor_action(
@@ -1239,143 +1247,64 @@ class Observatory:
                     "Slewing",
                     False,
                     "AbortSlew",
-                    device_name=paired_devices["Telescope"],
-                    log_message=f"Stopping telescope {paired_devices['Telescope']} slewing",
+                    device_name=device_name,
+                    log_message=f"Stopping telescope {device_name} slewing",
                     weather_sensitive=False,
                     error_sensitive=error_sensitive,
                 )
-            else:
-                for device_name in self.devices["Telescope"]:
-                    try:
-                        if self.guider[device_name].running:
-                            self.logger.info(
-                                f"Stopping telescope {device_name} guiding"
-                            )
-                            self.guider[device_name].running = False
-                    except Exception as e:
-                        self.error_source.append(
-                            {
-                                "device_type": "Guider",
-                                "device_name": device_name,
-                                "error": str(e),
-                            }
-                        )
-                        self.logger.error(
-                            f"Error stopping telescope {device_name} guiding: {str(e)}"
-                        )
 
-                    self.monitor_action(
-                        "Telescope",
-                        "Slewing",
-                        False,
-                        "AbortSlew",
-                        device_name=device_name,
-                        log_message=f"Stopping telescope {device_name} slewing",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
-
-            # stop telescope tracking
-            if paired_devices is not None:
+                # stop telescope tracking
                 self.monitor_action(
                     "Telescope",
                     "Tracking",
                     False,
                     "Tracking",
-                    device_name=paired_devices["Telescope"],
-                    log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
+                    device_name=device_name,
+                    log_message=f"Stopping telescope {device_name} tracking",
                     weather_sensitive=False,
                     error_sensitive=error_sensitive,
                 )
-            else:
-                for device_name in self.devices["Telescope"]:
-                    self.monitor_action(
-                        "Telescope",
-                        "Tracking",
-                        False,
-                        "Tracking",
-                        device_name=device_name,
-                        log_message=f"Stopping telescope {device_name} tracking",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
 
-            # park telescope
-            if paired_devices is not None:
+                # park telescope
                 self.monitor_action(
                     "Telescope",
                     "AtPark",
                     True,
                     "Park",
-                    device_name=paired_devices["Telescope"],
-                    log_message=f"Parking telescope {paired_devices['Telescope']}",
+                    device_name=device_name,
+                    log_message=f"Parking telescope {device_name}",
                     weather_sensitive=False,
                     error_sensitive=error_sensitive,
                 )
 
-            else:
-                for device_name in self.devices["Telescope"]:
-                    self.monitor_action(
-                        "Telescope",
-                        "AtPark",
-                        True,
-                        "Park",
-                        device_name=device_name,
-                        log_message=f"Parking telescope {device_name}",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
-
         if "Dome" in self.config:
             # park dome
-            if paired_devices is not None:
+            device_names = (
+                [paired_devices["Dome"]] if paired_devices else self.devices["Dome"]
+            )
+            for device_name in device_names:
                 self.monitor_action(
                     "Dome",
                     "AtPark",
                     True,
                     "Park",
-                    device_name=paired_devices["Dome"],
-                    log_message=f"Parking Dome {paired_devices['Dome']}",
+                    device_name=device_name,
+                    log_message=f"Parking Dome {device_name}",
                     weather_sensitive=False,
                     error_sensitive=error_sensitive,
                 )
-            else:
-                for device_name in self.devices["Dome"]:
-                    self.monitor_action(
-                        "Dome",
-                        "AtPark",
-                        True,
-                        "Park",
-                        device_name=device_name,
-                        log_message=f"Parking Dome {device_name}",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
 
-            # close dome shutter
-            if paired_devices is not None:
+                # close dome shutter
                 self.monitor_action(
                     "Dome",
                     "ShutterStatus",
                     1,
                     "CloseShutter",
-                    device_name=paired_devices["Dome"],
-                    log_message=f"Closing Dome shutter of {paired_devices['Dome']}",
+                    device_name=device_name,
+                    log_message=f"Closing Dome shutter of {device_name}",
                     weather_sensitive=False,
                     error_sensitive=error_sensitive,
                 )
-            else:
-                for device_name in self.devices["Dome"]:
-                    self.monitor_action(
-                        "Dome",
-                        "ShutterStatus",
-                        1,
-                        "CloseShutter",
-                        device_name=device_name,
-                        log_message=f"Closing Dome shutter of {device_name}",
-                        weather_sensitive=False,
-                        error_sensitive=error_sensitive,
-                    )
 
         if self.speculoos:
             # SPECULOOS EDIT
@@ -1383,7 +1312,7 @@ class Observatory:
 
         return True
 
-    def read_schedule(self) -> pd.DataFrame:
+    def read_schedule(self) -> pd.DataFrame | None:
         """
         Read the schedule CSV file and return it as a pandas DataFrame.
 
@@ -1651,13 +1580,13 @@ class Observatory:
 
         try:
             if row["device_type"] == "Camera":
-                cam_index = self.get_cam_index(row["device_name"])
-                paired_devices = self.config["Camera"][cam_index]["paired_devices"]
-                paired_devices["Camera"] = row["device_name"]
-                set_temperature = self.config["Camera"][cam_index]["temperature"]
-                temperature_tolerance = self.config["Camera"][cam_index][
-                    "temperature_tolerance"
-                ]
+                paired_devices = PairedDevices.from_observatory(
+                    observatory=self,
+                    camera_name=row["device_name"],
+                )
+                camera_config = paired_devices.get_device_config("Camera")
+                set_temperature = camera_config["temperature"]
+                temperature_tolerance = camera_config["temperature_tolerance"]
 
                 if row["action_type"] not in ["close", "open"]:
                     self.cool_camera(row, set_temperature, temperature_tolerance)
@@ -1802,6 +1731,11 @@ class Observatory:
                 - folder (str): The path to the directory where images will be stored.
                 - hdr (dict): A header dictionary with relevant information for the sequence.
         """
+        if not isinstance(paired_devices, PairedDevices):
+            paired_devices = PairedDevices.from_observatory(
+                observatory=self,
+                paired_device_names=paired_devices,
+            )
 
         self.logger.debug(
             f"Running pre_sequence for {row['device_name']} {row['action_type']} {row['action_value']}"
@@ -1837,7 +1771,10 @@ class Observatory:
         return action_value, folder, hdr
 
     def setup_observatory(
-        self, paired_devices: dict, action_value: dict, filter_list_index: int = 0
+        self,
+        paired_devices: dict | PairedDevices,
+        action_value: dict,
+        filter_list_index: int = 0,
     ) -> None:
         """
         Prepares the observatory for a sequence by performing necessary setup actions.
@@ -1866,6 +1803,11 @@ class Observatory:
         self.logger.debug(
             f"Running setup_observatory for {paired_devices} {action_value}"
         )
+        if not isinstance(paired_devices, PairedDevices):
+            paired_devices = PairedDevices.from_observatory(
+                observatory=self,
+                paired_device_names=paired_devices,
+            )
 
         # unpark and slew to target
         if (
@@ -1877,7 +1819,8 @@ class Observatory:
                 # open dome and unpark telescope -- this will open all domes if not in paired_devices...?
                 self.open_observatory(paired_devices)
 
-                telescope = self.devices["Telescope"][paired_devices["Telescope"]]
+                telescope = paired_devices.telescope
+                telescope_name = paired_devices["Telescope"]
 
                 if self.check_conditions():
                     # set tracking to true
@@ -1886,13 +1829,13 @@ class Observatory:
                         "Tracking",
                         True,
                         "Tracking",
-                        device_name=paired_devices["Telescope"],
-                        log_message=f"Setting Telescope {paired_devices['Telescope']} tracking to True",
+                        device_name=telescope_name,
+                        log_message=f"Setting Telescope {telescope_name} tracking to True",
                     )
 
                     # slew to target
                     self.logger.info(
-                        f"Slewing Telescope {paired_devices['Telescope']} to {action_value['ra']} {action_value['dec']}"
+                        f"Slewing Telescope {telescope_name} to {action_value['ra']} {action_value['dec']}"
                     )
                     telescope.get(
                         "SlewToCoordinatesAsync",
@@ -1916,8 +1859,8 @@ class Observatory:
             if isinstance(f, list):
                 f = f[filter_list_index]
 
-            filterwheel = self.devices["FilterWheel"][paired_devices["FilterWheel"]]
-            names = filterwheel.get("Names")
+            filter_wheel = paired_devices.filter_wheel
+            names = filter_wheel.get("Names")
 
             # find index of filter name
             if f in names:
@@ -1925,20 +1868,62 @@ class Observatory:
             else:
                 raise ValueError(f"Filter {f} not found in {names}")
 
+            filter_wheel_name = paired_devices["FilterWheel"]
             # set filter
             self.monitor_action(
                 "FilterWheel",
                 "Position",
                 filter_index,
                 "Position",
-                device_name=paired_devices["FilterWheel"],
-                log_message=f"Setting FilterWheel {paired_devices['FilterWheel']} to {f}",
+                device_name=filter_wheel_name,
+                log_message=f"Setting FilterWheel {filter_wheel_name} to {f}",
                 weather_sensitive=False,
             )
+            filter_focus_shift = filter_wheel.get("FocusOffsets")[filter_index]
+        else:
+            filter_focus_shift = 0
+
+        if (
+            (
+                "focus_shift" in action_value
+                or "focus_position" in action_value
+                or filter_focus_shift
+            )
+            and ("Focuser" in paired_devices)
+            and self.error_free
+        ):
+            self.logger.info(
+                f"Defocusing Focuser {paired_devices['Focuser']} with {action_value}."
+            )
+
+            defocuser = Defocuser(
+                astra=self,
+                paired_devices=paired_devices,
+            )
+
+            if "focus_position" in action_value:
+                new_focus_position = action_value["focus_position"]
+            elif "focus_shift" in action_value:
+                new_focus_position = (
+                    defocuser.best_focus_position + action_value["focus_shift"]
+                )
+            else:
+                new_focus_position = defocuser.best_focus_position
+
+            new_focus_position += filter_focus_shift
+
+            defocuser.defocus(new_focus_position)
+        elif "Focuser" in paired_devices:
+            # Move focuser to best focus position
+            defocuser = Defocuser(
+                astra=self,
+                paired_devices=paired_devices,
+            )
+            defocuser.refocus()
 
         if "bin" in action_value:
             if "Camera" in paired_devices:
-                camera = self.devices["Camera"][paired_devices["Camera"]]
+                camera = paired_devices.camera
                 self.logger.info(
                     f"Setting Camera {paired_devices['Camera']} binning to {action_value['bin']}"
                 )
@@ -1947,7 +1932,7 @@ class Observatory:
                 camera.set("NumX", camera.get("CameraXSize") // camera.get("BinX"))
                 camera.set("NumY", camera.get("CameraYSize") // camera.get("BinY"))
 
-    def wait_for_slew(self, paired_devices: dict) -> None:
+    def wait_for_slew(self, paired_devices: PairedDevices) -> None:
         """
         Wait for a telescope to complete its slewing operation.
 
@@ -1959,7 +1944,7 @@ class Observatory:
 
         """
 
-        telescope = self.devices["Telescope"][paired_devices["Telescope"]]
+        telescope = paired_devices.telescope
 
         # wait for slew to finish
         start_time = time.time()
@@ -2141,12 +2126,10 @@ class Observatory:
                 wcs,
             )
 
-            self.logger.info(f"Image saved as {os.path.basename(filepath)}")
             self.logger.info(
-                f"Image acquired in {(time.time() - exposure_end_time):.3f} s from when ImageReady was read True"
-            )
-            self.logger.info(
-                f"Image acquired in {(time.time() - exposure_start_time - exptime):.3f} s from when exposure integration should have ended"
+                f"Image saved as {os.path.basename(filepath)}. "
+                f"Acquired in {(time.time() - exposure_end_time):.3f} s after ImageReady was True, "
+                f"and {(time.time() - exposure_start_time - exptime):.3f} s after exposure integration should have ended."
             )
 
             self.last_image = filepath
@@ -2159,7 +2142,7 @@ class Observatory:
 
         return exposure_successful, filepath
 
-    def image_sequence(self, row: dict, paired_devices: dict) -> None:
+    def image_sequence(self, row: dict, paired_devices: PairedDevices) -> None:
         """
         Run an image sequence for a specific camera.
         """
@@ -2171,7 +2154,7 @@ class Observatory:
 
         action_value, folder, hdr = self.pre_sequence(row, paired_devices)
 
-        camera = self.devices[row["device_type"]][row["device_name"]]
+        camera = paired_devices.camera
         maxadu = camera.get("MaxADU")
 
         if row["action_type"] == "calibration":
@@ -2266,6 +2249,17 @@ class Observatory:
                 )
                 self.guider[paired_devices["Telescope"]].running = False
 
+        # stop telescope tracking at end of sequence
+        if "Telescope" in paired_devices:
+            self.monitor_action(
+                "Telescope",
+                "Tracking",
+                False,
+                "Tracking",
+                device_name=paired_devices["Telescope"],
+                log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
+            )
+
     def pointing_model_sequence(self, row: dict, paired_devices: dict) -> None:
         """
         Run a pointing model sequence for a specific camera.
@@ -2355,7 +2349,7 @@ class Observatory:
             else:
                 t_shift = 0
 
-            self.logger.info(f"Running pointing model point {counter+1}/{N}")
+            self.logger.info(f"Running pointing model point {counter + 1}/{N}")
 
             # move telescope to target
             action_value["ra"] = target_radec.ra.deg
@@ -2399,7 +2393,7 @@ class Observatory:
         row: dict,
         action_value: dict,
         filepath: str,
-        paired_devices: dict,
+        paired_devices: PairedDevices,
         sync: bool = False,
         slew: bool = True,
     ) -> tuple[bool, WCS | None]:
@@ -2425,15 +2419,9 @@ class Observatory:
             return (pointing_complete, None)
 
         # get telescope index
-        tel_index = [
-            i
-            for i, d in enumerate(self.config["Telescope"])
-            if d["device_name"] == paired_devices["Telescope"]
-        ][0]
-
         # convert to degrees
         pointing_threshold = (
-            self.config["Telescope"][tel_index]["pointing_threshold"] / 60
+            paired_devices.get_device_config("Telescope")["pointing_threshold"] / 60
         )
 
         if slew is False:
@@ -2443,8 +2431,8 @@ class Observatory:
         if abs(angular_separation) < pointing_threshold:
             self.logger.info(
                 f"No further pointing correction required. "
-                f"Correction of {angular_separation*60:.2f}' "
-                f"within threshold of {pointing_threshold*60:.2f}'"
+                f"Correction of {angular_separation * 60:.2f}' "
+                f"within threshold of {pointing_threshold * 60:.2f}'"
             )
             pointing_complete = True
 
@@ -2454,8 +2442,8 @@ class Observatory:
             )
 
         self.logger.info(
-            f"Pointing correction of {angular_separation*60:.2f}' "
-            f"required as it is outside threshold of {pointing_threshold*60:.2f}'"
+            f"Pointing correction of {angular_separation * 60:.2f}' "
+            f"required as it is outside threshold of {pointing_threshold * 60:.2f}'"
         )
         self.logger.info(f"RA shift: {pointing_correction.offset_ra}")
         self.logger.info(f"DEC shift: {pointing_correction.offset_dec}")
@@ -2463,7 +2451,7 @@ class Observatory:
         pointing_complete = False
 
         # telescope
-        telescope = self.devices["Telescope"][paired_devices["Telescope"]]
+        telescope = paired_devices.telescope
 
         if sync:
             telescope.get(
@@ -2501,8 +2489,8 @@ class Observatory:
         return (pointing_complete, pointing_corrector_handler.image_star_mapping.wcs)
 
     def start_guider(
-        self, row: dict, action_value: dict, folder: str, paired_devices: dict
-    ) -> None:
+        self, row: dict, action_value: dict, folder: str, paired_devices: PairedDevices
+    ) -> bool:
         """
         Start the guider for a telescope.
         """
@@ -2534,7 +2522,7 @@ class Observatory:
 
         return True
 
-    def guiding_calibration_sequence(self, row, paired_devices) -> bool:
+    def guiding_calibration_sequence(self, row, paired_devices: PairedDevices) -> bool:
         """
         Perform guding calibration.
 
@@ -2585,7 +2573,7 @@ class Observatory:
 
         return success
 
-    def autofocus_sequence(self, row, paired_devices) -> bool:
+    def autofocus_sequence(self, row, paired_devices: PairedDevices) -> bool:
         """
         Perform autofocus.
 
@@ -2620,6 +2608,7 @@ class Observatory:
 
             autofocuser.make_summary_plot()
             autofocuser.create_result_file()
+            autofocuser.save_best_focus_position()
 
         except Exception as e:
             success = False
@@ -3091,7 +3080,9 @@ class Observatory:
             )
         return cam_index
 
-    def base_header(self, paired_devices: dict, action_value: dict) -> fits.Header:
+    def base_header(
+        self, paired_devices: PairedDevices, action_value: dict
+    ) -> fits.Header:
         """
         This function creates a base header for the fits file.
 
@@ -3111,30 +3102,30 @@ class Observatory:
             if row["device_type"] == "astra" and row["fixed"] is True:
                 # custom headers
                 if row["header"] == "FILTER":
-                    device = self.devices["FilterWheel"][paired_devices["FilterWheel"]]
+                    device = paired_devices.filter_wheel
                     pos = device.get("Position")
                     names = device.get("Names")
                     hdr[row["header"]] = (names[pos], row["comment"])
                 elif row["header"] == "XPIXSZ":
-                    device = self.devices["Camera"][paired_devices["Camera"]]
+                    device = paired_devices.camera
                     binx = device.get("BinX")
                     xpixsize = device.get("PixelSizeX")
                     hdr[row["header"]] = (binx * xpixsize, row["comment"])
                 elif row["header"] == "YPIXSZ":
-                    device = self.devices["Camera"][paired_devices["Camera"]]
+                    device = paired_devices.camera
                     biny = device.get("BinY")
                     ypixsize = device.get("PixelSizeY")
                     hdr[row["header"]] = (biny * ypixsize, row["comment"])
                 elif row["header"] == "APTAREA":
-                    device = self.devices["Telescope"][paired_devices["Telescope"]]
+                    device = paired_devices.telescope
                     val = device.get("ApertureArea") * 1e6
                     hdr[row["header"]] = (val, row["comment"])
                 elif row["header"] == "APTDIA":
-                    device = self.devices["Telescope"][paired_devices["Telescope"]]
+                    device = paired_devices.telescope
                     val = device.get("ApertureDiameter") * 1e3
                     hdr[row["header"]] = (val, row["comment"])
                 elif row["header"] == "FOCALLEN":
-                    device = self.devices["Telescope"][paired_devices["Telescope"]]
+                    device = paired_devices.telescope
                     val = device.get("FocalLength") * 1e3
                     hdr[row["header"]] = (val, row["comment"])
                 elif row["header"] == "OBJECT":
@@ -3400,7 +3391,7 @@ class Observatory:
                             filehandle[0].add_checksum()
 
                             self.cursor.execute(
-                                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
+                                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row["filepath"]}"'''
                             )
                     except FileNotFoundError:
                         self.logger.warning(
@@ -3408,7 +3399,7 @@ class Observatory:
                         )
                     finally:
                         self.cursor.execute(
-                            f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row['filepath']}"'''
+                            f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row["filepath"]}"'''
                         )
 
             self.logger.info("Completing headers... Done.")
