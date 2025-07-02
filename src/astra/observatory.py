@@ -181,7 +181,7 @@ class Observatory:
         """
 
         db_name = CONFIG.paths.logs / f"{self.name}.db"
-        cursor = Sqlite3Worker(db_name)
+        cursor = Sqlite3Worker(db_name, max_queue_size=200)
 
         db_command_0 = """CREATE TABLE IF NOT EXISTS polling (
                 device_type   TEXT,
