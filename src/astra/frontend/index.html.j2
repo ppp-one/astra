@@ -304,6 +304,10 @@
 
 
     <script>
+
+        // log configs
+        console.log("configs: ", {{ configs | tojson }});
+
         particlesJS.load('particles-js', '/js/particlesjs-config.json', function () {
             console.log('callback - particles.js config loaded');
         });
