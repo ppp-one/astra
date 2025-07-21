@@ -283,7 +283,7 @@ class PointingCorrectionHandler:
         image_clean = cls._clean_image(image)
 
         # Detect stars in the image
-        stars_in_image = twirl.find_peaks(image_clean, threshold=3)
+        stars_in_image = twirl.find_peaks(image_clean, threshold=10)
 
         # Limit number of stars and gaia stars to use for plate solve
         number_of_stars_to_use = min(len(stars_in_image), 12)
