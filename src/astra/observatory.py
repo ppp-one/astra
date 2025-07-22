@@ -2771,7 +2771,12 @@ class Observatory:
                 # pointing correction if not already done
                 if action_value.get("pointing") and pointing_complete is False:
                     pointing_complete, wcs_solve = self.pointing_correction(
-                        row, action_value, filepath, paired_devices
+                        row,
+                        action_value,
+                        filepath,
+                        paired_devices,
+                        sync=False,
+                        slew=True,
                     )
 
                     if self.speculoos:
@@ -2957,7 +2962,7 @@ class Observatory:
 
             if self.speculoos:
                 # wait for telescope to settle
-                time.sleep(exptime * 2)  # for spirit
+                time.sleep(exptime * 3)  # for spirit
 
             # perform exposure
             success, filepath = self.perform_exposure(
@@ -3044,9 +3049,6 @@ class Observatory:
                 filepath, target_ra=action_value["ra"], target_dec=action_value["dec"]
             )
             pointing_correction = pointing_corrector_handler.pointing_correction
-            # offset_ra, offset_dec, wcs_solve, angular_separation = utils.pointing(
-            #     filepath, action_value["ra"], action_value["dec"]
-            # )
 
         except Exception as e:
             self.logger.warning(
