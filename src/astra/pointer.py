@@ -442,11 +442,11 @@ class PointingCorrectionHandler:
 
         # Detect stars in the image
         stars_in_image = find_stars_multiscale(
-            image_clean, scales=[1, 2, 3], threshold=10, edge_buffer=48
+            image_clean, scales=[1, 2, 3], threshold=7, edge_buffer=10
         )
 
         # Limit number of stars and gaia stars to use for plate solve
-        number_of_stars_to_use = min(len(stars_in_image), 12)
+        number_of_stars_to_use = min(len(stars_in_image), 16)
 
         if number_of_stars_to_use < 4:
             raise Exception("Not enough stars detected for plate solve")
@@ -495,10 +495,15 @@ class PointingCorrectionHandler:
     def from_fits_file(
         cls,
         filepath: str | Path,
+        dark_frame: str | Path | None = None,
         target_ra: float | None = None,
         target_dec: float | None = None,
     ):
         image, header = cls._read_fits_file(filepath)
+
+        if dark_frame:
+            dark_image, _ = cls._read_fits_file(dark_frame)
+            image = image - dark_image
 
         if target_dec is None:
             target_dec = float(header["DEC"])

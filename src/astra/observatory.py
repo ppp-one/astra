@@ -37,7 +37,7 @@ import math
 import os
 import sqlite3
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from multiprocessing import Manager
 from pathlib import Path
 from threading import Thread
@@ -2233,7 +2233,10 @@ class Observatory:
         if "object" == row["action_type"]:
             hdr["IMAGETYP"] = "Light Frame"
         elif "flats" == row["action_type"]:
-            hdr["IMAGETYP"] = "FLAT"  # TODO: change to Flat Frame?
+            if self.speculoos:
+                hdr["IMAGETYP"] = "FLAT"
+            else:
+                hdr["IMAGETYP"] = "Flat Frame"
 
         self.logger.debug(
             f"Finished pre_sequence for {row['device_name']} {row['action_type']} {row['action_value']}"
@@ -2884,12 +2887,6 @@ class Observatory:
             row, paired_devices, create_folder=False
         )
 
-        action_value["object"] = "pointing_model"
-
-        # create pointing_model folder
-        folder = CONFIG.paths.images / "pointing_model"
-        folder.mkdir(exist_ok=True)
-
         # number of points
         N = action_value.get("n", 100)
 
@@ -2900,6 +2897,25 @@ class Observatory:
         camera = self.devices[row["device_type"]][row["device_name"]]
         maxadu = camera.get("MaxADU")
 
+        # find dark frame
+        dark_frame = None
+        if action_value.get("dark_subtraction", False):
+
+            self.logger.info(
+                f"Dark subtraction enabled. Looking for matching dark frame for {row['device_name']}"
+                f" with exposure time {exptime} s in {folder}"
+            )
+
+            darks = list(Path(folder).glob(f"*Dark Frame_{exptime:.3f}*.fits"))
+
+            if len(darks) > 0:
+                dark_frame = darks[-1]
+                self.logger.info(f"Using dark frame {dark_frame}")
+            else:
+                self.logger.warning(
+                    f"No dark frame found in {folder}. Dark subtraction will not be applied."
+                )
+
         # get location
         obs_lat = hdr["LAT-OBS"]
         obs_lon = hdr["LONG-OBS"]
@@ -2909,11 +2925,23 @@ class Observatory:
         )
         MOON_LIMIT = 20 * u.deg  # pointing distance to the moon in degrees
 
+        # create pointing_model folder
+        date_str = (row["start_time"] + timedelta(hours=obs_lon / 15)).strftime(
+            "%Y%m%d"
+        )
+        folder = CONFIG.paths.images / "pointing_model" / date_str
+        folder.mkdir(exist_ok=True)
+        self.logger.info(f"{folder} created for pointing model images")
+
         # Generate points (spiral from zenith to 30 deg above horizon)
         num_turns = np.sqrt(N / 2)
         t_linear = np.linspace(0, 1, N)  # Generate base points
         ts = t_linear**0.5  # increase spacing towards zenith
         t_shift = 0
+
+        # update header
+        hdr["IMAGETYP"] = "Light Frame"
+        hdr["OBJECT"] = "Pointing Model"
 
         # open dome and unpark telescope
         self.open_observatory(paired_devices)
@@ -2980,7 +3008,13 @@ class Observatory:
 
             # pointing correction, sync and no slew
             pointing_complete, wcs_solve = self.pointing_correction(
-                row, action_value, filepath, paired_devices, sync=True, slew=False
+                row,
+                action_value,
+                filepath,
+                paired_devices,
+                dark_frame=dark_frame,
+                sync=True,
+                slew=False,
             )
 
             # update header with wcs
@@ -2999,6 +3033,7 @@ class Observatory:
         action_value: dict,
         filepath: str,
         paired_devices: PairedDevices,
+        dark_frame: str | Path | None = None,
         sync: bool = False,
         slew: bool = True,
     ) -> tuple[bool, WCS | None]:
@@ -3018,6 +3053,8 @@ class Observatory:
             filepath (str): Path to the FITS image file for plate solving.
             paired_devices (PairedDevices): Object containing telescope and other
                 devices for the correction.
+            dark_frame (str | Path | None, optional): Path to a dark frame for calibration.
+                Defaults to None (no dark subtraction).
             sync (bool, optional): If True, only sync the telescope without slewing.
                 Defaults to False.
             slew (bool, optional): If True, allows slewing to correct large errors.
@@ -3046,7 +3083,10 @@ class Observatory:
         )
         try:
             pointing_corrector_handler = PointingCorrectionHandler.from_fits_file(
-                filepath, target_ra=action_value["ra"], target_dec=action_value["dec"]
+                filepath,
+                dark_frame=dark_frame,
+                target_ra=action_value["ra"],
+                target_dec=action_value["dec"],
             )
             pointing_correction = pointing_corrector_handler.pointing_correction
 
