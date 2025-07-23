@@ -2884,7 +2884,7 @@ class Observatory:
         )
 
         action_value, folder, hdr = self.pre_sequence(
-            row, paired_devices, create_folder=False
+            row, paired_devices, create_folder=True
         )
 
         # number of points
