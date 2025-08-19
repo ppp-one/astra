@@ -35,7 +35,6 @@ Note:
 import logging
 import math
 import os
-import sqlite3
 import time
 from datetime import UTC, datetime, timedelta
 from multiprocessing import Manager
@@ -46,7 +45,6 @@ import astropy.units as u
 import numpy as np
 import pandas as pd
 import psutil
-import yaml
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
@@ -67,19 +65,6 @@ from astra.schedule import process_schedule
 
 logging.getLogger("sqlite3worker").setLevel(logging.INFO)
 CONFIG = Config()
-
-# TODO (set 2024-07-20):
-# - move schedule things to schedule.py
-# - optimise image ack < -- save sequence
-# - organise order of methods
-# - bugs
-# - internal safety monitor
-# - add more logging
-# - add more error handling
-# - add more comments
-# - add more docstrings
-# - add more tests
-# - add more type hints
 
 
 class Observatory:
