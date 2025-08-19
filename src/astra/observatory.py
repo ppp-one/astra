@@ -395,12 +395,14 @@ class Observatory:
                     index=False,
                 )
 
+            db.close()
+
+            for table in tables:
                 # once back up complete, delete rows older than 3 days ago from database
                 # to minimize database size for speed
                 self.cursor.execute(
                     f"DELETE FROM {table} WHERE datetime < datetime('now', '-3 days')"
                 )
-            db.close()
 
             self.logger.info("Database backed up")
 
