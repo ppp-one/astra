@@ -16,9 +16,11 @@ import pandas as pd
 import uvicorn
 from astropy.io import fits
 from astropy.visualization import ZScaleInterval
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket, Body
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
+import json
+
 
 from astra import ASTRA_VER, Config
 from astra.observatory import Observatory
@@ -315,6 +317,43 @@ async def schedule(observatory: str):
         return schedule.to_dict(orient="records")
     else:
         return []
+
+
+@app.post("/api/editschedule/{observatory}")
+async def edit_schedule(
+    observatory: str, schedule_data: str = Body(..., media_type="text/plain")
+):
+    obs = OBSERVATORIES[observatory]
+
+    schedule_path = obs.schedule_path
+
+    try:
+        # Parse the JSONL data
+        lines = schedule_data.strip().split("\n")
+        schedule_items = []
+        for line in lines:
+            if line.strip():
+                schedule_items.append(json.loads(line.strip()))
+
+        # Convert to DataFrame and save as JSONL
+        df = pd.DataFrame(schedule_items)
+        df.to_json(schedule_path, orient="records", lines=True)
+
+        obs.logger.info(f"Schedule updated with {len(schedule_items)} items")
+
+        return {
+            "status": "success",
+            "data": None,
+            "message": f"Schedule updated with {len(schedule_items)} items",
+        }
+
+    except Exception as e:
+        obs.logger.error(f"Error updating schedule: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "message": f"Error updating schedule: {str(e)}",
+        }
 
 
 @app.get("/api/db/polling/{observatory}/{device_type}")
@@ -878,6 +917,29 @@ async def autofocus(request: Request):
             # "observatories": list(OBSERVATORIES.keys()),
             # "webcamfeeds": WEBCAMFEEDS,
             # "configs": {obs.name: obs.config for obs in OBSERVATORIES.values()},
+        },
+        request=request,
+    )
+
+
+@app.get("/schedule/{observatory}")
+async def get_schedule(request: Request, observatory: str):
+    obs = OBSERVATORIES[observatory]
+
+    # Read the raw JSONL file to preserve original datetime string format
+    schedule_path = obs.schedule_path
+    try:
+        with open(schedule_path, "r") as f:
+            schedule_jsonl = f.read().strip()
+    except (FileNotFoundError, IOError):
+        schedule_jsonl = ""
+
+    return FRONTEND.TemplateResponse(
+        "schedule.html.j2",
+        {
+            "request": request,
+            "observatory": observatory,
+            "schedule": schedule_jsonl,
         },
         request=request,
     )

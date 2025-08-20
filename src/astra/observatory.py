@@ -222,8 +222,10 @@ class Observatory:
         self.robotic_switch = False
 
         # schedule
-        self.schedule_path = CONFIG.paths.schedules / f"{self.name}.csv"
-        # self.schedule_path = CONFIG.paths.schedules / f"{self.name}.jsonl" # TODO: change to this in future
+        # self.schedule_path = CONFIG.paths.schedules / f"{self.name}.csv"
+        self.schedule_path = (
+            CONFIG.paths.schedules / f"{self.name}.jsonl"
+        )  # TODO: change to this in future
         self.schedule_mtime = self.get_schedule_mtime()
         self.schedule = None
         if self.schedule_mtime != 0:
@@ -1692,7 +1694,7 @@ class Observatory:
             - Truncation moves schedule to current time for testing
             - File modification time is tracked to enable automatic reloading
         """
-        # TODO: schedule validity checker, add schedule as string to log?
+        # TODO: schedule validity checker
 
         try:
             schedule_mtime = self.get_schedule_mtime()

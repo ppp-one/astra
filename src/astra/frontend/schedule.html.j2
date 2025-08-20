@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Editor - {{ observatory }}</title>
+    <script src="/js/tailwind-3.3.5.js"></script>
+    <script src="/js/d3-7.9.0.min.js"></script>
+    <script src="/js/plot-0.6.17.min.js"></script>
+    <link rel="icon" href="/favicon.svg">
+    <style>
+        /* --- Card-Style Table Layout (Default for all screen sizes) --- */
+
+        /* Hide the table header */
+        .schedule-table thead {
+            display: none;
+        }
+
+        /* Make table elements behave like blocks */
+        .schedule-table,
+        .schedule-table tbody,
+        .schedule-table tr,
+        .schedule-table td {
+            display: block;
+            width: 100%;
+        }
+
+        /* Style each row as a card */
+        .schedule-table tr {
+            margin-bottom: 1rem;
+            border: 1px solid rgb(55 65 81 / 0.5);
+            /* Equivalent to border-gray-700/50 */
+            border-radius: 0.5rem;
+            /* Equivalent to rounded-lg */
+            overflow: hidden;
+        }
+
+        /* Style the cells */
+        .schedule-table td {
+            position: relative;
+            padding-left: 50%;
+            /* Create space for the label */
+            text-align: right;
+            border-bottom: 1px solid rgb(55 65 81 / 0.3);
+            /* Lighter border for cells */
+        }
+
+        .schedule-table tr td:last-child {
+            border-bottom: none;
+            /* Remove border from the last cell in the card */
+        }
+
+        /* Add data labels before each cell's content */
+        .schedule-table td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0.75rem;
+            /* p-3 equivalent */
+            width: 45%;
+            padding-right: 0.75rem;
+            text-align: left;
+            font-weight: bold;
+            color: #9ca3af;
+            /* text-gray-400 */
+        }
+
+        /* Optional: Desktop enhancement - Show traditional table on very large screens */
+        @media (min-width: 1280px) {
+            .schedule-table.desktop-table thead {
+                display: table-header-group;
+            }
+
+            .schedule-table.desktop-table,
+            .schedule-table.desktop-table tbody,
+            .schedule-table.desktop-table tr,
+            .schedule-table.desktop-table td {
+                display: table;
+                width: auto;
+            }
+
+            .schedule-table.desktop-table tbody {
+                display: table-row-group;
+            }
+
+            .schedule-table.desktop-table tr {
+                display: table-row;
+                margin-bottom: 0;
+                border: none;
+                border-radius: 0;
+            }
+
+            .schedule-table.desktop-table td {
+                display: table-cell;
+                position: static;
+                padding-left: 0.5rem;
+                text-align: left;
+                border-bottom: 1px solid rgb(55 65 81 / 0.3);
+            }
+
+            .schedule-table.desktop-table td:before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white relative">
+    <!-- Content -->
+    <div class="relative z-10 min-h-screen">
+        <!-- Header -->
+        <div class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-400">Schedule Editor</h1>
+                        <p class="text-gray-300">Observatory: {{ observatory }}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-gray-400 text-sm">Current Time (UTC)</div>
+                        <div id="currentTime" class="font-mono text-lg">--:--:--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto p-6">
+            <!-- Status Modal -->
+            <div id="statusModal"
+                class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center hidden">
+                <div class="bg-gray-800/90 border border-gray-700/50 rounded-lg p-6 mx-4 max-w-md w-full">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div id="statusIcon" class="w-6 h-6 flex-shrink-0"></div>
+                        <h3 id="statusTitle" class="text-lg font-semibold"></h3>
+                    </div>
+                    <p id="statusText" class="text-gray-300 mb-6"></p>
+                    <div class="flex justify-end">
+                        <button id="statusCloseBtn"
+                            class="px-4 py-2 bg-gray-600/80 hover:bg-gray-700/80 rounded text-sm transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Visualization -->
+            <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Schedule Timeline (UTC)</h2>
+                    <button id="toggleChartBtn"
+                        class="px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded text-sm transition-colors">
+                        Hide Chart
+                    </button>
+                </div>
+                <div id="scheduleChart" class="w-full" style="min-height: 400px;">
+                    <!-- Chart will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Schedule Editor -->
+            <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Schedule</h2>
+                    <div class="flex space-x-2">
+                        <button id="toggleViewBtn"
+                            class="hidden xl:block px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded text-sm transition-colors">
+                            Table View
+                        </button>
+                        <button id="addRowBtn"
+                            class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
+                            Add Row
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="mb-4 text-sm text-gray-400">
+                    <span id="scheduleStats">0 schedule items</span>
+                </div>
+
+                <!-- Schedule Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm schedule-table">
+                        <thead>
+                            <tr class="border-b border-gray-600/50">
+                                <th class="text-left p-2 w-12">#</th>
+                                <th class="text-left p-2">Device Name</th>
+                                <th class="text-left p-2">Action Type</th>
+                                <th class="text-left p-2">Action Value (JSON)</th>
+                                <th class="text-left p-2">Start Time (UTC)</th>
+                                <th class="text-left p-2">End Time (UTC)</th>
+                                <th class="text-left p-2 w-24">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTable">
+                            <!-- Rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Save Button at Bottom -->
+                <div class="mt-6 flex justify-end">
+                    <button id="saveScheduleBtn"
+                        class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 rounded text-base transition-colors font-medium">
+                        Save Schedule
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toISOString().slice(0, 19).replace('T', ' ');
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Get observatory name from URL
+        const observatoryName = window.location.pathname.split('/')[2];
+
+        // Schedule data
+        let scheduleData = [];
+        let chartVisible = true;
+        let tableViewMode = false; // false = card view (default), true = table view
+
+        // Color mapping for action types
+        const actionColors = {
+            'open': '#10b981',     // Green
+            'close': '#ef4444',    // Red
+            'flats': '#f59e0b',    // Amber
+            'object': '#3b82f6',   // Blue
+            'calibration': '#8b5cf6' // Purple
+        };
+
+        // Parse datetime string to Date object (treating as UTC)
+        function parseDateTime(dateTimeStr) {
+            if (!dateTimeStr) return null;
+
+            console.log('Parsing datetime:', dateTimeStr);
+
+            // Handle numeric timestamps (Unix timestamps in milliseconds)
+            if (typeof dateTimeStr === 'number') {
+                const date = new Date(dateTimeStr);
+                console.log('Parsed timestamp:', date, 'Valid:', !isNaN(date.getTime()));
+                return date;
+            }
+
+            // Ensure we have a string for string operations
+            if (typeof dateTimeStr !== 'string') {
+                dateTimeStr = String(dateTimeStr);
+            }
+
+            // Check if it's a numeric string (timestamp)
+            if (/^\d+$/.test(dateTimeStr)) {
+                const timestamp = parseInt(dateTimeStr, 10);
+                const date = new Date(timestamp);
+                console.log('Parsed numeric string as timestamp:', date, 'Valid:', !isNaN(date.getTime()));
+                return date;
+            }
+
+            // Handle format: "YYYY-MM-DD HH:MM:SS.sss"
+            if (dateTimeStr.includes(' ')) {
+                // Convert to ISO format and parse as UTC
+                let isoString = dateTimeStr.replace(' ', 'T');
+
+                // If it doesn't end with Z, add it for UTC parsing
+                if (!isoString.endsWith('Z')) {
+                    isoString += 'Z';
+                }
+
+                console.log('Converted to ISO:', isoString);
+                const date = new Date(isoString);
+                console.log('Parsed date:', date, 'Valid:', !isNaN(date.getTime()));
+                return date;
+            }
+
+            // Handle ISO format: "YYYY-MM-DDTHH:MM:SS"
+            if (dateTimeStr.includes('T')) {
+                let isoString = dateTimeStr;
+                if (!isoString.endsWith('Z') && !isoString.includes('+') && !isoString.includes('-')) {
+                    isoString += 'Z';
+                }
+                const date = new Date(isoString);
+                console.log('Parsed ISO date:', date, 'Valid:', !isNaN(date.getTime()));
+                return date;
+            }
+
+            // Handle other formats
+            const date = new Date(dateTimeStr);
+            console.log('Parsed other format:', date, 'Valid:', !isNaN(date.getTime()));
+            return date;
+        }
+
+        // Render the schedule chart
+        function renderChart() {
+            const chartContainer = document.getElementById('scheduleChart');
+
+            if (!chartVisible) {
+                chartContainer.style.display = 'none';
+                return;
+            } else {
+                chartContainer.style.display = 'block';
+            }
+
+            // Filter out items without both start and end times
+            const validItems = scheduleData.filter(item => {
+                const startTime = item.start_time;
+                const endTime = item.end_time;
+
+                // Check if both times exist and are valid
+                if (!startTime || !endTime) return false;
+
+                // Handle string values
+                if (typeof startTime === 'string' && typeof endTime === 'string') {
+                    return startTime.trim() !== '' && endTime.trim() !== '';
+                }
+
+                // Handle non-string values (numbers, etc.)
+                return true;
+            });
+
+            if (validItems.length === 0) {
+                chartContainer.innerHTML = '<div class="text-center text-gray-400 py-8">No valid schedule items to display. Add items with start and end times to see the timeline.</div>';
+                return;
+            }
+
+            // Prepare data for the chart
+            const chartData = validItems.map((item, index) => {
+                console.log('Processing item:', index, item);
+                const startDate = parseDateTime(item.start_time);
+                const endDate = parseDateTime(item.end_time);
+
+                console.log('Parsed dates - Start:', startDate, 'End:', endDate);
+
+                if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    console.log('Invalid dates for item:', index, 'Start valid:', startDate && !isNaN(startDate.getTime()), 'End valid:', endDate && !isNaN(endDate.getTime()));
+                    return null;
+                }
+
+                return {
+                    device: item.device_name || `Item ${index + 1}`,
+                    action_type: item.action_type || 'unknown',
+                    action_value: item.action_value || {},
+                    start: startDate,
+                    end: endDate,
+                    duration: endDate - startDate,
+                    label: `${item.device_name || 'Unnamed'} (${item.action_type || 'unknown'})`
+                };
+            }).filter(item => item !== null);
+
+            console.log('Final chart data:', chartData);
+
+            if (chartData.length === 0) {
+                chartContainer.innerHTML = '<div class="text-center text-gray-400 py-8">Invalid datetime format in schedule items. Please check your start and end times.</div>';
+                return;
+            }
+
+            try {
+                // Create the plot
+                const plot = Plot.plot({
+                    width: chartContainer.clientWidth - 40,
+                    height: Math.max(400, chartData.length * 40 + 100),
+                    marginLeft: 150,
+                    marginRight: 100,
+                    marginTop: 40,
+                    marginBottom: 60,
+                    style: {
+                        backgroundColor: "transparent",
+                        color: "#ffffff"
+                    },
+                    x: {
+                        type: "time",
+                        label: "Time (UTC)",
+                        tickFormat: d3.utcFormat("%H:%M"),
+                        grid: true
+                    },
+                    y: {
+                        label: "Schedule Items",
+                        domain: chartData.map(d => d.label),
+                        grid: true
+                    },
+                    color: {
+                        legend: true,
+                        domain: Object.keys(actionColors),
+                        range: Object.values(actionColors)
+                    },
+                    marks: [
+                        // Background grid
+                        Plot.gridX({ stroke: "#374151", strokeOpacity: 0.5 }),
+                        Plot.gridY({ stroke: "#374151", strokeOpacity: 0.5 }),
+
+                        // Gantt bars
+                        Plot.barX(chartData, {
+                            x1: "start",
+                            x2: "end",
+                            y: "label",
+                            fill: "action_type",
+                            title: d => {
+                                const actionValueStr = JSON.stringify(d.action_value, null, 2);
+                                return `${d.device}: ${d.action_type}\n${d.start.toISOString().slice(0, 19)}Z to ${d.end.toISOString().slice(0, 19)}Z\nDuration: ${Math.round(d.duration / 60000)} minutes\n\nAction Value:\n${actionValueStr}`;
+                            }
+                        }),
+
+                        // Text labels on bars
+                        Plot.text(chartData, {
+                            x: d => new Date((d.start.getTime() + d.end.getTime()) / 2),
+                            y: "label",
+                            text: d => d.duration > 600000 ? d.action_type : "", // Only show text if bar is wide enough (10+ minutes)
+                            fill: "#ffffff",
+                            fontSize: 10,
+                            fontWeight: "bold",
+                            textAnchor: "middle"
+                        })
+                    ]
+                });
+
+                // Clear and append the plot
+                chartContainer.innerHTML = '';
+                chartContainer.appendChild(plot);
+
+            } catch (error) {
+                console.error('Error rendering chart:', error);
+                chartContainer.innerHTML = '<div class="text-center text-red-400 py-8">Error rendering chart. Please check console for details.</div>';
+            }
+        }
+
+        // Toggle chart visibility
+        function toggleChart() {
+            chartVisible = !chartVisible;
+            const toggleBtn = document.getElementById('toggleChartBtn');
+            toggleBtn.textContent = chartVisible ? 'Hide Chart' : 'Show Chart';
+            renderChart();
+        }
+
+        // Toggle table view mode (card vs traditional table)
+        function toggleView() {
+            tableViewMode = !tableViewMode;
+            const toggleBtn = document.getElementById('toggleViewBtn');
+            const table = document.querySelector('.schedule-table');
+
+            if (tableViewMode) {
+                table.classList.add('desktop-table');
+                toggleBtn.textContent = 'Card View';
+            } else {
+                table.classList.remove('desktop-table');
+                toggleBtn.textContent = 'Table View';
+            }
+        }
+
+        // Format datetime for datetime-local input (treating all times as UTC)
+        function formatDateTimeLocal(dateTime) {
+            if (!dateTime) return '';
+
+            // Ensure we have a string for string operations
+            let dateTimeStr = typeof dateTime === 'string' ? dateTime : String(dateTime);
+
+            // Handle the specific format: "YYYY-MM-DD HH:MM:SS.sss" (treat as UTC)
+            if (dateTimeStr.includes(' ')) {
+                // Convert "2025-08-24 10:55:15.363" to "2025-08-24T10:55:15"
+                const parts = dateTimeStr.split(' ');
+                if (parts.length === 2) {
+                    const datePart = parts[0];
+                    const timePart = parts[1].split('.')[0]; // Remove milliseconds
+                    return `${datePart}T${timePart}`;
+                }
+            }
+
+            // If it's already in the correct format (YYYY-MM-DDTHH:MM:SS), return as is
+            if (dateTimeStr.includes('T')) {
+                return dateTimeStr.slice(0, 19); // Remove any timezone info
+            }
+
+            // Handle timestamp formats - treat as UTC
+            let date;
+            if (typeof dateTime === 'number') {
+                date = new Date(dateTime);
+            } else {
+                // Parse as UTC to avoid local timezone interpretation
+                date = new Date(dateTimeStr + (dateTimeStr.includes('Z') || dateTimeStr.includes('+') || dateTimeStr.includes('-') ? '' : 'Z'));
+            }
+
+            if (isNaN(date.getTime())) return '';
+
+            // Format as YYYY-MM-DDTHH:MM:SS for datetime-local input using UTC
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        }
+
+        // Status modal function
+        function showStatus(message, type = 'info') {
+            const modal = document.getElementById('statusModal');
+            const icon = document.getElementById('statusIcon');
+            const title = document.getElementById('statusTitle');
+            const text = document.getElementById('statusText');
+
+            // Set content based on type
+            text.textContent = message;
+
+            if (type === 'success') {
+                title.textContent = 'Success';
+                icon.innerHTML = '<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                title.className = 'text-lg font-semibold text-green-400';
+            } else if (type === 'error') {
+                title.textContent = 'Error';
+                icon.innerHTML = '<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                title.className = 'text-lg font-semibold text-red-400';
+            } else {
+                title.textContent = 'Information';
+                icon.innerHTML = '<svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                title.className = 'text-lg font-semibold text-blue-400';
+            }
+
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+
+            // Auto-close after 5 seconds for success/info, keep error open
+            if (type !== 'error') {
+                setTimeout(() => {
+                    closeStatusModal();
+                }, 5000);
+            }
+        }
+
+        // Close status modal function
+        function closeStatusModal() {
+            const modal = document.getElementById('statusModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+
+        // Load initial schedule data
+        function loadSchedule() {
+            try {
+                const scheduleJson = {{ schedule | tojson
+            }};
+        console.log("Raw schedule data:", scheduleJson);
+
+        if (scheduleJson) {
+            const lines = scheduleJson.trim().split('\n').filter(line => line.trim());
+            scheduleData = lines.map(line => JSON.parse(line));
+        } else {
+            scheduleData = [];
+        }
+        renderTable();
+        renderChart();
+            } catch (error) {
+            console.error("Error loading schedule data:", error);
+            showStatus('Error loading schedule: ' + error.message, 'error');
+            scheduleData = [];
+            renderTable();
+            renderChart();
+        }
+        }
+
+        // Render the schedule table
+        function renderTable() {
+            const tbody = document.getElementById('scheduleTable');
+            tbody.innerHTML = '';
+
+            // Update stats
+            document.getElementById('scheduleStats').textContent =
+                `${scheduleData.length} schedule item${scheduleData.length !== 1 ? 's' : ''}`;
+
+            scheduleData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-700/30 hover:bg-gray-700/20 transition-colors';
+
+                row.innerHTML = `
+                    <td class="p-2 text-gray-400 font-mono text-xs" data-label="#">
+                        ${index + 1}
+                    </td>
+                    <td class="p-2" data-label="Device Name">
+                        <input type="text" value="${item.device_name || ''}" 
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               onchange="updateItem(${index}, 'device_name', this.value)"
+                               placeholder="Enter device name">
+                    </td>
+                    <td class="p-2" data-label="Action Type">
+                        <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                                onchange="updateItem(${index}, 'action_type', this.value)">
+                            <option value="open" ${item.action_type === 'open' ? 'selected' : ''}>open</option>
+                            <option value="close" ${item.action_type === 'close' ? 'selected' : ''}>close</option>
+                            <option value="flats" ${item.action_type === 'flats' ? 'selected' : ''}>flats</option>
+                            <option value="object" ${item.action_type === 'object' ? 'selected' : ''}>object</option>
+                            <option value="calibration" ${item.action_type === 'calibration' ? 'selected' : ''}>calibration</option>
+                        </select>
+                    </td>
+                    <td class="p-2" data-label="Action Value (JSON)">
+                        <textarea class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm font-mono h-32 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors resize-y"
+                                  onchange="updateActionValue(${index}, this.value)"
+                                  placeholder="Enter JSON object">${JSON.stringify(item.action_value || {}, null, 2)}</textarea>
+                    </td>
+                    <td class="p-2" data-label="Start Time (UTC)">
+                        <input type="datetime-local" 
+                               value="${formatDateTimeLocal(item.start_time)}" 
+                               step="1"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               onchange="updateItem(${index}, 'start_time', this.value)">
+                    </td>
+                    <td class="p-2" data-label="End Time (UTC)">
+                        <input type="datetime-local" 
+                               value="${formatDateTimeLocal(item.end_time)}" 
+                               step="1"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               onchange="updateItem(${index}, 'end_time', this.value)">
+                    </td>
+                    <td class="p-2" data-label="Actions">
+                        <div class="flex space-x-1 justify-end">
+                            <button onclick="duplicateRow(${index})" 
+                                    class="px-2 py-1 bg-blue-600/80 hover:bg-blue-700/80 rounded text-xs transition-colors"
+                                    title="Duplicate row">
+                                Copy
+                            </button>
+                            <button onclick="deleteRow(${index})" 
+                                    class="px-2 py-1 bg-red-600/80 hover:bg-red-700/80 rounded text-xs transition-colors"
+                                    title="Delete row">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            // Update the chart as well
+            renderChart();
+        }
+
+        // Update item field
+        function updateItem(index, field, value) {
+            if (field === 'start_time' || field === 'end_time') {
+                // Convert datetime-local format (YYYY-MM-DDTHH:MM:SS) to the expected format (YYYY-MM-DD HH:MM:SS.000)
+                // Treat all datetime inputs as UTC
+                if (value) {
+                    // Convert "2025-08-24T10:55:15" to "2025-08-24 10:55:15.000"
+                    const convertedValue = value.replace('T', ' ') + '.000';
+                    scheduleData[index][field] = convertedValue;
+                } else {
+                    scheduleData[index][field] = '';
+                }
+                // Update chart when times change
+                renderChart();
+            } else {
+                scheduleData[index][field] = value;
+                // Update chart when device names or action types change
+                if (field === 'device_name' || field === 'action_type') {
+                    renderChart();
+                }
+            }
+        }
+
+        // Update action value (JSON)
+        function updateActionValue(index, value) {
+            try {
+                scheduleData[index].action_value = JSON.parse(value);
+            } catch (error) {
+                showStatus('Invalid JSON in action value for row ' + (index + 1), 'error');
+            }
+        }
+
+        // Add new row
+        function addRow() {
+            scheduleData.push({
+                device_name: '',
+                action_type: 'open',
+                action_value: {},
+                start_time: '',
+                end_time: ''
+            });
+            renderTable();
+        }
+
+        // Duplicate row
+        function duplicateRow(index) {
+            const originalItem = scheduleData[index];
+            const duplicatedItem = JSON.parse(JSON.stringify(originalItem)); // Deep copy
+            scheduleData.splice(index + 1, 0, duplicatedItem);
+            renderTable();
+        }
+
+        // Delete row
+        function deleteRow(index) {
+            if (scheduleData.length === 1) {
+                showStatus('Cannot delete the last remaining row', 'error');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete row ${index + 1}?`)) {
+                scheduleData.splice(index, 1);
+                renderTable();
+            }
+        }
+
+        // Save schedule
+        async function saveSchedule() {
+            try {
+                // Convert to JSONL format, only including the core fields
+                const jsonl = scheduleData.map(item => {
+                    // Only include the core fields that should be saved
+                    const coreItem = {
+                        device_name: item.device_name || '',
+                        action_type: item.action_type || '',
+                        action_value: item.action_value || {},
+                        start_time: item.start_time || '',  // Keep as string
+                        end_time: item.end_time || ''       // Keep as string
+                    };
+                    return JSON.stringify(coreItem);
+                }).join('\n');
+
+                const response = await fetch(`/api/editschedule/${observatoryName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: jsonl
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showStatus('Schedule saved successfully!', 'success');
+                } else {
+                    const errorResult = await response.json();
+                    throw new Error(errorResult.message || 'Failed to save schedule');
+                }
+            } catch (error) {
+                console.error('Error saving schedule:', error);
+                showStatus('Error saving schedule: ' + error.message, 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('addRowBtn').addEventListener('click', addRow);
+        document.getElementById('saveScheduleBtn').addEventListener('click', saveSchedule);
+        document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
+        document.getElementById('statusCloseBtn').addEventListener('click', closeStatusModal);
+
+        // Add toggle view button listener (only exists on xl screens)
+        const toggleViewBtn = document.getElementById('toggleViewBtn');
+        if (toggleViewBtn) {
+            toggleViewBtn.addEventListener('click', toggleView);
+        }
+
+        // Close modal when clicking outside of it
+        document.getElementById('statusModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeStatusModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Ctrl/Cmd + S to save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveSchedule();
+            }
+            // Ctrl/Cmd + N to add new row
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                addRow();
+            }
+            // Escape to close modal
+            if (e.key === 'Escape') {
+                closeStatusModal();
+            }
+        });
+
+        // Handle window resize for chart responsiveness
+        window.addEventListener('resize', function () {
+            if (chartVisible) {
+                setTimeout(renderChart, 100);
+            }
+        });
+
+        // Load initial schedule
+        loadSchedule();
+    </script>
+</body>
+
+</html>
