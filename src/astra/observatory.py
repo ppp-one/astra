@@ -2028,7 +2028,7 @@ class Observatory:
         self.logger.info(f"Starting {row['device_name']} {row['action_type']}")
 
         try:
-            if row["device_type"] == "Camera":
+            if row["device_name"] in self.devices["Camera"]:
                 paired_devices = PairedDevices.from_observatory(
                     observatory=self,
                     camera_name=row["device_name"],
@@ -2900,7 +2900,7 @@ class Observatory:
         exptime = action_value.get("exptime", 1)  # default to 1 second
 
         # get camera
-        camera = self.devices[row["device_type"]][row["device_name"]]
+        camera = self.devices["Camera"][row["device_name"]]
         maxadu = camera.get("MaxADU")
 
         # find dark frame
@@ -3508,7 +3508,7 @@ class Observatory:
         action_value, folder, hdr = self.pre_sequence(row, paired_devices)
 
         # camera device
-        camera = self.devices[row["device_type"]][row["device_name"]]
+        camera = self.devices["Camera"][row["device_name"]]
 
         # target adu and camera offset needed for flat exposure time calculation
         cam_index = self.get_cam_index(row["device_name"])
