@@ -74,7 +74,8 @@ def update_times(df: pd.DataFrame, time_factor: float) -> pd.DataFrame:
 
 
 def process_schedule(
-    filename: Union[str, Path], truncate: bool = False
+    filename: Union[str, Path],
+    truncate_factor: float | None = None,
 ) -> pd.DataFrame:
     """
     Process a schedule file and return a DataFrame with parsed schedule data.
@@ -86,9 +87,9 @@ def process_schedule(
     ----------
     filename : str or Path
         Path to the schedule file. Currently only CSV format is supported.
-    truncate : bool, optional
-        Whether to apply time truncation using update_times() with a factor of 25.
-        This is useful for development/testing to compress long schedules, by default False.
+    truncate_factor : float | None, optional
+        If specified, the schedule is truncated by the factor and moved to the current time.
+        This is useful for development/testing to compress long schedules, by default None.
 
     Returns
     -------
@@ -135,9 +136,9 @@ def process_schedule(
     # Sort the schedule by start_time
     schedule = schedule.sort_values(by=["start_time"])
 
-    # for development: Truncate the schedule if self.truncate_schedule is True
-    if truncate:
-        schedule = update_times(schedule, 25)
+    # for development: Truncate the schedule if self.truncate_factor is specified
+    if truncate_factor:
+        schedule = update_times(schedule, truncate_factor)
 
     schedule["completed"] = False
 

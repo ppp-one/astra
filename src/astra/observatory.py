@@ -123,8 +123,8 @@ class Observatory:
     def __init__(
         self,
         config_filename: str,
-        truncate_schedule: bool = False,
-        speculoos: bool = False,
+        truncate_factor: float | None = None,
+        custom_observatory: str = None,
     ):
         """
         Initialize the Observatory object.
@@ -136,10 +136,10 @@ class Observatory:
         Parameters:
             config_filename (str): Path to the configuration file for the observatory.
                 The filename is used to derive the observatory name.
-            truncate_schedule (bool, optional): If True, the schedule is truncated by a
-                factor of 100 and moved to the current time. Defaults to False.
-            speculoos (bool, optional): If True, enables SPECULOOS-specific logic
-                and error handling. Defaults to False.
+            truncate_factor (float | None, optional): If specified, the schedule is truncated by a
+                factor and moved to the current time. Defaults to None.
+            custom_observatory (str, optional): If specified, enables custom observatory
+                logic and error handling. Defaults to None.
 
         Attributes:
             name (str): Observatory name derived from config filename.
@@ -201,8 +201,8 @@ class Observatory:
         self.heartbeat = {}
 
         # custom logic flags
-        self.speculoos = speculoos
-        self.truncate_schedule = truncate_schedule
+        self.speculoos = custom_observatory == "speculoos"
+        self.truncate_factor = truncate_factor
 
         # log+polling backup flags
         self.run_backup = True
@@ -1679,7 +1679,7 @@ class Observatory:
         Features:
         - Automatic file modification detection and reload
         - Datetime parsing for start_time and end_time columns
-        - Optional schedule truncation for development (truncate_schedule flag)
+        - Optional schedule truncation for development (via truncate_factor)
         - Error handling with logging and error source tracking
 
         File Format:
@@ -1707,9 +1707,13 @@ class Observatory:
                 self.schedule_mtime = schedule_mtime
 
                 try:
+                    if self.truncate_factor:
+                        self.logger.warning(
+                            f"Truncating schedule by factor: {self.truncate_factor}"
+                        )
                     schedule = process_schedule(
                         self.schedule_path,
-                        truncate=self.truncate_schedule,
+                        truncate_factor=self.truncate_factor,
                     )
 
                     # dump text of schedule to log by reading raw file

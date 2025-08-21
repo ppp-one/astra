@@ -37,8 +37,8 @@ FRONTEND = Jinja2Templates(directory=FRONTEND_PATH)
 LAST_IMAGE = None
 LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
-TRUNCATE_SCHEDULE = False
-SPECULOOS = False
+TRUNCATE_FACTOR = None
+CUSTOM_OBSERVATORY = None
 
 
 def load_observatories():
@@ -51,7 +51,9 @@ def load_observatories():
     )  # should we use CONFIG.config['observatory_name'] here instead?
 
     for config_filename in config_files:
-        obs = Observatory(config_filename, TRUNCATE_SCHEDULE, speculoos=SPECULOOS)
+        obs = Observatory(
+            config_filename, TRUNCATE_FACTOR, custom_observatory=CUSTOM_OBSERVATORY
+        )
         OBSERVATORIES[obs.name] = obs
 
         if "Misc" in obs.config:
@@ -909,18 +911,25 @@ async def serve_files(request: Request, path: str = ""):
 def main():
     import argparse
 
-    global DEBUG, TRUNCATE_SCHEDULE, SPECULOOS
+    global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
     print(f"Astra version: {ASTRA_VER}")
 
-    # TODO: add observatory tag
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument("--debug", action="store_true", help="run in debug mode")
     parser.add_argument(
-        "--truncate", action="store_true", help="run in truncate_schedule mode"
+        "--truncate",
+        type=float,
+        help="truncate schedule by factor and reset time start time to now",
     )
     parser.add_argument(
-        "--speculoos", action="store_true", help="run in speculoos mode"
+        "--observatory",
+        type=str,
+        choices=["speculoos"],
+        help="specify observatory name (choices: speculoos)",
+    )
+    parser.add_argument(
+        "--reset", action="store_true", help="reset the Astra's base config"
     )
     args = parser.parse_args()
 
@@ -936,11 +945,22 @@ def main():
         DEBUG = True
         logging.getLogger().setLevel(logging.DEBUG)
 
-    if args.truncate:
-        TRUNCATE_SCHEDULE = True
+    if args.reset:
+        prompt = (
+            input(
+                "Are you sure you want to reset Astra's base config"
+                f" located at {CONFIG.CONFIG_PATH}? [y/n]: "
+            )
+            .strip()
+            .lower()
+        )
+        if prompt == "y":
+            CONFIG.reset()
 
-    if args.speculoos:
-        SPECULOOS = True
+    TRUNCATE_FACTOR = args.truncate
+
+    if args.observatory:
+        CUSTOM_OBSERVATORY = args.observatory
 
     # start the server
     log_level = "info" if not DEBUG else "debug"
