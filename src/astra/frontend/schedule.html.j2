@@ -163,13 +163,13 @@
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">Schedule</h2>
                     <div class="flex space-x-2">
+                        <button id="sortByTimeBtn"
+                            class="px-4 py-2 bg-orange-600/80 hover:bg-orange-700/80 rounded text-sm transition-colors">
+                            Sort by Start Time
+                        </button>
                         <button id="toggleViewBtn"
                             class="hidden xl:block px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded text-sm transition-colors">
                             Table View
-                        </button>
-                        <button id="addRowBtn"
-                            class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
-                            Add Row
                         </button>
                     </div>
                 </div>
@@ -201,10 +201,16 @@
 
                 <!-- Save Button at Bottom -->
                 <div class="mt-6 flex justify-end">
-                    <button id="saveScheduleBtn"
-                        class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 rounded text-base transition-colors font-medium">
-                        Save Schedule
-                    </button>
+                    <div class="flex space-x-2">
+                        <button id="addRowBtn"
+                            class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
+                            Add Row
+                        </button>
+                        <button id="saveScheduleBtn"
+                            class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 rounded text-base transition-colors font-medium">
+                            Save Schedule
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -228,13 +234,32 @@
         let chartVisible = true;
         let tableViewMode = false; // false = card view (default), true = table view
 
+        // Action value templates
+        const actionValueTemplates = {
+            'open': {},
+            'close': {},
+            'flats': { "filter": [""], "n": [] },
+            'object': { "object": "", "filter": "", "ra": 0, "dec": 0, "exptime": 0, "guiding": true, "pointing": true },
+            'calibration': { "exptime": [0, 10, 15, 30, 60, 120], "n": [10, 10, 10, 10, 10, 10] },
+            'pointing_model': {},
+            'autofocus': {},
+            'calibrate_guiding': {},
+            'cool_camera': {},
+            'complete_headers': {}
+        };
+
         // Color mapping for action types
         const actionColors = {
             'open': '#10b981',     // Green
             'close': '#ef4444',    // Red
             'flats': '#f59e0b',    // Amber
             'object': '#3b82f6',   // Blue
-            'calibration': '#8b5cf6' // Purple
+            'calibration': '#8b5cf6', // Purple
+            'pointing_model': '#f472b6', // Pink
+            'autofocus': '#800000', // Maroon
+            'calibrate_guiding': '#34d399', // Emerald
+            'cool_camera': '#60a5fa', // Sky
+            'complete_headers': '#00bcd4' // Turquoise
         };
 
         // Parse datetime string to Date object (treating as UTC)
@@ -589,12 +614,17 @@
                     </td>
                     <td class="p-2" data-label="Action Type">
                         <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
-                                onchange="updateItem(${index}, 'action_type', this.value)">
+                                onchange="updateActionType(${index}, this.value)">
                             <option value="open" ${item.action_type === 'open' ? 'selected' : ''}>open</option>
                             <option value="close" ${item.action_type === 'close' ? 'selected' : ''}>close</option>
                             <option value="flats" ${item.action_type === 'flats' ? 'selected' : ''}>flats</option>
                             <option value="object" ${item.action_type === 'object' ? 'selected' : ''}>object</option>
                             <option value="calibration" ${item.action_type === 'calibration' ? 'selected' : ''}>calibration</option>
+                            <option value="pointing_model" ${item.action_type === 'pointing_model' ? 'selected' : ''}>pointing_model</option>
+                            <option value="autofocus" ${item.action_type === 'autofocus' ? 'selected' : ''}>autofocus</option>
+                            <option value="calibrate_guiding" ${item.action_type === 'calibrate_guiding' ? 'selected' : ''}>calibrate_guiding</option>
+                            <option value="cool_camera" ${item.action_type === 'cool_camera' ? 'selected' : ''}>cool_camera</option>
+                            <option value="complete_headers" ${item.action_type === 'complete_headers' ? 'selected' : ''}>complete_headers</option>
                         </select>
                     </td>
                     <td class="p-2" data-label="Action Value (JSON)">
@@ -662,6 +692,18 @@
             }
         }
 
+        // Update action type with template
+        function updateActionType(index, actionType) {
+            scheduleData[index].action_type = actionType;
+
+            // Apply template for the action type
+            const template = actionValueTemplates[actionType] || {};
+            scheduleData[index].action_value = JSON.parse(JSON.stringify(template)); // Deep copy
+
+            // Re-render the table to update the action value textarea
+            renderTable();
+        }
+
         // Update action value (JSON)
         function updateActionValue(index, value) {
             try {
@@ -673,14 +715,52 @@
 
         // Add new row
         function addRow() {
+            // Get the end time and device name of the last row to use for new row
+            let newStartTime = '';
+            let newDeviceName = '';
+            if (scheduleData.length > 0) {
+                const lastRow = scheduleData[scheduleData.length - 1];
+                if (lastRow.end_time) {
+                    newStartTime = lastRow.end_time;
+                }
+                if (lastRow.device_name) {
+                    newDeviceName = lastRow.device_name;
+                }
+            }
+
             scheduleData.push({
-                device_name: '',
+                device_name: newDeviceName,
                 action_type: 'open',
                 action_value: {},
-                start_time: '',
+                start_time: newStartTime,
                 end_time: ''
             });
             renderTable();
+        }
+
+        // Sort schedule by start time
+        function sortByStartTime() {
+            // Filter out items without start times and sort the rest
+            const itemsWithTime = scheduleData.filter(item => item.start_time && item.start_time.trim() !== '');
+            const itemsWithoutTime = scheduleData.filter(item => !item.start_time || item.start_time.trim() === '');
+
+            // Sort items with time by start time
+            itemsWithTime.sort((a, b) => {
+                const timeA = parseDateTime(a.start_time);
+                const timeB = parseDateTime(b.start_time);
+
+                // Handle invalid dates by putting them at the end
+                if (!timeA || isNaN(timeA.getTime())) return 1;
+                if (!timeB || isNaN(timeB.getTime())) return -1;
+
+                return timeA.getTime() - timeB.getTime();
+            });
+
+            // Combine sorted items with time first, then items without time
+            scheduleData = [...itemsWithTime, ...itemsWithoutTime];
+
+            renderTable();
+            // showStatus('Schedule sorted by start time', 'success');
         }
 
         // Duplicate row
@@ -745,6 +825,7 @@
         document.getElementById('addRowBtn').addEventListener('click', addRow);
         document.getElementById('saveScheduleBtn').addEventListener('click', saveSchedule);
         document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
+        document.getElementById('sortByTimeBtn').addEventListener('click', sortByStartTime);
         document.getElementById('statusCloseBtn').addEventListener('click', closeStatusModal);
 
         // Add toggle view button listener (only exists on xl screens)
