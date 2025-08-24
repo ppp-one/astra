@@ -21,6 +21,8 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 import json
 
+import json
+
 
 from astra import ASTRA_VER, Config
 from astra.observatory import Observatory
@@ -948,6 +950,29 @@ async def autofocus(request: Request):
             # "observatories": list(OBSERVATORIES.keys()),
             # "webcamfeeds": WEBCAMFEEDS,
             # "configs": {obs.name: obs.config for obs in OBSERVATORIES.values()},
+        },
+        request=request,
+    )
+
+
+@app.get("/schedule/{observatory}")
+async def get_schedule(request: Request, observatory: str):
+    obs = OBSERVATORIES[observatory]
+
+    # Read the raw JSONL file to preserve original datetime string format
+    schedule_path = obs.schedule_path
+    try:
+        with open(schedule_path, "r") as f:
+            schedule_jsonl = f.read().strip()
+    except (FileNotFoundError, IOError):
+        schedule_jsonl = ""
+
+    return FRONTEND.TemplateResponse(
+        "schedule.html.j2",
+        {
+            "request": request,
+            "observatory": observatory,
+            "schedule": schedule_jsonl,
         },
         request=request,
     )
