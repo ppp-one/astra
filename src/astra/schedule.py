@@ -40,7 +40,7 @@ def update_times(df: pd.DataFrame, time_factor: float) -> pd.DataFrame:
     prev_end_time = None
     prev_new_start_time = None
     for i, row in df.iterrows():
-        device_type, device_name, action_type, action_value, start_time, end_time = row
+        device_name, action_type, action_value, start_time, end_time = row
 
         se_time_diff = end_time - start_time
         se_time_diff = se_time_diff / time_factor
@@ -56,7 +56,6 @@ def update_times(df: pd.DataFrame, time_factor: float) -> pd.DataFrame:
         new_end_time = new_start_time + se_time_diff
 
         new_row = [
-            device_type,
             device_name,
             action_type,
             action_value,
@@ -130,8 +129,10 @@ def process_schedule(
         raise ValueError(f"Unsupported file format: {schedule_path.suffix}")
 
     # at this point schedule must be a DataFrame
-    schedule["start_time"] = pd.to_datetime(schedule.start_time, utc=True)
-    schedule["end_time"] = pd.to_datetime(schedule.end_time, utc=True)
+    schedule["start_time"] = pd.to_datetime(
+        schedule.start_time, utc=True, format="mixed"
+    )
+    schedule["end_time"] = pd.to_datetime(schedule.end_time, utc=True, format="mixed")
 
     # Sort the schedule by start_time
     schedule = schedule.sort_values(by=["start_time"])

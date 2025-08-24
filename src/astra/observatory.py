@@ -1525,7 +1525,7 @@ class Observatory:
                             )
 
     def close_observatory(
-        self, paired_devices: dict | None = None, error_sensitive: bool = True
+        self, paired_devices: PairedDevices | None = None, error_sensitive: bool = True
     ) -> bool:
         """
         Close the observatory in a safe, controlled sequence.
@@ -2227,7 +2227,7 @@ class Observatory:
             f"Running pre_sequence for {row['device_name']} {row['action_type']} {row['action_value']}"
         )
 
-        action_value: dict = eval(row["action_value"])
+        action_value: dict = row["action_value"]
 
         # prepare observatory for sequence
         self.setup_observatory(paired_devices, action_value)
@@ -2835,7 +2835,7 @@ class Observatory:
 
         # stop guiding at end of sequence
         if action_value.get("guiding", False):
-            self.stop_guider(row["device_name"])
+            self.stop_guider(paired_devices["Telescope"])
 
         # stop telescope tracking at end of sequence
         if "Telescope" in paired_devices:
@@ -3254,7 +3254,7 @@ class Observatory:
         self.threads.append(
             {
                 "type": "guider",
-                "device_name": row["device_name"],
+                "device_name": paired_devices["Telescope"],
                 "thread": th,
                 "id": "guider",
             }

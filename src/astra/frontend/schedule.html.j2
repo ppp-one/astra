@@ -109,16 +109,36 @@
     <!-- Content -->
     <div class="relative z-10 min-h-screen">
         <!-- Header -->
-        <div class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50">
-            <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-4">
                 <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-bold text-blue-400">Schedule Editor</h1>
-                        <p class="text-gray-300">Observatory: {{ observatory }}</p>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-400 hover:text-white transition-colors"
+                            title="Back to Observatory">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </a>
+                        <div>
+                            <h1 class="text-2xl font-bold text-blue-400">Schedule Editor</h1>
+                            <p class="text-gray-300">Observatory: {{ observatory }}</p>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-gray-400 text-sm">Current Time (UTC)</div>
-                        <div id="currentTime" class="font-mono text-lg">--:--:--</div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <div class="text-gray-400 text-sm">Current Time (UTC)</div>
+                            <div id="currentTime" class="font-mono text-lg">--:--:--</div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div id="saveStatus" class="text-sm text-gray-400">
+                                <span id="saveStatusText">Saved</span>
+                            </div>
+                            <button id="saveScheduleBtn"
+                                class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 disabled:bg-gray-600/50 disabled:cursor-not-allowed rounded text-base transition-colors font-medium">
+                                <span id="saveButtonText">Save Schedule</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,6 +163,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Hidden file input for schedule upload -->
+            <input type="file" id="fileInput" accept=".jsonl,.json,.txt" style="display: none;">
 
             <!-- Schedule Visualization -->
             <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 mb-6">
@@ -174,6 +197,26 @@
                     </div>
                 </div>
 
+                <!-- Drag and Drop Upload Zone -->
+                <div id="uploadZone"
+                    class="mb-6 border-2 border-dashed border-gray-600/50 rounded-lg p-6 text-center transition-colors duration-200 hover:border-indigo-500/50 hover:bg-indigo-900/10">
+                    <div class="flex flex-col items-center space-y-2">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                            </path>
+                        </svg>
+                        <div class="text-sm text-gray-400">
+                            <span class="font-medium text-indigo-400 hover:text-indigo-300 cursor-pointer"
+                                id="browseFiles">Click to browse</span>
+                            or drag and drop your schedule file here
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            Supports .jsonl files
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Quick Stats -->
                 <div class="mb-4 text-sm text-gray-400">
                     <span id="scheduleStats">0 schedule items</span>
@@ -201,16 +244,10 @@
 
                 <!-- Save Button at Bottom -->
                 <div class="mt-6 flex justify-end">
-                    <div class="flex space-x-2">
-                        <button id="addRowBtn"
-                            class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
-                            Add Row
-                        </button>
-                        <button id="saveScheduleBtn"
-                            class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 rounded text-base transition-colors font-medium">
-                            Save Schedule
-                        </button>
-                    </div>
+                    <button id="addRowBtn"
+                        class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
+                        Add Row
+                    </button>
                 </div>
             </div>
         </div>
@@ -233,6 +270,8 @@
         let scheduleData = [];
         let chartVisible = true;
         let tableViewMode = false; // false = card view (default), true = table view
+        let hasUnsavedChanges = false;
+        let originalScheduleData = [];
 
         // Action value templates
         const actionValueTemplates = {
@@ -522,6 +561,40 @@
             return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
         }
 
+        // Update save status
+        function updateSaveStatus() {
+            const saveStatusText = document.getElementById('saveStatusText');
+            const saveButton = document.getElementById('saveScheduleBtn');
+            const saveButtonText = document.getElementById('saveButtonText');
+
+            if (hasUnsavedChanges) {
+                saveStatusText.textContent = 'Unsaved changes';
+                saveStatusText.className = 'text-yellow-400';
+                saveButton.classList.remove('bg-green-600/80', 'hover:bg-green-700/80');
+                saveButton.classList.add('bg-orange-600/80', 'hover:bg-orange-700/80');
+                saveButtonText.textContent = 'Save Changes';
+            } else {
+                saveStatusText.textContent = 'Saved';
+                saveStatusText.className = 'text-green-400';
+                saveButton.classList.remove('bg-orange-600/80', 'hover:bg-orange-700/80');
+                saveButton.classList.add('bg-green-600/80', 'hover:bg-green-700/80');
+                saveButtonText.textContent = 'Save Schedule';
+            }
+        }
+
+        // Mark as changed
+        function markAsChanged() {
+            hasUnsavedChanges = true;
+            updateSaveStatus();
+        }
+
+        // Mark as saved
+        function markAsSaved() {
+            hasUnsavedChanges = false;
+            originalScheduleData = JSON.parse(JSON.stringify(scheduleData));
+            updateSaveStatus();
+        }
+
         // Status modal function
         function showStatus(message, type = 'info') {
             const modal = document.getElementById('statusModal');
@@ -565,7 +638,129 @@
             modal.style.display = 'none';
         }
 
-        // Load initial schedule data
+        // Upload schedule function
+        async function uploadSchedule(file = null) {
+            // Get file from parameter or file input
+            if (!file) {
+                const fileInput = document.getElementById('fileInput');
+                file = fileInput.files[0];
+            }
+
+            if (!file) {
+                showStatus('Please select a file to upload', 'error');
+                return;
+            }
+
+            // Validate file type
+            const validExtensions = ['.jsonl', '.json', '.txt'];
+            const fileName = file.name.toLowerCase();
+            const isValidFile = validExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!isValidFile) {
+                showStatus('Please upload a valid schedule file (.jsonl, .json, or .txt)', 'error');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Show uploading state
+                showUploadingState();
+
+                const response = await fetch(`/api/uploadschedule/${observatoryName}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus('Schedule uploaded successfully! Reloading...', 'success');
+                    // Reload the page to show the new schedule
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || 'Failed to upload schedule');
+                }
+            } catch (error) {
+                console.error('Error uploading schedule:', error);
+                showStatus('Error uploading schedule: ' + error.message, 'error');
+            } finally {
+                hideUploadingState();
+                // Reset file input
+                const fileInput = document.getElementById('fileInput');
+                fileInput.value = '';
+            }
+        }
+
+        // Show uploading state
+        function showUploadingState() {
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.add('border-blue-500/50', 'bg-blue-900/20');
+            uploadZone.innerHTML = `
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+                    <div class="text-sm text-blue-400">Uploading schedule...</div>
+                </div>
+            `;
+        }
+
+        // Hide uploading state
+        function hideUploadingState() {
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.remove('border-blue-500/50', 'bg-blue-900/20');
+            uploadZone.innerHTML = `
+                <div class="flex flex-col items-center space-y-2">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <div class="text-sm text-gray-400">
+                        <span class="font-medium text-indigo-400 hover:text-indigo-300 cursor-pointer" id="browseFiles">Click to browse</span>
+                        or drag and drop your schedule file here
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Supports .jsonl, .json, and .txt files
+                    </div>
+                </div>
+            `;
+            // Re-attach the browse files event listener
+            document.getElementById('browseFiles').addEventListener('click', selectScheduleFile);
+        }
+
+        // Handle drag and drop events
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.add('border-indigo-500', 'bg-indigo-900/20');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.remove('border-indigo-500', 'bg-indigo-900/20');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.remove('border-indigo-500', 'bg-indigo-900/20');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadSchedule(files[0]);
+            }
+        }
+
+        // Trigger file selection
+        function selectScheduleFile() {
+            document.getElementById('fileInput').click();
+        }        // Load initial schedule data
         function loadSchedule() {
             try {
                 const scheduleJson = {{ schedule | tojson
@@ -578,12 +773,21 @@
         } else {
             scheduleData = [];
         }
+
+        // Store original data for comparison
+        originalScheduleData = JSON.parse(JSON.stringify(scheduleData));
+        hasUnsavedChanges = false;
+        updateSaveStatus();
+
         renderTable();
         renderChart();
             } catch (error) {
             console.error("Error loading schedule data:", error);
             showStatus('Error loading schedule: ' + error.message, 'error');
             scheduleData = [];
+            originalScheduleData = [];
+            hasUnsavedChanges = false;
+            updateSaveStatus();
             renderTable();
             renderChart();
         }
@@ -690,6 +894,7 @@
                     renderChart();
                 }
             }
+            markAsChanged();
         }
 
         // Update action type with template
@@ -700,6 +905,8 @@
             const template = actionValueTemplates[actionType] || {};
             scheduleData[index].action_value = JSON.parse(JSON.stringify(template)); // Deep copy
 
+            markAsChanged();
+
             // Re-render the table to update the action value textarea
             renderTable();
         }
@@ -708,6 +915,7 @@
         function updateActionValue(index, value) {
             try {
                 scheduleData[index].action_value = JSON.parse(value);
+                markAsChanged();
             } catch (error) {
                 showStatus('Invalid JSON in action value for row ' + (index + 1), 'error');
             }
@@ -735,6 +943,7 @@
                 start_time: newStartTime,
                 end_time: ''
             });
+            markAsChanged();
             renderTable();
         }
 
@@ -768,6 +977,7 @@
             const originalItem = scheduleData[index];
             const duplicatedItem = JSON.parse(JSON.stringify(originalItem)); // Deep copy
             scheduleData.splice(index + 1, 0, duplicatedItem);
+            markAsChanged();
             renderTable();
         }
 
@@ -780,6 +990,7 @@
 
             if (confirm(`Are you sure you want to delete row ${index + 1}?`)) {
                 scheduleData.splice(index, 1);
+                markAsChanged();
                 renderTable();
             }
         }
@@ -787,6 +998,14 @@
         // Save schedule
         async function saveSchedule() {
             try {
+                // Disable save button during save
+                const saveButton = document.getElementById('saveScheduleBtn');
+                const saveButtonText = document.getElementById('saveButtonText');
+                const originalText = saveButtonText.textContent;
+
+                saveButton.disabled = true;
+                saveButtonText.textContent = 'Saving...';
+
                 // Convert to JSONL format, only including the core fields
                 const jsonl = scheduleData.map(item => {
                     // Only include the core fields that should be saved
@@ -810,6 +1029,7 @@
 
                 if (response.ok) {
                     const result = await response.json();
+                    markAsSaved();
                     showStatus('Schedule saved successfully!', 'success');
                 } else {
                     const errorResult = await response.json();
@@ -818,6 +1038,12 @@
             } catch (error) {
                 console.error('Error saving schedule:', error);
                 showStatus('Error saving schedule: ' + error.message, 'error');
+            } finally {
+                // Re-enable save button
+                const saveButton = document.getElementById('saveScheduleBtn');
+                const saveButtonText = document.getElementById('saveButtonText');
+                saveButton.disabled = false;
+                updateSaveStatus(); // This will restore the correct button text
             }
         }
 
@@ -827,6 +1053,20 @@
         document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
         document.getElementById('sortByTimeBtn').addEventListener('click', sortByStartTime);
         document.getElementById('statusCloseBtn').addEventListener('click', closeStatusModal);
+
+        // File input change listener
+        document.getElementById('fileInput').addEventListener('change', function () {
+            uploadSchedule();
+        });
+
+        // Drag and drop listeners
+        const uploadZone = document.getElementById('uploadZone');
+        uploadZone.addEventListener('dragover', handleDragOver);
+        uploadZone.addEventListener('dragleave', handleDragLeave);
+        uploadZone.addEventListener('drop', handleDrop);
+
+        // Browse files click listener
+        document.getElementById('browseFiles').addEventListener('click', selectScheduleFile);
 
         // Add toggle view button listener (only exists on xl screens)
         const toggleViewBtn = document.getElementById('toggleViewBtn');
@@ -841,28 +1081,19 @@
             }
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function (e) {
-            // Ctrl/Cmd + S to save
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                e.preventDefault();
-                saveSchedule();
-            }
-            // Ctrl/Cmd + N to add new row
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                e.preventDefault();
-                addRow();
-            }
-            // Escape to close modal
-            if (e.key === 'Escape') {
-                closeStatusModal();
-            }
-        });
-
         // Handle window resize for chart responsiveness
         window.addEventListener('resize', function () {
             if (chartVisible) {
                 setTimeout(renderChart, 100);
+            }
+        });
+
+        // Warn about unsaved changes when leaving the page
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
             }
         });
 

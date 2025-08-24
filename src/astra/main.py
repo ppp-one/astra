@@ -16,7 +16,7 @@ import pandas as pd
 import uvicorn
 from astropy.io import fits
 from astropy.visualization import ZScaleInterval
-from fastapi import FastAPI, Request, WebSocket, Body
+from fastapi import FastAPI, Request, WebSocket, Body, UploadFile, File
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 import json
@@ -341,7 +341,9 @@ async def edit_schedule(
         df = pd.DataFrame(schedule_items)
         df.to_json(schedule_path, orient="records", lines=True)
 
-        obs.logger.info(f"Schedule updated with {len(schedule_items)} items")
+        obs.logger.info(
+            f"Schedule updated with {len(schedule_items)} items from editor"
+        )
 
         return {
             "status": "success",
@@ -355,6 +357,33 @@ async def edit_schedule(
             "status": "error",
             "data": None,
             "message": f"Error updating schedule: {str(e)}",
+        }
+
+
+# upload schedule file
+@app.post("/api/uploadschedule/{observatory}")
+async def upload_schedule(observatory: str, file: UploadFile = File(...)):
+    obs = OBSERVATORIES[observatory]
+
+    try:
+        # Save the uploaded file
+        file_path = obs.schedule_path
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+
+        obs.logger.info(f"Schedule uploaded from web interface")
+
+        return {
+            "status": "success",
+            "data": None,
+            "message": "Schedule uploaded successfully",
+        }
+    except Exception as e:
+        obs.logger.warning(f"Error uploading schedule: {e}")
+        return {
+            "status": "error",
+            "data": None,
+            "message": f"Error uploading schedule: {str(e)}",
         }
 
 
@@ -980,6 +1009,9 @@ def main():
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument("--debug", action="store_true", help="run in debug mode")
     parser.add_argument(
+        "--port", type=int, default=8000, help="port to run the server on"
+    )
+    parser.add_argument(
         "--truncate",
         type=float,
         help="truncate schedule by factor and reset time start time to now",
@@ -1031,7 +1063,7 @@ def main():
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=8000,
+        port=args.port,
         log_level=log_level,
         timeout_graceful_shutdown=None,
     )
