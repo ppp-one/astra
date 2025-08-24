@@ -75,79 +75,11 @@ function addUnits(parameter, weather_safety_limits) {
     }
 }
 
-// Function to plot weather data
-function plotWeather(data, observatory, update) {
-
-    console.log("Plotting weather data for", observatory);
-
-    const weather_data = data['data'];
-    const weather_safety_limits = data['safety_limits'];
-
-    const width = document.getElementById(`content--${observatory}`).clientWidth;
-    const fixed_width = 320;
-    const height = Math.max(width, fixed_width) * 0.4;
+// Function to generate weather table HTML
+function generateWeatherTable(observatory, weather_parameters, latest_values, weather_safety_limits) {
     const percent_to_show = 10;
-    const weather_parameters = Object.keys(weather_data[0]);
 
-    // sort the weather parameters such that temperature and dew point are first and then humidity, then the rest
-    weather_parameters.sort((a, b) => {
-        const priority = {
-            RelativeSkyTemp: 1,
-            RainRate: 2,
-            WindSpeed: 3,
-            WindGust: 4,
-            Humidity: 5,
-            SkyTemperature: 6,
-            Temperature: 8,
-            DewPoint: 9,
-        };
-        return (priority[a] || Infinity) - (priority[b] || Infinity);
-    });
-
-
-    const latest_values = data['latest'];
-
-    weather_parameters.forEach((parameter) => {
-        // find min and max values for each parameter
-        const values = weather_data.map((d) => d[parameter]);
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-
-        if (!(parameter in weather_safety_limits)) {
-            weather_safety_limits[parameter] = { lower: null, upper: null };
-        }
-        weather_safety_limits[parameter].min = min;
-        weather_safety_limits[parameter].max = max;
-
-        // add units for ASCOM spec
-        addUnits(parameter, weather_safety_limits);
-
-        const { upper: upper_safety_limit, lower: lower_safety_limit } = weather_safety_limits[parameter];
-        const safety_range = upper_safety_limit - lower_safety_limit;
-
-        // Calculate percentage differences
-        const max_value_from_upper_safety_limit = upper_safety_limit !== null ? Math.abs(((max - upper_safety_limit) / safety_range) * 100) : Infinity;
-        const min_value_from_lower_safety_limit = lower_safety_limit !== null ? Math.abs(((min - lower_safety_limit) / safety_range) * 100) : Infinity;
-
-        // Determine upper domain
-        const upper_domain = max < lower_safety_limit && lower_safety_limit !== null
-            ? lower_safety_limit
-            : max_value_from_upper_safety_limit < percent_to_show
-                ? Math.max(max, upper_safety_limit)
-                : max;
-
-        // Determine lower domain
-        const lower_domain = min > upper_safety_limit && upper_safety_limit !== null
-            ? upper_safety_limit
-            : min_value_from_lower_safety_limit < percent_to_show
-                ? Math.min(min, lower_safety_limit)
-                : min;
-
-        weather_safety_limits[parameter].domain = [lower_domain, upper_domain];
-    });
-
-
-    document.getElementById(`weather-latest--${observatory}`).innerHTML = `
+    return `
         <div class="flex-initial overflow-x-scroll">
         <table class="table-auto w-full proportional-nums font-variant-numeric rounded-lg bg-gray-600/20" id="weather-table--${observatory}" title="Last refreshed: ${new Date().toISOString().slice(0, 19).replace("T", " ")}">
         <thead>
@@ -251,6 +183,110 @@ function plotWeather(data, observatory, update) {
           </tbody>
         </table>
         </div>`;
+}
+
+// Function to update only the weather table (called from websocket updates)
+function updateWeatherTableOnly(observatory) {
+    if (!weatherDataCache[observatory] || !weatherDataCache[observatory].latest) return;
+
+    const weather_safety_limits = weatherDataCache[observatory].safety_limits;
+    const latest_values = weatherDataCache[observatory].latest;
+    const weather_parameters = Object.keys(latest_values).filter(param => param !== 'datetime');
+
+    // Sort parameters same way as in plotWeather
+    weather_parameters.sort((a, b) => {
+        const priority = {
+            RelativeSkyTemp: 1,
+            RainRate: 2,
+            WindSpeed: 3,
+            WindGust: 4,
+            Humidity: 5,
+            SkyTemperature: 6,
+            Temperature: 8,
+            DewPoint: 9,
+        };
+        return (priority[a] || Infinity) - (priority[b] || Infinity);
+    });
+
+    const tableHtml = generateWeatherTable(observatory, weather_parameters, latest_values, weather_safety_limits);
+    document.getElementById(`weather-latest--${observatory}`).innerHTML = tableHtml;
+}
+
+// Function to plot weather data
+function plotWeather(data, observatory, update) {
+
+    console.log("Plotting weather data for", observatory);
+
+    const weather_data = data['data'];
+    const weather_safety_limits = data['safety_limits'];
+
+    const width = document.getElementById(`content--${observatory}`).clientWidth;
+    const fixed_width = 320;
+    const height = Math.max(width, fixed_width) * 0.4;
+    const percent_to_show = 10;
+    const weather_parameters = Object.keys(weather_data[0]);
+
+    // sort the weather parameters such that temperature and dew point are first and then humidity, then the rest
+    weather_parameters.sort((a, b) => {
+        const priority = {
+            RelativeSkyTemp: 1,
+            RainRate: 2,
+            WindSpeed: 3,
+            WindGust: 4,
+            Humidity: 5,
+            SkyTemperature: 6,
+            Temperature: 8,
+            DewPoint: 9,
+        };
+        return (priority[a] || Infinity) - (priority[b] || Infinity);
+    });
+
+
+    const latest_values = data['latest'];
+
+    weather_parameters.forEach((parameter) => {
+        // find min and max values for each parameter
+        const values = weather_data.map((d) => d[parameter]);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+
+        if (!(parameter in weather_safety_limits)) {
+            weather_safety_limits[parameter] = { lower: null, upper: null };
+        }
+        weather_safety_limits[parameter].min = min;
+        weather_safety_limits[parameter].max = max;
+
+        // add units for ASCOM spec
+        addUnits(parameter, weather_safety_limits);
+
+        const { upper: upper_safety_limit, lower: lower_safety_limit } = weather_safety_limits[parameter];
+        const safety_range = upper_safety_limit - lower_safety_limit;
+
+        // Calculate percentage differences
+        const max_value_from_upper_safety_limit = upper_safety_limit !== null ? Math.abs(((max - upper_safety_limit) / safety_range) * 100) : Infinity;
+        const min_value_from_lower_safety_limit = lower_safety_limit !== null ? Math.abs(((min - lower_safety_limit) / safety_range) * 100) : Infinity;
+
+        // Determine upper domain
+        const upper_domain = max < lower_safety_limit && lower_safety_limit !== null
+            ? lower_safety_limit
+            : max_value_from_upper_safety_limit < percent_to_show
+                ? Math.max(max, upper_safety_limit)
+                : max;
+
+        // Determine lower domain
+        const lower_domain = min > upper_safety_limit && upper_safety_limit !== null
+            ? upper_safety_limit
+            : min_value_from_lower_safety_limit < percent_to_show
+                ? Math.min(min, lower_safety_limit)
+                : min;
+
+        weather_safety_limits[parameter].domain = [lower_domain, upper_domain];
+    });
+
+
+    // Generate and display the weather table
+    const tableHtml = generateWeatherTable(observatory, weather_parameters, latest_values, weather_safety_limits);
+    document.getElementById(`weather-latest--${observatory}`).innerHTML = tableHtml;
 
 
     // Helper function to create common plot marks

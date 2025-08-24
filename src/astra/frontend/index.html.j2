@@ -569,6 +569,35 @@
         let mousePos = { x: 0, y: 0 };
         let weatherDataCache = {};
         let weatherLatestTimestamp = {};
+
+        function updateWeatherLatestFromWebsocket(observatory, deviceData) {
+            // Find ObservingConditions device data
+            const weatherDevice = deviceData.find(device =>
+                device.item === 'ObservingConditions' && device.polled
+            );
+
+            if (weatherDevice && weatherDataCache[observatory]) {
+                // Extract the latest values from the polled data
+                const newLatest = {};
+                for (const [key, value] of Object.entries(weatherDevice.polled)) {
+                    if (key !== 'datetime' && value && typeof value.value !== 'undefined') {
+                        newLatest[key] = parseFloat(value.value);
+                    }
+                }
+
+                // Add calculated RelativeSkyTemp if both values exist
+                if (newLatest.SkyTemperature && newLatest.Temperature) {
+                    newLatest.RelativeSkyTemp = newLatest.SkyTemperature - newLatest.Temperature;
+                }
+
+                // Update the cached latest values
+                weatherDataCache[observatory].latest = { ...weatherDataCache[observatory].latest, ...newLatest };
+
+                // Update the weather table display without re-plotting charts
+                updateWeatherTableOnly(observatory);
+            }
+        }
+
         function updateWeatherChart(observatory, update = false) {
             // On first load, fetch all data
             if (!weatherDataCache[observatory] || !update) {
@@ -748,6 +777,9 @@
             let message = JSON.parse(event.data);
             if (type == 'summary') {
                 updateTable("summary-table-0--" + observatory, message['table0'], { "item": "item", "status": "status", "last_update": "last update" });
+
+                // Update weather latest values from websocket
+                updateWeatherLatestFromWebsocket(observatory, message['table0']);
 
                 // update title color if error found in astra
                 if (message['table1'][0]['item'] == "error free") {
