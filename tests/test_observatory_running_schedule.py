@@ -45,45 +45,45 @@ def temp_config(tmp_path_factory):
         "gaia_db": str(gaia_db),
     }
 
+    logger.info(f"Temporary config data: {config_data}")
+
     # Write config file
     with open(config_path, "w") as f:
         yaml.dump(config_data, f)
 
-    # Store original Config class attributes and singleton
-    original_config_path = Config.CONFIG_PATH
-    original_template_dir = Config.TEMPLATE_DIR
-    original_instance = Config._instance
+    # Patch the Config class paths - keep real template dir to use actual templates
+    Config.CONFIG_PATH = config_path
+    # Create config instance - this will copy real templates to temp directory
+    config = Config(allow_default=True)
 
-    try:
-        # Patch the Config class paths - keep real template dir to use actual templates
-        Config.CONFIG_PATH = config_path
-        # Config.TEMPLATE_DIR stays the same to use real templates from source
-        Config._instance = None  # Clear singleton to force fresh initialization
-
-        # Create config instance - this will copy real templates to temp directory
-        config = Config(allow_default=True)
-
-        # Verify that the observatory config file was created from the template
-        observatory_config_file = (
-            config.paths.observatory_config / "test_observatory_config.yml"
+    # Verify that the observatory config file was created from the template
+    observatory_config_file = (
+        config.paths.observatory_config / "test_observatory_config.yml"
+    )
+    observatory_fits_config_file = (
+        config.paths.observatory_config / "test_observatory_fits_header_config.csv"
+    )
+    if not observatory_config_file.exists():
+        raise FileNotFoundError(
+            f"Observatory config file was not created: {observatory_config_file}"
         )
-        if not observatory_config_file.exists():
-            raise FileNotFoundError(
-                f"Observatory config file was not created: {observatory_config_file}"
-            )
+    if not observatory_fits_config_file.exists():
+        raise FileNotFoundError(
+            f"Observatory fits config file was not created: {observatory_fits_config_file}"
+        )
 
-        logger.info(f"Temporary config created successfully with paths:")
-        logger.info(f"  Images: {config.paths.images}")
-        logger.info(f"  Schedules: {config.paths.schedules}")
-        logger.info(f"  Observatory config: {config.paths.observatory_config}")
+    # modify both .yml and .csv to stop Astra complaining (add empty lines)
+    with open(observatory_config_file, "a") as f:
+        f.write("\n")
+    with open(observatory_fits_config_file, "a") as f:
+        f.write("\n")
 
-        yield config
+    logger.info(f"Temporary config created successfully with paths:")
+    logger.info(f"  Images: {config.paths.images}")
+    logger.info(f"  Schedules: {config.paths.schedules}")
+    logger.info(f"  Observatory config: {config.paths.observatory_config}")
 
-    finally:
-        # Restore original Config class attributes
-        Config.CONFIG_PATH = original_config_path
-        Config.TEMPLATE_DIR = original_template_dir
-        Config._instance = original_instance
+    yield config
 
 
 def check_simulators_available():
@@ -126,25 +126,22 @@ def setup_observatories(temp_config):
         pytest.skip("Alpaca simulators not available on localhost:11111")
 
     # Import all modules that have global CONFIG instances
-    import astra.observatory as obs_module
-
-    # Store original config (they're all the same singleton instance)
-    original_config = obs_module.CONFIG
-    logger.info(f"Original config paths: {original_config.paths.images}")
-    logger.info(f"Temp config paths: {temp_config.paths.images}")
-
-    # Verify we're actually using different configs
-    assert (
-        original_config != temp_config
-    ), "Temp config should be different from original"
-    assert str(original_config.paths.images) != str(
-        temp_config.paths.images
-    ), "Image paths should be different"
+    from astra import (
+        observatory,
+        autofocus,
+        calibrate_guiding,
+        guiding,
+        image_handler,
+        schedule,
+    )
 
     # Patch all modules with temp config
-    obs_module.CONFIG = temp_config
-
-    logger.info("Patched all module CONFIG references to use temp_config")
+    observatory.CONFIG = temp_config
+    autofocus.CONFIG = temp_config
+    calibrate_guiding.CONFIG = temp_config
+    guiding.CONFIG = temp_config
+    image_handler.CONFIG = temp_config
+    schedule.CONFIG = temp_config
 
     try:
         # Load observatories with test config
@@ -153,7 +150,7 @@ def setup_observatories(temp_config):
 
         for config_filename in config_files:
             logger.info(f"Loading observatory from {config_filename}")
-            obs = Observatory(config_filename)
+            obs = observatory.Observatory(config_filename)
             OBSERVATORIES[obs.name] = obs
             obs.connect_all()
 
@@ -174,11 +171,6 @@ def setup_observatories(temp_config):
     finally:
         # Cleanup after all tests
         clean_up_observatories()
-
-        # Restore original config to all modules
-        obs_module.CONFIG = original_config
-
-        logger.info("Restored original CONFIG references to all modules")
 
 
 @pytest.fixture(scope="function")
@@ -202,7 +194,7 @@ def observatory():
 
 
 @pytest.fixture
-def schedule_manager(observatory, temp_config):
+def schedule_manager(observatory: Observatory, temp_config):
     """Manage test schedule creation and cleanup."""
     schedule_path = temp_config.paths.schedules / f"{observatory.name}.jsonl"
 
@@ -260,7 +252,7 @@ def create_schedule_data(action_type: str, device_name: str = None) -> dict:
                 "dec": -30.0,
                 "exptime": 1,  # Very short exposure
                 "filter": "Clear",
-                "guiding": False,
+                "guiding": True,
                 "pointing": False,
             },
             "duration": 1,  # Shorter duration
@@ -282,11 +274,12 @@ def create_schedule_data(action_type: str, device_name: str = None) -> dict:
         "action_value": config["action_value"],
         "start_time": base_time.isoformat(),
         "end_time": (base_time + timedelta(minutes=config["duration"])).isoformat(),
+        "_duration": config["duration"],  # For internal use only
     }
 
 
 def wait_for_schedule_completion(
-    observatory, timeout: int = 120
+    observatory: Observatory, schedule_data: dict
 ) -> tuple[bool, int, bool]:
     """
     Wait for schedule to complete and return results.
@@ -294,6 +287,8 @@ def wait_for_schedule_completion(
     Returns:
         tuple: (success, completed_actions, error_free_maintained)
     """
+    print("Schedule data:", schedule_data)
+    timeout = schedule_data["_duration"] * 60 + 120  # duration in seconds + buffer
     start_time = time.time()
     error_free_maintained = True
 
@@ -302,7 +297,7 @@ def wait_for_schedule_completion(
 
     # Wait for schedule to start
     wait_start = time.time()
-    while not observatory.schedule_running and (time.time() - wait_start) < 15:
+    while not observatory.schedule_running and (time.time() - wait_start) < timeout:
         time.sleep(0.5)
 
     if not observatory.schedule_running:
@@ -324,7 +319,13 @@ def wait_for_schedule_completion(
 
         time.sleep(1)
 
-    print(observatory.schedule["completed"])
+    complete_headers = 1
+    while complete_headers > 0 and (time.time() - start_time) < timeout:
+        complete_headers = observatory.cursor.execute(
+            "SELECT COUNT(*) FROM images WHERE complete_hdr=0"
+        )[0][0]
+
+        time.sleep(1)
 
     final_completed = (
         observatory.schedule["completed"].sum()
@@ -344,7 +345,7 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory
+                observatory, schedule_data
             )
 
             assert (
@@ -361,7 +362,7 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory
+                observatory, schedule_data
             )
 
             assert (
@@ -378,7 +379,7 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory
+                observatory, schedule_data
             )
 
             assert (
@@ -395,7 +396,7 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory
+                observatory, schedule_data
             )
 
             assert (
@@ -412,7 +413,7 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory
+                observatory, schedule_data
             )
 
             assert (
