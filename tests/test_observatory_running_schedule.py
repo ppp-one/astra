@@ -292,6 +292,9 @@ def wait_for_schedule_completion(
     start_time = time.time()
     error_free_maintained = True
 
+    # count number of images in Config().paths.images
+    initial_n_images = len(list(Config().paths.images.glob("**/*.fits")))
+
     logger.info("pytest Starting schedule...")
     observatory.start_schedule()
 
@@ -318,6 +321,14 @@ def wait_for_schedule_completion(
                     break
 
         time.sleep(1)
+
+    # count number of images in Config().paths.images
+    final_n_images = len(list(Config().paths.images.glob("**/*.fits")))
+    n_images = final_n_images - initial_n_images
+    if schedule_data["action_type"] == "object":
+        print(f"Number of images taken: {n_images}")
+        if n_images == 0:
+            error_free_maintained = False
 
     complete_headers = 1
     while complete_headers > 0 and (time.time() - start_time) < timeout:
