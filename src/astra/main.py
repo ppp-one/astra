@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import logging
 import os
-import sqlite3
 import time
 from contextlib import asynccontextmanager
 from datetime import UTC
@@ -19,8 +18,6 @@ from astropy.visualization import ZScaleInterval
 from fastapi import FastAPI, Request, WebSocket, Body, UploadFile, File
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
-import json
-
 import json
 
 
@@ -74,11 +71,6 @@ def load_observatories():
                 FWS[obs.name][fw_name] = obs.devices["FilterWheel"][fw_name].get(
                     "Names"
                 )
-
-
-def observatory_db(name):
-    db = sqlite3.connect(CONFIG.paths.logs / f"{name}.db")
-    return db
 
 
 def clean_up():
@@ -393,15 +385,25 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
 async def polling(
     observatory: str, device_type: str, day: float = 1, since: str = None
 ):
-    db = observatory_db(observatory)
+    obs = OBSERVATORIES[observatory]
     if since:
         # Only fetch new records since the given timestamp
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > '{since}'"""
     else:
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{day} day')"""
 
-    df = pd.read_sql_query(q, db)
-    db.close()
+    rows = obs.cursor.execute(q)
+    if isinstance(rows, str):
+        # Handle error case
+        return {"error": f"Database error: {rows}"}
+
+    # Convert to DataFrame - discover columns first
+    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('polling')")
+    if not pragma or isinstance(pragma, str):
+        return {"error": "Could not get polling table schema"}
+    columns = [row[1] for row in pragma]
+
+    df = pd.DataFrame(rows or [], columns=columns)
 
     # Pivot: datetime as index, device_command as columns
     df = df.pivot(index="datetime", columns="device_command", values="device_value")
@@ -463,12 +465,21 @@ async def polling(
 
 @app.get("/api/log/{observatory}")
 async def log(observatory: str, datetime: str, limit: int = 100):
-    db = observatory_db(observatory)
+    obs = OBSERVATORIES[observatory]
     q = f"""SELECT * FROM (SELECT * FROM log WHERE datetime < '{datetime}' ORDER BY datetime DESC LIMIT {limit}) a ORDER BY datetime ASC"""
 
-    df = pd.read_sql_query(q, db)
+    rows = obs.cursor.execute(q)
+    if isinstance(rows, str):
+        # Handle error case
+        return {"error": f"Database error: {rows}"}
 
-    db.close()
+    # Convert to DataFrame - discover columns first
+    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('log')")
+    if not pragma or isinstance(pragma, str):
+        return {"error": "Could not get log table schema"}
+    columns = [row[1] for row in pragma]
+
+    df = pd.DataFrame(rows or [], columns=columns)
 
     return df.to_dict(orient="records")
 
@@ -478,9 +489,21 @@ async def websocket_log(websocket: WebSocket, observatory: str):
     await websocket.accept()
     obs = OBSERVATORIES[observatory]
 
-    db = observatory_db(observatory)
     q = """SELECT * FROM (SELECT * FROM log ORDER BY datetime DESC LIMIT 100) a ORDER BY datetime ASC"""
-    initial_df = pd.read_sql_query(q, db)
+    rows = obs.cursor.execute(q)
+    if isinstance(rows, str):
+        # Handle error case
+        await websocket.close(code=1011, reason=f"Database error: {rows}")
+        return
+
+    # Convert to DataFrame - discover columns first
+    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('log')")
+    if not pragma or isinstance(pragma, str):
+        await websocket.close(code=1011, reason="Could not get log table schema")
+        return
+    columns = [row[1] for row in pragma]
+
+    initial_df = pd.DataFrame(rows or [], columns=columns)
 
     last_time = initial_df.datetime.iloc[-1]
 
@@ -503,7 +526,14 @@ async def websocket_log(websocket: WebSocket, observatory: str):
         if len(initial_log) > 0:
             q = f"""SELECT * FROM log WHERE datetime > '{last_time}'"""
 
-        df = pd.read_sql_query(q, db)
+        rows = obs.cursor.execute(q)
+        if isinstance(rows, str):
+            # Handle error case
+            print(f"Database error in websocket: {rows}")
+            socket = False
+            break
+
+        df = pd.DataFrame(rows or [], columns=columns)
         data = df.to_dict(orient="records")
 
         data_dict = {}
@@ -516,7 +546,6 @@ async def websocket_log(websocket: WebSocket, observatory: str):
             await websocket.send_json(data_dict)
             await asyncio.sleep(1)
         except:
-            db.close()
             print("log socket closed")
             socket = False
 
