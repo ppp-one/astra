@@ -1,6 +1,6 @@
 Telescope:
   - device_name: telescope_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
     pointing_threshold: 0.06 # arcmins
     guider: # set by the user using calibrate_guiding sequence
@@ -22,14 +22,14 @@ Telescope:
         "set_y": 0.0
 Focuser:
   - device_name: focuser_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
     focus_position: 10000
 Camera:
   - device_name: camera_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
-    temperature: -60
+    temperature: -20
     temperature_tolerance: 1
     flats:
       target_adu: [31500, 10500]
@@ -45,15 +45,15 @@ Camera:
       SafetyMonitor: safety_observatoryname
 Dome:
   - device_name: dome_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
 FilterWheel:
   - device_name: fw_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
 ObservingConditions:
   - device_name: weather_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
     polling_delay: 5
     closing_limits:
@@ -67,22 +67,21 @@ ObservingConditions:
       Temperature:
         - lower: 0
           max_safe_duration: 30
-        - lower: -5
-          max_safe_duration: 150
       WindSpeed:
         - upper: 10
           max_safe_duration: 30
       SkyTemperature:
         - upper: -30
           max_safe_duration: 30
-        - upper: -20
-          max_safe_duration: 150
       SkyBrightness:
         - upper: 1000
           max_safe_duration: 30
+      RelativeSkyTemp:
+        - upper: -40
+          max_safe_duration: 30
 SafetyMonitor:
   - device_name: safety_observatoryname
-    ip: localhost
+    ip: localhost:11111
     device_number: 0
     max_safe_duration: 30
 

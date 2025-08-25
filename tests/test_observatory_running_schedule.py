@@ -7,10 +7,9 @@ import pytest
 import time
 import json
 import requests
-from pathlib import Path
+import yaml
 from datetime import datetime, timedelta, UTC
 from contextlib import contextmanager
-from threading import Thread
 from glob import glob
 
 from astra import Config
@@ -20,8 +19,71 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-CONFIG = Config()
 OBSERVATORIES: dict = {}
+
+
+@pytest.fixture(scope="session")
+def temp_config(tmp_path_factory):
+    """Create a temporary config for testing that uses real Astra templates."""
+    tmp_path = tmp_path_factory.mktemp("astra_test")
+    logger.info(f"Creating temporary config in {tmp_path}")
+
+    # Create temporary paths
+    config_path = tmp_path / "config" / "astra_config.yml"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+
+    folder_assets = tmp_path / "assets"
+    folder_assets.mkdir(parents=True, exist_ok=True)
+
+    gaia_db = tmp_path / "gaia.db"
+    gaia_db.touch()  # Create empty Gaia DB file
+
+    # Create config data
+    config_data = {
+        "observatory_name": "test_observatory",
+        "folder_assets": str(folder_assets),
+        "gaia_db": str(gaia_db),
+    }
+
+    # Write config file
+    with open(config_path, "w") as f:
+        yaml.dump(config_data, f)
+
+    # Store original Config class attributes and singleton
+    original_config_path = Config.CONFIG_PATH
+    original_template_dir = Config.TEMPLATE_DIR
+    original_instance = Config._instance
+
+    try:
+        # Patch the Config class paths - keep real template dir to use actual templates
+        Config.CONFIG_PATH = config_path
+        # Config.TEMPLATE_DIR stays the same to use real templates from source
+        Config._instance = None  # Clear singleton to force fresh initialization
+
+        # Create config instance - this will copy real templates to temp directory
+        config = Config(allow_default=True)
+
+        # Verify that the observatory config file was created from the template
+        observatory_config_file = (
+            config.paths.observatory_config / "test_observatory_config.yml"
+        )
+        if not observatory_config_file.exists():
+            raise FileNotFoundError(
+                f"Observatory config file was not created: {observatory_config_file}"
+            )
+
+        logger.info(f"Temporary config created successfully with paths:")
+        logger.info(f"  Images: {config.paths.images}")
+        logger.info(f"  Schedules: {config.paths.schedules}")
+        logger.info(f"  Observatory config: {config.paths.observatory_config}")
+
+        yield config
+
+    finally:
+        # Restore original Config class attributes
+        Config.CONFIG_PATH = original_config_path
+        Config.TEMPLATE_DIR = original_template_dir
+        Config._instance = original_instance
 
 
 def check_simulators_available():
@@ -58,30 +120,65 @@ def clean_up_observatories():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_observatories():
+def setup_observatories(temp_config):
     """Setup observatories for testing."""
     if not check_simulators_available():
         pytest.skip("Alpaca simulators not available on localhost:11111")
 
-    # Load observatories with truncation for faster testing
-    config_files = glob(str(CONFIG.paths.observatory_config / "*_config.yml"))
+    # Import all modules that have global CONFIG instances
+    import astra.observatory as obs_module
 
-    for config_filename in config_files:
-        obs = Observatory(config_filename)  # Remove truncation factor
-        OBSERVATORIES[obs.name] = obs
-        obs.connect_all()
+    # Store original config (they're all the same singleton instance)
+    original_config = obs_module.CONFIG
+    logger.info(f"Original config paths: {original_config.paths.images}")
+    logger.info(f"Temp config paths: {temp_config.paths.images}")
 
-        # Wait a bit for connections to stabilize
-        time.sleep(5)
+    # Verify we're actually using different configs
+    assert (
+        original_config != temp_config
+    ), "Temp config should be different from original"
+    assert str(original_config.paths.images) != str(
+        temp_config.paths.images
+    ), "Image paths should be different"
 
-    if not OBSERVATORIES:
-        logger.warning(f"No observatories loaded from {config_files} at {CONFIG.paths}")
-        pytest.skip("No observatories loaded")
+    # Patch all modules with temp config
+    obs_module.CONFIG = temp_config
 
-    yield OBSERVATORIES
+    logger.info("Patched all module CONFIG references to use temp_config")
 
-    # Cleanup after all tests
-    clean_up_observatories()
+    try:
+        # Load observatories with test config
+        config_files = glob(str(temp_config.paths.observatory_config / "*_config.yml"))
+        logger.info(f"Found observatory config files: {config_files}")
+
+        for config_filename in config_files:
+            logger.info(f"Loading observatory from {config_filename}")
+            obs = Observatory(config_filename)
+            OBSERVATORIES[obs.name] = obs
+            obs.connect_all()
+
+            # Wait a bit for connections to stabilize
+            time.sleep(5)
+
+        if not OBSERVATORIES:
+            logger.warning(
+                f"No observatories loaded from {config_files} at {temp_config.paths}"
+            )
+            pytest.skip("No observatories loaded")
+
+        logger.info(
+            f"Successfully loaded {len(OBSERVATORIES)} observatories: {list(OBSERVATORIES.keys())}"
+        )
+        yield OBSERVATORIES
+
+    finally:
+        # Cleanup after all tests
+        clean_up_observatories()
+
+        # Restore original config to all modules
+        obs_module.CONFIG = original_config
+
+        logger.info("Restored original CONFIG references to all modules")
 
 
 @pytest.fixture(scope="function")
@@ -105,16 +202,9 @@ def observatory():
 
 
 @pytest.fixture
-def schedule_manager(observatory):
+def schedule_manager(observatory, temp_config):
     """Manage test schedule creation and cleanup."""
-    config = Config()
-    schedule_path = config.paths.schedules / f"{observatory.name}.jsonl"
-    backup_path = None
-
-    # Backup existing schedule
-    if schedule_path.exists():
-        backup_path = schedule_path.with_suffix(".jsonl.test_backup")
-        schedule_path.rename(backup_path)
+    schedule_path = temp_config.paths.schedules / f"{observatory.name}.jsonl"
 
     @contextmanager
     def create_test_schedule(schedule_data):
@@ -138,19 +228,22 @@ def schedule_manager(observatory):
 
     yield create_test_schedule
 
-    # Restore original schedule
-    if backup_path and backup_path.exists():
-        backup_path.rename(schedule_path)
-
 
 def create_schedule_data(action_type: str, device_name: str = None) -> dict:
     """Create schedule data for the specified action type."""
-    # Start the action in 15 seconds from now to give plenty of buffer
+    # Start the action in 5 seconds from now to give plenty of buffer
     base_time = datetime.now(UTC) + timedelta(seconds=5)
 
     # Use default device name if not provided
     if device_name is None:
-        device_name = f"camera_{list(OBSERVATORIES.keys())[0]}"
+        # Get the camera device name from the first available observatory
+        if OBSERVATORIES:
+            obs = list(OBSERVATORIES.values())[0]
+            # Get the first camera device name from the observatory's config
+            if hasattr(obs, "_config") and "Camera" in obs._config:
+                camera_devices = obs._config["Camera"]
+                if camera_devices and len(camera_devices) > 0:
+                    device_name = camera_devices[0]["device_name"]
 
     action_configs = {
         "cool_camera": {"action_value": {}, "duration": 1},  # minutes
@@ -206,13 +299,6 @@ def wait_for_schedule_completion(
 
     logger.info("pytest Starting schedule...")
     observatory.start_schedule()
-
-    # Validate schedule is loaded and ready
-    # if observatory.schedule is None:
-    #     return False, 0, error_free_maintained
-
-    # if observatory.schedule.iloc[-1]["end_time"] < datetime.now(UTC):
-    #     return False, 0, error_free_maintained
 
     # Wait for schedule to start
     wait_start = time.time()
