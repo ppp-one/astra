@@ -121,7 +121,7 @@
                             </svg>
                         </a>
                         <div>
-                            <h1 class="text-2xl font-bold text-blue-400">Schedule Editor</h1>
+                            <h1 class="text-2xl font-bold text-blue-300">Schedule Editor</h1>
                             <p class="text-gray-300">Observatory: {{ observatory }}</p>
                         </div>
                     </div>
@@ -131,11 +131,8 @@
                             <div id="currentTime" class="font-mono text-lg">--:--:--</div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <div id="saveStatus" class="text-sm text-gray-400">
-                                <span id="saveStatusText">Saved</span>
-                            </div>
                             <button id="saveScheduleBtn"
-                                class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 disabled:bg-gray-600/50 disabled:cursor-not-allowed rounded text-base transition-colors font-medium">
+                                class="px-6 py-3 bg-green-600/80 hover:bg-green-700/80 disabled:bg-gray-600/50 disabled:cursor-not-allowed rounded-lg text-base transition-colors font-medium">
                                 <span id="saveButtonText">Save Schedule</span>
                             </button>
                         </div>
@@ -157,7 +154,7 @@
                     <p id="statusText" class="text-gray-300 mb-6"></p>
                     <div class="flex justify-end">
                         <button id="statusCloseBtn"
-                            class="px-4 py-2 bg-gray-600/80 hover:bg-gray-700/80 rounded text-sm transition-colors">
+                            class="px-4 py-2 bg-gray-600/80 hover:bg-gray-700/80 rounded-lg text-sm transition-colors">
                             Close
                         </button>
                     </div>
@@ -171,10 +168,10 @@
             <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 mb-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">Schedule Timeline (UTC)</h2>
-                    <button id="toggleChartBtn"
-                        class="px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded text-sm transition-colors">
+                    {# <button id="toggleChartBtn"
+                        class="px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded-lg text-sm transition-colors">
                         Hide Chart
-                    </button>
+                    </button> #}
                 </div>
                 <div id="scheduleChart" class="w-full" style="min-height: 400px;">
                     <!-- Chart will be rendered here -->
@@ -187,11 +184,11 @@
                     <h2 class="text-xl font-semibold">Schedule</h2>
                     <div class="flex space-x-2">
                         <button id="sortByTimeBtn"
-                            class="px-4 py-2 bg-orange-600/80 hover:bg-orange-700/80 rounded text-sm transition-colors">
+                            class="px-4 py-2 bg-slate-600/80 hover:bg-slate-700/80 rounded-lg text-sm transition-colors">
                             Sort by Start Time
                         </button>
                         <button id="toggleViewBtn"
-                            class="hidden xl:block px-4 py-2 bg-purple-600/80 hover:bg-purple-700/80 rounded text-sm transition-colors">
+                            class="hidden xl:block px-4 py-2 bg-slate-600/80 hover:bg-slate-700/80 rounded-lg text-sm transition-colors">
                             Table View
                         </button>
                     </div>
@@ -199,7 +196,7 @@
 
                 <!-- Drag and Drop Upload Zone -->
                 <div id="uploadZone"
-                    class="mb-6 border-2 border-dashed border-gray-600/50 rounded-lg p-6 text-center transition-colors duration-200 hover:border-indigo-500/50 hover:bg-indigo-900/10">
+                    class="mb-6 border-2 border-dashed border-gray-600/50 rounded-lg p-6 text-center transition-colors duration-200 hover:border-slate-500/50 hover:bg-slate-900/10">
                     <div class="flex flex-col items-center space-y-2">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -207,7 +204,7 @@
                             </path>
                         </svg>
                         <div class="text-sm text-gray-400">
-                            <span class="font-medium text-indigo-400 hover:text-indigo-300 cursor-pointer"
+                            <span class="font-medium text-slate-400 hover:text-slate-300 cursor-pointer"
                                 id="browseFiles">Click to browse</span>
                             or drag and drop your schedule file here
                         </div>
@@ -245,7 +242,7 @@
                 <!-- Save Button at Bottom -->
                 <div class="mt-6 flex justify-end">
                     <button id="addRowBtn"
-                        class="px-4 py-2 bg-blue-600/80 hover:bg-blue-700/80 rounded text-sm transition-colors">
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700/80 rounded-lg text-sm transition-colors">
                         Add Row
                     </button>
                 </div>
@@ -499,12 +496,12 @@
         }
 
         // Toggle chart visibility
-        function toggleChart() {
-            chartVisible = !chartVisible;
-            const toggleBtn = document.getElementById('toggleChartBtn');
-            toggleBtn.textContent = chartVisible ? 'Hide Chart' : 'Show Chart';
-            renderChart();
-        }
+        // function toggleChart() {
+        //     chartVisible = !chartVisible;
+        //     const toggleBtn = document.getElementById('toggleChartBtn');
+        //     toggleBtn.textContent = chartVisible ? 'Hide Chart' : 'Show Chart';
+        //     renderChart();
+        // }
 
         // Toggle table view mode (card vs traditional table)
         function toggleView() {
@@ -568,19 +565,14 @@
 
         // Update save status
         function updateSaveStatus() {
-            const saveStatusText = document.getElementById('saveStatusText');
             const saveButton = document.getElementById('saveScheduleBtn');
             const saveButtonText = document.getElementById('saveButtonText');
 
             if (hasUnsavedChanges) {
-                saveStatusText.textContent = 'Unsaved changes';
-                saveStatusText.className = 'text-yellow-400';
                 saveButton.classList.remove('bg-green-600/80', 'hover:bg-green-700/80');
                 saveButton.classList.add('bg-orange-600/80', 'hover:bg-orange-700/80');
                 saveButtonText.textContent = 'Save Changes';
             } else {
-                saveStatusText.textContent = 'Saved';
-                saveStatusText.className = 'text-green-400';
                 saveButton.classList.remove('bg-orange-600/80', 'hover:bg-orange-700/80');
                 saveButton.classList.add('bg-green-600/80', 'hover:bg-green-700/80');
                 saveButtonText.textContent = 'Save Schedule';
@@ -662,7 +654,7 @@
             const isValidFile = validExtensions.some(ext => fileName.endsWith(ext));
 
             if (!isValidFile) {
-                showStatus('Please upload a valid schedule file (.jsonl, .json, or .txt)', 'error');
+                showStatus('Please upload a valid schedule file (.jsonl)', 'error');
                 return;
             }
 
@@ -817,12 +809,12 @@
                     </td>
                     <td class="p-2" data-label="Device Name">
                         <input type="text" value="${item.device_name || ''}" 
-                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                onchange="updateItem(${index}, 'device_name', this.value)"
                                placeholder="Enter device name">
                     </td>
                     <td class="p-2" data-label="Action Type">
-                        <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                        <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                 onchange="updateActionType(${index}, this.value)">
                             <option value="open" ${item.action_type === 'open' ? 'selected' : ''}>open</option>
                             <option value="close" ${item.action_type === 'close' ? 'selected' : ''}>close</option>
@@ -837,7 +829,7 @@
                         </select>
                     </td>
                     <td class="p-2" data-label="Action Value (JSON)">
-                        <textarea class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm font-mono h-32 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors resize-y"
+                        <textarea class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm font-mono h-32 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors resize-y"
                                   onchange="updateActionValue(${index}, this.value)"
                                   placeholder="Enter JSON object">${JSON.stringify(item.action_value || {}, null, 2)}</textarea>
                     </td>
@@ -845,25 +837,25 @@
                         <input type="datetime-local" 
                                value="${formatDateTimeLocal(item.start_time)}" 
                                step="1"
-                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                onchange="updateItem(${index}, 'start_time', this.value)">
                     </td>
                     <td class="p-2" data-label="End Time (UTC)">
                         <input type="datetime-local" 
                                value="${formatDateTimeLocal(item.end_time)}" 
                                step="1"
-                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                onchange="updateItem(${index}, 'end_time', this.value)">
                     </td>
                     <td class="p-2" data-label="Actions">
                         <div class="flex space-x-1 justify-end">
                             <button onclick="duplicateRow(${index})" 
-                                    class="px-2 py-1 bg-blue-600/80 hover:bg-blue-700/80 rounded text-xs transition-colors"
+                                    class="px-2 py-1 bg-blue-600 hover:bg-blue-700/80 rounded-lg text-xs transition-colors"
                                     title="Duplicate row">
                                 Copy
                             </button>
                             <button onclick="deleteRow(${index})" 
-                                    class="px-2 py-1 bg-red-600/80 hover:bg-red-700/80 rounded text-xs transition-colors"
+                                    class="px-2 py-1 bg-red-600/80 hover:bg-red-700/80 rounded-lg text-xs transition-colors"
                                     title="Delete row">
                                 Delete
                             </button>
@@ -1035,7 +1027,7 @@
                 if (response.ok) {
                     const result = await response.json();
                     markAsSaved();
-                    showStatus('Schedule saved successfully!', 'success');
+                    //showStatus('Schedule saved successfully!', 'success');
                 } else {
                     const errorResult = await response.json();
                     throw new Error(errorResult.message || 'Failed to save schedule');
@@ -1055,7 +1047,7 @@
         // Event listeners
         document.getElementById('addRowBtn').addEventListener('click', addRow);
         document.getElementById('saveScheduleBtn').addEventListener('click', saveSchedule);
-        document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
+        //document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
         document.getElementById('sortByTimeBtn').addEventListener('click', sortByStartTime);
         document.getElementById('statusCloseBtn').addEventListener('click', closeStatusModal);
 
