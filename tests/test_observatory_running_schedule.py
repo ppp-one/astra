@@ -75,6 +75,7 @@ def setup_observatories():
         time.sleep(5)
 
     if not OBSERVATORIES:
+        logger.warning(f"No observatories loaded from {config_files} at {CONFIG.paths}")
         pytest.skip("No observatories loaded")
 
     yield OBSERVATORIES
