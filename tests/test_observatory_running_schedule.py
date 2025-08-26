@@ -416,6 +416,8 @@ def wait_for_schedule_completion(
                     assert False, "Telescope or dome did not park after weather alert."
                 else:
                     logger.info("Telescope and dome are parked.")
+                    observatory.stop_schedule()
+                    break
 
         time.sleep(1)
 
