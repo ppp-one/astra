@@ -366,10 +366,10 @@ def wait_for_schedule_completion(
     # Monitor execution
     last_completed = 0
     weather_alert_injected = False
+
     while True:
         if (time.time() - start_time) > timeout:
             raise TimeoutError("Schedule did not complete in expected time.")
-
         if not observatory.error_free:
             error_free_maintained = False
             break
@@ -418,6 +418,41 @@ def wait_for_schedule_completion(
                     logger.info("Telescope and dome are parked.")
                     observatory.stop_schedule()
                     break
+
+        if schedule_data.get("_inject_weather_alert", False) and (
+            time.time() - start_time
+        ) > schedule_data.get("_inject_weather_alert_delay", 30):
+            if not weather_alert_injected:
+                logger.info("Injecting weather alert...")
+                # Inject a weather alert halfway through the schedule duration
+                response = requests.put(
+                    "http://localhost:11111/api/v1/safetymonitor/0/issafe",
+                    data={"IsSafe": False},
+                )
+                if response.status_code != 200:
+                    logger.error(f"Failed to inject weather alert: {response.text}")
+                    assert False, "Failed to inject weather alert."
+                else:
+                    logger.info("Weather alert injected successfully.")
+                    weather_alert_injected = True
+                    time.sleep(10)  # Wait for 10 seconds before checking status
+            else:
+                # check that dome and telescope closed
+                response = requests.get(
+                    "http://localhost:11111/api/v1/telescope/0/atpark"
+                )
+
+                telescope_atpark = response.json().get("Value", False)
+
+                response = requests.get("http://localhost:11111/api/v1/dome/0/atpark")
+
+                dome_atpark = response.json().get("Value", False)
+
+                if not (telescope_atpark and dome_atpark):
+                    logger.error("Telescope or dome is not parked.")
+                    assert False, "Telescope or dome did not park after weather alert."
+                else:
+                    logger.info("Telescope and dome are parked.")
 
         time.sleep(1)
 
@@ -597,6 +632,7 @@ class TestScheduleActionTypes:
             ), f"object action did not complete successfully. Error sources: {observatory.error_source}"
             assert completed > 0, "No actions were completed"
 
+
     def test_autofocus_action(self, observatory, schedule_manager):
         """Test autofocus action type"""
         schedule_data = create_schedule_data("autofocus")
@@ -613,32 +649,6 @@ class TestScheduleActionTypes:
                 success
             ), f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
             assert completed > 0, "No actions were completed"
-
-    # def test_autofocus_action_with_weather_alert(self, observatory, schedule_manager):
-    #     """Test autofocus action type with weather alert."""
-    #     schedule_data = create_schedule_data("autofocus", inject_weather_alert=True)
-
-    #     with schedule_manager(schedule_data):
-    #         success, completed, error_free_maintained = wait_for_schedule_completion(
-    #             observatory, schedule_data
-    #         )
-
-    #         assert (
-    #             error_free_maintained
-    #         ), f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
-    #         assert (
-    #             success
-    #         ), f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
-    #         assert completed > 0, "No actions were completed"
-
-    #         assert (
-    #             error_free_maintained
-    #         ), f"error_free became False during flats action. Error sources: {observatory.error_source}"
-    #         assert (
-    #             success
-    #         ), f"flats action did not complete successfully. Error sources: {observatory.error_source}"
-    #         assert completed > 0, "No actions were completed"
-
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
