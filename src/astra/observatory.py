@@ -3438,10 +3438,10 @@ class Observatory:
             autofocuser.setup()
 
             success = autofocuser.run()
-
-            autofocuser.make_summary_plot()
-            autofocuser.create_result_file()
-            autofocuser.save_best_focus_position()
+            if success:
+                autofocuser.make_summary_plot()
+                autofocuser.create_result_file()
+                autofocuser.save_best_focus_position()
 
         except Exception as e:
             success = False
