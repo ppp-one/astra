@@ -78,10 +78,20 @@ def temp_config(tmp_path_factory):
     with open(observatory_fits_config_file, "a") as f:
         f.write("\n")
 
+    # change the max_safe_duration in the config under SafetyMonitor
+    with open(observatory_config_file, "r") as file:
+        observatory_config = yaml.safe_load(file)
+        observatory_config["SafetyMonitor"][0]["max_safe_duration"] = 0.5
+
+    with open(observatory_config_file, "w") as file:
+        yaml.dump(observatory_config, file)
+
     logger.info(f"Temporary config created successfully with paths:")
+    logger.info(f"  Assets: {config.paths.assets}")
     logger.info(f"  Images: {config.paths.images}")
     logger.info(f"  Schedules: {config.paths.schedules}")
     logger.info(f"  Observatory config: {config.paths.observatory_config}")
+    logger.info(f"  Logs: {config.paths.logs}")
 
     yield config
 
@@ -142,6 +152,13 @@ def setup_observatories(temp_config):
     guiding.CONFIG = temp_config
     image_handler.CONFIG = temp_config
     schedule.CONFIG = temp_config
+
+    logger.info("Reloading observatory state to defaults")
+    response = requests.get(
+        "http://localhost:11111/reload",
+    )
+
+    assert response.status_code == 200
 
     try:
         # Load observatories with test config
@@ -221,21 +238,23 @@ def schedule_manager(observatory: Observatory, temp_config):
     yield create_test_schedule
 
 
-def create_schedule_data(action_type: str, device_name: str = None) -> dict:
+def create_schedule_data(
+    action_type: str,
+    inject_weather_alert: bool = False,
+    inject_weather_alert_delay: int = 30,
+) -> dict:
     """Create schedule data for the specified action type."""
     # Start the action in 5 seconds from now to give plenty of buffer
     base_time = datetime.now(UTC) + timedelta(seconds=5)
 
-    # Use default device name if not provided
-    if device_name is None:
-        # Get the camera device name from the first available observatory
-        if OBSERVATORIES:
-            obs = list(OBSERVATORIES.values())[0]
-            # Get the first camera device name from the observatory's config
-            if hasattr(obs, "_config") and "Camera" in obs._config:
-                camera_devices = obs._config["Camera"]
-                if camera_devices and len(camera_devices) > 0:
-                    device_name = camera_devices[0]["device_name"]
+    # Get the camera device name from the first available observatory
+    if OBSERVATORIES:
+        obs = list(OBSERVATORIES.values())[0]
+        # Get the first camera device name from the observatory's config
+        if hasattr(obs, "_config") and "Camera" in obs._config:
+            camera_devices = obs._config["Camera"]
+            if camera_devices and len(camera_devices) > 0:
+                device_name = camera_devices[0]["device_name"]
 
     action_configs = {
         "cool_camera": {"action_value": {}, "duration": 1},  # minutes
@@ -248,8 +267,8 @@ def create_schedule_data(action_type: str, device_name: str = None) -> dict:
         "object": {
             "action_value": {
                 "object": "test_target",
-                "ra": 100.0,
-                "dec": -30.0,
+                "ra": 10.0,
+                "dec": -40.0,
                 "exptime": 1,  # Very short exposure
                 "filter": "Clear",
                 "guiding": True,
@@ -268,7 +287,7 @@ def create_schedule_data(action_type: str, device_name: str = None) -> dict:
 
     config = action_configs[action_type]
 
-    return {
+    row = {
         "device_name": device_name,
         "action_type": action_type,
         "action_value": config["action_value"],
@@ -276,6 +295,12 @@ def create_schedule_data(action_type: str, device_name: str = None) -> dict:
         "end_time": (base_time + timedelta(minutes=config["duration"])).isoformat(),
         "_duration": config["duration"],  # For internal use only
     }
+
+    if inject_weather_alert:
+        row["_inject_weather_alert"] = True
+        row["_inject_weather_alert_delay"] = inject_weather_alert_delay
+
+    return row
 
 
 def wait_for_schedule_completion(
@@ -287,6 +312,19 @@ def wait_for_schedule_completion(
     Returns:
         tuple: (success, completed_actions, error_free_maintained)
     """
+    # set weather to safe
+    logger.info("Reloading observatory state to defaults")
+    response = requests.get(
+        "http://localhost:11111/reload",
+    )
+    if response.status_code != 200:
+        logger.error(f"Failed to reload observatory state: {response.text}")
+        assert False, "Failed to reload observatory state."
+
+    # clear all tables
+    observatory.cursor.execute("DELETE FROM images")
+    observatory.cursor.execute("DELETE FROM polling")
+
     print("Schedule data:", schedule_data)
     timeout = schedule_data["_duration"] * 60 + 120  # duration in seconds + buffer
     start_time = time.time()
@@ -308,6 +346,7 @@ def wait_for_schedule_completion(
 
     # Monitor execution
     last_completed = 0
+    weather_alert_injected = False
     while observatory.schedule_running and (time.time() - start_time) < timeout:
         if not observatory.error_free:
             error_free_maintained = False
@@ -320,6 +359,41 @@ def wait_for_schedule_completion(
                 if completed >= len(observatory.schedule):
                     break
 
+        if schedule_data.get("_inject_weather_alert", False) and (
+            time.time() - start_time
+        ) > schedule_data.get("_inject_weather_alert_delay", 30):
+            if not weather_alert_injected:
+                logger.info("Injecting weather alert...")
+                # Inject a weather alert halfway through the schedule duration
+                response = requests.put(
+                    "http://localhost:11111/api/v1/safetymonitor/0/issafe",
+                    data={"IsSafe": False},
+                )
+                if response.status_code != 200:
+                    logger.error(f"Failed to inject weather alert: {response.text}")
+                    assert False, "Failed to inject weather alert."
+                else:
+                    logger.info("Weather alert injected successfully.")
+                    weather_alert_injected = True
+                    time.sleep(10)  # Wait for 10 seconds before checking status
+            else:
+                # check that dome and telescope closed
+                response = requests.get(
+                    "http://localhost:11111/api/v1/telescope/0/atpark"
+                )
+
+                telescope_atpark = response.json().get("Value", False)
+
+                response = requests.get("http://localhost:11111/api/v1/dome/0/atpark")
+
+                dome_atpark = response.json().get("Value", False)
+
+                if not (telescope_atpark and dome_atpark):
+                    logger.error("Telescope or dome is not parked.")
+                    assert False, "Telescope or dome did not park after weather alert."
+                else:
+                    logger.info("Telescope and dome are parked.")
+
         time.sleep(1)
 
     # count number of images in Config().paths.images
@@ -327,9 +401,9 @@ def wait_for_schedule_completion(
     n_images = final_n_images - initial_n_images
     if schedule_data["action_type"] == "object":
         print(f"Number of images taken: {n_images}")
-        if n_images == 0:
-            error_free_maintained = False
+        assert n_images != 0, "Images were not taken during object action."
 
+    # Wait for all headers to be complete
     complete_headers = 1
     while complete_headers > 0 and (time.time() - start_time) < timeout:
         complete_headers = observatory.cursor.execute(
@@ -338,11 +412,17 @@ def wait_for_schedule_completion(
 
         time.sleep(1)
 
-    final_completed = (
-        observatory.schedule["completed"].sum()
-        if observatory.schedule is not None
-        else 0
-    )
+    # Check if weather alert was injected
+    if not schedule_data.get("_inject_weather_alert", False):
+        final_completed = (
+            observatory.schedule["completed"].sum()
+            if observatory.schedule is not None
+            else 0
+        )
+    else:
+        final_completed = 1
+
+    assert final_completed > 0, "No actions were completed in the schedule."
 
     return final_completed > 0, final_completed, error_free_maintained
 
@@ -401,6 +481,25 @@ class TestScheduleActionTypes:
             ), f"close action did not complete successfully. Error sources: {observatory.error_source}"
             assert completed > 0, "No actions were completed"
 
+    def test_close_action_with_weather_alert(self, observatory, schedule_manager):
+        """Test close action type with weather alert."""
+        schedule_data = create_schedule_data(
+            "close", inject_weather_alert=True, inject_weather_alert_delay=0
+        )
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data
+            )
+
+            assert (
+                error_free_maintained
+            ), f"error_free became False during close action. Error sources: {observatory.error_source}"
+            assert (
+                success
+            ), f"close action did not complete successfully. Error sources: {observatory.error_source}"
+            assert completed > 0, "No actions were completed"
+
     def test_open_action(self, observatory, schedule_manager):
         """Test open action type."""
         schedule_data = create_schedule_data("open")
@@ -418,9 +517,45 @@ class TestScheduleActionTypes:
             ), f"open action did not complete successfully. Error sources: {observatory.error_source}"
             assert completed > 0, "No actions were completed"
 
+    def test_open_action_with_weather_alert(self, observatory, schedule_manager):
+        """Test open action type with weather alert."""
+        schedule_data = create_schedule_data(
+            "open", inject_weather_alert=True, inject_weather_alert_delay=0
+        )
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data
+            )
+
+            assert (
+                error_free_maintained
+            ), f"error_free became False during open action. Error sources: {observatory.error_source}"
+            assert (
+                success
+            ), f"open action did not complete successfully. Error sources: {observatory.error_source}"
+            assert completed > 0, "No actions were completed"
+
     def test_object_action(self, observatory, schedule_manager):
         """Test object action type."""
         schedule_data = create_schedule_data("object")
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data
+            )
+
+            assert (
+                error_free_maintained
+            ), f"error_free became False during object action. Error sources: {observatory.error_source}"
+            assert (
+                success
+            ), f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            assert completed > 0, "No actions were completed"
+
+    def test_object_action_with_weather_alert(self, observatory, schedule_manager):
+        """Test object action type with weather alert."""
+        schedule_data = create_schedule_data("object", inject_weather_alert=True)
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(

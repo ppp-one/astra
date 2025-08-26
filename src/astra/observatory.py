@@ -2108,7 +2108,8 @@ class Observatory:
             # set 'completed' flag to True if ended under normal conditions
             if self.error_free and self.schedule_running and self.watchdog_running:
                 if (
-                    row["action_type"] in ["calibration", "close"]
+                    row["action_type"]
+                    in ["calibration", "close", "cool_camera", "complete_headers"]
                 ) or self.weather_safe:
                     self.schedule.loc[row.name, "completed"] = True
 
