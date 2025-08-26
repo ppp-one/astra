@@ -276,6 +276,25 @@ def create_schedule_data(
             },
             "duration": 1,  # Shorter duration
         },
+        "autofocus": {
+            "action_value": {
+                "exptime": 1.0,
+                "filter": "Clear",
+                "focus_measure_operator": "hfr",
+                # "g_mag_range": (5, 10),
+                # "j_mag_range": (5, 10),
+                # "airmass_threshold": 1.01,
+                # "selection_method": "maximal",
+                "ra": 121.48813,
+                "dec": 4.28434,
+                "search_range_is_relative": True,
+                "search_range": 500,
+                "n_steps": (5,),
+                "n_exposures": (1,),
+                "star_find_threshold": 6,
+            },
+            "duration": 2,  # Give it a bit more time
+        },
         # "flats": {
         #     "action_value": {"filter": ["Clear"], "n": [1]},
         #     "duration": 1,
@@ -347,7 +366,10 @@ def wait_for_schedule_completion(
     # Monitor execution
     last_completed = 0
     weather_alert_injected = False
-    while observatory.schedule_running and (time.time() - start_time) < timeout:
+
+    while True:
+        if (time.time() - start_time) > timeout:
+            raise TimeoutError("Schedule did not complete in expected time.")
         if not observatory.error_free:
             error_free_maintained = False
             break
@@ -357,6 +379,44 @@ def wait_for_schedule_completion(
             if completed > last_completed:
                 last_completed = completed
                 if completed >= len(observatory.schedule):
+                    observatory.stop_schedule()
+                    break
+
+        if schedule_data.get("_inject_weather_alert", False) and (
+            time.time() - start_time
+        ) > schedule_data.get("_inject_weather_alert_delay", 30):
+            if not weather_alert_injected:
+                logger.info("Injecting weather alert...")
+                # Inject a weather alert halfway through the schedule duration
+                response = requests.put(
+                    "http://localhost:11111/api/v1/safetymonitor/0/issafe",
+                    data={"IsSafe": False},
+                )
+                if response.status_code != 200:
+                    logger.error(f"Failed to inject weather alert: {response.text}")
+                    assert False, "Failed to inject weather alert."
+                else:
+                    logger.info("Weather alert injected successfully.")
+                    weather_alert_injected = True
+                    time.sleep(10)  # Wait for 10 seconds before checking status
+            else:
+                # check that dome and telescope closed
+                response = requests.get(
+                    "http://localhost:11111/api/v1/telescope/0/atpark"
+                )
+
+                telescope_atpark = response.json().get("Value", False)
+
+                response = requests.get("http://localhost:11111/api/v1/dome/0/atpark")
+
+                dome_atpark = response.json().get("Value", False)
+
+                if not (telescope_atpark and dome_atpark):
+                    logger.error("Telescope or dome is not parked.")
+                    assert False, "Telescope or dome did not park after weather alert."
+                else:
+                    logger.info("Telescope and dome are parked.")
+                    observatory.stop_schedule()
                     break
 
         if schedule_data.get("_inject_weather_alert", False) and (
@@ -405,11 +465,13 @@ def wait_for_schedule_completion(
 
     # Wait for all headers to be complete
     complete_headers = 1
-    while complete_headers > 0 and (time.time() - start_time) < timeout:
+    while complete_headers > 0:
+        if (time.time() - start_time) > timeout:
+            raise TimeoutError("complete_headers did not complete in expected time.")
         complete_headers = observatory.cursor.execute(
             "SELECT COUNT(*) FROM images WHERE complete_hdr=0"
         )[0][0]
-
+        print(f"Number of incomplete headers: {complete_headers}")
         time.sleep(1)
 
     # Check if weather alert was injected
@@ -570,23 +632,23 @@ class TestScheduleActionTypes:
             ), f"object action did not complete successfully. Error sources: {observatory.error_source}"
             assert completed > 0, "No actions were completed"
 
-    # def test_flats_action(self, observatory, schedule_manager):
-    #     """Test flats action type."""
-    #     schedule_data = create_schedule_data("flats")
 
-    #     with schedule_manager(schedule_data):
-    #         success, completed, error_free_maintained = wait_for_schedule_completion(
-    #             observatory
-    #         )
+    def test_autofocus_action(self, observatory, schedule_manager):
+        """Test autofocus action type"""
+        schedule_data = create_schedule_data("autofocus")
 
-    #         assert (
-    #             error_free_maintained
-    #         ), f"error_free became False during flats action. Error sources: {observatory.error_source}"
-    #         assert (
-    #             success
-    #         ), f"flats action did not complete successfully. Error sources: {observatory.error_source}"
-    #         assert completed > 0, "No actions were completed"
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data
+            )
 
+            assert (
+                error_free_maintained
+            ), f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
+            assert (
+                success
+            ), f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
+            assert completed > 0, "No actions were completed"
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

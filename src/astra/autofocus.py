@@ -126,14 +126,16 @@ class AstraCamera(CameraInterface):
             hdr=self.hdr,
             use_light=use_light,
             log_option=log_option,
-            maximal_sleep_time=0.01,
+            maximal_sleep_time=0.1,
             folder=self.folder,
             maxadu=self.alpaca_device_camera.get("MaxADU"),
         )
         self.success = exposure_successful
 
         if not self.success:
-            raise ValueError("Exposure failed.")
+            self.success = False
+            self.astra.logger.warning("Exposure failed.")
+            # raise ValueError("Exposure failed.")
 
     def determine_image_data_type_and_maxadu(self):
         self._perform_exposure(
@@ -177,16 +179,17 @@ class AstraFocuser(FocuserInterface):
         allowed_range = (0, alpaca_device_focuser.get("MaxStep"))
         super().__init__(current_position=current_position, allowed_range=allowed_range)
 
-    def move_focuser_to_position(self, new_position: int):
+    def move_focuser_to_position(self, new_position: int, hard_timeout: float = 120):
         """
         Calling this function should take as long as it takes to move the focuser to the desired position.
         """
         new_position = self._project_to_allowed_range(new_position)
 
         self.alpaca_device_focuser.get("Move", Position=new_position)
+        start_time = time.time()
         while self.alpaca_device_focuser.get("IsMoving"):
-            if self.row is not None and not self.astra.check_conditions(self.row):
-                raise ValueError("Focuser move aborted due to bad conditions.")
+            if time.time() - start_time > hard_timeout:
+                raise TimeoutError("Slew timeout")
             time.sleep(0.1)
 
         time.sleep(3)  # settle time
@@ -239,7 +242,7 @@ class AstraTelescope(TelescopeInterface):
             if time.time() - start_time > hard_timeout:
                 raise TimeoutError("Slew timeout")
             if not self.astra.check_conditions(self.row):
-                raise ValueError("Slew aborted due to bad conditions.")
+                break
 
             time.sleep(1)
 
@@ -279,7 +282,9 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
 
     @classmethod
     def from_row(cls, astra, folder, row, paired_devices):
-        action_value, _, hdr = astra.pre_sequence(row, paired_devices)
+        # action_value, _, hdr = astra.pre_sequence(row, paired_devices)
+        action_value = row["action_value"]
+        hdr = astra.base_header(paired_devices, action_value)
 
         alpaca_device_camera = astra.devices["Camera"][row["device_name"]]
         alpaca_device_focuser = astra.devices["Focuser"][paired_devices["Focuser"]]
@@ -436,6 +441,7 @@ class Autofocuser:
                 }
             )
             self.astra.logger.exception(f"Error running autofocus: {str(e)}")
+            self.success = False
             return False
 
     def setup(self):
@@ -584,9 +590,14 @@ class Autofocuser:
             return False
 
         try:
-            self.calibration_coordinates = self._determine_autofocus_calibration_field(
+            coords = self._determine_autofocus_calibration_field(
                 self.row, self.action_value, self.hdr
             )
+            if coords:
+                self.calibration_coordinates = coords
+            else:
+                self.success = False
+
         except Exception as e:
             self.astra.logger.error(
                 f"Error determining autofocus calibration field: {str(e)}."
@@ -647,7 +658,7 @@ class Autofocuser:
         self.astra.logger.info("Determining autofocus calibration field.")
         try:
             if not self.astra.check_conditions(row=row):
-                raise ValueError("Autofocus aborted due to bad conditions.")
+                return False
             observatory_location = EarthLocation(
                 lat=hdr["LAT-OBS"] * u.deg,
                 lon=hdr["LONG-OBS"] * u.deg,
@@ -715,7 +726,7 @@ class Autofocuser:
                 "within the desired magnitude ranges.",
             )
             if not self.astra.check_conditions(row=row):
-                raise ValueError("Autofocus aborted due to bad conditions.")
+                return False
 
             # Determine the number of stars that would be on the ccd
             # if the telescope was centred on a given star
@@ -724,7 +735,7 @@ class Autofocuser:
                 width=action_value.get("fov_width", 11.666666 / 60),
             )
             if not self.astra.check_conditions(row=row):
-                raise ValueError("Autofocus aborted due to bad conditions.")
+                return False
 
             # Find the desired field of calibration
             znqr.sort_values(["zenith_angle", "n"], ascending=[True, True])
@@ -755,7 +766,7 @@ class Autofocuser:
 
         except Exception as e:
             if not self.astra.check_conditions(row=row):
-                raise ValueError("Autofocus aborted due to bad conditions.")
+                return False
             self.astra.logger.warning(
                 f"Error determining autofocus target coordinates: {str(e)}. "
                 "Attempt to autofocus at zenith.",
@@ -944,6 +955,8 @@ class Autofocuser:
         plt.close()
         """
         try:
+            if self.success is False:
+                return
             if self.save_path is None:
                 self.astra.logger.error(
                     "Skipping creation of summary plot, as save_path is unspecified."
@@ -980,6 +993,8 @@ class Autofocuser:
             self.astra.logger.exception(f"Error creating summary plot: {str(e)}")
 
     def create_result_file(self):
+        if self.success is False:
+            return
         if self.save_path is None:
             self.astra.logger.error(
                 "Skipping creation of log file, as save_path is unspecified."
@@ -1021,7 +1036,7 @@ class Autofocuser:
 
         camera_index = self.astra.get_cam_index(self.row["device_name"])
         observatory_config = ObservatoryConfig.from_config(CONFIG)
-        observatory_config["Focuser"][camera_index]["focus_position"] = (
-            self.best_focus_position
-        )
+        observatory_config["Focuser"][camera_index][
+            "focus_position"
+        ] = self.best_focus_position
         observatory_config.save()
