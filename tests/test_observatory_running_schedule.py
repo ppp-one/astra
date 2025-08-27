@@ -340,7 +340,8 @@ def wait_for_schedule_completion(
         logger.error(f"Failed to reload observatory state: {response.text}")
         assert False, "Failed to reload observatory state."
 
-    # clear all tables
+    # clear all tables for schedule run
+    logger.info("Clearing images and polling tables...")
     observatory.cursor.execute("DELETE FROM images")
     observatory.cursor.execute("DELETE FROM polling")
 

@@ -45,6 +45,7 @@ import astropy.units as u
 import numpy as np
 import pandas as pd
 import psutil
+import sqlite3
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
@@ -299,6 +300,14 @@ class Observatory:
         db_name = CONFIG.paths.logs / f"{self.name}.db"
         cursor = Sqlite3Worker(db_name, max_queue_size=2000)
 
+        # Enable WAL mode - critical for concurrent access
+        cursor.execute("PRAGMA journal_mode=WAL")
+
+        # Optimize for high write throughput
+        cursor.execute("PRAGMA synchronous=NORMAL")  # Faster than FULL, safer than OFF
+        cursor.execute("PRAGMA cache_size=10000")  # Increase cache (10MB for large DB)
+        cursor.execute("PRAGMA temp_store=memory")  # Use memory for temp operations
+
         db_command_0 = """CREATE TABLE IF NOT EXISTS polling (
                 device_type   TEXT,
                 device_name TEXT,
@@ -354,56 +363,45 @@ class Observatory:
                 self.logger.warning(f"Disk usage {disk_usage.percent}% is high")
 
             dt_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+            db_path = CONFIG.paths.logs / f"{self.name}.db"
+
+            # create backup directory if not exists
             archive_path = CONFIG.paths.logs / "archive"
             archive_path.mkdir(exist_ok=True)
 
-            # only backup these tables
             tables = ["polling", "log", "autoguider_log", "autoguider_info_log"]
             # 'images', 'autoguider_ref'
 
+            db = sqlite3.connect(db_path)
             for table in tables:
-                # discover columns
-                pragma = self.cursor.execute(
-                    f"SELECT * FROM pragma_table_info('{table}')"
+                # backup table
+                df = pd.read_sql_query(
+                    f"SELECT * FROM {table} WHERE datetime > datetime('now', '-1 days')",
+                    db,
                 )
-                if not pragma or isinstance(pragma, str):
-                    self.logger.error(f"Could not get schema for table {table}")
-                    continue
-                columns = [row[1] for row in pragma]
-
-                # select rows from last 24 hours
-                rows = self.cursor.execute(
-                    f"SELECT * FROM {table} "
-                    "WHERE datetime > datetime('now', '-1 days')"
-                )
-
-                if isinstance(rows, str):
-                    self.logger.error(f"Error backing up {table}: {rows}")
-                    continue
-
-                # write to CSV
-                df = pd.DataFrame(rows or [], columns=columns)
                 df.to_csv(
-                    archive_path / f"{self.name}_{table}_{dt_str}.csv",
+                    os.path.join(
+                        CONFIG.paths.logs,
+                        "archive",
+                        f"{self.name}_{table}_{dt_str}.csv",
+                    ),
                     index=False,
                 )
-                self.logger.debug(f"Backed up {len(df)} rows from {table}")
 
-                # delete old rows
+            for table in tables:
+                # once back up complete, delete rows older than 3 days ago from database
+                # to minimize database size for speed
                 self.cursor.execute(
-                    f"DELETE FROM {table} "
-                    "WHERE datetime < datetime('now', '-3 days')"
+                    f"DELETE FROM {table} WHERE datetime < datetime('now', '-3 days')"
                 )
+
+            db.close()
 
             self.logger.info("Database backed up")
 
         except Exception as e:
             self.error_source.append(
-                {
-                    "device_type": "Backup",
-                    "device_name": "backup",
-                    "error": str(e),
-                }
+                {"device_type": "Backup", "device_name": "backup", "error": str(e)}
             )
             self.logger.error(f"Error backing up database: {str(e)}")
 
@@ -1105,73 +1103,108 @@ class Observatory:
 
         longest_time_to_safe = 0
         longest_max_safe_duration = 0
-        if "ObservingConditions" in self.config:
-            if "closing_limits" in self.config["ObservingConditions"][0]:
-                closing_limits = self.config["ObservingConditions"][0]["closing_limits"]
 
-                for parameter, limits in closing_limits.items():
-                    for limit in limits:
-                        max_safe_duration = limit.get("max_safe_duration", 0)
-                        lower_limit = limit.get("lower")
-                        upper_limit = limit.get("upper")
+        if "ObservingConditions" not in self.config:
+            return True, 0, 0
 
-                        self.logger.debug(
-                            f"Checking internal safety monitor for {parameter} with limits {lower_limit} - {upper_limit}, max_safe_duration {max_safe_duration} minutes"
+        if "closing_limits" not in self.config["ObservingConditions"][0]:
+            return True, 0, 0
+
+        closing_limits = self.config["ObservingConditions"][0]["closing_limits"]
+        # find largest max_safe_duration
+        max_safe_duration = max(
+            limit.get("max_safe_duration", 0)
+            for limits in closing_limits.values()
+            for limit in limits
+        )
+
+        device_type = "ObservingConditions"
+        q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{max_safe_duration*1.1} minutes')"""
+
+        rows = self.cursor.execute(q)
+
+        # Convert to DataFrame
+        columns = [
+            "device_type",
+            "device_name",
+            "device_command",
+            "device_value",
+            "datetime",
+        ]
+
+        df = pd.DataFrame(rows, columns=columns)
+
+        if df.shape[0] == 0:
+            self.logger.warning("No data found for internal safety weather monitor")
+            return True, 0, 0
+
+        # Pivot: datetime as index, device_command as columns
+        df = df.pivot(index="datetime", columns="device_command", values="device_value")
+
+        # Ensure datetime index and numeric values
+        df.index = pd.to_datetime(df.index, utc=True)
+        df = df.sort_index()
+        df = df.apply(pd.to_numeric, errors="coerce")
+
+        # interpolate
+        df = df.interpolate(method="time")
+
+        if "SkyTemperature" in df.columns and "Temperature" in df.columns:
+            df["RelativeSkyTemp"] = df["SkyTemperature"] - df["Temperature"]
+
+        # Check each parameter and its limits
+        for parameter, limits in closing_limits.items():
+            if parameter not in df.columns:
+                self.logger.warning(f"Parameter '{parameter}' not found in DataFrame")
+                continue
+
+            for limit in limits:
+                max_safe_duration = limit.get("max_safe_duration", 0)
+                lower_limit = limit.get("lower")
+                upper_limit = limit.get("upper")
+
+                if lower_limit is not None and upper_limit is not None:
+                    condition = (df[parameter] < lower_limit) | (
+                        df[parameter] > upper_limit
+                    )
+                elif lower_limit is not None:
+                    condition = df[parameter] < lower_limit
+                elif upper_limit is not None:
+                    condition = df[parameter] > upper_limit
+                else:
+                    continue  # no limits defined
+
+                # Apply the condition to the DataFrame
+                _df = df[
+                    condition
+                    & (
+                        df.index
+                        > (
+                            pd.Timestamp.now(tz="UTC")
+                            - pd.Timedelta(minutes=max_safe_duration)
                         )
+                    )
+                ]
 
-                        if parameter == "RelativeSkyTemp":
-                            value_expr = "(CAST(a.device_value AS FLOAT) - CAST(b.device_value AS FLOAT))"
-                            join_clause = """
-                            JOIN polling b 
-                            ON b.device_type = 'ObservingConditions'
-                            AND b.device_command = 'Temperature'
-                            AND ABS(strftime('%s', a.datetime) - strftime('%s', b.datetime)) <= 2.5
-                            """
-                            source_table = "polling a"
-                            command_filter = "a.device_type = 'ObservingConditions' AND a.device_command = 'SkyTemperature'"
-                            datetime_field = "a.datetime"
-                        else:
-                            value_expr = "CAST(device_value AS FLOAT)"
-                            join_clause = ""
-                            source_table = "polling"
-                            command_filter = f"device_type = 'ObservingConditions' AND device_command = '{parameter}'"
-                            datetime_field = "datetime"
+                count = _df.shape[0]
+                if count == 0:
+                    max_datetime = None
+                else:
+                    max_datetime = _df.index.max()
+                if count > 0:
+                    time_since_last_unsafe = pd.to_datetime(
+                        datetime.now(UTC)
+                    ) - pd.to_datetime(max_datetime, utc=True)
 
-                        if lower_limit is not None and upper_limit is not None:
-                            condition = f"({value_expr} < {lower_limit} OR {value_expr} > {upper_limit})"
-                        elif lower_limit is not None:
-                            condition = f"{value_expr} < {lower_limit}"
-                        elif upper_limit is not None:
-                            condition = f"{value_expr} > {upper_limit}"
-                        else:
-                            continue  # no limits defined
+                    current_time_to_safe = (
+                        max_safe_duration - time_since_last_unsafe.total_seconds() / 60
+                    )
 
-                        q = f"""
-                        SELECT COUNT(*), MAX({datetime_field})
-                        FROM {source_table}
-                        {join_clause}
-                        WHERE {command_filter}
-                        AND {condition}
-                        AND {datetime_field} > datetime('now', '-{max_safe_duration} minutes')
-                        """
+                    if current_time_to_safe > longest_time_to_safe:
+                        longest_time_to_safe = current_time_to_safe
 
-                        rows = self.cursor.execute(q)
-
-                        if rows[0][0] > 0:
-                            time_since_last_unsafe = pd.to_datetime(
-                                datetime.now(UTC)
-                            ) - pd.to_datetime(rows[0][1], utc=True)
-
-                            current_time_to_safe = (
-                                max_safe_duration
-                                - time_since_last_unsafe.total_seconds() / 60
-                            )
-
-                            if current_time_to_safe > longest_time_to_safe:
-                                longest_time_to_safe = current_time_to_safe
-
-                            if max_safe_duration > longest_max_safe_duration:
-                                longest_max_safe_duration = max_safe_duration
+                    if max_safe_duration > longest_max_safe_duration:
+                        longest_max_safe_duration = max_safe_duration
 
         return (
             longest_time_to_safe == 0,
