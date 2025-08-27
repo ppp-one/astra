@@ -45,6 +45,7 @@ import astropy.units as u
 import numpy as np
 import pandas as pd
 import psutil
+import sqlite3
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
@@ -354,56 +355,45 @@ class Observatory:
                 self.logger.warning(f"Disk usage {disk_usage.percent}% is high")
 
             dt_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+            db_path = CONFIG.paths.logs / f"{self.name}.db"
+
+            # create backup directory if not exists
             archive_path = CONFIG.paths.logs / "archive"
             archive_path.mkdir(exist_ok=True)
 
-            # only backup these tables
             tables = ["polling", "log", "autoguider_log", "autoguider_info_log"]
             # 'images', 'autoguider_ref'
 
+            db = sqlite3.connect(db_path)
             for table in tables:
-                # discover columns
-                pragma = self.cursor.execute(
-                    f"SELECT * FROM pragma_table_info('{table}')"
+                # backup table
+                df = pd.read_sql_query(
+                    f"SELECT * FROM {table} WHERE datetime > datetime('now', '-1 days')",
+                    db,
                 )
-                if not pragma or isinstance(pragma, str):
-                    self.logger.error(f"Could not get schema for table {table}")
-                    continue
-                columns = [row[1] for row in pragma]
-
-                # select rows from last 24 hours
-                rows = self.cursor.execute(
-                    f"SELECT * FROM {table} "
-                    "WHERE datetime > datetime('now', '-1 days')"
-                )
-
-                if isinstance(rows, str):
-                    self.logger.error(f"Error backing up {table}: {rows}")
-                    continue
-
-                # write to CSV
-                df = pd.DataFrame(rows or [], columns=columns)
                 df.to_csv(
-                    archive_path / f"{self.name}_{table}_{dt_str}.csv",
+                    os.path.join(
+                        CONFIG.paths.logs,
+                        "archive",
+                        f"{self.name}_{table}_{dt_str}.csv",
+                    ),
                     index=False,
                 )
-                self.logger.debug(f"Backed up {len(df)} rows from {table}")
 
-                # delete old rows
+            for table in tables:
+                # once back up complete, delete rows older than 3 days ago from database
+                # to minimize database size for speed
                 self.cursor.execute(
-                    f"DELETE FROM {table} "
-                    "WHERE datetime < datetime('now', '-3 days')"
+                    f"DELETE FROM {table} WHERE datetime < datetime('now', '-3 days')"
                 )
+
+            db.close()
 
             self.logger.info("Database backed up")
 
         except Exception as e:
             self.error_source.append(
-                {
-                    "device_type": "Backup",
-                    "device_name": "backup",
-                    "error": str(e),
-                }
+                {"device_type": "Backup", "device_name": "backup", "error": str(e)}
             )
             self.logger.error(f"Error backing up database: {str(e)}")
 
