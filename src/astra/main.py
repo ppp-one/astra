@@ -8,6 +8,7 @@ from datetime import UTC
 from glob import glob
 from io import BytesIO
 from pathlib import Path
+import sqlite3
 
 import httpx
 import matplotlib.pyplot as plt
@@ -40,6 +41,11 @@ LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
+
+
+def observatory_db(name):
+    db = sqlite3.connect(CONFIG.paths.logs / f"{name}.db")
+    return db
 
 
 def load_observatories():
@@ -385,25 +391,15 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
 async def polling(
     observatory: str, device_type: str, day: float = 1, since: str = None
 ):
-    obs = OBSERVATORIES[observatory]
+    db = observatory_db(observatory)
     if since:
         # Only fetch new records since the given timestamp
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > '{since}'"""
     else:
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{day} day')"""
 
-    rows = obs.cursor.execute(q)
-    if isinstance(rows, str):
-        # Handle error case
-        return {"error": f"Database error: {rows}"}
-
-    # Convert to DataFrame - discover columns first
-    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('polling')")
-    if not pragma or isinstance(pragma, str):
-        return {"error": "Could not get polling table schema"}
-    columns = [row[1] for row in pragma]
-
-    df = pd.DataFrame(rows or [], columns=columns)
+    df = pd.read_sql_query(q, db)
+    db.close()
 
     # Pivot: datetime as index, device_command as columns
     df = df.pivot(index="datetime", columns="device_command", values="device_value")
@@ -465,21 +461,12 @@ async def polling(
 
 @app.get("/api/log/{observatory}")
 async def log(observatory: str, datetime: str, limit: int = 100):
-    obs = OBSERVATORIES[observatory]
+    db = observatory_db(observatory)
     q = f"""SELECT * FROM (SELECT * FROM log WHERE datetime < '{datetime}' ORDER BY datetime DESC LIMIT {limit}) a ORDER BY datetime ASC"""
 
-    rows = obs.cursor.execute(q)
-    if isinstance(rows, str):
-        # Handle error case
-        return {"error": f"Database error: {rows}"}
+    df = pd.read_sql_query(q, db)
 
-    # Convert to DataFrame - discover columns first
-    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('log')")
-    if not pragma or isinstance(pragma, str):
-        return {"error": "Could not get log table schema"}
-    columns = [row[1] for row in pragma]
-
-    df = pd.DataFrame(rows or [], columns=columns)
+    db.close()
 
     return df.to_dict(orient="records")
 
@@ -489,21 +476,9 @@ async def websocket_log(websocket: WebSocket, observatory: str):
     await websocket.accept()
     obs = OBSERVATORIES[observatory]
 
+    db = observatory_db(observatory)
     q = """SELECT * FROM (SELECT * FROM log ORDER BY datetime DESC LIMIT 100) a ORDER BY datetime ASC"""
-    rows = obs.cursor.execute(q)
-    if isinstance(rows, str):
-        # Handle error case
-        await websocket.close(code=1011, reason=f"Database error: {rows}")
-        return
-
-    # Convert to DataFrame - discover columns first
-    pragma = obs.cursor.execute("SELECT * FROM pragma_table_info('log')")
-    if not pragma or isinstance(pragma, str):
-        await websocket.close(code=1011, reason="Could not get log table schema")
-        return
-    columns = [row[1] for row in pragma]
-
-    initial_df = pd.DataFrame(rows or [], columns=columns)
+    initial_df = pd.read_sql_query(q, db)
 
     last_time = initial_df.datetime.iloc[-1]
 
@@ -526,14 +501,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
         if len(initial_log) > 0:
             q = f"""SELECT * FROM log WHERE datetime > '{last_time}'"""
 
-        rows = obs.cursor.execute(q)
-        if isinstance(rows, str):
-            # Handle error case
-            print(f"Database error in websocket: {rows}")
-            socket = False
-            break
-
-        df = pd.DataFrame(rows or [], columns=columns)
+        df = pd.read_sql_query(q, db)
         data = df.to_dict(orient="records")
 
         data_dict = {}
@@ -546,6 +514,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
             await websocket.send_json(data_dict)
             await asyncio.sleep(1)
         except:
+            db.close()
             print("log socket closed")
             socket = False
 
