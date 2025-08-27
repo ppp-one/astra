@@ -1154,6 +1154,9 @@ class Observatory:
 
         # Check each parameter and its limits
         for parameter, limits in closing_limits.items():
+            if parameter not in df.columns:
+                self.logger.warning(f"Parameter '{parameter}' not found in DataFrame")
+                continue
 
             for limit in limits:
                 max_safe_duration = limit.get("max_safe_duration", 0)
