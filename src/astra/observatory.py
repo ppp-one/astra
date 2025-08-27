@@ -300,6 +300,14 @@ class Observatory:
         db_name = CONFIG.paths.logs / f"{self.name}.db"
         cursor = Sqlite3Worker(db_name, max_queue_size=2000)
 
+        # Enable WAL mode - critical for concurrent access
+        cursor.execute("PRAGMA journal_mode=WAL")
+
+        # Optimize for high write throughput
+        cursor.execute("PRAGMA synchronous=NORMAL")  # Faster than FULL, safer than OFF
+        cursor.execute("PRAGMA cache_size=10000")  # Increase cache (10MB for large DB)
+        cursor.execute("PRAGMA temp_store=memory")  # Use memory for temp operations
+
         db_command_0 = """CREATE TABLE IF NOT EXISTS polling (
                 device_type   TEXT,
                 device_name TEXT,
