@@ -68,7 +68,7 @@ def create_image_dir(
 
     if user_specified_dir:
         folder = Path(user_specified_dir)
-        folder.mkdir(exist_ok=True)
+        folder.mkdir(parents=True, exist_ok=True)
     else:
         date_str = (schedule_start_time + timedelta(hours=site_long / 15)).strftime(
             "%Y%m%d"
@@ -177,13 +177,13 @@ def save_image(
     # update FITS header
     hdr["DATE-OBS"] = (
         dateobs.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-        "UTC date/time of exposure start",
+        "UTC datetime file written",
     )
 
     date = datetime.now(UTC)
     hdr["DATE"] = (
         date.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-        "UTC date/time when this file was written",
+        "UTC datetime start of exposure",
     )
 
     # add WCS information
