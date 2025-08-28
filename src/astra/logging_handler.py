@@ -74,7 +74,7 @@ class LoggingHandler(logging.Handler):
             All log records are stored in the 'log' database table with timestamp,
             level, module, function, line number, and message.
         """
-        if record.levelno == logging.ERROR:
+        if record.levelno >= logging.ERROR:
             self.instance.error_free = False
 
         print(f"[{record.levelname}] {record.msg} {str(record.exc_info)}")
@@ -82,7 +82,6 @@ class LoggingHandler(logging.Handler):
         dt_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         level = record.levelname.lower()
         message = record.msg if isinstance(record.msg, str) else str(record.msg)
-        message.replace("\n", " ")
 
         if record.exc_info:
             message += "\n" + "".join(traceback.format_exception(*record.exc_info))
@@ -96,8 +95,3 @@ class LoggingHandler(logging.Handler):
         self.instance.cursor.execute(
             f"INSERT INTO log VALUES ('{dt_str}', '{level}', '{message}')"
         )
-
-        # self.instance.cursor.execute(
-        #     "INSERT INTO log (datetime, level, message) VALUES (?, ?, ?)",
-        #     (dt_str, level, message),
-        # )
