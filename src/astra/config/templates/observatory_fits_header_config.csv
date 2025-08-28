@@ -17,9 +17,9 @@ OBSERVER,str,true,astra_fixed,Astra,Name of the observer
 OBJECT,str,true,astra,,Target as given by the user
 RADESYS,str,true,astra_fixed,FK5,Reference system
 EQUINOX,float,true,astra_fixed,2000,Catalog equinox of the object coords
-DATE,str,false,astra,,[ISO 8601] UTC date/time when this file was written
+DATE,str,false,astra,,UTC datetime file written
 MJD-OBS,float,false,astra,,Modified Julian Date at start of exposure
-DATE-OBS,str,false,astra,,[ISO 8601] UTC date/time at start of exposure
+DATE-OBS,str,false,astra,,UTC datetime start of exposure
 TIMESYS,str,true,astra_fixed,UTC,Time system used
 EXPTIME,float,true,astra,,[s] Exposure time
 LST,float,false,astra,,[s] Local Sidereal Time at start of exposure
