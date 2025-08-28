@@ -1,8 +1,22 @@
+"""Configuration management for Astra observatory automation system.
+
+This module provides configuration classes for managing Astra's settings,
+observatory configurations, and asset paths. It handles YAML configuration
+files, directory initialization, and provides a singleton pattern for
+global configuration access.
+
+Classes:
+    Config: Main configuration singleton for Astra settings
+    AssetPaths: Container for asset directory paths
+    ObservatoryConfig: Observatory-specific configuration management
+    _ConfigInitialiser: Helper class for initial configuration setup
+"""
+
 import filecmp
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union, Any
 
 import yaml
 
@@ -35,9 +49,10 @@ class Config:
     TEMPLATE_DIR = Path(__file__).parent / "config" / "templates"
     TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-    _instance = None
+    _instance: Optional["Config"] = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args: Any, **kwargs: Any) -> "Config":
+        """Ensure singleton pattern - only one Config instance exists."""
         if cls._instance is None:
             cls._instance = super(Config, cls).__new__(cls)
         return cls._instance
@@ -45,10 +60,10 @@ class Config:
     def __init__(
         self,
         observatory_name: Optional[str] = None,
-        folder_assets: Optional[Path | str] = None,
-        gaia_db: Optional[Path | str] = None,
+        folder_assets: Optional[Union[Path, str]] = None,
+        gaia_db: Optional[Union[Path, str]] = None,
         allow_default: bool = False,
-    ):
+    ) -> None:
         """Initialise the configuration settings.
 
         Args:
@@ -73,8 +88,12 @@ class Config:
 
         self._initialize_observatory_files(allow_default=allow_default)
 
-    def reset(self, remove_assets=False):
-        """Resets the configuration, optionally removing associated asset folders."""
+    def reset(self, remove_assets: bool = False) -> None:
+        """Reset configuration by removing config file and optionally assets.
+
+        Args:
+            remove_assets: If True, also removes the assets folder after confirmation.
+        """
         if remove_assets:
             prompt = (
                 input(f"Are you sure you want to remove {self.folder_assets}? [y/n]: ")
@@ -91,8 +110,8 @@ class Config:
 
         return None
 
-    def save(self):
-        """Saves the current configuration settings to the YAML file."""
+    def save(self) -> None:
+        """Save current configuration settings to YAML file."""
 
         _ConfigInitialiser._validate_paths(
             folder_assets=self.folder_assets, gaia_db=self.gaia_db
@@ -107,16 +126,33 @@ class Config:
             yaml.dump(config, file)
 
     def as_datetime(self, date_string: str) -> datetime:
-        """Convert a string to a datetime object using the configured format."""
+        """Convert string to datetime using configured format.
+
+        Args:
+            date_string: Date string to convert.
+
+        Returns:
+            datetime: Parsed datetime object.
+        """
         return datetime.strptime(date_string, self.TIME_FORMAT)
 
     def _load_from_file(self) -> Dict[str, str]:
+        """Load configuration from YAML file.
+
+        Returns:
+            dict: Configuration data from file.
+        """
         with open(self.CONFIG_PATH, "r") as file:
             config = yaml.safe_load(file)
 
         return config
 
-    def _initialize_observatory_files(self, allow_default: bool):
+    def _initialize_observatory_files(self, allow_default: bool) -> None:
+        """Initialize observatory configuration files from templates.
+
+        Args:
+            allow_default: If False, raises SystemExit when files remain unchanged.
+        """
         if not self.TEMPLATE_DIR.exists():
             raise FileNotFoundError(
                 f"Template directory {self.TEMPLATE_DIR} not found."
@@ -158,9 +194,13 @@ class Config:
 
 
 class AssetPaths:
-    """Container with paths to asset directories and the log_file used by Astra."""
+    """Container for asset directory paths and log file used by Astra.
 
-    def __init__(self, folder_assets: Path | str):
+    Manages the creation and organization of Astra's asset directories
+    including configuration, schedules, images, and logs.
+    """
+
+    def __init__(self, folder_assets: Union[Path, str]) -> None:
         if isinstance(folder_assets, str):
             folder_assets = Path(folder_assets)
 
@@ -173,7 +213,7 @@ class AssetPaths:
 
         self._initialize_folders_and_log_file()
 
-    def _initialize_folders_and_log_file(self):
+    def _initialize_folders_and_log_file(self) -> None:
         """Create necessary folders and the log file if they do not exist."""
         for folder in (
             self.assets,
@@ -205,17 +245,27 @@ class AssetPaths:
 
 
 class _ConfigInitialiser:
-    """Initialises the configuration settings for Astra."""
+    """Helper class for initial configuration setup through user prompts.
+
+    Handles the first-time setup process including directory creation,
+    user input validation, and initial configuration file generation.
+    """
 
     DEFAULT_ASSETS_PATH = Path.home() / "Documents" / "Astra"
 
     @staticmethod
     def run(
         observatory_name: Optional[str],
-        folder_assets: Optional[str | Path],
-        gaia_db: Optional[str | Path],
-    ):
-        """Create initial configuration through user prompts."""
+        folder_assets: Optional[Union[str, Path]],
+        gaia_db: Optional[Union[str, Path]],
+    ) -> None:
+        """Create initial configuration through user prompts.
+
+        Args:
+            observatory_name: Name of the observatory.
+            folder_assets: Path to assets folder.
+            gaia_db: Path to Gaia database file.
+        """
         if any(item is None for item in (observatory_name, folder_assets, gaia_db)):
             print("\nWelcome to Astra! Please provide the following information:\n")
         else:
@@ -248,7 +298,11 @@ class _ConfigInitialiser:
 
     @staticmethod
     def _prompt_assets_path() -> Path:
-        """Prompt user for assets folder location."""
+        """Prompt user for assets folder location.
+
+        Returns:
+            Path: Validated path to assets folder.
+        """
         while True:
             use_default = (
                 input(
@@ -279,8 +333,12 @@ class _ConfigInitialiser:
                 print("Please enter 'y' or 'n'.")
 
     @staticmethod
-    def _prompt_gaia_db_path() -> str | None:
-        """Prompt user for Gaia DB location."""
+    def _prompt_gaia_db_path() -> Optional[str]:
+        """Prompt user for Gaia database location.
+
+        Returns:
+            str or None: Path to Gaia database file or None if not using local DB.
+        """
         while True:
             use_local = input("\nUse local Gaia DB? [y/n]: ").strip().lower()
 
@@ -296,9 +354,18 @@ class _ConfigInitialiser:
 
     @staticmethod
     def _validate_paths(
-        folder_assets: Optional[str | Path], gaia_db: Optional[str | Path]
-    ):
-        """Validate the arguments provided by the user."""
+        folder_assets: Optional[Union[str, Path]], gaia_db: Optional[Union[str, Path]]
+    ) -> None:
+        """Validate user-provided path arguments.
+
+        Args:
+            folder_assets: Path to assets folder.
+            gaia_db: Path to Gaia database file.
+
+        Raises:
+            TypeError: If paths are not str or Path types.
+            FileNotFoundError: If gaia_db path doesn't exist.
+        """
         if folder_assets is not None and not isinstance(folder_assets, (str, Path)):
             raise TypeError(f"Expected str or Path, got {type(folder_assets)}")
 
@@ -310,54 +377,72 @@ class _ConfigInitialiser:
 
 
 class ObservatoryConfig(dict):
-    """
-    Examples
-    --------
-    >>> from astra.config import ObservatoryConfig
-    >>> observatory_config = ObservatoryConfig.from_config()
+    """Observatory-specific configuration management with YAML persistence.
+
+    Extends dict to provide configuration loading, saving, backup creation,
+    and automatic reload detection for observatory configuration files.
+
+    Examples:
+        >>> from astra.config import ObservatoryConfig
+        >>> observatory_config = ObservatoryConfig.from_config()
     """
 
-    def __init__(self, config_path: str | Path, observatory_name: str):
-        self.config_path = (
+    def __init__(self, config_path: Union[str, Path], observatory_name: str) -> None:
+        self.config_path: Path = (
             config_path if isinstance(config_path, Path) else Path(config_path)
         )
-        self.observatory_name = observatory_name
-        self._config_last_modified = None
+        self.observatory_name: str = observatory_name
+        self._config_last_modified: Optional[float] = None
         self.load()
 
     @property
     def file_path(self) -> Path:
-        """Returns the path to the observatory configuration yaml file."""
+        """Get path to the observatory configuration YAML file."""
         return self.config_path / f"{self.observatory_name}_config.yml"
 
-    def load(self):
-        """Loads the observatory configuration file."""
+    def load(self) -> None:
+        """Load observatory configuration from YAML file."""
         with open(self.file_path, "r") as file:
             config = yaml.safe_load(file)
         self.update(config)
         self._config_last_modified = self.file_path.stat().st_mtime
 
-    def reload(self):
-        """Reloads the observatory configuration file."""
+    def reload(self) -> "ObservatoryConfig":
+        """Reload configuration if file has been modified.
+
+        Returns:
+            ObservatoryConfig: Self for method chaining.
+        """
         if self.is_outdated():
             self.load()
         return self
 
-    def save(self, file_path: str | Path | None = None):
-        """Saves the observatory configuration file."""
+    def save(self, file_path: Optional[Union[str, Path]] = None) -> None:
+        """Save configuration to YAML file with automatic backup.
+
+        Args:
+            file_path: Optional custom save path, defaults to original file path.
+        """
         config = dict(self)
         file_path = self.file_path if file_path is None else file_path
         self.save_backup()
         with open(file_path, "w") as file:
             yaml.dump(config, file)
 
-    def save_backup(self):
-        """Creates a backup of the observatory configuration file."""
+    def save_backup(self) -> None:
+        """Create timestamped backup of current configuration file."""
         backup_path = self.backup_file_path()
         os.rename(self.file_path, backup_path)
 
     def backup_file_path(self, datetime_str: str = "") -> Path:
-        """Returns the file path of a backup of the observatory configuration file."""
+        """Get backup file path with timestamp.
+
+        Args:
+            datetime_str: Optional custom datetime string, defaults to current time.
+
+        Returns:
+            Path: Full path to backup file.
+        """
         if not datetime_str:
             datetime_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         backup_dir = self.config_path / "backups"
@@ -365,13 +450,29 @@ class ObservatoryConfig(dict):
         return backup_dir / f"{datetime_str}_{self.observatory_name}_config_backup.yml"
 
     def is_outdated(self) -> bool:
+        """Check if configuration file has been modified since last load.
+
+        Returns:
+            bool: True if file has been modified externally.
+        """
         current_mod_time = self.file_path.stat().st_mtime
         if self._config_last_modified is None:
             return True
         return current_mod_time != self._config_last_modified
 
     @classmethod
-    def from_config(cls, config: Optional[Config] = None):
+    def from_config(cls, config: Optional[Config] = None) -> "ObservatoryConfig":
+        """Create ObservatoryConfig from main Config instance.
+
+        Args:
+            config: Main Config instance, creates new one if None.
+
+        Returns:
+            ObservatoryConfig: Configured instance for the observatory.
+
+        Raises:
+            TypeError: If config is not a Config instance.
+        """
         if config is None:
             config = Config()
 

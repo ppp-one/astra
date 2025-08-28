@@ -1,3 +1,19 @@
+"""Main FastAPI application for Astra observatory automation system.
+
+This module provides a web-based interface for controlling and monitoring multiple
+astronomical observatories. It handles real-time device status updates, schedule
+management, image display, logging, and WebSocket communications for the observatory
+control system.
+
+Key features:
+- Multi-observatory support with device monitoring
+- Real-time WebSocket updates for device status
+- Schedule upload and editing capabilities
+- Image conversion and display (FITS to JPEG)
+- Database logging and telemetry storage
+- Safety monitoring and robotic operation control
+"""
+
 import asyncio
 import datetime
 import logging
@@ -43,12 +59,26 @@ TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
 
 
-def observatory_db(name):
+def observatory_db(name: str) -> sqlite3.Connection:
+    """Get database connection for observatory logging.
+
+    Args:
+        name (str): Observatory name for database file.
+
+    Returns:
+        sqlite3.Connection: Database connection object.
+    """
     db = sqlite3.connect(CONFIG.paths.logs / f"{name}.db")
     return db
 
 
-def load_observatories():
+def load_observatories() -> None:
+    """Load and initialize all observatory configurations.
+
+    Discovers observatory config files, creates Observatory instances,
+    establishes device connections, and sets up filter wheel mappings.
+    Updates global OBSERVATORIES, WEBCAMFEEDS, and FWS dictionaries.
+    """
     global OBSERVATORIES  # not sure if this is necessary
     global WEBCAMFEEDS
     global FWS
@@ -79,7 +109,12 @@ def load_observatories():
                 )
 
 
-def clean_up():
+def clean_up() -> None:
+    """Clean up and stop all observatory devices before shutdown.
+
+    Iterates through all observatories and device types to safely
+    stop all connected devices. Handles exceptions during shutdown.
+    """
     for obs in OBSERVATORIES.values():
         # Get all the devices
         for device_type in obs.devices:
@@ -96,7 +131,15 @@ def clean_up():
     print("Exiting clean_up")
 
 
-def format_time(ftime: datetime.datetime):
+def format_time(ftime: datetime.datetime) -> str | None:
+    """Format datetime object to HH:MM:SS string.
+
+    Args:
+        ftime (datetime.datetime): Datetime object to format.
+
+    Returns:
+        str | None: Formatted time string or None if formatting fails.
+    """
     # if ftime is not NaTType:
     try:
         return ftime.strftime("%H:%M:%S")
@@ -104,7 +147,21 @@ def format_time(ftime: datetime.datetime):
         return None
 
 
-def convert_fits_to_jpg(fits_file, observatory):
+def convert_fits_to_jpg(fits_file: str, observatory: str) -> tuple[str, dict]:
+    """Convert FITS astronomical image to JPEG for web display.
+
+    Opens FITS file, extracts image data and headers, applies Z-scale
+    normalization, and saves as JPEG. Removes old JPEG files for the
+    observatory before creating new one.
+
+    Args:
+        fits_file (str): Path to FITS file to convert.
+        observatory (str): Observatory name for file management.
+
+    Returns:
+        tuple[str, dict]: Filepath (relative path to JPEG) and headers
+            (extracted FITS header information).
+    """
     # Open the FITS file
     headers = {}
     with fits.open(fits_file) as hdulist:
@@ -137,6 +194,17 @@ def convert_fits_to_jpg(fits_file, observatory):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """FastAPI lifespan context manager for startup and shutdown.
+
+    Handles application startup (loading observatories) and shutdown
+    (cleaning up device connections) lifecycle events.
+
+    Args:
+        app (FastAPI): FastAPI application instance.
+
+    Yields:
+        None: Application runs between yield statements.
+    """
     # Load observatories
     load_observatories()
     yield
@@ -148,7 +216,20 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/video/{observatory}/{filename:path}", include_in_schema=False)
-async def get_video(request: Request, observatory, filename: str = None):
+async def get_video(request: Request, observatory: str, filename: str = None):
+    """Proxy video streams from observatory webcams.
+
+    Forwards HTTP requests to webcam feeds, handling both MP4 video
+    streams and HTML content with appropriate media types.
+
+    Args:
+        request (Request): FastAPI request object with headers.
+        observatory (str): Observatory name for webcam lookup.
+        filename (str): Video filename or path to stream.
+
+    Returns:
+        StreamingResponse: Proxied video content with appropriate headers.
+    """
     headers = request.headers
     base_url = WEBCAMFEEDS[observatory]
     target_url = f"{base_url}/{filename}"
@@ -172,6 +253,14 @@ async def get_video(request: Request, observatory, filename: str = None):
 
 @app.get("/api/heartbeat/{observatory}")
 async def heartbeat(observatory: str):
+    """Get observatory heartbeat status for health monitoring.
+
+    Args:
+        observatory (str): Observatory name to check.
+
+    Returns:
+        dict: JSON response with heartbeat status data.
+    """
     obs = OBSERVATORIES[observatory]
 
     return {"status": "success", "data": obs.heartbeat, "message": ""}
@@ -190,6 +279,17 @@ async def heartbeat(observatory: str):
 
 @app.get("/api/close/{observatory}")
 def close_observatory(observatory: str):
+    """Close observatory and stop all operations safely.
+
+    Stops running schedule if active and closes the observatory.
+    Logs all actions for audit trail.
+
+    Args:
+        observatory (str): Observatory name to close.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated closing of observatory from web interface")
@@ -208,6 +308,18 @@ def close_observatory(observatory: str):
 
 @app.get("/api/cool_camera/{observatory}/{device_name}")
 def cool_camera(observatory: str, device_name: str):
+    """Initiate camera cooling to configured target temperature.
+
+    Gets camera configuration and starts cooling process to the
+    specified set temperature with defined tolerance.
+
+    Args:
+        observatory (str): Observatory name containing the camera.
+        device_name (str): Camera device name to cool.
+
+    Returns:
+        dict: JSON response with operation status and cooling details.
+    """
     obs = OBSERVATORIES[observatory]
 
     row = {"device_name": device_name}
@@ -237,7 +349,15 @@ def cool_camera(observatory: str, device_name: str):
 
 
 @app.get("/api/complete_headers/{observatory}")
-def cool_camera(observatory: str):
+def complete_headers(observatory: str):
+    """Complete FITS header processing for observatory images.
+
+    Args:
+        observatory (str): Observatory name to process headers for.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated completion of headers from web interface")
@@ -249,6 +369,17 @@ def cool_camera(observatory: str):
 
 @app.get("/api/startwatchdog/{observatory}")
 async def start_watchdog(observatory: str):
+    """Start observatory watchdog monitoring system.
+
+    Resets error states and starts the watchdog process for
+    continuous observatory health monitoring.
+
+    Args:
+        observatory (str): Observatory name to start watchdog for.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated starting of watchdog from web interface")
@@ -262,6 +393,14 @@ async def start_watchdog(observatory: str):
 
 @app.get("/api/stopwatchdog/{observatory}")
 async def stop_watchdog(observatory: str):
+    """Stop observatory watchdog monitoring system.
+
+    Args:
+        observatory (str): Observatory name to stop watchdog for.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated stopping of watchdog from web interface")
@@ -273,6 +412,14 @@ async def stop_watchdog(observatory: str):
 
 @app.get("/api/roboticswitch/{observatory}")
 async def roboticswitch(observatory: str):
+    """Toggle observatory robotic operation mode.
+
+    Args:
+        observatory (str): Observatory name to toggle robotic mode for.
+
+    Returns:
+        dict: JSON response with current robotic switch state.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated robotic switch from web interface")
@@ -284,6 +431,14 @@ async def roboticswitch(observatory: str):
 
 @app.get("/api/startschedule/{observatory}")
 async def start_schedule(observatory: str):
+    """Start executing the observatory's observation schedule.
+
+    Args:
+        observatory (str): Observatory name to start schedule for.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated starting of schedule from web interface")
@@ -295,6 +450,14 @@ async def start_schedule(observatory: str):
 
 @app.get("/api/stopschedule/{observatory}")
 async def stop_schedule(observatory: str):
+    """Stop executing the observatory's observation schedule.
+
+    Args:
+        observatory (str): Observatory name to stop schedule for.
+
+    Returns:
+        dict: JSON response with operation status.
+    """
     obs = OBSERVATORIES[observatory]
 
     obs.logger.info(f"User initiated stopping of schedule from web interface")
@@ -306,6 +469,15 @@ async def stop_schedule(observatory: str):
 
 @app.get("/api/schedule/{observatory}")
 async def schedule(observatory: str):
+    """Get current observatory schedule with formatted times.
+
+    Args:
+        observatory (str): Observatory name to get schedule for.
+
+    Returns:
+        list: Schedule items with start/end times formatted as HH:MM:SS,
+              or empty list if no schedule exists.
+    """
     obs = OBSERVATORIES[observatory]
     if obs.schedule_mtime != 0:
         schedule = obs.schedule
@@ -325,6 +497,17 @@ async def schedule(observatory: str):
 async def edit_schedule(
     observatory: str, schedule_data: str = Body(..., media_type="text/plain")
 ):
+    """Update observatory schedule from web editor.
+
+    Parses JSONL schedule data and saves to observatory schedule file.
+
+    Args:
+        observatory (str): Observatory name to update schedule for.
+        schedule_data (str): JSONL formatted schedule data.
+
+    Returns:
+        dict: Status response with success/error information.
+    """
     obs = OBSERVATORIES[observatory]
 
     schedule_path = obs.schedule_path
@@ -360,9 +543,17 @@ async def edit_schedule(
         }
 
 
-# upload schedule file
 @app.post("/api/uploadschedule/{observatory}")
 async def upload_schedule(observatory: str, file: UploadFile = File(...)):
+    """Upload schedule file to replace current observatory schedule.
+
+    Args:
+        observatory (str): Observatory name to upload schedule for.
+        file (UploadFile): Uploaded schedule file in JSONL format.
+
+    Returns:
+        dict: Upload status response with success/error information.
+    """
     obs = OBSERVATORIES[observatory]
 
     try:
@@ -391,6 +582,20 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
 async def polling(
     observatory: str, device_type: str, day: float = 1, since: str = None
 ):
+    """Get device polling data from observatory database.
+
+    Retrieves and processes telemetry data for specific device types,
+    including pivot formatting, safety limits, and statistical grouping.
+
+    Args:
+        observatory (str): Observatory name to query data for.
+        device_type (str): Type of device (e.g., 'ObservingConditions').
+        day (float): Number of days back to retrieve data. Defaults to 1.
+        since (str): Optional timestamp to get only newer records.
+
+    Returns:
+        dict: Processed polling data with safety limits and latest values.
+    """
     db = observatory_db(observatory)
     if since:
         # Only fetch new records since the given timestamp
@@ -461,6 +666,16 @@ async def polling(
 
 @app.get("/api/log/{observatory}")
 async def log(observatory: str, datetime: str, limit: int = 100):
+    """Get observatory log entries before specified datetime.
+
+    Args:
+        observatory (str): Observatory name to query logs for.
+        datetime (str): Upper limit datetime for log entries.
+        limit (int): Maximum number of log entries to return. Defaults to 100.
+
+    Returns:
+        list: Log entries as dictionary records.
+    """
     db = observatory_db(observatory)
     q = f"""SELECT * FROM (SELECT * FROM log WHERE datetime < '{datetime}' ORDER BY datetime DESC LIMIT {limit}) a ORDER BY datetime ASC"""
 
@@ -473,6 +688,15 @@ async def log(observatory: str, datetime: str, limit: int = 100):
 
 @app.websocket("/ws/log/{observatory}")
 async def websocket_log(websocket: WebSocket, observatory: str):
+    """WebSocket endpoint for real-time log streaming.
+
+    Provides initial log history and streams new log entries as they
+    are added to the database. Also includes schedule modification time.
+
+    Args:
+        websocket (WebSocket): WebSocket connection object.
+        observatory (str): Observatory name for log streaming.
+    """
     await websocket.accept()
     obs = OBSERVATORIES[observatory]
 
@@ -521,6 +745,16 @@ async def websocket_log(websocket: WebSocket, observatory: str):
 
 @app.websocket("/ws/{observatory}")
 async def websocket_endpoint(websocket: WebSocket, observatory: str):
+    """Main WebSocket endpoint for real-time observatory status updates.
+
+    Streams comprehensive observatory status including device polling data,
+    system health, operational status, and latest images. Handles FITS to
+    JPEG conversion for image display.
+
+    Args:
+        websocket (WebSocket): WebSocket connection object.
+        observatory (str): Observatory name for status monitoring.
+    """
     global LAST_IMAGE, LAST_IMAGE_JPG, USEFUL_HEADERS
 
     await websocket.accept()
@@ -937,9 +1171,16 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
 @app.get("/autofocus", include_in_schema=False)
 async def autofocus(request: Request):
-    """TODO: Implement
-    Pass the csv file and the fits file_names
-    Call fits files in the csv file
+    """Autofocus web interface endpoint (TODO: Implement).
+
+    Placeholder for autofocus functionality that will process CSV
+    files with FITS image references for focus analysis.
+
+    Args:
+        request (Request): FastAPI request object.
+
+    Returns:
+        TemplateResponse: HTML template for autofocus interface.
     """
     return FRONTEND.TemplateResponse(
         "autofocus.html.j2",
@@ -955,29 +1196,18 @@ async def autofocus(request: Request):
 
 @app.get("/schedule/{observatory}")
 async def get_schedule(request: Request, observatory: str):
-    obs = OBSERVATORIES[observatory]
+    """Serve schedule editor page with current schedule data.
 
-    # Read the raw JSONL file to preserve original datetime string format
-    schedule_path = obs.schedule_path
-    try:
-        with open(schedule_path, "r") as f:
-            schedule_jsonl = f.read().strip()
-    except (FileNotFoundError, IOError):
-        schedule_jsonl = ""
+    Loads raw JSONL schedule file preserving original datetime
+    format for the web-based schedule editor interface.
 
-    return FRONTEND.TemplateResponse(
-        "schedule.html.j2",
-        {
-            "request": request,
-            "observatory": observatory,
-            "schedule": schedule_jsonl,
-        },
-        request=request,
-    )
+    Args:
+        request (Request): FastAPI request object.
+        observatory (str): Observatory name to load schedule for.
 
-
-@app.get("/schedule/{observatory}")
-async def get_schedule(request: Request, observatory: str):
+    Returns:
+        TemplateResponse: HTML template with schedule editor and data.
+    """
     obs = OBSERVATORIES[observatory]
 
     # Read the raw JSONL file to preserve original datetime string format
@@ -1001,6 +1231,19 @@ async def get_schedule(request: Request, observatory: str):
 
 @app.get("/{path:path}", include_in_schema=False)
 async def serve_files(request: Request, path: str = ""):
+    """Serve static files and main application interface.
+
+    Handles routing for the main dashboard, favicon, JavaScript files,
+    and frontend assets. Returns 404 for unknown paths.
+
+    Args:
+        request (Request): FastAPI request object.
+        path (str): Requested file path. Defaults to empty string for root.
+
+    Returns:
+        Union[TemplateResponse, FileResponse, HTMLResponse]: Appropriate response
+            based on requested path.
+    """
     if path == "":
         return FRONTEND.TemplateResponse(
             "index.html.j2",
@@ -1023,6 +1266,11 @@ async def serve_files(request: Request, path: str = ""):
 
 
 def main():
+    """Main entry point for Astra observatory automation system.
+
+    Parses command line arguments, configures logging, handles configuration
+    reset, and starts the FastAPI server with specified options.
+    """
     import argparse
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY

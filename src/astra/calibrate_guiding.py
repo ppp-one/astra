@@ -1,7 +1,20 @@
+"""Guiding calibration system for telescope autoguiding setup.
+
+This module provides automated calibration of telescope guiding systems by
+measuring pixel-to-time scales and determining camera orientation relative
+to telescope mount axes. It performs systematic nudges in cardinal directions
+and analyzes the resulting star field shifts to create calibration parameters.
+
+Classes:
+    CustomImageClass: Enhanced image processing with background subtraction
+    GuidingCalibrator: Main calibration orchestrator for guiding systems
+"""
+
 import time
 from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import yaml
@@ -19,7 +32,20 @@ OBSERVATORY_CONFIG = ObservatoryConfig.from_config(CONFIG)
 
 
 class CustomImageClass(Image):
+    """Enhanced image processing class with background subtraction and cleaning.
+
+    Extends the donuts Image class to provide sophisticated background
+    subtraction, median filtering, and banding correction for improved
+    star detection and shift measurements during guiding calibration.
+    """
+
     def preconstruct_hook(self):
+        """Apply background subtraction and image cleaning preprocessing.
+
+        Performs sigma-clipped background estimation, median filtering,
+        and horizontal banding correction to prepare images for accurate
+        star position measurements during guiding calibration.
+        """
         sigma_clip = SigmaClip(sigma=3.0)
         bkg_estimator = MedianBackground()
 
@@ -42,13 +68,45 @@ class CustomImageClass(Image):
 
 
 class GuidingCalibrator:
+    """Automated telescope guiding calibration system.
+
+    Orchestrates the complete guiding calibration process by systematically
+    pulsing the telescope mount in cardinal directions and measuring the
+    resulting star field shifts to determine pixel-to-time scales and
+    camera orientation relative to mount axes.
+
+    Args:
+        astra_observatory (Any): Observatory instance for device control.
+        row (Dict[str, Any]): Camera configuration row from schedule.
+        paired_devices (Dict[str, str]): Dictionary mapping device types to device names.
+        action_value (Dict[str, Any]): Configuration parameters for calibration.
+        hdr (Dict[str, Any]): FITS header data dictionary for images.
+        save_path (Path): Directory for saving calibration data and images.
+        pulse_time (float): Duration of guide pulses in milliseconds.
+        exptime (float): Exposure time for calibration images in seconds.
+        settle_time (float): Wait time after pulses before exposing in seconds.
+        number_of_cycles (int): Number of calibration cycles to perform.
+
+    Attributes:
+        astra_observatory: Observatory instance for device control.
+        row: Camera configuration row from schedule.
+        paired_devices: Dictionary of paired device names.
+        action_value: Configuration parameters for calibration.
+        hdr: FITS header data for images.
+        save_path: Directory for saving calibration data and images.
+        pulse_time: Duration of guide pulses in milliseconds.
+        exptime: Exposure time for calibration images.
+        settle_time: Wait time after pulses before exposing.
+        number_of_cycles: Number of calibration cycles to perform.
+    """
+
     def __init__(
         self,
-        astra_observatory: "astra.observatory.Observatory",
-        row,
-        paired_devices: dict,
-        action_value: dict,
-        hdr,
+        astra_observatory: Any,
+        row: Dict[str, Any],
+        paired_devices: Dict[str, str],
+        action_value: Dict[str, Any],
+        hdr: Dict[str, Any],
         save_path: Path = (
             CONFIG.paths.images
             / "calibrate_guiding"
@@ -78,14 +136,28 @@ class GuidingCalibrator:
         ]
         save_path.mkdir(parents=True, exist_ok=True)
 
-    def run(self):
+    def run(self) -> None:
+        """Execute complete guiding calibration sequence.
+
+        Performs telescope slewing, calibration cycles, configuration
+        completion, and saves results to observatory configuration.
+        """
         self.slew_telescope_one_hour_east_of_sidereal_meridian()
         self.perform_calibration_cycles()
         self.complete_calibration_config()
         self.save_calibration_config()
         self.update_observatory_config()
 
-    def slew_telescope_one_hour_east_of_sidereal_meridian(self):
+    def slew_telescope_one_hour_east_of_sidereal_meridian(self) -> None:
+        """Position telescope one hour east of meridian for calibration.
+
+        Slews telescope to RA = LST - 1 hour, Dec = 0 degrees to provide
+        optimal conditions for guiding calibration with good star tracking
+        and minimal atmospheric effects.
+
+        Raises:
+            ValueError: If telescope slewing fails.
+        """
         local_sidereal_time = self._telescope.get("SiderealTime")
         target_right_ascension = local_sidereal_time - 1
 
@@ -109,8 +181,13 @@ class GuidingCalibrator:
         except Exception as e:
             raise ValueError(f"Failed to slew telescope: {e}")
 
-    def perform_calibration_cycles(self):
-        """Nudge camera in direction U, D, L, R to determine its scale and orientation."""
+    def perform_calibration_cycles(self) -> None:
+        """Execute systematic guiding calibration cycles.
+
+        Performs multiple cycles of telescope nudges in North, South, East,
+        and West directions, measuring star field shifts to determine pixel
+        scales and camera orientation. Each cycle improves measurement accuracy.
+        """
         image_path = self._perform_exposure()
         donuts_ref = self._apply_donuts(image_path)
 
@@ -148,7 +225,16 @@ class GuidingCalibrator:
             f"Directions: {str(self._directions)}; Scales: {str(self._scales)}"
         )
 
-    def complete_calibration_config(self):
+    def complete_calibration_config(self) -> None:
+        """Generate final calibration configuration from measurements.
+
+        Processes collected direction and scale measurements to create
+        PIX2TIME conversion factors, determine RA axis orientation,
+        and validate measurement consistency across cycles.
+
+        Raises:
+            ValueError: If direction measurements are inconsistent across cycles.
+        """
         calibration_config = {
             "PIX2TIME": {"+x": None, "-x": None, "+y": None, "-y": None},
             "RA_AXIS": None,
@@ -176,11 +262,17 @@ class GuidingCalibrator:
         self.astra_observatory.logger.info("Directions are consistent")
         self._calibration_config.update(calibration_config)
 
-    def save_calibration_config(self):
+    def save_calibration_config(self) -> None:
+        """Save calibration configuration to YAML file."""
         with open(self.save_path / "calibration_config.yaml", "w") as file:
             yaml.dump(self._calibration_config, file)
 
-    def update_observatory_config(self):
+    def update_observatory_config(self) -> None:
+        """Update observatory configuration with calibration results.
+
+        Integrates the calculated calibration parameters into the observatory
+        configuration file for the specific camera being calibrated.
+        """
         camera_index = self.astra_observatory.get_cam_index(self.row["device_name"])
 
         observatory_config = ObservatoryConfig.from_config(CONFIG)
@@ -191,8 +283,19 @@ class GuidingCalibrator:
         self.astra_observatory.logger.info("Observatory config updated.")
 
     @staticmethod
-    def _determine_shift_direction(shift):
-        """Take a donuts shift object and work out the direction of the shift and the distance"""
+    def _determine_shift_direction(shift: Any) -> Tuple[str, float]:
+        """Analyze donuts shift measurement to determine direction and magnitude.
+
+        Processes shift measurements to identify the primary axis of movement
+        and calculate the pixel displacement magnitude for calibration.
+
+        Args:
+            shift (Any): Donuts shift measurement object with x and y value attributes.
+
+        Returns:
+            Tuple[str, float]: Direction literal ('+x', '-x', '+y', '-y') and
+                              pixel displacement magnitude.
+        """
         sx = shift.x.value
         sy = shift.y.value
         if abs(sx) > abs(sy):
@@ -210,10 +313,20 @@ class GuidingCalibrator:
 
         return direction_literal, magnitude
 
-    def _pulse_guide_telescope(self, guide_direction: GuideDirections, duration: float):
-        """
-        Move the telescope along a given direction
-        for the specified amount of time
+    def _pulse_guide_telescope(
+        self, guide_direction: GuideDirections, duration: float
+    ) -> None:
+        """Execute telescope guide pulse in specified direction.
+
+        Sends guide pulse command to telescope mount and waits for completion.
+        Logs telescope position after pulse for verification.
+
+        Args:
+            guide_direction (GuideDirections): Cardinal direction for guide pulse from GuideDirections enum.
+            duration (float): Pulse duration in milliseconds.
+
+        Raises:
+            ValueError: If guide direction is invalid.
         """
         if guide_direction not in GuideDirections:
             raise ValueError("Invalid direction")
@@ -236,7 +349,18 @@ class GuidingCalibrator:
         self.astra_observatory.logger.info(f"RA: {ra:.8f} deg, DEC: {dec:.8f} deg")
 
     @staticmethod
-    def _apply_donuts(image_path):
+    def _apply_donuts(image_path: Path) -> Donuts:
+        """Create Donuts instance for image shift measurement.
+
+        Configures Donuts with custom image processing for accurate
+        star shift detection during guiding calibration.
+
+        Args:
+            image_path (Path): Path object pointing to FITS image file.
+
+        Returns:
+            Donuts: Configured Donuts instance for shift measurements.
+        """
         return Donuts(
             image_path,
             normalise=False,
@@ -245,7 +369,18 @@ class GuidingCalibrator:
             image_class=CustomImageClass,
         )
 
-    def _perform_exposure(self):
+    def _perform_exposure(self) -> Path:
+        """Capture calibration image with specified parameters.
+
+        Waits for telescope settling, then captures image using configured
+        exposure time and saves to calibration directory.
+
+        Returns:
+            Path: Path to captured FITS image file.
+
+        Raises:
+            ValueError: If image exposure fails.
+        """
         self.astra_observatory.logger.info(f"Waiting {self.settle_time} s to settle...")
         time.sleep(self.settle_time)
 

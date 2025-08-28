@@ -1,3 +1,41 @@
+"""
+Astronomical telescope autoguiding system with PID control.
+
+This module provides automated guiding functionality for astronomical telescopes
+using image-based tracking with PID control loops. It implements the complete
+guiding workflow from image acquisition to telescope correction commands.
+
+Key Features:
+- Real-time star tracking using the Donuts image registration library
+- PID control loops for precise telescope corrections
+- Database logging of guiding performance and corrections
+- Support for German Equatorial Mount (GEM) pier side changes
+- Outlier rejection and statistical analysis of guiding errors
+- Automatic reference image management per field/filter combination
+- Background subtraction and image cleaning for robust star detection
+
+The system continuously monitors incoming images, compares them to reference
+images, calculates pointing errors, and applies corrective pulse guide commands
+to keep the telescope accurately tracking celestial objects.
+
+Typical Usage:
+    # Initialize guider with telescope and configuration
+    guider = Guider(telescope, astra_instance, guider_params)
+
+    # Start the main guiding loop
+    guider.guider_loop(
+        camera_name="main_camera",
+        glob_str="/path/to/images/*.fits",
+        wait_time=10,
+        binning=1
+    )
+
+Components:
+    CustomImageClass: Image preprocessing for robust star detection
+    Guider: Main autoguiding class with PID control
+    PID: Discrete PID controller implementation
+"""
+
 import glob as g
 import logging
 import os
@@ -5,6 +43,7 @@ import time
 from datetime import datetime, UTC
 from math import cos, radians
 from shutil import copyfile
+from typing import Optional, Dict, List, Tuple, Any, Union
 
 import numpy as np
 from alpaca.telescope import GuideDirections, AlignmentModes, PierSide
@@ -51,7 +90,27 @@ IS_PULSE_GUIDING_TIMEOUT = 120  # seconds
 
 
 class CustomImageClass(Image):
-    def preconstruct_hook(self):
+    """
+    Custom image preprocessing class for robust autoguiding star detection.
+
+    Extends the Donuts Image class to apply background subtraction, median filtering,
+    and horizontal banding correction before star detection. This preprocessing
+    improves the reliability of star tracking in noisy or non-uniform images.
+
+    The preprocessing pipeline:
+    1. Background subtraction using 2D background estimation
+    2. Median filtering to reduce noise
+    3. Horizontal band correction to remove systematic gradients
+    4. Clipping to ensure positive pixel values
+    """
+
+    def preconstruct_hook(self) -> None:
+        """
+        Apply image preprocessing before Donuts star detection.
+
+        Performs background subtraction, noise reduction, and systematic
+        correction to improve star detection reliability.
+        """
         sigma_clip = SigmaClip(sigma=3.0)
         bkg_estimator = MedianBackground()
 
@@ -74,7 +133,51 @@ class CustomImageClass(Image):
 
 
 class Guider:
-    def __init__(self, telescope: object, astra: "Astra", params: dict):
+    """
+    Automated telescope guiding system with PID control and statistical analysis.
+
+    Implements a complete autoguiding solution that continuously monitors telescope
+    pointing accuracy and applies corrective pulse guide commands. Features include
+    PID control loops, outlier rejection, database logging, and support for German
+    Equatorial Mounts with pier side changes.
+
+    The guider maintains statistical buffers for error analysis, handles field
+    stabilization periods, and manages reference images per field/filter combination.
+
+    Attributes:
+        telescope: Alpaca telescope device for pulse guiding commands
+        cursor: Database cursor for logging guiding data
+        logger: Logger instance for status messages
+        error_source: List for collecting error information
+        PIX2TIME: Pixel-to-millisecond conversion factors for guide pulses
+        DIRECTIONS: Mapping of guide directions to Alpaca constants
+        RA_AXIS: Which axis (x/y) corresponds to Right Ascension
+        PID_COEFFS: PID controller coefficients for x and y axes
+        running: Flag to control guiding loop execution
+
+    Example:
+        >>> guider = Guider(telescope, astra_instance, {
+        ...     "PIX2TIME": {"+x": 100, "-x": 100, "+y": 100, "-y": 100},
+        ...     "DIRECTIONS": {"+x": "East", "-x": "West", "+y": "North", "-y": "South"},
+        ...     "RA_AXIS": "x",
+        ...     "PID_COEFFS": {"x": {"p": 0.8, "i": 0.1, "d": 0.1}, ...}
+        ... })
+        >>> guider.guider_loop("camera1", "/data/*.fits")
+    """
+
+    def __init__(self, telescope: Any, astra: "Astra", params: Dict[str, Any]) -> None:
+        """
+        Initialize the autoguider with telescope, logging, and PID parameters.
+
+        Parameters:
+            telescope: Alpaca telescope device for sending pulse guide commands.
+            astra: Main Astra instance providing cursor, logger, and error_source.
+            params (dict): Configuration dictionary containing:
+                - PIX2TIME: Pixel to millisecond conversion factors
+                - DIRECTIONS: Guide direction mappings
+                - RA_AXIS: Which axis corresponds to RA ("x" or "y")
+                - PID_COEFFS: PID controller coefficients for both axes
+        """
         # TODO: camera angle?
 
         # pass in objects from astra
@@ -125,12 +228,12 @@ class Guider:
 
         # set up variables
         # initialise the PID controllers for X and Y
-        self.PIDx = PID(
+        self.PIDx: PID = PID(
             self.PID_COEFFS["x"]["p"],
             self.PID_COEFFS["x"]["i"],
             self.PID_COEFFS["x"]["d"],
         )
-        self.PIDy = PID(
+        self.PIDy: PID = PID(
             self.PID_COEFFS["y"]["p"],
             self.PID_COEFFS["y"]["i"],
             self.PID_COEFFS["y"]["d"],
@@ -139,13 +242,19 @@ class Guider:
         self.PIDy.setPoint(self.PID_COEFFS["set_y"])
 
         # ag correction buffers - used for outlier rejection
-        self.BUFF_X, self.BUFF_Y = [], []
+        self.BUFF_X: List[float] = []
+        self.BUFF_Y: List[float] = []
 
-        self.running = False
+        self.running: bool = False
 
-    def create_tables(self):
+    def create_tables(self) -> None:
         """
-        Create a database for donuts
+        Create database tables for autoguider reference images and logging.
+
+        Creates three tables:
+        - autoguider_ref: Reference image metadata and validity periods
+        - autoguider_log: Detailed guiding corrections and statistics
+        - autoguider_info_log: General status and info messages
         """
 
         db_command_0 = """CREATE TABLE IF NOT EXISTS autoguider_ref (
@@ -193,23 +302,15 @@ class Guider:
 
         self.cursor.execute(db_command_2)
 
-    def logShiftsToDb(self, qry_args):
+    def logShiftsToDb(self, qry_args: Tuple[str, ...]) -> None:
         """
-        Log the autguiding information to the database
+        Log autoguiding corrections and statistics to the database.
 
-        Parameters
-        ----------
-        qry_args : array like
-            Tuple of items to log in the database.
-            See itemised list in logShiftsToFile docstring
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
+        Parameters:
+            qry_args (tuple): Tuple containing guiding data in order:
+                night, reference, comparison, stabilised, shift_x, shift_y,
+                pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,
+                std_buff_y, culled_max_shift_x, culled_max_shift_y
         """
         qry = """
             INSERT INTO autoguider_log
@@ -223,24 +324,13 @@ class Guider:
 
         self.cursor.execute(qry % qry_args)
 
-    def logMessageToDb(self, camera_name, message):
+    def logMessageToDb(self, camera_name: str, message: str) -> None:
         """
-        Log outout messages to the database
+        Log status messages to the database.
 
-        Parameters
-        ----------
-        camera_name : str
-            Name of the instrument being autoguided
-        message : str
-            Output message to log
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
+        Parameters:
+            camera_name (str): Name of the camera being autoguided.
+            message (str): Status or info message to log.
         """
         qry = """
             INSERT INTO autoguider_info_log
@@ -251,56 +341,16 @@ class Guider:
         qry_args = (camera_name, message)
         self.cursor.execute(qry % qry_args)
 
-    def logShiftsToFile(self, logfile, loglist, header=False):
+    def logShiftsToFile(
+        self, logfile: str, loglist: List[str], header: bool = False
+    ) -> None:
         """
-        Log the guide corrections to disc. This log is
-        typically located with the data files for each night
+        Log guiding corrections to a text file alongside image data.
 
-        Parameters
-        ----------
-        logfile : string
-            Path to the logfile
-        log_list : array like
-            List of items to log, see order of items below:
-        night : string
-            Date of the night
-        ref : string
-            Name of the current reference image
-        check : string
-            Name of the current guide image
-        stabilised : string
-            Telescope stabilised yet? (y | n)
-        shift_x : float
-            Raw shift measured in X direction
-        shift_y : float
-            Raw shift measured in Y direction
-        pre_pid_X : float
-            X correction sent to the PID loop
-        pre_pid_y : float
-            Y correction sent to the PID loop
-        post_pid_X : float
-            X correction sent to the mount, post PID loop
-        post_pid_y : float
-            Y correction sent to the mount, post PID loop
-        std_buff_x : float
-            Sttdev of X AG value buffer
-        std_buff_y : float
-            Sttdev of Y AG value buffer
-        culled_max_shift_x : string
-            Culled X measurement if > max allowed shift (y | n)
-        culled_max_shift_y : string
-            Culled Y measurement if > max allowed shift (y | n)
-        header : boolean
-            Flag to set writing the log file header. This is done
-            at the start of the night only
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
+        Parameters:
+            logfile (str): Path to the log file.
+            loglist (list): List of values to log (see logShiftsToDb for order).
+            header (bool, optional): Whether to write column headers. Defaults to False.
         """
         if header:
             line = (
@@ -312,52 +362,37 @@ class Guider:
         with open(logfile, "a") as outfile:
             outfile.write("{}\n".format(line))
 
-    def guide(self, x, y, images_to_stabilise, camera_name, binning=1, gem=False):
+    def guide(
+        self,
+        x: float,
+        y: float,
+        images_to_stabilise: int,
+        camera_name: str,
+        binning: int = 1,
+        gem: bool = False,
+    ) -> Tuple[bool, float, float, float, float]:
         """
-        Generic autoguiding command with built-in PID control loop
-        guide() will track recent autoguider corrections and ignore
-        abnormally large offsets. It will also handle orientation
-        and scale conversions as per the telescope specific config
-        file.
+        Apply telescope guiding corrections using PID control with outlier rejection.
 
-        During the initial field stabilisation period the limits are
-        relaxed slightly and large pull in errors are not appended
-        to the steady state outlier rejection buffer
+        Processes measured pointing errors through PID controllers, applies outlier
+        rejection during stable operation, and sends pulse guide commands to the telescope.
+        Handles declination scaling for RA corrections and German Equatorial Mount
+        pier side changes.
 
-        Parameters
-        ----------
-        x : float
-            Guide correction to make in X direction
-        y : float
-            Guide correction to make in Y direction
-        images_to_stabilise : int
-            Number of images before field is stabilised
-            If -ve, field has stabilised
-            If +ve allow for bigger shifts and do not append
-            ag values to buffers
-        camera_name : string
-            Name of the camera being used for autoguiding
-        binning : int
-            Binning factor for the images (default is 1)
-        gem : boolean
-            Is the telescope in German equatorial mode?
+        Parameters:
+            x (float): Guide correction needed in X direction (pixels).
+            y (float): Guide correction needed in Y direction (pixels).
+            images_to_stabilise (int): Images remaining in stabilization period.
+                Negative values indicate stable operation.
+            camera_name (str): Name of the camera for logging.
+            binning (int, optional): Image binning factor. Defaults to 1.
+            gem (bool, optional): Whether telescope is German Equatorial Mount. Defaults to False.
 
-        Returns
-        -------
-        success : boolean
-            was the correction applied? Proxy for telescope connected
-        pidx : float
-            X correction actually sent to the mount, post PID
-        pidy : float
-            Y correction actually sent to the mount, post PID
-        sigma_x : float
-            Stddev of X buffer
-        sigma_y : float
-            Stddev of Y buffer
-
-        Raises
-        ------
-        None
+        Returns:
+            tuple: (success, pidx, pidy, sigma_x, sigma_y) where:
+                - success (bool): Whether correction was applied
+                - pidx, pidy (float): Actual corrections sent to mount
+                - sigma_x, sigma_y (float): Buffer standard deviations
         """
 
         if gem:
@@ -544,33 +579,21 @@ class Guider:
             self.BUFF_Y.append(y)
         return True, pidx, pidy, sigma_x, sigma_y
 
-    def getReferenceImage(self, field, filt, exptime, camera, pierside):
+    def getReferenceImage(
+        self, field: str, filt: str, exptime: str, camera: str, pierside: int
+    ) -> Optional[str]:
         """
-        Look in the database for the current
-        field/filter reference image
+        Retrieve the current reference image path for given observation parameters.
 
-        Parameters
-        ----------
-        field : string
-            name of the current field
-        filt : string
-            name of the current filter
-        exptime : string
-            exposure time of the current image
-        camera : string
-            name of the camera
-        pierside : int
-            telescope side of pier (1 = West, 0 = East, -1 = Unknown)
+        Parameters:
+            field (str): Target field name.
+            filt (str): Filter name.
+            exptime (str): Exposure time.
+            camera (str): Camera name.
+            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).
 
-        Returns
-        -------
-        ref_image : string
-            path to the reference image
-            returns None if no reference image found
-
-        Raises
-        ------
-        None
+        Returns:
+            str | None: Path to reference image, or None if not found.
         """
         tnow = datetime.now(UTC).isoformat().split(".")[0].replace("T", " ")
         qry = """
@@ -594,28 +617,25 @@ class Guider:
             ref_image = os.path.join(self.reference_dir, result[0][0])
         return ref_image
 
-    def setReferenceImage(self, field, filt, exptime, ref_image, camera, pierside):
+    def setReferenceImage(
+        self,
+        field: str,
+        filt: str,
+        exptime: str,
+        ref_image: str,
+        camera: str,
+        pierside: int,
+    ) -> None:
         """
-        Set a new image as a reference in the database
+        Set a new reference image in the database and copy to reference directory.
 
-        Parameters
-        ----------
-        field : string
-            name of the current field
-        filt : string
-            name of the current filter
-        ref_image : string
-            name of the image to set as reference
-        camera : string
-            name of the camera
-        pierside : int
-            telescope side of pier (1 = West, 0 = East, -1 = Unknown)
-
-        Returns
-        -------
-
-        Raises
-        ------
+        Parameters:
+            field (str): Target field name.
+            filt (str): Filter name.
+            exptime (str): Exposure time.
+            ref_image (str): Path to image file to use as reference.
+            camera (str): Camera name.
+            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).
         """
         tnow = datetime.now(UTC).isoformat().split(".")[0].replace("T", " ")
         qry = """
@@ -642,36 +662,21 @@ class Guider:
             ref_image, os.path.join(self.reference_dir, os.path.split(ref_image)[-1])
         )
 
-    def waitForImage(self, n_images, camera_name, glob_str, wait_time=10):
+    def waitForImage(
+        self, n_images: int, camera_name: str, glob_str: str, wait_time: int = 10
+    ) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
         """
-        Wait for new images.
+        Wait for new images to appear in the monitoring directory.
 
-        Parameters
-        ----------
-        n_images : int
-            number of images previously acquired
-        camera_name : str
-            Name of the camera being used for autoguiding
-        glob_str : str
-            Glob string to match the images in the directory
-        wait_time : int
-            Time to wait for new images in seconds
+        Parameters:
+            n_images (int): Number of images previously seen.
+            camera_name (str): Camera name for logging.
+            glob_str (str): Glob pattern to match image files.
+            wait_time (int, optional): Base wait time in seconds. Defaults to 10.
 
-
-        Returns
-        -------
-        newest_image : string
-            filenname of the newest image
-        newest_field : string
-            name of the newest field
-        newest_filter : string
-            name of the newest filter
-        newest_exptime : string
-            exposure time of the newest image
-
-        Raises
-        ------
-        None
+        Returns:
+            tuple: (newest_image, newest_field, newest_filter, newest_exptime)
+                Returns (None, None, None, None) if self.running becomes False.
         """
         if self.running is True:
             while self.running:
@@ -727,24 +732,25 @@ class Guider:
         # return None values if self.running is False
         return None, None, None, None
 
-    def guider_loop(self, camera_name, glob_str, wait_time=10, binning=1):
+    def guider_loop(
+        self, camera_name: str, glob_str: str, wait_time: int = 10, binning: int = 1
+    ) -> None:
         """
-        Main loop for the guider.
+        Main autoguiding loop that continuously monitors and corrects telescope pointing.
 
-        Parameters
-        ----------
-        camera_name : str
-            Name of the camera being used for autoguiding
-        glob_str : str
-            Glob string to match the images in the directory
-        wait_time : int
-            Time to wait for new images in seconds
-        binning : int
-            Binning factor for the images (default is 1)
+        Monitors a directory for new images, compares them to reference images,
+        calculates pointing corrections, and applies telescope guide pulses.
+        Handles field changes, pier side changes, and maintains guiding statistics.
 
-        Returns
-        -------
-        None
+        Parameters:
+            camera_name (str): Name of the camera for logging and database records.
+            glob_str (str): Glob pattern to match incoming image files.
+            wait_time (int, optional): Time to wait for new images. Defaults to 10.
+            binning (int, optional): Image binning factor for scaling corrections. Defaults to 1.
+
+        Note:
+            Sets self.running = True and continues until set to False.
+            Automatically handles reference image selection and field stabilization.
         """
         self.running = True
 
@@ -1063,37 +1069,55 @@ PID loop controller
 
 class PID:
     """
-    Discrete PID control
+    Discrete PID controller for autoguiding corrections.
 
-    http://code.activestate.com/recipes/577231-discrete-pid-controller/
+    Implements a digital PID control loop with configurable proportional, integral,
+    and derivative gains. Includes integrator clamping to prevent windup.
+
+    Based on: http://code.activestate.com/recipes/577231-discrete-pid-controller/
+
+    Parameters:
+        P (float, optional): Proportional gain. Defaults to 0.5.
+        I (float, optional): Integral gain. Defaults to 0.25.
+        D (float, optional): Derivative gain. Defaults to 0.0.
+        Derivator (float, optional): Initial derivative term. Defaults to 0.
+        Integrator (float, optional): Initial integrator value. Defaults to 0.
+        Integrator_max (float, optional): Maximum integrator value. Defaults to 500.
+        Integrator_min (float, optional): Minimum integrator value. Defaults to -500.
     """
 
     def __init__(
         self,
-        P=0.5,
-        I=0.25,
-        D=0.0,
-        Derivator=0,
-        Integrator=0,
-        Integrator_max=500,
-        Integrator_min=-500,
-    ):
-        self.Kp = P
-        self.Ki = I
-        self.Kd = D
-        self.Derivator = Derivator
-        self.Integrator = Integrator
-        self.Integrator_max = Integrator_max
-        self.Integrator_min = Integrator_min
-        self.set_point = 0.0
-        self.error = 0.0
-        self.P_value = 0.0  # included as pylint complained - jmcc
-        self.D_value = 0.0  # included as pylint complained - jmcc
-        self.I_value = 0.0  # included as pylint complained - jmcc
+        P: float = 0.5,
+        I: float = 0.25,
+        D: float = 0.0,
+        Derivator: float = 0,
+        Integrator: float = 0,
+        Integrator_max: float = 500,
+        Integrator_min: float = -500,
+    ) -> None:
+        self.Kp: float = P
+        self.Ki: float = I
+        self.Kd: float = D
+        self.Derivator: float = Derivator
+        self.Integrator: float = Integrator
+        self.Integrator_max: float = Integrator_max
+        self.Integrator_min: float = Integrator_min
+        self.set_point: float = 0.0
+        self.error: float = 0.0
+        self.P_value: float = 0.0  # included as pylint complained - jmcc
+        self.D_value: float = 0.0  # included as pylint complained - jmcc
+        self.I_value: float = 0.0  # included as pylint complained - jmcc
 
-    def update(self, current_value):
+    def update(self, current_value: float) -> float:
         """
-        Calculate PID output value for given reference input and feedback
+        Calculate PID output for given input and feedback.
+
+        Parameters:
+            current_value (float): Current process value (feedback).
+
+        Returns:
+            float: PID controller output.
         """
         self.error = self.set_point - current_value
         self.P_value = self.Kp * self.error
@@ -1108,64 +1132,49 @@ class PID:
         pid = self.P_value + self.I_value + self.D_value
         return pid
 
-    def setPoint(self, set_point):
+    def setPoint(self, set_point: float) -> None:
         """
-        Initilize the setpoint of PID
+        Initialize the PID setpoint and reset integrator/derivator.
+
+        Parameters:
+            set_point (float): Desired target value.
         """
         self.set_point = set_point
         self.Integrator = 0
         self.Derivator = 0
 
-    def setIntegrator(self, Integrator):
-        """
-        Set Integrator
-        """
+    def setIntegrator(self, Integrator: float) -> None:
+        """Set integrator value."""
         self.Integrator = Integrator
 
-    def setDerivator(self, Derivator):
-        """
-        Set Derivator
-        """
+    def setDerivator(self, Derivator: float) -> None:
+        """Set derivator value."""
         self.Derivator = Derivator
 
-    def setKp(self, P):
-        """
-        Set Kp
-        """
+    def setKp(self, P: float) -> None:
+        """Set proportional gain."""
         self.Kp = P
 
-    def setKi(self, I):
-        """
-        Set Ki
-        """
+    def setKi(self, I: float) -> None:
+        """Set integral gain."""
         self.Ki = I
 
-    def setKd(self, D):
-        """
-        Set Kd
-        """
+    def setKd(self, D: float) -> None:
+        """Set derivative gain."""
         self.Kd = D
 
-    def getPoint(self):
-        """
-        Get point
-        """
+    def getPoint(self) -> float:
+        """Get current setpoint."""
         return self.set_point
 
-    def getError(self):
-        """
-        Get Error
-        """
+    def getError(self) -> float:
+        """Get current error value."""
         return self.error
 
-    def getIntegrator(self):
-        """
-        Get Integrator
-        """
+    def getIntegrator(self) -> float:
+        """Get current integrator value."""
         return self.Integrator
 
-    def getDerivator(self):
-        """
-        Get Derivator
-        """
+    def getDerivator(self) -> float:
+        """Get current derivator value."""
         return self.Derivator

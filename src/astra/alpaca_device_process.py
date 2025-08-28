@@ -1,9 +1,24 @@
+"""ALPACA device multiprocessing wrapper for astronomical device control.
+
+This module provides a multiprocessing-based wrapper for ALPACA astronomical
+devices, enabling concurrent device polling, method execution, and data logging.
+It implements a producer-consumer pattern with pipes for communication between
+the main process and device-specific subprocesses.
+
+Classes:
+    AlpacaDevice: Multiprocessing wrapper for ALPACA astronomical devices
+
+The module supports various ALPACA device types including telescopes, cameras,
+filter wheels, focusers, domes, and environmental monitoring equipment.
+"""
+
 import os
 import signal
 import time
 from datetime import UTC, datetime
 from multiprocessing import Lock, Pipe, Process
 from threading import Thread
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from alpaca.camera import *
 from alpaca.covercalibrator import *
@@ -22,7 +37,37 @@ from alpaca.telescope import *
 
 
 class AlpacaDevice(Process):
-    def __init__(self, ip, device_type, device_number, device_name, queue, debug=False):
+    """Multiprocessing wrapper for ALPACA astronomical devices.
+
+    Provides a process-based interface for ALPACA devices with concurrent
+    polling capabilities, method execution, and inter-process communication
+    via pipes. Supports automatic retry logic and comprehensive error handling.
+
+    Args:
+        ip (str): IP address of the ALPACA device server.
+        device_type (str): Type of device (e.g., 'Telescope', 'Camera').
+        device_number (int): Device number on the ALPACA server.
+        device_name (str): User-friendly name for the device.
+        queue: Multiprocessing queue for logging and data communication.
+        debug (bool): Enable debug logging for device operations.
+
+    Attributes:
+        device: ALPACA device instance.
+        metadata: Device identification information.
+        front_pipe: Communication pipe for main process.
+        back_pipe: Communication pipe for device subprocess.
+        lock: Thread lock for pipe synchronization.
+    """
+
+    def __init__(
+        self,
+        ip: str,
+        device_type: str,
+        device_number: int,
+        device_name: str,
+        queue: Any,
+        debug: bool = False,
+    ) -> None:
         super().__init__()
         self.front_pipe, self.back_pipe = Pipe()
         self.lock = Lock()
@@ -74,7 +119,19 @@ class AlpacaDevice(Process):
 
     ## FRONTEND METHODS
 
-    def get(self, method, **kwargs):
+    def get(self, method: str, **kwargs) -> Any:
+        """Execute device method with automatic retry and error handling.
+
+        Args:
+            method (str): Name of the device method to execute.
+            **kwargs: Keyword arguments to pass to the method.
+
+        Returns:
+            Any: Result from the device method execution.
+
+        Raises:
+            Exception: If the device method execution fails.
+        """
         ## method getter
         with self.lock:
             self.front_pipe.send(["get", {"method": method, **kwargs}])
@@ -84,7 +141,19 @@ class AlpacaDevice(Process):
             else:
                 return msg
 
-    def set(self, method, value):
+    def set(self, method: str, value: Any) -> Any:
+        """Set device property value with error handling.
+
+        Args:
+            method (str): Name of the device property to set.
+            value (Any): Value to assign to the property.
+
+        Returns:
+            Any: Result from the property setter.
+
+        Raises:
+            Exception: If the property setting fails.
+        """
         ## property setter
         with self.lock:
             self.front_pipe.send(["set", {"method": method, "value": value}])
@@ -94,23 +163,44 @@ class AlpacaDevice(Process):
             else:
                 return msg
 
-    def start_poll(self, method, delay):
+    def start_poll(self, method: str, delay: float) -> None:
+        """Start continuous polling of a device method.
+
+        Args:
+            method (str): Name of the device method to poll.
+            delay (float): Polling interval in seconds.
+        """
         with self.lock:
             self.front_pipe.send(["start_poll", {"method": method, "delay": delay}])
 
-    def stop_poll(self, method=None):
+    def stop_poll(self, method: Optional[str] = None) -> None:
+        """Stop polling for a specific method or all methods.
+
+        Args:
+            method (Optional[str]): Method name to stop polling, or None for all.
+        """
         with self.lock:
             self.front_pipe.send(["stop_poll", {"method": method}])
 
-    def pause_polls(self):
+    def pause_polls(self) -> None:
+        """Temporarily pause all active polling operations."""
         with self.lock:
             self.front_pipe.send("pause_polls")
 
-    def resume_polls(self):
+    def resume_polls(self) -> None:
+        """Resume all paused polling operations."""
         with self.lock:
             self.front_pipe.send("resume_polls")
 
-    def poll_list(self):
+    def poll_list(self) -> List[str]:
+        """Get list of currently active polling methods.
+
+        Returns:
+            List[str]: List of method names being polled.
+
+        Raises:
+            Exception: If polling list retrieval fails.
+        """
         with self.lock:
             self.front_pipe.send("poll_list")
             msg = self.front_pipe.recv()
@@ -119,7 +209,16 @@ class AlpacaDevice(Process):
             else:
                 return msg
 
-    def poll_latest(self):
+    def poll_latest(self) -> Dict[str, Dict[str, Any]]:
+        """Get latest polling results for all active methods.
+
+        Returns:
+            Dict[str, Dict[str, Any]]: Dictionary mapping method names to
+                                     their latest values and timestamps.
+
+        Raises:
+            Exception: If latest polling data retrieval fails.
+        """
         with self.lock:
             self.front_pipe.send("poll_latest")
             msg = self.front_pipe.recv()
@@ -128,7 +227,8 @@ class AlpacaDevice(Process):
             else:
                 return msg
 
-    def stop(self):
+    def stop(self) -> None:
+        """Stop the device process and clean up resources."""
         with self.lock:
             print(f"AlpacaDevice {self.device_type} {self.device_number} stopping")
             self.front_pipe.send("stop")
@@ -136,7 +236,13 @@ class AlpacaDevice(Process):
 
     ## BACKEND CORE
 
-    def run(self):
+    def run(self) -> None:
+        """Main process loop for handling device operations.
+
+        Runs in the device subprocess to handle method calls, polling,
+        and inter-process communication. Sets up signal handlers for
+        graceful shutdown.
+        """
         print(
             f"AlpacaDevice {self.device_type} {self.device_number} started with pid [{os.getpid()}]"
         )
@@ -150,7 +256,15 @@ class AlpacaDevice(Process):
 
         print(f"AlpacaDevice {self.device_type} {self.device_number} stopped")
 
-    def listenFront__(self):
+    def listenFront__(self) -> bool:
+        """Listen for and process messages from the main process.
+
+        Handles various message types including method calls, polling
+        control, and shutdown commands.
+
+        Returns:
+            bool: True to continue running, False to stop the process.
+        """
         try:
             r = self.back_pipe.recv()
             message = r[0] if len(r) == 2 else r
@@ -189,7 +303,19 @@ class AlpacaDevice(Process):
 
     ## BACKEND METHODS
 
-    def get__(self, method, pipe=True, **kwargs):
+    def get__(
+        self, method: str, pipe: bool = True, **kwargs
+    ) -> Union[Any, Dict[str, Any]]:
+        """Backend method execution with retry logic and error handling.
+
+        Args:
+            method (str): Name of the device method to execute.
+            pipe (bool): Whether to send result via pipe or return directly.
+            **kwargs: Keyword arguments for the method.
+
+        Returns:
+            Union[Any, Dict[str, Any]]: Method result or status dictionary.
+        """
         ## method getter
         try:
             # permit 3 attempts
@@ -305,7 +431,13 @@ class AlpacaDevice(Process):
                     "message": f"Get method error: {str(e)}",
                 }
 
-    def set__(self, method, value):
+    def set__(self, method: str, value: Any) -> None:
+        """Backend property setter with retry logic and error handling.
+
+        Args:
+            method (str): Name of the device property to set.
+            value (Any): Value to assign to the property.
+        """
         ## property setter
         try:
             # permit 3 attempts
@@ -395,7 +527,16 @@ class AlpacaDevice(Process):
             )
             self.back_pipe.send(e)  # check if valid, need args?
 
-    def loop__(self, method, delay):
+    def loop__(self, method: str, delay: float) -> None:
+        """Continuous polling loop for a specific device method.
+
+        Runs in a separate thread to continuously poll a device method
+        at the specified interval, logging results to the database.
+
+        Args:
+            method (str): Name of the device method to poll.
+            delay (float): Polling interval in seconds.
+        """
         self._poll_list.append(method)
         self._poll_latest[method] = {}
         self._poll_latest[method]["value"] = None
@@ -451,7 +592,13 @@ class AlpacaDevice(Process):
                 )
             )
 
-    def start_poll__(self, method, delay):
+    def start_poll__(self, method: str, delay: float) -> None:
+        """Start a new polling thread for the specified method.
+
+        Args:
+            method (str): Name of the device method to start polling.
+            delay (float): Polling interval in seconds.
+        """
         if method not in self._poll_list:
             Thread(target=self.loop__, args=(method, delay), daemon=True).start()
             self.queue.put(
@@ -467,7 +614,13 @@ class AlpacaDevice(Process):
                 )
             )
 
-    def stop_poll__(self, method=None, *args):
+    def stop_poll__(self, method: Optional[str] = None, *args) -> None:
+        """Stop polling for a specific method or all methods.
+
+        Args:
+            method (Optional[str]): Method name to stop polling, or None for all.
+            *args: Additional arguments (used for signal handlers).
+        """
         if method is None:
             self._poll_list = []
             self._poll_latest = {}
@@ -512,7 +665,8 @@ class AlpacaDevice(Process):
                 )
             )
 
-    def poll_list__(self):
+    def poll_list__(self) -> None:
+        """Send current polling list via pipe."""
         try:
             self.back_pipe.send(self._poll_list)
         except Exception as e:
@@ -530,7 +684,8 @@ class AlpacaDevice(Process):
             )
             self.back_pipe.send(e)
 
-    def poll_latest__(self):
+    def poll_latest__(self) -> None:
+        """Send latest polling results via pipe."""
         try:
             self.back_pipe.send(self._poll_latest)
         except Exception as e:
@@ -548,7 +703,12 @@ class AlpacaDevice(Process):
             )
             self.back_pipe.send(e)
 
-    def stop__(self, *args):
+    def stop__(self, *args) -> None:
+        """Stop the device process and close communication pipes.
+
+        Args:
+            *args: Additional arguments (used for signal handlers).
+        """
         self.active = False
 
         # close pipes

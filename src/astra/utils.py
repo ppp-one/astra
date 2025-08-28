@@ -1,3 +1,18 @@
+"""Utility functions for astronomical observations and data processing.
+
+This module provides essential utility functions for the Astra observatory system,
+including time conversions, coordinate transformations, database queries, and
+telescope error handling. Functions support FITS header processing, flat field
+observations, and SPECULOOS telescope operations.
+
+Key capabilities:
+- Julian Day and astronomical time system conversions
+- FITS header time calculations with light travel corrections
+- Solar position analysis for flat field timing
+- Database queries for astronomical catalogs
+- SPECULOOS telescope error checking and acknowledgement
+"""
+
 import math
 import sqlite3
 import time
@@ -14,20 +29,17 @@ from astropy.time import Time
 
 ## for final fits header
 def interpolate_dfs(index: np.ndarray, *data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Interpolates panda dataframes onto an index, of same index type (e.g. wavelength in microns)
+    """Interpolate multiple pandas DataFrames onto a common index.
 
-    Parameters
-    ----------
-    index : np.ndarray
-        1d array which data is to be interpolated onto
-    data : pd.DataFrame
-        Pandas dataframes to interpolate
+    Merges and interpolates multiple DataFrames using a specified index array,
+    commonly used for wavelength-dependent data processing in spectroscopy.
 
-    Returns
-    -------
-    pd.DataFrame
-        Interpolated dataframe
+    Args:
+        index (np.ndarray): 1D array to interpolate data onto (e.g., wavelength grid).
+        *data (pd.DataFrame): Variable number of DataFrames to interpolate.
+
+    Returns:
+        pd.DataFrame: Combined DataFrame with all data interpolated onto the common index.
     """
     df = pd.DataFrame({"tmp": index}, index=index)
     for dat in data:
@@ -41,26 +53,20 @@ def interpolate_dfs(index: np.ndarray, *data: pd.DataFrame) -> pd.DataFrame:
 
 
 def __to_format(jd: float, fmt: str) -> float:
-    """
-    Converts a Julian Day object into a specific format.  For
-    example, Modified Julian Day.
+    """Convert Julian Day to specified time format.
 
-    Parameters
-    ----------
-    jd : float
-        Julian Day value
-    fmt : str
-        Format to convert to ('jd', 'mjd', 'rjd')
+    Internal function for converting Julian Day values to different astronomical
+    time formats like Modified Julian Day or Reduced Julian Day.
 
-    Returns
-    -------
-    float
-        Converted Julian Day value
+    Args:
+        jd (float): Julian Day value to convert.
+        fmt (str): Target format ('jd', 'mjd', 'rjd').
 
-    Raises
-    ------
-    ValueError
-        If fmt is not a valid format
+    Returns:
+        float: Converted time value in specified format.
+
+    Raises:
+        ValueError: If format string is not recognized.
     """
     if fmt.lower() == "jd":
         return jd
@@ -73,22 +79,17 @@ def __to_format(jd: float, fmt: str) -> float:
 
 
 def to_jd(dt: datetime, fmt: str = "jd") -> float:
-    """
-    Converts a given datetime object to Julian date.
-    Algorithm is copied from https://en.wikipedia.org/wiki/Julian_day
-    All variable names are consistent with the notation on the wiki page.
+    """Convert datetime object to Julian Day using standard algorithm.
 
-    Parameters
-    ----------
-    dt : datetime
-        Datetime object to convert to Julian Day
-    fmt : str, optional
-        Format to return ('jd', 'mjd', 'rjd'), by default "jd"
+    Converts Python datetime to Julian Day format using the algorithm from
+    Wikipedia. Supports conversion to various Julian Day formats.
 
-    Returns
-    -------
-    float
-        Julian Day value in specified format
+    Args:
+        dt (datetime): Datetime object to convert.
+        fmt (str): Output format ('jd', 'mjd', 'rjd'). Defaults to 'jd'.
+
+    Returns:
+        float: Julian Day value in specified format.
     """
     a = math.floor((14 - dt.month) / 12)
     y = dt.year + 4800 - a
@@ -116,26 +117,18 @@ def to_jd(dt: datetime, fmt: str = "jd") -> float:
 
 
 def getLightTravelTimes(target: SkyCoord, time_to_correct: Time) -> Tuple[Time, Time]:
-    """
-    From: https://github.com/WarwickAstro/time-conversions
-    Get the light travel times to the helio- and barycentres
+    """Calculate light travel times to heliocentric and barycentric frames.
 
-    Parameters
-    ----------
-    target : SkyCoord
-        The target coordinates
-    time_to_correct : Time
-        The time of observation to correct. The astropy.Time
-        object must have been initialised with an EarthLocation
+    Computes corrections for light travel time from Earth to the solar system
+    barycenter and heliocenter, essential for precise timing in astronomy.
 
-    Returns
-    -------
-    Tuple[Time, Time]
-        Tuple containing (ltt_bary, ltt_helio):
-        - ltt_bary : Time
-            The light travel time to the barycentre
-        - ltt_helio : Time
-            The light travel time to the heliocentre
+    Args:
+        target (SkyCoord): Target celestial coordinates.
+        time_to_correct (Time): Observation time requiring correction.
+            Must be initialized with an EarthLocation.
+
+    Returns:
+        Tuple[Time, Time]: Light travel times as (barycentric, heliocentric).
     """
 
     ltt_bary = time_to_correct.light_travel_time(target)
@@ -146,31 +139,19 @@ def getLightTravelTimes(target: SkyCoord, time_to_correct: Time) -> Tuple[Time, 
 def time_conversion(
     jd: float, location: Any, target: SkyCoord
 ) -> Tuple[float, float, float, str]:
-    """
-    Convert time to various astronomical time systems.
-    From: https://github.com/WarwickAstro/time-conversions
+    """Convert time to various astronomical reference frames.
 
-    Parameters
-    ----------
-    jd : float
-        Julian Day
-    location : EarthLocation
-        Observer location
-    target : SkyCoord
-        Target coordinates
+    Transforms Julian Day to heliocentric and barycentric systems, calculates
+    local sidereal time and hour angle for astronomical observations.
 
-    Returns
-    -------
-    Tuple[float, float, float, str]
-        Tuple containing (hjd, bjd, lstsec, ha):
-        - hjd : float
-            Heliocentric Julian Day
-        - bjd : float
-            Barycentric Julian Day
-        - lstsec : float
-            Local Sidereal Time in seconds
-        - ha : str
-            Hour Angle as formatted string
+    Args:
+        jd (float): Julian Day to convert.
+        location (EarthLocation): Observer's geographic location.
+        target (SkyCoord): Target celestial coordinates.
+
+    Returns:
+        Tuple[float, float, float, str]: Converted times as
+            (hjd, bjd, lst_seconds, hour_angle_string).
     """
 
     time_inp = Time(jd, format="jd", scale="utc", location=location)
@@ -191,24 +172,17 @@ def time_conversion(
 def hdr_times(
     hdr: dict, fits_config: pd.DataFrame, location: Any, target: SkyCoord
 ) -> None:
-    """
-    Add time-related headers to FITS header dictionary.
+    """Add comprehensive time information to FITS header.
 
-    Parameters
-    ----------
-    hdr : dict
-        FITS header dictionary to modify
-    fits_config : pd.DataFrame
-        Configuration dataframe containing header specifications
-    location : EarthLocation
-        Observer location
-    target : SkyCoord
-        Target coordinates
+    Calculates and adds various time formats to FITS header including
+    Julian Day variants, Modified Julian Day, and astronomical time corrections.
+    Also computes airmass from altitude.
 
-    Returns
-    -------
-    None
-        Modifies hdr in-place
+    Args:
+        hdr (dict): FITS header dictionary to modify in-place.
+        fits_config (pd.DataFrame): Configuration with header specifications.
+        location (EarthLocation): Observer's geographic location.
+        target (SkyCoord): Target celestial coordinates.
     """
     dateobs = pd.to_datetime(hdr["DATE-OBS"])
 
@@ -255,25 +229,19 @@ def hdr_times(
 
 ## for flat fielding
 def is_sun_rising(obs_location: Any) -> Tuple[bool, bool, AltAz]:
-    """
-    Determine if the sun is rising and if conditions are suitable for flat field observations.
+    """Determine solar motion and flat field observation readiness.
 
-    Parameters
-    ----------
-    obs_location : EarthLocation
-        Observer location
+    Analyzes sun position and movement to determine if conditions are suitable
+    for flat field calibration observations, which require specific twilight conditions.
 
-    Returns
-    -------
-    Tuple[bool, bool, AltAz]
-        Tuple containing (sun_rising, flat_ready, sun_altaz0):
-        - sun_rising : bool
-            True if sun is rising, False if setting
-        - flat_ready : bool
-            True if conditions are suitable for flat field observations
-            (sun altitude between -12° and -1°)
-        - sun_altaz0 : AltAz
-            Current sun position in alt-az coordinates
+    Args:
+        obs_location (EarthLocation): Observer's geographic location.
+
+    Returns:
+        Tuple[bool, bool, AltAz]: Solar status as (rising, flat_ready, position):
+            - rising: True if sun is rising, False if setting
+            - flat_ready: True if optimal for flats (sun altitude -12° to -1°)
+            - position: Current sun position in alt-az coordinates
     """
     # sun's position now
     obs_time0 = Time.now()
@@ -311,26 +279,20 @@ def is_sun_rising(obs_location: Any) -> Tuple[bool, bool, AltAz]:
 def db_query(
     db: Union[str, Path], min_dec: float, max_dec: float, min_ra: float, max_ra: float
 ) -> pd.DataFrame:
-    """
-    Queries a federated database for astronomical data within a specified range of declination and right ascension.
+    """Query astronomical database for objects within coordinate bounds.
 
-    Parameters
-    ----------
-    db : str or Path
-        The path to the SQLite database file
-    min_dec : float
-        The minimum declination value to query (degrees)
-    max_dec : float
-        The maximum declination value to query (degrees)
-    min_ra : float
-        The minimum right ascension value to query (degrees)
-    max_ra : float
-        The maximum right ascension value to query (degrees)
+    Performs federated query across sharded SQLite database tables to retrieve
+    astronomical catalog data within specified declination and right ascension ranges.
 
-    Returns
-    -------
-    pd.DataFrame
-        A pandas DataFrame containing the queried astronomical data
+    Args:
+        db (Union[str, Path]): Path to the SQLite database file.
+        min_dec (float): Minimum declination in degrees.
+        max_dec (float): Maximum declination in degrees.
+        min_ra (float): Minimum right ascension in degrees.
+        max_ra (float): Maximum right ascension in degrees.
+
+    Returns:
+        pd.DataFrame: Combined results from all relevant database shards.
     """
 
     conn = sqlite3.connect(db)
@@ -365,27 +327,20 @@ def db_query(
 def check_astelos_error(
     telescope: Any, close: bool = False
 ) -> Tuple[bool, pd.DataFrame, str]:
-    """
-    Check astelos telescope status list property for errors.
+    """Check SPECULOOS telescope status for known acceptable errors.
 
-    Parameters
-    ----------
-    telescope : Any
-        Telescope object with get() method for commands
-    close : bool, optional
-        Whether to include slit closure errors in allowed errors, by default False
+    Analyzes telescope status messages to identify errors and determines if they
+    are in the list of known acceptable errors that can be safely acknowledged.
 
-    Returns
-    -------
-    Tuple[bool, pd.DataFrame, str]
-        Tuple containing (valid, df_list, messages):
-        - valid : bool
-            True if all errors are in the allowed list, False otherwise
-        - df_list : pd.DataFrame
-            DataFrame containing all found errors with columns:
-            ['error', 'detail', 'level', 'component']
-        - messages : str
-            Raw telescope status messages
+    Args:
+        telescope (Any): Telescope object with get() method for status commands.
+        close (bool): Whether to include slit closure errors in acceptable list.
+
+    Returns:
+        Tuple[bool, pd.DataFrame, str]: Error analysis as (valid, errors, messages):
+            - valid: True if all errors are acceptable, False otherwise
+            - errors: DataFrame with columns ['error', 'detail', 'level', 'component']
+            - messages: Raw telescope status message string
     """
 
     allowed_err = [
@@ -511,36 +466,26 @@ def ack_astelos_error(
     messages: str,
     close: bool = False,
 ) -> Tuple[bool, str]:
-    """
-    Acknowledge telescope errors if they are valid (in the allowed list).
+    """Acknowledge acceptable SPECULOOS telescope errors.
 
-    Parameters
-    ----------
-    telescope : Any
-        Telescope object with get() method for commands
-    valid : bool
-        Whether the errors are valid (from check_astelos_error)
-    all_errors : pd.DataFrame
-        DataFrame containing error information with 'level' column
-    messages : str
-        Original telescope status messages
-    close : bool, optional
-        Whether to include slit closure errors in allowed errors, by default False
+    Attempts to clear acceptable telescope errors by sending appropriate
+    acknowledgement commands. Continues until all errors are cleared or
+    unacceptable errors are encountered.
 
-    Returns
-    -------
-    Tuple[bool, str]
-        Tuple containing (success, messages):
-        - success : bool
-            True if errors were successfully acknowledged or no errors present,
-            False if invalid errors remain
-        - messages : str
-            Updated telescope status messages
+    Args:
+        telescope (Any): Telescope object with get() method for commands.
+        valid (bool): Whether errors are acceptable (from check_astelos_error).
+        all_errors (pd.DataFrame): Error information with 'level' column.
+        messages (str): Original telescope status messages.
+        close (bool): Whether to include slit closure errors as acceptable.
 
-    Raises
-    ------
-    TimeoutError
-        If error acknowledgement takes longer than 2 minutes
+    Returns:
+        Tuple[bool, str]: Acknowledgement result as (success, final_messages):
+            - success: True if all errors cleared, False if unacceptable errors remain
+            - final_messages: Updated telescope status messages
+
+    Raises:
+        TimeoutError: If error clearing takes longer than 2 minutes.
     """
 
     start_time = time.time()

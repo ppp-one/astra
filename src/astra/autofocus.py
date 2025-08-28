@@ -1,9 +1,32 @@
+"""Automated telescope autofocus system for astronomical observations.
+
+This module provides a comprehensive autofocus system for astronomical telescopes,
+integrating with ALPACA devices and the astrafocus library. It supports various
+focus measurement operators, automatic target selection using Gaia catalog data,
+and sophisticated focusing algorithms for optimal image quality.
+
+Key components:
+- Camera, focuser, and telescope interfaces for ALPACA devices
+- Automated target selection using Gaia star catalog
+- Multiple focus measurement algorithms (HFR, FFT, variance-based)
+- Defocusing and refocusing capabilities
+- Comprehensive logging and result visualization
+
+Classes:
+    AstraCamera: Camera interface for autofocus operations
+    AstraFocuser: Focuser interface with position control
+    AstraTelescope: Telescope interface for positioning
+    AstraAutofocusDeviceManager: Device coordination for autofocus
+    Defocuser: Controlled defocusing and refocusing operations
+    Autofocuser: Main autofocus orchestrator with target selection
+"""
+
 import logging
 import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple, Union
 
 import astrafocus.extremum_estimators as astrafee
 import astrafocus.focus_measure_operators as astrafmo
@@ -41,20 +64,31 @@ __all__ = ["AstraAutofocusDeviceManager", "Autofocuser"]
 
 
 class AstraCamera(CameraInterface):
-    """
-    A camera interface for the Astra autofocus system.
+    """Camera interface for autofocus operations with ALPACA devices.
+
+    Provides image acquisition capabilities for autofocus sequences,
+    including exposure control, hot pixel removal, and data type handling.
+
+    Args:
+        astra: Observatory instance for device control and logging.
+        alpaca_device_camera (AlpacaDevice): ALPACA camera device instance.
+        row (Dict[str, Any]): Camera configuration parameters.
+        folder (str): Directory path for saving images.
+        hdr (Dict[str, Any]): FITS header data for images.
+        image_data_type: NumPy data type for images, auto-detected if None.
+        maxadu: Maximum ADU value for camera, auto-detected if None.
     """
 
     def __init__(
         self,
-        astra: "Astra",
+        astra: Any,
         alpaca_device_camera: AlpacaDevice,
-        row: dict,
+        row: Dict[str, Any],
         folder: str,
-        hdr,
-        image_data_type=None,
-        maxadu=None,
-    ):
+        hdr: Dict[str, Any],
+        image_data_type: Optional[np.dtype] = None,
+        maxadu: Optional[int] = None,
+    ) -> None:
         self.astra = astra
         self.alpaca_device_camera = alpaca_device_camera
 
@@ -74,8 +108,15 @@ class AstraCamera(CameraInterface):
     def perform_exposure(
         self, texp: float, log_option: Optional[str] = None, use_light: bool = True
     ) -> np.ndarray:
-        """
-        Calling this function should take as long as it takes to make the observation.
+        """Capture image with specified exposure time and settings.
+
+        Args:
+            texp (float): Exposure time in seconds.
+            log_option (Optional[str]): Logging option for the exposure.
+            use_light (bool): Whether to use light frame (vs bias frame).
+
+        Returns:
+            np.ndarray: Captured image data as numpy array.
         """
         self._perform_exposure(texp=texp, log_option=log_option, use_light=use_light)
         image = np.array(
@@ -87,17 +128,21 @@ class AstraCamera(CameraInterface):
         return image
 
     @staticmethod
-    def remove_hot_pixels(image, threshold=5, kernel_size=3):
-        """
-        Remove hot pixels from a 2D numpy image by comparing it with a smoothed version.
+    def remove_hot_pixels(
+        image: np.ndarray, threshold: float = 5, kernel_size: int = 3
+    ) -> np.ndarray:
+        """Remove hot pixels from image using median filtering.
 
-        Parameters:
-        - image: 2D numpy array representing the image.
-        - threshold: The threshold factor to identify hot pixels.
-        - kernel_size: The size of the kernel used for median filtering.
+        Identifies and replaces hot pixels by comparing with a smoothed version
+        of the image using median filtering.
+
+        Args:
+            image (np.ndarray): 2D image array to process.
+            threshold (float): Threshold factor to identify hot pixels.
+            kernel_size (int): Size of median filter kernel.
 
         Returns:
-        - cleaned_image: 2D numpy array with hot pixels removed.
+            np.ndarray: Image with hot pixels replaced by smoothed values.
         """
         # Create a copy of the image to avoid modifying the original
         cleaned_image = np.copy(image)
@@ -118,7 +163,16 @@ class AstraCamera(CameraInterface):
 
     def _perform_exposure(
         self, texp: float, log_option: Optional[str] = None, use_light: bool = True
-    ):
+    ) -> None:
+        """Internal method to perform camera exposure.
+
+        Handles the actual camera exposure operation and updates success status.
+
+        Args:
+            texp (float): Exposure time in seconds.
+            log_option (Optional[str]): Logging option for the exposure.
+            use_light (bool): Whether to use light frame (vs bias frame).
+        """
         exposure_successful, filepath = self.astra.perform_exposure(
             camera=self.alpaca_device_camera,
             exptime=texp,
@@ -137,7 +191,12 @@ class AstraCamera(CameraInterface):
             self.astra.logger.warning("Exposure failed.")
             # raise ValueError("Exposure failed.")
 
-    def determine_image_data_type_and_maxadu(self):
+    def determine_image_data_type_and_maxadu(self) -> None:
+        """Determine camera image data type and maximum ADU value.
+
+        Takes a test exposure to determine the camera's image data type
+        and maximum ADU value for proper image processing.
+        """
         self._perform_exposure(
             texp=0.0,
             log_option=None,
@@ -165,9 +224,22 @@ class AstraCamera(CameraInterface):
 
 
 class AstraFocuser(FocuserInterface):
+    """Focuser interface for Astra observatory automation system.
+
+    Provides position control interface for telescope focuser through ALPACA protocol.
+
+    Args:
+        astra (Any): Main Astra instance for system coordination.
+        alpaca_device_focuser (AlpacaDevice): ALPACA focuser device interface.
+        row (dict): Configuration parameters for focuser setup.
+    """
+
     def __init__(
-        self, astra, alpaca_device_focuser: AlpacaDevice, row: Optional[dict] = None
-    ):
+        self,
+        astra: Any,
+        alpaca_device_focuser: AlpacaDevice,
+        row: Optional[dict] = None,
+    ) -> None:
         if not alpaca_device_focuser.get("Absolute"):
             raise ValueError("Focuser must be absolute for autofocusing to work.")
 
@@ -179,9 +251,20 @@ class AstraFocuser(FocuserInterface):
         allowed_range = (0, alpaca_device_focuser.get("MaxStep"))
         super().__init__(current_position=current_position, allowed_range=allowed_range)
 
-    def move_focuser_to_position(self, new_position: int, hard_timeout: float = 120):
-        """
-        Calling this function should take as long as it takes to move the focuser to the desired position.
+    def move_focuser_to_position(
+        self, new_position: int, hard_timeout: float = 120
+    ) -> None:
+        """Move focuser to specified position with timeout protection.
+
+        Moves the focuser to the target position and waits for completion.
+        Includes range checking and timeout protection.
+
+        Args:
+            new_position (int): Target focuser position.
+            hard_timeout (float): Maximum time to wait for movement in seconds.
+
+        Raises:
+            TimeoutError: If movement takes longer than hard_timeout.
         """
         new_position = self._project_to_allowed_range(new_position)
 
@@ -195,11 +278,26 @@ class AstraFocuser(FocuserInterface):
         time.sleep(3)  # settle time
         return None
 
-    def get_current_position(self):
+    def get_current_position(self) -> int:
+        """Get the current focuser position.
+
+        Returns:
+            int: Current position of the focuser.
+        """
         return self.alpaca_device_focuser.get("Position")
 
     def _project_to_allowed_range(self, new_position: int) -> int:
-        """Project the given position to the allowed range of the focuser."""
+        """Project position to the allowed focuser range.
+
+        Ensures the requested position is within the focuser's allowed range,
+        adjusting to boundaries if necessary with warning messages.
+
+        Args:
+            new_position (int): Requested focuser position.
+
+        Returns:
+            int: Position adjusted to allowed range.
+        """
         if self.allowed_range[0] is not None and new_position < self.allowed_range[0]:
             new_position = self.allowed_range[0]
             self.astra.logger.warning(
@@ -217,18 +315,33 @@ class AstraFocuser(FocuserInterface):
 
 
 class AstraTelescope(TelescopeInterface):
+    """Telescope interface for Astra observatory automation system.
+
+    Provides coordinate control and pointing interface for telescope through ALPACA protocol.
+
+    Args:
+        astra (Any): Main Astra instance for system coordination.
+        alpaca_device_telescope (AlpacaDevice): ALPACA telescope device interface.
+        row (dict): Configuration parameters for telescope setup.
+    """
+
     def __init__(
-        self, astra: "Astra", alpaca_device_telescope: AlpacaDevice, row: dict
-    ):
+        self, astra: Any, alpaca_device_telescope: AlpacaDevice, row: dict
+    ) -> None:
         self.astra = astra
         self.alpaca_device_telescope = alpaca_device_telescope
 
         self.row = row
         super().__init__()
 
-    def set_telescope_position(self, coordinates: SkyCoord, hard_timeout: float = 120):
-        """
-        Calling this function should take as long as it takes to move the telescope to the desired position.
+    def set_telescope_position(
+        self, coordinates: SkyCoord, hard_timeout: float = 120
+    ) -> None:
+        """Move telescope to specified celestial coordinates.
+
+        Args:
+            coordinates (SkyCoord): Target celestial coordinates.
+            hard_timeout (float): Maximum time to wait for slew completion in seconds.
         """
         self.alpaca_device_telescope.get(
             "SlewToCoordinatesAsync",
@@ -248,31 +361,29 @@ class AstraTelescope(TelescopeInterface):
 
 
 class AstraAutofocusDeviceManager(AutofocusDeviceManager):
-    """
-    Autofocus device manager for the Astra autofocus system.
+    """Device manager for Astra autofocus operations.
 
-    Parameters:
-        astra (Astra): The Astra instance.
-        action_value (dict): Dictionary containing action values.
-        row (dict): A dictionary containing configuration parameters.
-        astra_camera (AstraCamera): The Astra camera instance.
-        astra_focuser (AstraFocuser): The Astra focuser instance.
-        astra_telescope (Optional[AstraTelescope]): The Astra telescope instance (optional).
+    Coordinates camera, focuser, and telescope for automated focusing operations
+    using the astrafocus library framework.
 
-    Methods:
-        check_conditions() -> bool:
-            Check the conditions for autofocus.
+    Args:
+        astra (Any): Main Astra instance for system coordination.
+        action_value (dict): Configuration values for autofocus action.
+        row (dict): Observatory configuration parameters.
+        astra_camera (AstraCamera): Camera interface for image capture.
+        astra_focuser (AstraFocuser): Focuser interface for position control.
+        astra_telescope (Optional[AstraTelescope]): Telescope interface for positioning.
     """
 
     def __init__(
         self,
-        astra: "Astra",
+        astra: Any,
         action_value: dict,
         row: dict,
         astra_camera: AstraCamera,
         astra_focuser: AstraFocuser,
         astra_telescope: Optional[AstraTelescope] = None,
-    ):
+    ) -> None:
         self.astra = astra
         self.action_value = action_value
         self.row = row
@@ -281,7 +392,23 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         )
 
     @classmethod
-    def from_row(cls, astra, folder, row, paired_devices):
+    def from_row(
+        cls, astra: Any, folder: str, row: dict, paired_devices: PairedDevices
+    ) -> "AstraAutofocusDeviceManager":
+        """Create device manager from configuration row.
+
+        Factory method to construct an autofocus device manager from
+        observatory configuration and device mappings.
+
+        Args:
+            astra (Any): Main Astra instance.
+            folder (str): Directory path for saving images.
+            row (dict): Configuration row with device settings.
+            paired_devices (PairedDevices): Device manager instance.
+
+        Returns:
+            AstraAutofocusDeviceManager: Configured device manager instance.
+        """
         # action_value, _, hdr = astra.pre_sequence(row, paired_devices)
         action_value = row["action_value"]
         hdr = astra.base_header(paired_devices, action_value)
@@ -315,17 +442,33 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
             astra_telescope=astra_telescope,
         )
 
-    def check_conditions(self):
+    def check_conditions(self) -> bool:
+        """Check if observatory conditions are suitable for autofocus.
+
+        Returns:
+            bool: True if conditions are acceptable, False otherwise.
+        """
         return self.astra.check_conditions(row=self.row)
 
 
 class Defocuser:
+    """Defocusing control for creating intentionally out-of-focus images.
+
+    Used for specific observational techniques requiring defocused stellar images,
+    such as photometry of very bright stars or specific calibration procedures.
+
+    Args:
+        astra (Any): Main Astra instance for system coordination.
+        paired_devices (PairedDevices): Device manager for observatory components.
+        row (Optional[dict]): Configuration parameters for defocusing operation.
+    """
+
     def __init__(
         self,
-        astra: "Astra",
+        astra: Any,
         paired_devices: PairedDevices,
         row: Optional[dict] = None,
-    ):
+    ) -> None:
         self.astra = astra
         self.row = row
         self.paired_devices = paired_devices
@@ -339,9 +482,24 @@ class Defocuser:
 
     @property
     def focuser_name(self) -> str:
+        """Get the name of the connected focuser device.
+
+        Returns:
+            str: Name identifier of the focuser device.
+        """
         return self.paired_devices["Focuser"]
 
-    def load_best_focus_position_from_config(self):
+    def load_best_focus_position_from_config(self) -> int:
+        """Load the best focus position from device configuration.
+
+        Retrieves the stored focus position from the focuser configuration.
+
+        Returns:
+            int: Best focus position from configuration.
+
+        Raises:
+            ValueError: If focuser configuration is not found or missing focus_position.
+        """
         focuser_config = self.paired_devices.get_device_config("Focuser")
         if focuser_config is None or "focus_position" not in focuser_config:
             self.astra.logger.warning(
@@ -355,10 +513,23 @@ class Defocuser:
         return focuser_config["focus_position"]
 
     @property
-    def current_position(self):
+    def current_position(self) -> int:
+        """Get the current focuser position.
+
+        Returns:
+            int: Current position of the focuser.
+        """
         return self._focuser.get_current_position()
 
-    def defocus(self, position: int):
+    def defocus(self, position: int) -> None:
+        """Move focuser to a defocused position.
+
+        Intentionally moves the focuser away from the best focus position
+        for specialized observing techniques.
+
+        Args:
+            position (int): Target defocus position.
+        """
         if position == self.current_position:
             self.astra.logger.debug(
                 f"Focuser {self.focuser_name} already at position "
@@ -375,7 +546,12 @@ class Defocuser:
 
         self._focuser.move_focuser_to_position(position)
 
-    def refocus(self):
+    def refocus(self) -> None:
+        """Return focuser to the best focus position.
+
+        Moves the focuser back to the stored best focus position
+        after defocusing operations.
+        """
         if self.current_position == self.best_focus_position:
             self.astra.logger.debug(
                 f"Focuser {self.focuser_name} already at best "
@@ -390,21 +566,40 @@ class Defocuser:
 
 
 class Autofocuser:
+    """Main autofocus orchestration class for Astra observatory.
+
+    Coordinates complete autofocus operations including target selection,
+    focus measurement, and optimization using multiple algorithms.
+
+    Args:
+        astra (Any): Main Astra instance for system coordination.
+        row (dict): Observatory configuration parameters.
+        paired_devices (PairedDevices): Device manager for observatory components.
+        action_value (dict): Configuration values for autofocus action.
+        hdr (Any): Header information for image metadata.
+        save_path (Optional[Path]): Directory path for saving autofocus data.
+        calibration_coordinates (Optional[Any]): Specific coordinates for calibration.
+        focus_measure_operator_name (Optional[str]): Name of focus measurement algorithm.
+        autofocuser (Optional[Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]]):
+            Specific autofocus algorithm instance.
+        success (bool): Success flag for autofocus operation.
+    """
+
     def __init__(
         self,
-        astra: "Astra",
-        row,
+        astra: Any,
+        row: dict,
         paired_devices: PairedDevices,
         action_value: dict,
-        hdr,
-        save_path: Path | None = None,
-        calibration_coordinates=None,
-        focus_measure_operator_name=None,
+        hdr: Any,
+        save_path: Optional[Path] = None,
+        calibration_coordinates: Optional[Any] = None,
+        focus_measure_operator_name: Optional[str] = None,
         autofocuser: Optional[
-            NonParametricResponseAutofocuser | AnalyticResponseAutofocuser
+            Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]
         ] = None,
         success: bool = True,
-    ):
+    ) -> None:
         self.astra = astra
         self.row = row
         self.paired_devices = paired_devices
@@ -419,13 +614,27 @@ class Autofocuser:
         self._initialise_logging()
 
     @property
-    def best_focus_position(self):
-        """Return the best focus position found by the autofocuser."""
+    def best_focus_position(self) -> int:
+        """Get the best focus position found by the autofocuser.
+
+        Returns:
+            int: Optimal focus position determined by autofocus algorithm.
+
+        Raises:
+            ValueError: If autofocuser has not been set up yet.
+        """
         if self.autofocuser is None:
             raise ValueError("Autofocuser has not been set up yet.")
         return self.autofocuser.best_focus_position
 
-    def run(self):
+    def run(self) -> bool:
+        """Execute the autofocus sequence.
+
+        Runs the complete autofocus operation using the configured algorithm.
+
+        Returns:
+            bool: True if autofocus completed successfully, False otherwise.
+        """
         if not self.success or not self.astra.check_conditions(row=self.row):
             return False
 
@@ -444,7 +653,12 @@ class Autofocuser:
             self.success = False
             return False
 
-    def setup(self):
+    def setup(self) -> None:
+        """Set up the autofocus system with devices and algorithms.
+
+        Configures camera, focuser, telescope interfaces and initializes
+        the autofocus algorithm with specified parameters.
+        """
         if not self._check_conditions():
             return False
 
@@ -463,7 +677,12 @@ class Autofocuser:
             )
             self.success = False
 
-    def _setup(self):
+    def _setup(self) -> None:
+        """Internal setup method for autofocus configuration.
+
+        Configures save paths, device managers, focus measure operators,
+        and autofocus algorithms based on action values.
+        """
         action_value = self.action_value
 
         date = datetime.now().strftime("%Y%m%d")
@@ -557,34 +776,20 @@ class Autofocuser:
 
         self.autofocuser = autofocuser
 
-    def determine_autofocus_calibration_field(self):
-        """Determine the calibration field for the autofocus.
+    def determine_autofocus_calibration_field(self) -> None:
+        """Determine optimal celestial coordinates for autofocus operation.
 
-        This function determines the calibration field for the autofocus. It uses the following
-        parameters from the action_value:
-            - 'gaia_tmass_db_path': The path to the Gaia-Tmass database.
-            - 'maximal_zenith_angle': The maximal zenith angle in degrees. Default is None.
-            - 'airmass_threshold': The airmass threshold. Default is 1.01.
-            - 'g_mag_range': The range of g magnitudes. Default is (0, 10).
-            - 'j_mag_range': The range of j magnitudes. Default is (0, 10).
-            - 'fov_height': The height of the field of view in argmins. Default is 11.666666 / 60.
-            - 'fov_width': The width of the field of view in argmins. Default is 11.666666 / 60.
-            - 'selection_method': The method for selecting the calibration field.
+        Selects suitable star field for autofocus using Gaia catalog data and
+        zenith neighborhood analysis. Uses various selection criteria including
+        magnitude ranges, field of view, and star density preferences.
 
-        In broad terms, the function determines the zenith neighbourhood of the observatory
-        and selects a star from it. The selection method can be one of the following:
-            - 'single': Select the star closest to zenith within the desired magnitude range
-               that is alone in the fov.
-            - 'maximal': Select the star closest to zenith within the desired magnitude range
-               that has the maximal number of neighbours in the fov.
-            - 'any': Select the star closest to zenith within the desired magnitude range.
+        Selection methods:
+            - 'single': Isolated star closest to zenith
+            - 'maximal': Star with maximum neighbors in field
+            - 'any': Any suitable star closest to zenith
 
-        If the selection method is unsuccessful, the function will attempt to autofocus at zenith.
-
-        Raises:
-            ValueError: If no observatory location is found in the header.
-            ValueError: check_conditions return false.
-
+        Updates self.calibration_coordinates with selected coordinates or
+        sets self.success to False if no suitable field found.
         """
         if not self._check_conditions():
             return False
@@ -790,7 +995,12 @@ class Autofocuser:
 
         return centre_coordinates
 
-    def slew_to_calibration_field(self):
+    def slew_to_calibration_field(self) -> None:
+        """Slew telescope to the determined autofocus calibration field.
+
+        Moves the telescope to the coordinates selected for autofocus operations.
+        Updates action_value with target coordinates and initiates observatory setup.
+        """
         if not self.success:
             return False
 
@@ -814,8 +1024,18 @@ class Autofocuser:
             )
             self.success = False
 
-    def determine_focus_measure_operator(self, action_value):
-        """Determine the focus measure operator from user input."""
+    def determine_focus_measure_operator(self, action_value: dict) -> Tuple[Any, str]:
+        """Select focus measurement algorithm from configuration.
+
+        Determines the appropriate focus measure operator based on user preferences,
+        supporting various algorithms like HFR, 2D Gaussian, FFT, and variance-based methods.
+
+        Args:
+            action_value (dict): Configuration containing focus_measure_operator preference.
+
+        Returns:
+            Tuple[Any, str]: Focus measure operator class and descriptive name.
+        """
         focus_measure_operator_name = action_value.get("focus_measure_operator", "HFR")
 
         if not isinstance(focus_measure_operator_name, str):
@@ -853,10 +1073,16 @@ class Autofocuser:
             focus_measure_operator_name = "HFR"
         return focus_measure_operator, focus_measure_operator_name
 
-    def determine_extremum_estimator(
-        self,
-    ) -> astrafee.RobustExtremumEstimator:
-        """Determine the extremum estimator from user input."""
+    def determine_extremum_estimator(self) -> astrafee.RobustExtremumEstimator:
+        """Select extremum estimation algorithm for focus curve analysis.
+
+        Chooses appropriate curve fitting method for determining optimal focus
+        from focus measure vs position data. Supports LOWESS, median filter,
+        spline, and RBF methods.
+
+        Returns:
+            astrafee.RobustExtremumEstimator: Configured extremum estimator instance.
+        """
         action_value = self.action_value
         extremum_estimator = action_value.get("extremum_estimator", "LOWESS")
         if not isinstance(extremum_estimator, str):
@@ -894,7 +1120,21 @@ class Autofocuser:
         max_reduction_steps: int = 5,
         minimal_exposure_time: float = 0.1,
     ) -> float:
-        """Reduce exposure time if necessary to avoid saturation."""
+        """Automatically reduce exposure time to prevent saturation.
+
+        Takes test exposures and progressively reduces exposure time if saturation
+        is detected, ensuring optimal image quality for focus measurements.
+
+        Args:
+            autofocus_device_manager (AstraAutofocusDeviceManager): Device manager for camera access.
+            exposure_time (float): Initial exposure time in seconds.
+            reduction_factor (float): Factor by which to reduce exposure time.
+            max_reduction_steps (int): Maximum number of reduction iterations.
+            minimal_exposure_time (float): Minimum allowed exposure time.
+
+        Returns:
+            float: Optimal exposure time that avoids saturation.
+        """
         new_exposure_time = exposure_time
         for _ in range(max_reduction_steps):
             if new_exposure_time < minimal_exposure_time:
@@ -929,30 +1169,12 @@ class Autofocuser:
 
         return new_exposure_time
 
-    def make_summary_plot(self):
-        """
-        import os
-        from pathlib import Path
-        save_path = Path("/Users/ddegen/pydev/astra/assets/images/autofocus_ref")
-        most_recent_dir = sorted(
-            [item for item in os.listdir(save_path) if os.path.isdir(save_path / item)]
-        )[-1]
-        save_path = save_path / most_recent_dir
+    def make_summary_plot(self) -> None:
+        """Create visualization plot of autofocus results.
 
-        import matplotlib.pyplot as plt
-        import pandas as pd
-        focus_record = sorted(
-            [item for item in os.listdir(save_path) if item.endswith(".csv")]
-        )[-1]
-        df = pd.read_csv(save_path / focus_record)
-        df.sort_values("focus_pos", inplace=True)
-        fig, axes = plt.subplots(len(df.columns)-1, figsize=(8, 6*len(df.columns)-1))
-        for i, ax in enumerate(axes):
-            ax.plot(df["focus_pos"], df[df.columns[i+1]], color="black", marker=".", ls="")
-            ax.set_xlabel("Focuser position")
-            ax.set_ylabel(df.columns[i+1])
-        plt.savefig(save_path / f"{focus_record.removesuffix('.csv')}_full.pdf")
-        plt.close()
+        Generates a summary plot showing focus measure vs focuser position
+        with the determined best focus position marked. Saves plot to the
+        autofocus results directory.
         """
         try:
             if self.success is False:
@@ -992,7 +1214,12 @@ class Autofocuser:
         except Exception as e:
             self.astra.logger.exception(f"Error creating summary plot: {str(e)}")
 
-    def create_result_file(self):
+    def create_result_file(self) -> None:
+        """Create text file with autofocus results summary.
+
+        Writes a summary file containing the best focus position, algorithm used,
+        and autofocuser configuration for future reference.
+        """
         if self.success is False:
             return
         if self.save_path is None:
@@ -1018,19 +1245,37 @@ class Autofocuser:
         except Exception as e:
             self.astra.logger.exception(f"Error creating log file: {str(e)}")
 
-    def _initialise_logging(self):
+    def _initialise_logging(self) -> None:
+        """Set up logging integration with astrafocus library.
+
+        Configures the astrafocus logger to use Astra's logging system
+        for consistent log formatting and storage.
+        """
         if logging.getLogger("astrafocus").hasHandlers():
             logging.getLogger("astrafocus").handlers.clear()
         logging.getLogger("astrafocus").addHandler(LoggingHandler(self.astra))
 
-    def _check_conditions(self):
+    def _check_conditions(self) -> bool:
+        """Verify observatory conditions are suitable for autofocus.
+
+        Checks weather, equipment status, and other conditions before
+        proceeding with autofocus operations.
+
+        Returns:
+            bool: True if conditions are acceptable, False otherwise.
+        """
         if not self.astra.check_conditions(row=self.row):
             self.astra.logger.error("Autofocus aborted due to bad conditions.")
             self.success = False
 
         return self.success
 
-    def save_best_focus_position(self):
+    def save_best_focus_position(self) -> None:
+        """Save determined best focus position to observatory configuration.
+
+        Updates the focuser configuration with the optimal focus position
+        found during autofocus operation for future use.
+        """
         if not self.success or not self.action_value.get("save", True):
             return
 

@@ -1,3 +1,29 @@
+"""
+Astronomical image processing and FITS file management utilities.
+
+This module provides functions for handling astronomical images captured from
+observatory cameras. It manages image directory creation, data type conversion,
+and FITS file saving with proper headers and metadata.
+
+Key features:
+- Automatic directory creation with date-based naming
+- Image data type conversion and array reshaping for FITS compatibility
+- FITS file saving with comprehensive metadata and WCS support
+- Intelligent filename generation based on observation parameters
+
+The module handles various image types including light frames, bias frames,
+dark frames, and calibration images, ensuring proper metadata preservation
+and file organization for astronomical data processing pipelines.
+
+Example:
+    # Create directory and save an astronomical image
+    folder = create_image_dir(schedule_start_time, site_longitude)
+    filepath = save_image(
+        image_data, image_info, maxadu, header,
+        camera_name, obs_time, folder_name
+    )
+"""
+
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Union
@@ -18,31 +44,26 @@ def create_image_dir(
     user_specified_dir: Optional[str] = None,
 ) -> Path:
     """
-    Create a directory to store images.
+    Create a directory for storing astronomical images.
 
-    This function creates a directory to store images. If a user-specified directory
-    is provided, it is used. Otherwise, the directory is created in the 'images'
-    folder with a name based on the schedule's beginning date (shifted to local
-    time using site's longitude).
+    Creates a directory for image storage using either a user-specified path
+    or an auto-generated date-based path. The auto-generated path uses the
+    local date calculated from the schedule start time and site longitude.
 
-    Parameters
-    ----------
-    schedule_start_time : datetime, optional
-        The start time of the observing schedule, by default datetime.now(UTC)
-    site_long : float, optional
-        Site longitude in degrees (used to convert UTC to local time), by default 0
-    user_specified_dir : str or None, optional
-        Custom directory path to use instead of auto-generated path, by default None
+    Parameters:
+        schedule_start_time (datetime, optional): Start time of the observing schedule.
+            Defaults to current UTC time.
+        site_long (float, optional): Site longitude in degrees for local time conversion.
+            Defaults to 0.
+        user_specified_dir (str | None, optional): Custom directory path. If provided,
+            this overrides auto-generation. Defaults to None.
 
-    Returns
-    -------
-    Path
-        Path object pointing to the created directory
+    Returns:
+        Path: Path object pointing to the created directory.
 
-    Notes
-    -----
-    The auto-generated directory name format is YYYYMMDD based on the local date
-    calculated from schedule_start_time + (site_long / 15) hours.
+    Note:
+        Auto-generated directory format is YYYYMMDD based on local date calculated
+        as schedule_start_time + (site_long / 15) hours.
     """
 
     if user_specified_dir:
@@ -61,44 +82,28 @@ def transform_image_to_array(
     image: Union[List[int], np.ndarray], maxadu: int, image_info: ImageMetadata
 ) -> np.ndarray:
     """
-    Transform image data to a numpy array with the correct shape and data type for FITS files.
+    Transform raw image data to a FITS-compatible numpy array.
 
-    This function takes raw image data and metadata, determines the appropriate data type
-    based on the image element type and maximum ADU value, and reshapes the array for
-    compatibility with astropy.io.fits conventions.
+    Converts raw image data to the appropriate data type and shape for FITS files.
+    Handles data type selection based on image element type and maximum ADU value,
+    and applies necessary array transpositions for FITS conventions.
 
-    Parameters
-    ----------
-    image : list of int or np.ndarray
-        Raw image data as a list or numpy array
-    maxadu : int
-        Maximum ADU (Analog-to-Digital Unit) value for the image
-    image_info : ImageMetadata
-        Metadata object containing image properties including:
-        - ImageElementType: Data type indicator (0-3)
-        - Rank: Number of dimensions (2 for grayscale, 3 for color)
+    Parameters:
+        image (list[int] | np.ndarray): Raw image data as list or numpy array.
+        maxadu (int): Maximum ADU (Analog-to-Digital Unit) value for the image.
+        image_info (ImageMetadata): Metadata containing ImageElementType (0-3) and
+            Rank (2 for grayscale, 3 for color).
 
-    Returns
-    -------
-    np.ndarray
-        Properly shaped and typed numpy array ready for FITS file creation.
-        For 2D images: transposed array
-        For 3D images: transposed with axes (2, 1, 0)
+    Returns:
+        np.ndarray: Properly shaped and typed array ready for FITS file creation.
+            2D images are transposed, 3D images use transpose(2, 1, 0).
 
-    Raises
-    ------
-    ValueError
-        If ImageElementType is not in the expected range (0-3)
+    Raises:
+        ValueError: If ImageElementType is not in range 0-3.
 
-    Notes
-    -----
-    ImageElementType mapping:
-    - 0, 1: uint16
-    - 2: uint16 (if maxadu <= 65535) or int32 (if maxadu > 65535)
-    - 3: float64
-
-    The transpose operations are required to match FITS file conventions
-    where the first axis corresponds to columns and the second to rows.
+    Note:
+        ImageElementType mapping: 0,1→uint16; 2→uint16 (≤65535) or int32 (>65535); 3→float64.
+        Transpose operations match FITS conventions where first axis = columns, second = rows.
     """
     if not isinstance(image, np.ndarray):
         image = np.array(image)
@@ -136,51 +141,32 @@ def save_image(
     wcs: Optional[WCS] = None,
 ) -> Path:
     """
-    Save an image to disk in FITS format with proper headers and filename generation.
+    Save an astronomical image as a FITS file with proper headers and filename.
 
-    This function transforms raw image data, updates FITS headers with observation
-    metadata, optionally adds WCS information, and saves the result as a FITS file
-    with an automatically generated filename based on image properties.
+    Transforms raw image data, updates FITS headers with observation metadata,
+    optionally adds WCS information, and saves as a FITS file with an automatically
+    generated filename based on image properties.
 
-    Parameters
-    ----------
-    image : list of int or np.ndarray
-        Raw image data to be saved
-    image_info : ImageMetadata
-        Metadata object containing image properties for data type determination
-    maxadu : int
-        Maximum ADU (Analog-to-Digital Unit) value for the image
-    hdr : fits.Header
-        FITS header dictionary containing image metadata. Must include:
-        - FILTER: Filter name used for the observation
-        - IMAGETYP: Type of image ("Light Frame", "Bias Frame", "Dark Frame", etc.)
-        - OBJECT: Target object name (for light frames)
-        - EXPTIME: Exposure time in seconds
-    device_name : str
-        Name of the camera/device used for the observation
-    dateobs : datetime
-        UTC datetime when the exposure started
-    folder : str
-        Subfolder name within the images directory where the file will be saved
-    wcs : WCS, optional
-        World Coordinate System information to add to the header, by default None
+    Parameters:
+        image (list[int] | np.ndarray): Raw image data to save.
+        image_info (ImageMetadata): Image metadata for data type determination.
+        maxadu (int): Maximum ADU value for the image.
+        hdr (fits.Header): FITS header containing FILTER, IMAGETYP, OBJECT, EXPTIME.
+        device_name (str): Camera/device name for filename generation.
+        dateobs (datetime): UTC datetime when exposure started.
+        folder (str): Subfolder name within the images directory.
+        wcs (WCS, optional): World Coordinate System information. Defaults to None.
 
-    Returns
-    -------
-    Path
-        Path object pointing to the saved FITS file
+    Returns:
+        Path: Path to the saved FITS file.
 
-    Notes
-    -----
-    The function automatically generates filenames based on image type:
-    - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
-    - Bias/Dark frames: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
-    - Other frames: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
+    Note:
+        Filename formats:
+        - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
+        - Bias/Dark: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
+        - Other: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
 
-    The FITS header is automatically updated with:
-    - DATE-OBS: UTC date/time of exposure start
-    - DATE: UTC date/time when the file was written
-    - WCS information (if provided)
+        Headers automatically updated with DATE-OBS, DATE, and WCS (if provided).
     """
 
     # transform image to numpy array
