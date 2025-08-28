@@ -1,6 +1,6 @@
 import os
 import sys
-import toml
+import importlib.metadata
 
 # Add the project source directory to the path so that autodoc can find the modules
 sys.path.insert(0, os.path.abspath("../../src"))
@@ -11,8 +11,7 @@ copyright = "2025, Peter Pedersen"
 author = "Peter Pedersen"
 
 # The full version, including alpha/beta/rc tags
-pyproject = toml.load("../../pyproject.toml")
-version = pyproject["project"]["version"]
+version = importlib.metadata.version("astra")
 
 # General configuration
 extensions = [
