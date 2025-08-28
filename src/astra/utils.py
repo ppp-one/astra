@@ -419,13 +419,25 @@ def check_astelos_error(
             "2",
             "HA",
         ],
-        ["ERR_RunDevError", "Working pressure suddenly lost", "2", "HA"],
+        [
+            "ERR_DeviceError",
+            "axis #0\\| amplifier fault #07H\\| safe torque-off circuit fault",
+            "2",
+            "DEC",
+        ],
+        [
+            "ERR_DeviceError",
+            "axis #1\\| amplifier fault #07H\\| safe torque-off circuit fault",
+            "2",
+            "HA",
+        ],
         [
             "ERR_DeviceError",
             "axis #1\\| amplifier fault #07H\\| safe torque-off circuit fault",
             "2",
             "DEC",
         ],
+        ["ERR_RunDevError", "Working pressure suddenly lost", "2", "HA"],
         ["ERR_RunDevError", "Working pressure suddenly lost", "2", "DEC"],
         ["ERR_DeviceWarn", "Malformed telegram from GPS", "4", "LOCAL"],
     ]
