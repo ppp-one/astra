@@ -7,7 +7,7 @@ Prerequisites
 Before installing Astra, ensure you have the following prerequisites:
 
 * Python 3.11 or higher
-* ASCOM Alpaca-compatible devices or simulators
+* ASCOM Alpaca-compatible devices or `simulators <https://github.com/ppp-one/alpaca-simulators>`_ 
 * Git (for installation from source)
 * *Optional*: `Gaia-2MASS sqlite catalogue <https://drive.google.com/file/d/1xg23KtKkl_0b0zLuDpouUjTh3klyae2c/view>`_ (18 GB)
    * Catalogue of 300M Gaia stars cross matched with 2MASS, proper motion included (see `here <https://github.com/ppp-one/gaia-tmass-sqlite>`_ for details)

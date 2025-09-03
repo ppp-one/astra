@@ -167,3 +167,68 @@ img.align-center {
     margin-bottom: 1.5em;
     /* Adjust value as needed */
 }
+
+.scrollable-code .highlight {
+    max-height: 400px;
+    /* Adjust height as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Optional: Add some padding and improve scrollbar appearance */
+.scrollable-code .highlight pre {
+    margin: 0;
+    padding: 10px;
+}
+
+/* For webkit browsers - customize scrollbar */
+.scrollable-code .highlight::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-code .highlight::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.scrollable-code .highlight::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+/* New styles for scrollable tables */
+.scrollable-table {
+    display: block;
+    max-height: 400px;
+    /* Adjust height as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.scrollable-table table {
+    width: 100%;
+    margin: 0;
+}
+
+/* Optional: Sticky header for better UX */
+.scrollable-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+}
+
+/* Customize scrollbar for tables too */
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}

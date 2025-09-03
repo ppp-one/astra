@@ -2,9 +2,9 @@ Telescope:
   - device_name: telescope_observatoryname
     ip: localhost:11111
     device_number: 0
-    pointing_threshold: 0.06 # arcmins
-    guider: # set by the user using calibrate_guiding sequence
-      PIX2TIME:
+    pointing_threshold: 0.1 # arcmins
+    guider: # populated using calibrate_guiding sequence
+      PIX2TIME: # ms/pixel for camera used for guiding
         "+x": 69.32860207831231
         "-x": 69.05795081331794
         "+y": 69.32860207831231
@@ -15,7 +15,7 @@ Telescope:
         "-x": South
         "+y": East
         "-y": West
-      PID_COEFFS:
+      PID_COEFFS: # defaults
         "x": { "p": 0.70, "i": 0.02, "d": 0.0 }
         "y": { "p": 0.50, "i": 0.02, "d": 0.0 }
         "set_x": 0.0
@@ -55,7 +55,7 @@ ObservingConditions:
   - device_name: weather_observatoryname
     ip: localhost:11111
     device_number: 0
-    polling_delay: 5
+    polling_interval: 5
     closing_limits:
       Humidity:
         - upper: 70

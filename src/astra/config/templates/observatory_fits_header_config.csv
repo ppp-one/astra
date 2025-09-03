@@ -96,17 +96,3 @@ MJD-END,float,false,astra,,Modified Julian Date at end of exposure
 DATE-END,str,false,astra,,[ISO 8601] UTC date/time at end of exposure
 ,,,,,
 ASTRA,str,true,astra,,Version of Astra
-,,,,,
-WCSAXES,int,true,astra_fixed,0,no comment
-CTYPE1,str,true,astra_fixed,,TAN (gnomic) projection
-CTYPE2,str,true,astra_fixed,,TAN (gnomic) projection
-CRVAL1,float,true,astra_fixed,0.0,RA  of reference point
-CRVAL2,float,true,astra_fixed,0.0,DEC of reference point
-CRPIX1,float,true,astra_fixed,0.0,X reference pixel
-CRPIX2,float,true,astra_fixed,0.0,Y reference pixel
-CUNIT1,str,true,astra_fixed,,X pixel scale units
-CUNIT2,str,true,astra_fixed,,Y pixel scale units
-CD1_1,float,true,astra_fixed,0.0,Transformation matrix
-CD1_2,float,true,astra_fixed,0.0,Transformation matrix
-CD2_1,float,true,astra_fixed,0.0,Transformation matrix
-CD2_2,float,true,astra_fixed,0.0,Transformation matrix
