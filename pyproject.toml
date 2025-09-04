@@ -35,6 +35,7 @@ dependencies = [
 dev = ["ruff", "black==24.3.0", "pytest", "toml"]
 test = ["pytest"]
 docs = [
+    "sphinx",
     "matplotlib",
     "myst-nb",
     "sphinx-book-theme",
