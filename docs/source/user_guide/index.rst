@@ -10,9 +10,4 @@ This section provides detailed guidance on using Astra for observatory automatio
    observatory_configuration
    fits_header_configuration
    scheduling
-   .. guiding
-   .. autofocus
-   .. pointing
-   .. calibration
-   .. flats
-   .. safety_monitoring
+   operation

@@ -1,14 +1,14 @@
-Scheduling
-==========
+Scheduling Syntax
+================
 
 Astra uses a flexible scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each line represents a scheduled action with these fields:
 
 .. - ``device_type``: Type of the device (e.g., camera, telescope)
 - ``device_name``: Name of the camera device (the primary instrument that coordinates all operations)
 - ``action_type``: Type of action to perform
-- ``action_value``: Parameters for the action (as a JSON object)
-- ``start_time``: When the action should start (ISO format: YYYY-MM-DD HH:MM:SS.sss)
-- ``end_time``: When the action should end (ISO format: YYYY-MM-DD HH:MM:SS.sss)
+- ``action_value``: Parameters for the action
+- ``start_time``: When the action should start (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
+- ``end_time``: Latest when the action should end (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
 
 .. note::
    **Instrument-Centric Design**: All scheduled actions specify a camera as the ``device_name``. The camera acts as the primary instrument that coordinates operations with its paired devices (telescope, dome, filter wheel, focuser, etc.). This design ensures all devices work together as a cohesive system.
@@ -36,23 +36,23 @@ Place your schedule file in the observatory schedules directory with a ``.jsonl`
 
 - ``~/Documents/Astra/schedules/observatory_name.jsonl``
 
-Astra will automatically detect and load JSONL schedule files with the specified name pattern.
+Astra will automatically detect and load the JSONL schedule file, with the specified name pattern, if modified.
 
 Supported Action Types
 --------------------
 
 Astra supports the following action types for observatory automation, organized by function:
 
-- ``open``: Open observatory (dome, telescope, camera cooling)
-- ``close``: Close observatory (park telescope, close dome)
+- ``open``: Open observatory
+- ``close``: Close observatory
 - ``cool_camera``: Activate camera cooling
 - ``object``: Capture light frames with optional pointing correction/autoguiding
-- ``calibration``: Take dark and bias frames
+- ``calibration``: Capture dark and bias frames
 - ``flats``: Capture sky flat field frames
 - ``autofocus``: Autofocus
 - ``calibrate_guiding``: Calibrate guiding parameters
-- ``pointing_model``: Build telescope pointing model
-- ``complete_headers``: Complete FITS headers
+- ``pointing_model``: Help build a telescope pointing model
+- ``complete_headers``: Complete FITS headers of all images captured
 
 .. note::
    The ``complete_headers`` action automatically runs at the end of every schedule execution to ensure complete metadata in all FITS files.
@@ -71,8 +71,6 @@ Open the observatory for observations:
 1. Opens dome shutter
 2. Unparks telescope
 
-The sequence only proceeds if weather conditions are safe and no errors are present. For SPECULOOS observatories, special error handling and polling management is performed.
-
 **Required parameters:**
     None
 
@@ -90,8 +88,6 @@ Close the observatory:
 3. Park the telescope
 4. Park the dome and close shutter
 
-For SPECULOOS observatories, includes special error handling and polling
-management during the closure sequence.
 
 **Required parameters:**
     None
@@ -102,13 +98,13 @@ management during the closure sequence.
 ``object``
 ^^^^^^^^^^
 
-Execute a sequence of light frames:
+Capture a sequence of light frames:
 
 1. Pre-sequence setup (telescope pointing, setting filters, focus position, camera binning, base headers)
-2. Perform pointing correction (if `pointing=true`)
-3. Start guiding (if `guiding=true`)
-4. Capture exposures
-5. Stop guiding and telescope tracking at completion
+2. Capture exposures
+3. Perform pointing correction (if `pointing=true`)
+4. Start guiding (if `guiding=true`)
+5. Stop exposures, guiding, and telescope tracking at completion
 
 **Required parameters:**
     - ``object``: Target name (string)
@@ -130,7 +126,7 @@ Execute a sequence of light frames:
 ``calibration``
 ^^^^^^^^^^^^^^^
 
-Execute a sequence of calibration images.
+Capture a sequence of calibration images.
 
 **Required parameters:**
     - ``exptime``: List of exposure times in seconds (List[float])
@@ -146,15 +142,13 @@ Execute a sequence of calibration images.
 ``flats``
 ^^^^^^^^^
 
-Execute a sequence of sky flat field frames:
+Capture a sequence of sky flat field frames:
 
-1. Monitors sun altitude for optimal flat field conditions
-2. Positions telescope for best uniformity on sky (180 degrees opposite the sun, 75 degrees above the horizon)
-3. Calculates optimal exposure times for target ADU levels
-4. Capture exposures
-5. Iterates through multiple filters if specified
-6. Handles exposure time adjustments as sky brightness changes
-
+1. Waits for the Sun's altitude to be between -1 and -12 degrees
+2. Positions telescope to `near-uniform portion of the sky <https://arxiv.org/pdf/1407.8283.pdf>`_, 180 degrees opposite the Sun in azimuth, 75 degrees above the horizon in altitude
+3. Capture exposures and re-positions telescope between exposures
+4. Iterates through filters
+5. Handles exposure time adjustments as sky brightness changes
 
 **Required parameters:**
     - ``filter``: List of filter names (List[string])
@@ -169,20 +163,15 @@ Execute a sequence of sky flat field frames:
 
 ``autofocus``
 ^^^^^^^^^^^^^
-Perform autofocus sequence to achieve optimal telescope focus.
 
-Executes an automated focusing routine that systematically tests different
-focus positions to find the optimal focus setting. Uses star analysis
-to measure focus quality and determine the best focus position.
+Perform autofocus sequence to achieve optimal telescope focus:
 
-Process:
-    1. Prepares observatory and creates autofocus metadata
-    2. Checks safety conditions before starting
-    3. Executes autofocus routine using appropriate algorithm
-    4. Takes test exposures at different focus positions
-    5. Analyzes star quality metrics (FWHM, HFD, etc.)
-    6. Determines and sets optimal focus position
-    7. Returns success status
+1. If no RA/DEC specified, use the local star database to identify a suitable field with enough stars
+2. Move telescope
+3. Takes images at different focus positions
+4. Measures star sharpness in each image
+5. Fits a curve to determine optimal focus
+6. Generates plots and saves focus results
 
 **Required parameters:**
     None
@@ -219,8 +208,10 @@ Process:
 ``calibrate_guiding``
 ^^^^^^^^^^^^^^^^^^^^
 
+Calibrate guiding parameters by measuring pixel-to-time scales of pulse guiding commands and determining camera orientation relative to telescope mount axes.
+
 **Required parameters:**
-None
+    None
 
 **Optional parameters:**
     - ``filter``: Filter name (string, default: current filter)
@@ -235,8 +226,13 @@ None
 ``pointing_model``
 ^^^^^^^^^^^^^^^^^^
 
+Generate a series of pointings and capture an image at each
+location, plate solve, and send SyncToCoordinates to the telescope. The sequence creates
+a spiral pattern of points from zenith down to a 30 degree altitude, avoiding
+positions less than 20 degrees to the Moon.
+
 **Required parameters:**
-None
+    None
 
 **Optional parameters:**
     - ``n``: Number of points to use for the model (int, default: 100)
@@ -250,67 +246,27 @@ None
 ``complete_headers``
 ^^^^^^^^^^^^^^^^^^^^
 
+Post-processes captured images by adding dynamic FITS header information that
+wasn't available at exposure time. Uses polled device data from paired devices to interpolate
+accurate values for each image timestamp.
+
 **Required parameters:**
-None
+    None
 
 **Optional parameters:**
-None
+    None
 
 
 ``cool_camera``
 ^^^^^^^^^^^^^^^
 
+Activates the camera cooler and sets the target temperature with specified tolerance 
+from observatory configuration with a 30 minute timeout.
+
 **Required parameters:**
-None
+    None
 
 **Optional parameters:**
-None
+    None
 
-
-
-Safety and Monitoring
--------------------
-
-Weather Conditions
-~~~~~~~~~~~~~~~~~
-
-Astra continuously monitors weather conditions using the SafetyMonitor device. The scheduler handles different action types based on weather dependency:
-
-**Weather-dependent actions** (require safe conditions):
-    - ``open``, ``object``, ``autofocus``, ``calibrate_guiding``, ``pointing_model``
-
-**Weather-independent actions** (can run in unsafe weather):
-    - ``calibration``, ``close``, ``cool_camera``, ``complete_headers``
-
-If weather becomes unsafe during execution, weather-dependent actions will stop, while weather-independent actions continue. In either case, the observatory will close safely if needed.  The scheduler will also attempt to resume operations once conditions are safe again.
-
-
-Troubleshooting
---------------
-
-Common Issues
-~~~~~~~~~~~
-
-**Schedule not starting:**
-    - Check that watchdog is running
-    - Verify robotic switch is enabled
-    - Ensure schedule end time is in the future
-    - Confirm schedule file format is valid JSONL
-    - **Verify camera device name exists in configuration**
-
-**Actions skipping:**
-    - Check weather conditions for weather-dependent actions
-    - **Verify camera device name matches configuration exactly**
-    - Review action parameters for correct format
-    - Check for timing conflicts or overlaps
-    - **Ensure camera has required paired devices configured**
-
-**Incomplete sequences:**
-    - Monitor error logs for device communication issues
-    - Verify safety conditions throughout sequence
-    - Check for sufficient time allocation between actions
-
-**Invalid action parameters:**
-    - Validate JSON syntax in action_value fields
-    - Ensure required parameters are present
-    - Check coordinate ranges and filter names
+    TODO: add timeout as parameter?
