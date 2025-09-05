@@ -36,7 +36,7 @@ During the initial run, you will be prompted to configure your observatory.
  
      /Users/peter/Documents/Astra/observatory_config
  
-   ..  attention:: The configuration files will be created in the `observatory_config` directory. You must edit them with your observatory's  information before using Astra in normal operation. See: :doc:`observatory configuration files <user_guide/configuration>`.
+   ..  attention:: The configuration files will be created in the `observatory_config` directory. You must edit them with your observatory's  information before using Astra in normal operation. See: :doc:`observatory configuration files <user_guide/observatory_configuration>`.
 
 
 Normal operation

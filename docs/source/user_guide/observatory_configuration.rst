@@ -52,7 +52,7 @@ Telescope Configuration
 
 Additional parameters for telescope mounts:
 
-- ``pointing_threshold``: Maximum acceptable pointing error in arcminutes (float)
+- ``pointing_threshold``: Maximum acceptable pointing error in arcminutes if pointing correction enabled (float)
 - ``guider``: Autoguider calibration settings (dict, populated automatically by the `calibrate_guiding` sequence)
 
 Focuser Configuration
@@ -71,7 +71,8 @@ Camera-specific parameters for cooling and imaging:
 **Cooling Parameters:**
 
 - ``temperature``: Target cooling temperature in Celsius (float)
-- ``temperature_tolerance``: Acceptable temperature variance from target in Celsius (float)
+- ``temperature_tolerance``: Acceptable temperature tolerance from target in Celsius (float)
+- ``cooling_timeout``: Time in minutes to wait to reach target temperature before timing out (int, default: 30)
 
 **Sky Flat Parameters:**
 
@@ -88,6 +89,13 @@ Camera-specific parameters for cooling and imaging:
   
   - ``<device_type>``: Must match the ``device_name`` used in device configuration (string)
 
+
+Dome Configuration
+^^^^^^^^^^^^^^^^^^
+
+Dome-specific parameters:
+
+- ``close_dome_on_error``: Flag to close the dome in case of a Astra or non-dome device error. (boolean, default: false)
 
 ObservingConditions Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

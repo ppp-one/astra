@@ -31,6 +31,7 @@ Camera:
     device_number: 0
     temperature: -20
     temperature_tolerance: 1
+    cooling_timeout: 30
     flats:
       target_adu: [31500, 10500]
       bias_offset: 300
@@ -47,6 +48,7 @@ Dome:
   - device_name: dome_observatoryname
     ip: localhost:11111
     device_number: 0
+    close_dome_on_error: false
 FilterWheel:
   - device_name: fw_observatoryname
     ip: localhost:11111

@@ -11,7 +11,7 @@ Development Setup
 
    .. code-block:: bash
 
-      git clone https://github.com/your-username/astra.git
+      git clone https://github.com/ppp-one/astra.git
       cd astra
 
 3. Create a virtual environment and install development dependencies:
