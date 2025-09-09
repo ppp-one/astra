@@ -56,7 +56,9 @@ Once the initial setup is complete, you can run Astra.
 
 #. After a few moments, open your web browser and navigate to the following URL http://localhost:8000
 
-   .. image:: ../../screenshot.png
-      :width: 800px
-      :align: center
-      :alt: Astra web interface
+.. figure:: _static/screenshot.jpg
+   :width: 80%
+   :align: center
+   :alt: Astra web interface
+
+   Astra web interface
