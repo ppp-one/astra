@@ -19,7 +19,7 @@ Let's start with the observatory configuration.
 This example configuration shows all supported device types and their parameters. You can customize this template for your specific observatory setup.
 
 Device Types and Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Astra supports the following device types, all conforming to the ASCOM Alpaca standard:
 
@@ -37,7 +37,7 @@ Astra supports the following device types, all conforming to the ASCOM Alpaca st
 Each device type has specific configuration parameters detailed below.
 
 Common Device Parameters
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All devices share these required parameters:
 
@@ -48,7 +48,7 @@ All devices share these required parameters:
 
 
 Telescope Configuration
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Additional parameters for telescope mounts:
 
@@ -56,7 +56,7 @@ Additional parameters for telescope mounts:
 - ``guider``: Autoguider calibration settings (dict, populated automatically by the `calibrate_guiding` sequence)
 
 Focuser Configuration
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
 Focuser-specific parameters:
 
@@ -64,7 +64,7 @@ Focuser-specific parameters:
 
 
 Camera Configuration
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 
 Camera-specific parameters for cooling and imaging:
 
@@ -92,14 +92,14 @@ Camera-specific parameters for cooling and imaging:
 
 
 Dome Configuration
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 Dome-specific parameters:
 
 - ``close_dome_on_error``: Flag to close the dome in case of a Astra or non-dome device error. (boolean, default: false)
 
 ObservingConditions Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Weather monitoring and safety parameters:
 
@@ -116,7 +116,7 @@ Weather monitoring and safety parameters:
 
 
 SafetyMonitor Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Safety system monitoring parameters:
 
@@ -124,7 +124,7 @@ Safety system monitoring parameters:
 
 
 Misc Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
 
 Optional observatory-wide settings:
 
