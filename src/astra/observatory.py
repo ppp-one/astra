@@ -223,10 +223,7 @@ class Observatory:
         self.robotic_switch = False
 
         # schedule
-        # self.schedule_path = CONFIG.paths.schedules / f"{self.name}.csv"
-        self.schedule_path = (
-            CONFIG.paths.schedules / f"{self.name}.jsonl"
-        )  # TODO: change to this in future
+        self.schedule_path = CONFIG.paths.schedules / f"{self.name}.jsonl"
         self.schedule_mtime = self.get_schedule_mtime()
         self.schedule = None
         if self.schedule_mtime != 0:
@@ -362,7 +359,6 @@ class Observatory:
             if disk_usage.percent > 90:
                 self.logger.warning(f"Disk usage {disk_usage.percent}% is high")
 
-            dt_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             db_path = CONFIG.paths.logs / f"{self.name}.db"
 
             # create backup directory if not exists
@@ -378,6 +374,14 @@ class Observatory:
                 df = pd.read_sql_query(
                     f"SELECT * FROM {table} WHERE datetime > datetime('now', '-1 days')",
                     db,
+                )
+                dt_str = (
+                    df["datetime"]
+                    .iloc[0]
+                    .replace(":", "")
+                    .replace("-", "")
+                    .replace(" ", "_")
+                    .split(".")[0]
                 )
                 df.to_csv(
                     os.path.join(
@@ -972,61 +976,33 @@ class Observatory:
                         self.logger.warning(
                             f"Device {device_types[0]} {device_names[0]} has errors."
                         )
-                        # only one device has errors
-                        # match device_types[0]:
-                        #     case "SafetyMonitor":
-                        #         pass
-                        #     case "ObservingConditions":
-                        #         pass
-                        #     case "Telescope":
-                        #         pass
-                        #     case "Dome":
-                        #         pass
-                        #     case "Guider":
-                        #         pass
-                        #     case "Camera":
-                        #         pass
-                        #     case "FilterWheel":
-                        #         pass
-                        #     case "Focuser":
-                        #         pass
-                        #     case "Rotator":
-                        #         pass
-                        #     case "CoverCalibrator":
-                        #         pass
-                        #     case "Switch":
-                        #         pass
-                        #     case "Schedule":
-                        #         pass
-                        #     case "Queue":
-                        #         # restart queue?
-                        #         pass
-                        #     case "Headers":
-                        #         pass
-                        #     case "Watchdog":
-                        #         pass
-                        #     case "Backup":
-                        #         pass
-                        #     case _:
-                        #         pass
 
-                    if self.speculoos:
-                        # if not dome or telescope, park
-                        if (
-                            "Dome" not in device_types
-                            and "Telescope" not in device_types
-                        ):
-                            self.logger.warning(
-                                f"(SPECULOOS EDIT): Closing observatory due to no errors in Dome or Telescope"
-                            )
-                            self.close_observatory(error_sensitive=False)
+                    # if no error in dome or telescope, park
+                    if (
+                        "Dome" not in device_types
+                        and "Telescope" not in device_types
+                        and ("Dome" in self.config or "Telescope" in self.config)
+                    ):
+                        self.logger.warning(
+                            f"Closing observatory due to no errors in Dome or Telescope"
+                        )
+                        self.close_observatory(error_sensitive=False)
 
-                        elif "Dome" not in device_types and "Telescope" in device_types:
-                            self.logger.warning(
-                                f"(SPECULOOS EDIT): Closing Dome due to no errors in Dome, but errors in Telescope"
-                            )
-                            for device_name in self.devices["Dome"]:
-                                self.speculoos_check_and_ack_error(close=True)
+                    elif (
+                        "Dome" not in device_types
+                        and "Telescope" in device_types
+                        and "Dome" in self.config
+                    ):
+                        for dome_config in self.config["Dome"]:
+                            if dome_config.get("close_dome_on_error", False):
+
+                                if self.speculoos:
+                                    self.speculoos_check_and_ack_error(close=True)
+
+                                device_name = dome_config["device_name"]
+                                self.logger.warning(
+                                    f"Closing Dome {device_name} due to errors."
+                                )
                                 self.monitor_action(
                                     "Dome",
                                     "ShutterStatus",
@@ -1667,6 +1643,32 @@ class Observatory:
                 )
 
         if "Dome" in self.config:
+            # only proceed if telescope parked
+            if (
+                "Telescope" in self.config
+                and self.config["Dome"].get("close_dome_on_error", False) is False
+            ):
+                telescope_names = (
+                    [paired_devices["Telescope"]]
+                    if paired_devices
+                    else self.devices["Telescope"]
+                )
+
+                for telescope_name in telescope_names:
+                    telescope = self.devices["Telescope"][telescope_name]
+                    at_park = telescope.get("AtPark")
+                    if at_park is False:
+                        self.error_source.append(
+                            {
+                                "device_type": "Telescope",
+                                "device_name": telescope_name,
+                                "error": "Telescope not parked, cannot close dome during close_observatory method",
+                            }
+                        )
+                        self.logger.error(
+                            f"Telescope {telescope_name} not parked, cannot close dome during close_observatory method"
+                        )
+                        return False
             # park dome
             device_names = (
                 [paired_devices["Dome"]] if paired_devices else self.devices["Dome"]
@@ -2079,10 +2081,13 @@ class Observatory:
                 )
                 camera_config = paired_devices.get_device_config("Camera")
                 set_temperature = camera_config["temperature"]
-                temperature_tolerance = camera_config["temperature_tolerance"]
+                temperature_tolerance = camera_config.get("temperature_tolerance", 1)
+                cooling_timeout = camera_config.get("cooling_timeout", 30)
 
                 if row["action_type"] not in ["close", "open"]:
-                    self.cool_camera(row, set_temperature, temperature_tolerance)
+                    self.cool_camera(
+                        row, set_temperature, temperature_tolerance, cooling_timeout
+                    )
 
             if not self.check_conditions(row):
                 return
@@ -2109,7 +2114,9 @@ class Observatory:
                 if "Camera" in self.config:
                     # open dome and unpark telescope
                     self.open_observatory(paired_devices)
-                    self.cool_camera(row, set_temperature, temperature_tolerance)
+                    self.cool_camera(
+                        row, set_temperature, temperature_tolerance, cooling_timeout
+                    )
                 else:
                     # open all dome(s) and unpark telescope(s)
                     self.open_observatory()
@@ -2118,14 +2125,18 @@ class Observatory:
                 if "Camera" in self.config:
                     # close dome and park telescope
                     self.close_observatory(paired_devices)
-                    self.cool_camera(row, set_temperature, temperature_tolerance)
+                    self.cool_camera(
+                        row, set_temperature, temperature_tolerance, cooling_timeout
+                    )
                 else:
                     # close all dome(s) and park telescope(s)
                     self.close_observatory()
 
             elif "cool_camera" == row["action_type"]:
                 if "Camera" in self.config:
-                    self.cool_camera(row, set_temperature, temperature_tolerance)
+                    self.cool_camera(
+                        row, set_temperature, temperature_tolerance, cooling_timeout
+                    )
 
             elif "complete_headers" == row["action_type"]:
                 self.final_headers()
@@ -2171,7 +2182,11 @@ class Observatory:
             )
 
     def cool_camera(
-        self, row: dict, set_temperature: float, temperature_tolerance: float = 1
+        self,
+        row: dict,
+        set_temperature: float,
+        temperature_tolerance: float = 1,
+        cooling_timeout: int = 30,
     ) -> None:
         """
         Cool a camera to the specified temperature.
@@ -2187,16 +2202,18 @@ class Observatory:
                 for the camera CCD.
             temperature_tolerance (float, optional): Acceptable temperature
                 deviation from target in degrees Celsius. Defaults to 1.
+            cooling_timeout (int, optional): Time in minutes to wait for cooling
+                before raising error. Defaults to 30.
 
         Process:
         1. Turns on the camera cooler
         2. Sets the target CCD temperature with specified tolerance
-        3. Waits up to 30 minutes for temperature stabilization
+        3. Waits up to cooling_timeout for temperature stabilization
 
         Safety Features:
         - Not weather sensitive (can operate in unsafe weather)
-        - Extended timeout (30 minutes) for temperature stabilization
         - Continuous monitoring until target temperature reached
+        - Configurable timeout for temperature stabilization
 
         Note:
             - Essential for scientific imaging to reduce thermal noise
@@ -2224,9 +2241,9 @@ class Observatory:
             run_command_type="set",
             abs_tol=temperature_tolerance,
             log_message=f"Setting camera {row['device_name']} temperature to {set_temperature}C with tolerance of {temperature_tolerance}C",
-            timeout=60 * 30,
+            timeout=60 * cooling_timeout,
             weather_sensitive=False,
-        )  # 30 minutes
+        )
 
     def pre_sequence(
         self, row: dict, paired_devices: dict, create_folder: bool = True
@@ -3594,9 +3611,9 @@ class Observatory:
                 f"Not the right time to take flats for {row['device_name']}, sun at {sun_altaz.alt.degree:.2f} degrees and {'rising' if sun_rising else 'setting'}"
             )
 
-            # calculate time until sun is in right position of between -1 and -10 degrees altitude
+            # calculate time until sun is in right position of between -1 and -12 degrees altitude
             if sun_rising:
-                # angle between sun_altaz.alt.degree and -10
+                # angle between sun_altaz.alt.degree and -12
                 angle = -12 - sun_altaz.alt.degree
             else:
                 # angle between sun_altaz.alt.degree and -1
@@ -3615,7 +3632,6 @@ class Observatory:
         while self.check_conditions(row) and (take_flats is False):
             sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
 
-            print(sun_rising, take_flats, obs_location.lat.degree, sun_altaz.alt.degree)
             if take_flats is False:
                 time.sleep(1)
 

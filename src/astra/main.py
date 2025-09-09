@@ -328,6 +328,7 @@ def cool_camera(observatory: str, device_name: str):
 
     set_temperature = obs.config["Camera"][cam_index]["temperature"]
     temperature_tolerance = obs.config["Camera"][cam_index]["temperature_tolerance"]
+    cooling_timeout = obs.config["Camera"][cam_index].get("cooling_timeout", 30)
 
     obs.logger.info(f"User initiated cooling of {device_name} from web interface")
 
@@ -343,6 +344,7 @@ def cool_camera(observatory: str, device_name: str):
         row,
         set_temperature=set_temperature,
         temperature_tolerance=temperature_tolerance,
+        cooling_timeout=cooling_timeout,
     )
 
     return {"status": "success", "data": "null", "message": ""}
@@ -1278,20 +1280,25 @@ def main():
     print(f"Astra version: {ASTRA_VER}")
 
     parser = argparse.ArgumentParser(description="Run Astra")
-    parser.add_argument("--debug", action="store_true", help="run in debug mode")
     parser.add_argument(
-        "--port", type=int, default=8000, help="port to run the server on"
+        "--debug", action="store_true", help="run in debug mode (default: false)"
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="port to run the server on (default: 8000)",
     )
     parser.add_argument(
         "--truncate",
         type=float,
-        help="truncate schedule by factor and reset time start time to now",
+        help="truncate schedule by factor and reset time start time to now (default: None)",
     )
     parser.add_argument(
         "--observatory",
         type=str,
         choices=["speculoos"],
-        help="specify observatory name (choices: speculoos)",
+        help="specify observatory name (default: None)",
     )
     parser.add_argument(
         "--reset", action="store_true", help="reset the Astra's base config"
