@@ -1,36 +1,7 @@
 Operation Guide
 ================
 
-Observatory operation with Astra is designed to be as automated and safe as possible, with a focus on robotic observing. This guide covers the key aspects of operating Astra, including the web interface, startup, watchdog functionality, weather safety, core logic, and troubleshooting.
-
-
-Web Interface
------------------
-
-.. figure:: ../_static/ui-robotic-switch-screenshot.jpg
-   :width: 80%
-   :align: center
-   :alt: Top portion of Astra's web interface
-
-   Top portion of Astra's web interface
-
-Astra's web interface is built with FastAPI and jinja2, with its API documentation available at http://localhost:8000/docs after startup.
-
-At the top of the web interface, you will find key status indicators:
-    - Observatory's name
-    - UTC time
-    - Watchdog status (green=running, red=stopped)
-    - Weather safety status (green=safe, red=unsafe)
-    - Schedule running status (green=on, gray=off)
-    - Robotic toggle switch (green=on, gray=off)
-
-.. warning:: Toggling the robotic switch **on** will begin any loaded schedule.
-
-Astra's web interface is divided into four main sections:
-    - **Summary**: Displays real-time status of connected devices, including key properties and error states.
-    - **Logs**: Provides access to system and device logs for monitoring and troubleshooting. It also displays the currently loaded schedule and its status.
-    - **Weather**: Shows current weather conditions, graphs, and the respective safety limits set in the observatory configuration.
-    - **Controls**: Some basic observatory controls, such as closing the observatory.
+Observatory operation with Astra is designed to be as automated and safe as possible, with a focus on robotic observing. This guide covers the key aspects of operating Astra, including startup, web interface,watchdog functionality, weather safety, core logic, and troubleshooting.
 
 Startup
 -------
@@ -75,7 +46,38 @@ When Astra starts, it goes through three main phases: initialization, device con
     - **Safety System**: Watchdog starts monitoring weather, device process health, and system status.  
 
 **3. Web Interface**  
-    - **FastAPI**: FastAPI UI and API are initialized.
+    - **FastAPI**: jinja2 delivered user interface and API are initialized.
+
+
+Web Interface
+-----------------
+
+If you're interested in jumping straight into Astra, the web interface is where you'll spend most of your time. Otherwise, please continue reading for more context on how Astra operates.
+
+.. figure:: ../_static/ui-robotic-switch-screenshot.jpg
+   :width: 80%
+   :align: center
+   :alt: Top portion of Astra's web interface
+
+   Top portion of Astra's web interface
+
+Astra's web interface is built with FastAPI and jinja2, with its API documentation available at http://localhost:8000/docs after startup.
+
+At the top of the web interface, you will find key status indicators:
+    - Observatory's name (turns red if any errors are present)
+    - UTC time
+    - Watchdog status (green=running, red=stopped)
+    - Weather safety status (green=safe, red=unsafe)
+    - Schedule running status (green=on, gray=off)
+    - Robotic toggle switch (green=on, gray=off)
+
+.. warning:: Toggling the robotic switch **on** will begin any loaded schedule.
+
+Astra's web interface is divided into four main sections:
+    - **Summary**: Displays real-time status of connected devices, including key properties and error states.
+    - **Logs**: Provides access to system and device logs for monitoring and troubleshooting. It also displays the currently loaded schedule and its status.
+    - **Weather**: Shows current weather conditions, graphs, and the respective safety limits set in the observatory configuration.
+    - **Controls**: Some basic observatory controls, such as closing the observatory.
 
 
 Watchdog
@@ -111,31 +113,41 @@ If weather becomes unsafe during execution, weather-dependent actions will stop,
 Core Logic
 -----------------
 
-.. image:: ../_static/python_comms.svg
+Astra is built around a multi-process architecture, where each device runs in its own process. This design ensures that issues with one device do not affect the overall system's stability. Communication between the main process and device processes is managed through a shared queue.
+
+.. figure:: ../_static/core-logic.svg
    :width: 80%
    :align: center
-   :alt: Inter-process communication in Astra
+   :alt: Inter-process communication in Astra with two Alpaca devices for illustration.
+
+   Inter-process communication in Astra with two Alpaca devices for illustration.
+
+An SQLite database is used for storing polled device data and logs. However, since SQLite does not support concurrent writes, Astra employs a thread based queuing system to manage database access. 
+
+Each device process sends its polled data to the main process via the shared queue, which is then managed by the database worker that handles all database writes. This approach prevents database locks and ensures data integrity.
+
+The watchdog reads from SQLite database as part of the weather safety logic, monitoring the history of the SafetyMonitor and ObservingConditions.
+
+Pipes are used for direct communication between the main process and device processes, allowing for efficient command execution and status updates.
+
 
 
 Troubleshooting
 --------------
-
-Common Issues
-^^^^^^^^^^^^^^
 
 **Schedule not starting:**
     - Check that watchdog is running
     - Verify robotic switch is enabled
     - Ensure schedule end time is in the future
     - Confirm schedule file format is valid JSONL
-    - **Verify camera device name exists in configuration**
+    - Verify camera device name exists in configuration
 
 **Actions skipping:**
     - Check weather conditions for weather-dependent actions
-    - **Verify camera device name matches configuration exactly**
+    - Verify camera device name matches configuration exactly
     - Review action parameters for correct format
     - Check for timing conflicts or overlaps
-    - **Ensure camera has required paired devices configured**
+    - Ensure camera has required paired devices configured
 
 **Incomplete sequences:**
     - Monitor error logs for device communication issues

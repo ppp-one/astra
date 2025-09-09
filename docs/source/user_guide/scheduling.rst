@@ -268,5 +268,3 @@ from observatory configuration with a 30 minute timeout.
 
 **Optional parameters:**
     None
-
-    TODO: add timeout as parameter?
