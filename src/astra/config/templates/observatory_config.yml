@@ -33,9 +33,10 @@ Camera:
     temperature_tolerance: 1
     cooling_timeout: 30
     flats:
-      target_adu: [31500, 10500]
+      target_adu: 31500
+      target_adu_tolerance: 10500
       bias_offset: 300
-      lower_exptime_limit: 6
+      lower_exptime_limit: 1
       upper_exptime_limit: 60
     paired_devices:
       Telescope: telescope_observatoryname

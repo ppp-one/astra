@@ -78,7 +78,8 @@ Camera-specific parameters for cooling and imaging:
 
 - ``flats``: Configuration for automated flat field acquisition (dict)
   
-  - ``target_adu``: Target median ADU values as [target, tolerance] (List[int, int])
+  - ``target_adu``: Target median ADU value for sky flat frame (int)
+  - ``target_adu_tolerance``: Acceptable tolerance around target ADU (int)
   - ``bias_offset``: Median bias level offset in ADU for exposure time calculations (int)
   - ``lower_exptime_limit``: Minimum allowed exposure time in seconds (int)
   - ``upper_exptime_limit``: Maximum allowed exposure time in seconds (int)

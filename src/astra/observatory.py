@@ -3530,11 +3530,6 @@ class Observatory:
             paired_devices (dict): Dictionary of paired devices including telescope,
                 camera, filter wheel, and dome for the sequence.
 
-        Action Value Parameters:
-            - 'filter': Filter name(s) for flat field acquisition
-            - 'target_adu': Target ADU level for optimal flat exposure
-            - 'nflats': Number of flat frames per filter
-            - Other standard imaging parameters
 
         Process:
         1. Monitors sun altitude for optimal flat field conditions
@@ -3574,7 +3569,11 @@ class Observatory:
 
         # target adu and camera offset needed for flat exposure time calculation
         cam_index = self.get_cam_index(row["device_name"])
-        target_adu = self.config["Camera"][cam_index]["flats"]["target_adu"]
+        config_target_adu = self.config["Camera"][cam_index]["flats"]["target_adu"]
+        config_target_adu_tolerance = self.config["Camera"][cam_index]["flats"].get(
+            "target_adu_tolerance", config_target_adu * 0.2
+        )
+        target_adu = [config_target_adu, config_target_adu_tolerance]
         offset = self.config["Camera"][cam_index]["flats"]["bias_offset"]
         lower_exptime_limit = self.config["Camera"][cam_index]["flats"][
             "lower_exptime_limit"
