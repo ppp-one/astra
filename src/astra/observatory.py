@@ -1646,7 +1646,8 @@ class Observatory:
             # only proceed if telescope parked
             if (
                 "Telescope" in self.config
-                and self.config["Dome"].get("close_dome_on_error", False) is False
+                and self.config["Dome"][0].get("close_dome_on_error", False)
+                is False  # TODO: assume one dome, but should check all domes or paired dome
             ):
                 telescope_names = (
                     [paired_devices["Telescope"]]
