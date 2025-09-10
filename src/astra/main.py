@@ -16,15 +16,16 @@ Key features:
 
 import asyncio
 import datetime
+import json
 import logging
 import os
+import sqlite3
 import time
 from contextlib import asynccontextmanager
 from datetime import UTC
 from glob import glob
 from io import BytesIO
 from pathlib import Path
-import sqlite3
 
 import httpx
 import matplotlib.pyplot as plt
@@ -32,11 +33,9 @@ import pandas as pd
 import uvicorn
 from astropy.io import fits
 from astropy.visualization import ZScaleInterval
-from fastapi import FastAPI, Request, WebSocket, Body, UploadFile, File
+from fastapi import Body, FastAPI, File, Request, UploadFile, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
-import json
-
 
 from astra import ASTRA_VER, Config
 from astra.observatory import Observatory
@@ -45,7 +44,6 @@ from astra.observatory import Observatory
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # global variables
-CONFIG = Config()
 FRONTEND_PATH = Path(__file__).parent / "frontend"
 OBSERVATORIES: dict[str, Observatory] = {}
 WEBCAMFEEDS = {}
@@ -68,7 +66,7 @@ def observatory_db(name: str) -> sqlite3.Connection:
     Returns:
         sqlite3.Connection: Database connection object.
     """
-    db = sqlite3.connect(CONFIG.paths.logs / f"{name}.db")
+    db = sqlite3.connect(Config().paths.logs / f"{name}.db")
     return db
 
 
@@ -84,8 +82,8 @@ def load_observatories() -> None:
     global FWS
 
     config_files = glob(
-        str(CONFIG.paths.observatory_config / "*_config.yml")
-    )  # should we use CONFIG.config['observatory_name'] here instead?
+        str(Config().paths.observatory_config / "*_config.yml")
+    )  # should we use Config().config['observatory_name'] here instead?
 
     for config_filename in config_files:
         obs = Observatory(
@@ -143,7 +141,7 @@ def format_time(ftime: datetime.datetime) -> str | None:
     # if ftime is not NaTType:
     try:
         return ftime.strftime("%H:%M:%S")
-    except:
+    except Exception:
         return None
 
 
@@ -292,16 +290,16 @@ def close_observatory(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated closing of observatory from web interface")
+    obs.logger.info("User initiated closing of observatory from web interface")
 
     if obs.schedule_running:
-        obs.logger.info(f"Stopping schedule for safety.")
+        obs.logger.info("Stopping schedule for safety.")
         obs.stop_schedule()
 
     val = obs.close_observatory()
 
     if val:
-        obs.logger.info(f"Observatory closed.")
+        obs.logger.info("Observatory closed.")
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -362,7 +360,7 @@ def complete_headers(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated completion of headers from web interface")
+    obs.logger.info("User initiated completion of headers from web interface")
 
     obs.final_headers()
 
@@ -384,7 +382,7 @@ async def start_watchdog(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated starting of watchdog from web interface")
+    obs.logger.info("User initiated starting of watchdog from web interface")
 
     obs.error_free = True
     obs.error_source = []
@@ -405,7 +403,7 @@ async def stop_watchdog(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated stopping of watchdog from web interface")
+    obs.logger.info("User initiated stopping of watchdog from web interface")
 
     obs.watchdog_running = False
 
@@ -424,7 +422,7 @@ async def roboticswitch(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated robotic switch from web interface")
+    obs.logger.info("User initiated robotic switch from web interface")
 
     obs.toggle_robotic_switch()
 
@@ -443,7 +441,7 @@ async def start_schedule(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated starting of schedule from web interface")
+    obs.logger.info("User initiated starting of schedule from web interface")
 
     obs.start_schedule()
 
@@ -462,7 +460,7 @@ async def stop_schedule(observatory: str):
     """
     obs = OBSERVATORIES[observatory]
 
-    obs.logger.info(f"User initiated stopping of schedule from web interface")
+    obs.logger.info("User initiated stopping of schedule from web interface")
 
     obs.stop_schedule()
 
@@ -564,7 +562,7 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
         with open(file_path, "wb") as f:
             f.write(await file.read())
 
-        obs.logger.info(f"Schedule uploaded from web interface")
+        obs.logger.info("Schedule uploaded from web interface")
 
         return {
             "status": "success",
@@ -719,7 +717,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
     try:
         await websocket.send_json(data_dict)
         await asyncio.sleep(1)
-    except:
+    except Exception:
         print("log socket closed")
         socket = False
 
@@ -739,7 +737,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
                 last_time = df.datetime.iloc[-1]
             await websocket.send_json(data_dict)
             await asyncio.sleep(1)
-        except:
+        except Exception:
             db.close()
             print("log socket closed")
             socket = False
@@ -838,16 +836,16 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     dt = (
                         dt_tracking
                         if tracking
-                        else dt_slewing if slewing else dt_tracking
+                        else dt_slewing
+                        if slewing
+                        else dt_tracking
                     )
 
                     try:
                         polled["RightAscension"]["value"] = polled["RightAscension"][
                             "value"
-                        ] * (
-                            360 / 24
-                        )  # convert to degrees
-                    except:
+                        ] * (360 / 24)  # convert to degrees
+                    except Exception:
                         pass
 
                     last_update = (dt_now - dt).total_seconds()
@@ -946,7 +944,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     else:
                         try:
                             status = FWS[observatory][device_name][pos]
-                        except:
+                        except Exception:
                             print(
                                 f"FilterWheel {device_name} position {pos} not found in fws dict",
                                 FWS,
@@ -1166,7 +1164,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         try:
             await websocket.send_json(data)
             await asyncio.sleep(1)
-        except:
+        except Exception:
             print("main socket closed")
             socket = False
 
@@ -1308,7 +1306,7 @@ def main():
     logging.basicConfig(
         format="%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        filename=CONFIG.paths.log_file,
+        filename=Config().paths.log_file,
         level=logging.DEBUG,
     )
     logging.Formatter.converter = time.gmtime
@@ -1321,13 +1319,13 @@ def main():
         prompt = (
             input(
                 "Are you sure you want to reset Astra's base config"
-                f" located at {CONFIG.CONFIG_PATH}? [y/n]: "
+                f" located at {Config().CONFIG_PATH}? [y/n]: "
             )
             .strip()
             .lower()
         )
         if prompt == "y":
-            CONFIG.reset()
+            Config().reset()
 
     TRUNCATE_FACTOR = args.truncate
 

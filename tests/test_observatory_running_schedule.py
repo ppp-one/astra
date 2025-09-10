@@ -3,106 +3,28 @@ Pytest tests for Observatory schedule action types.
 Tests each action type individually to ensure they complete without setting error_free to False.
 """
 
-import pytest
-import time
 import json
-import requests
-import yaml
-from datetime import datetime, timedelta, UTC
+import logging
+import time
 from contextlib import contextmanager
+from datetime import UTC, datetime, timedelta
 from glob import glob
 
-from astra import Config
-from astra.observatory import Observatory
+import pytest
+import requests
 
-import logging
+from astra.observatory import Observatory
 
 logger = logging.getLogger(__name__)
 
 OBSERVATORIES: dict = {}
 
 
-@pytest.fixture(scope="session")
-def temp_config(tmp_path_factory):
-    """Create a temporary config for testing that uses real Astra templates."""
-    tmp_path = tmp_path_factory.mktemp("astra_test")
-    logger.info(f"Creating temporary config in {tmp_path}")
-
-    # Create temporary paths
-    config_path = tmp_path / "config" / "astra_config.yml"
-    config_path.parent.mkdir(parents=True, exist_ok=True)
-
-    folder_assets = tmp_path / "assets"
-    folder_assets.mkdir(parents=True, exist_ok=True)
-
-    gaia_db = tmp_path / "gaia.db"
-    gaia_db.touch()  # Create empty Gaia DB file
-
-    # Create config data
-    config_data = {
-        "observatory_name": "test_observatory",
-        "folder_assets": str(folder_assets),
-        "gaia_db": str(gaia_db),
-    }
-
-    logger.info(f"Temporary config data: {config_data}")
-
-    # Write config file
-    with open(config_path, "w") as f:
-        yaml.dump(config_data, f)
-
-    # Patch the Config class paths - keep real template dir to use actual templates
-    Config.CONFIG_PATH = config_path
-    # Create config instance - this will copy real templates to temp directory
-    config = Config(allow_default=True)
-
-    # Verify that the observatory config file was created from the template
-    observatory_config_file = (
-        config.paths.observatory_config / "test_observatory_config.yml"
-    )
-    observatory_fits_config_file = (
-        config.paths.observatory_config / "test_observatory_fits_header_config.csv"
-    )
-    if not observatory_config_file.exists():
-        raise FileNotFoundError(
-            f"Observatory config file was not created: {observatory_config_file}"
-        )
-    if not observatory_fits_config_file.exists():
-        raise FileNotFoundError(
-            f"Observatory fits config file was not created: {observatory_fits_config_file}"
-        )
-
-    # modify both .yml and .csv to stop Astra complaining (add empty lines)
-    with open(observatory_config_file, "a") as f:
-        f.write("\n")
-    with open(observatory_fits_config_file, "a") as f:
-        f.write("\n")
-
-    # change the max_safe_duration in the config under SafetyMonitor
-    with open(observatory_config_file, "r") as file:
-        observatory_config = yaml.safe_load(file)
-        observatory_config["SafetyMonitor"][0]["max_safe_duration"] = 0.5
-
-    with open(observatory_config_file, "w") as file:
-        yaml.dump(observatory_config, file)
-
-    logger.info(f"Temporary config created successfully with paths:")
-    logger.info(f"  Assets: {config.paths.assets}")
-    logger.info(f"  Images: {config.paths.images}")
-    logger.info(f"  Schedules: {config.paths.schedules}")
-    logger.info(f"  Observatory config: {config.paths.observatory_config}")
-    logger.info(f"  Logs: {config.paths.logs}")
-
-    yield config
-
-
-def check_simulators_available():
+def check_simulators_available(server_url="http://localhost:11111"):
     """Check if Alpaca simulators are running."""
     try:
         logger.info("Checking if Alpaca simulators are running...")
-        response = requests.get(
-            "http://localhost:11111/api/v1/camera/0/connected", timeout=5
-        )
+        response = requests.get(f"{server_url}/api/v1/camera/0/connected", timeout=5)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
@@ -130,18 +52,18 @@ def clean_up_observatories():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_observatories(temp_config):
+def setup_observatories(temp_config, server_url):
     """Setup observatories for testing."""
-    if not check_simulators_available():
-        pytest.skip("Alpaca simulators not available on localhost:11111")
+    if not check_simulators_available(server_url):
+        pytest.skip(f"Alpaca simulators not available on {server_url}")
 
     # Import all modules that have global CONFIG instances
     from astra import (
-        observatory,
         autofocus,
         calibrate_guiding,
         guiding,
         image_handler,
+        observatory,
         schedule,
     )
 
@@ -154,9 +76,7 @@ def setup_observatories(temp_config):
     schedule.CONFIG = temp_config
 
     logger.info("Reloading observatory state to defaults")
-    response = requests.get(
-        "http://localhost:11111/reload",
-    )
+    response = requests.get(f"{server_url}/reload")
 
     assert response.status_code == 200
 
@@ -323,7 +243,10 @@ def create_schedule_data(
 
 
 def wait_for_schedule_completion(
-    observatory: Observatory, schedule_data: dict
+    observatory: Observatory,
+    schedule_data: dict,
+    server_url,
+    config,
 ) -> tuple[bool, int, bool]:
     """
     Wait for schedule to complete and return results.
@@ -334,7 +257,7 @@ def wait_for_schedule_completion(
     # set weather to safe
     logger.info("Reloading observatory state to defaults")
     response = requests.get(
-        "http://localhost:11111/reload",
+        server_url,
     )
     if response.status_code != 200:
         logger.error(f"Failed to reload observatory state: {response.text}")
@@ -351,7 +274,7 @@ def wait_for_schedule_completion(
     error_free_maintained = True
 
     # count number of images in Config().paths.images
-    initial_n_images = len(list(Config().paths.images.glob("**/*.fits")))
+    initial_n_images = len(list(config.paths.images.glob("**/*.fits")))
 
     logger.info("pytest Starting schedule...")
     observatory.start_schedule()
@@ -390,7 +313,7 @@ def wait_for_schedule_completion(
                 logger.info("Injecting weather alert...")
                 # Inject a weather alert halfway through the schedule duration
                 response = requests.put(
-                    "http://localhost:11111/api/v1/safetymonitor/0/issafe",
+                    f"{server_url}/api/v1/safetymonitor/0/issafe",
                     data={"IsSafe": False},
                 )
                 if response.status_code != 200:
@@ -402,13 +325,11 @@ def wait_for_schedule_completion(
                     time.sleep(10)  # Wait for 10 seconds before checking status
             else:
                 # check that dome and telescope closed
-                response = requests.get(
-                    "http://localhost:11111/api/v1/telescope/0/atpark"
-                )
+                response = requests.get(f"{server_url}/api/v1/telescope/0/atpark")
 
                 telescope_atpark = response.json().get("Value", False)
 
-                response = requests.get("http://localhost:11111/api/v1/dome/0/atpark")
+                response = requests.get(f"{server_url}/api/v1/dome/0/atpark")
 
                 dome_atpark = response.json().get("Value", False)
 
@@ -427,7 +348,7 @@ def wait_for_schedule_completion(
                 logger.info("Injecting weather alert...")
                 # Inject a weather alert halfway through the schedule duration
                 response = requests.put(
-                    "http://localhost:11111/api/v1/safetymonitor/0/issafe",
+                    f"{server_url}/api/v1/safetymonitor/0/issafe",
                     data={"IsSafe": False},
                 )
                 if response.status_code != 200:
@@ -439,13 +360,11 @@ def wait_for_schedule_completion(
                     time.sleep(10)  # Wait for 10 seconds before checking status
             else:
                 # check that dome and telescope closed
-                response = requests.get(
-                    "http://localhost:11111/api/v1/telescope/0/atpark"
-                )
+                response = requests.get(f"{server_url}/api/v1/telescope/0/atpark")
 
                 telescope_atpark = response.json().get("Value", False)
 
-                response = requests.get("http://localhost:11111/api/v1/dome/0/atpark")
+                response = requests.get(f"{server_url}/api/v1/dome/0/atpark")
 
                 dome_atpark = response.json().get("Value", False)
 
@@ -458,7 +377,7 @@ def wait_for_schedule_completion(
         time.sleep(1)
 
     # count number of images in Config().paths.images
-    final_n_images = len(list(Config().paths.images.glob("**/*.fits")))
+    final_n_images = len(list(config.paths.images.glob("**/*.fits")))
     n_images = final_n_images - initial_n_images
     if schedule_data["action_type"] == "object":
         print(f"Number of images taken: {n_images}")
@@ -490,61 +409,74 @@ def wait_for_schedule_completion(
     return final_completed > 0, final_completed, error_free_maintained
 
 
+def set_safety_monitor_safe(server_url):
+    """Set the safety monitor to safe."""
+    requests.put(f"{server_url}/api/v1/safetymonitor/0/issafe", data={"IsSafe": True})
+
+
+@pytest.mark.slow
 class TestScheduleActionTypes:
     """Test each schedule action type individually."""
 
-    def test_cool_camera_action(self, observatory, schedule_manager):
+    def test_cool_camera_action(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test cool_camera action type."""
         schedule_data = create_schedule_data("cool_camera")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during cool_camera action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"cool_camera action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during cool_camera action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"cool_camera action did not complete successfully. "
+                f"Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_calibration_action(self, observatory, schedule_manager):
+    def test_calibration_action(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test calibration action type."""
         schedule_data = create_schedule_data("calibration")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during calibration action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"calibration action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during calibration action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"calibration action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_close_action(self, observatory, schedule_manager):
+    def test_close_action(self, observatory, schedule_manager, server_url, temp_config):
         """Test close action type."""
         schedule_data = create_schedule_data("close")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during close action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"close action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during close action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"close action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_close_action_with_weather_alert(self, observatory, schedule_manager):
+    def test_close_action_with_weather_alert(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test close action type with weather alert."""
         schedule_data = create_schedule_data(
             "close", inject_weather_alert=True, inject_weather_alert_delay=0
@@ -552,119 +484,134 @@ class TestScheduleActionTypes:
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during close action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"close action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during close action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"close action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_open_action(self, observatory, schedule_manager):
+    def test_open_action(self, observatory, schedule_manager, server_url, temp_config):
         """Test open action type."""
+        set_safety_monitor_safe(server_url)
         schedule_data = create_schedule_data("open")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during open action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"open action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during open action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"open action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_open_action_with_weather_alert(self, observatory, schedule_manager):
+    def test_open_action_with_weather_alert(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test open action type with weather alert."""
+        set_safety_monitor_safe(server_url)
         schedule_data = create_schedule_data(
             "open", inject_weather_alert=True, inject_weather_alert_delay=0
         )
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during open action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"open action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during open action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"open action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_object_action(self, observatory, schedule_manager):
+    def test_object_action(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test object action type."""
+        set_safety_monitor_safe(server_url)
         schedule_data = create_schedule_data("object")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during object action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during object action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_object_action_with_weather_alert(self, observatory, schedule_manager):
+    def test_object_action_with_weather_alert(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test object action type with weather alert."""
         schedule_data = create_schedule_data("object", inject_weather_alert=True)
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during object action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during object action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_autofocus_action(self, observatory, schedule_manager):
+    def test_autofocus_action(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test autofocus action type"""
+        set_safety_monitor_safe(server_url)
         schedule_data = create_schedule_data("autofocus")
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
-    def test_autofocus_action_with_weather_alert(self, observatory, schedule_manager):
+    def test_autofocus_action_with_weather_alert(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
         """Test autofocus action type with weather alert"""
+        set_safety_monitor_safe(server_url)
         schedule_data = create_schedule_data("autofocus", inject_weather_alert=True)
 
         with schedule_manager(schedule_data):
             success, completed, error_free_maintained = wait_for_schedule_completion(
-                observatory, schedule_data
+                observatory, schedule_data, server_url, temp_config
             )
 
-            assert (
-                error_free_maintained
-            ), f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
-            assert (
-                success
-            ), f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
+            assert error_free_maintained, (
+                f"error_free became False during autofocus action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"autofocus action did not complete successfully. Error sources: {observatory.error_source}"
+            )
             assert completed > 0, "No actions were completed"
 
 

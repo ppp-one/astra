@@ -35,8 +35,6 @@ from astropy.wcs.utils import WCS
 
 from astra import Config
 
-CONFIG = Config()
-
 
 def create_image_dir(
     schedule_start_time: datetime = datetime.now(UTC),
@@ -73,7 +71,7 @@ def create_image_dir(
         date_str = (schedule_start_time + timedelta(hours=site_long / 15)).strftime(
             "%Y%m%d"
         )
-        folder = CONFIG.paths.images / date_str
+        folder = Config().paths.images / date_str
         folder.mkdir(exist_ok=True)
     return folder
 
@@ -202,7 +200,7 @@ def save_image(
     else:
         filename = f"{device_name}_{filter_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']:.3f}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
 
-    filepath = CONFIG.paths.images / folder / filename
+    filepath = Config().paths.images / folder / filename
 
     # save FITS file
     hdu.writeto(filepath)

@@ -222,8 +222,14 @@ def hdr_times(
                 pass
 
     z = (90 - hdr["ALTITUDE"]) * np.pi / 180
-    hdr["AIRMASS"] = (1.002432 * np.cos(z) ** 2 + 0.148386 * np.cos(z) + 0.0096467) / (
-        np.cos(z) ** 3 + 0.149864 * np.cos(z) ** 2 + 0.0102963 * np.cos(z) + 0.000303978
+    hdr["AIRMASS"] = (
+        (1.002432 * np.cos(z) ** 2 + 0.148386 * np.cos(z) + 0.0096467)
+        / (
+            np.cos(z) ** 3
+            + 0.149864 * np.cos(z) ** 2
+            + 0.0102963 * np.cos(z)
+            + 0.000303978
+        )
     )  # https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)
 
 
@@ -307,7 +313,7 @@ def db_query(
     arr = np.arange(np.floor(min_dec), np.ceil(max_dec) + 1, 1)
     relevant_shard_ids = set()
     for i in range(len(arr) - 1):
-        shard_id = f"{arr[i]:.0f}_{arr[i+1]:.0f}"
+        shard_id = f"{arr[i]:.0f}_{arr[i + 1]:.0f}"
         relevant_shard_ids.add(shard_id)
 
     # Execute the federated query across the relevant shard(s).

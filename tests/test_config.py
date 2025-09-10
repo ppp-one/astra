@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, MagicMock
 
 import pytest
 import yaml
@@ -122,7 +122,7 @@ class TestConfig:
 
     def test_config_initialization_creates_config_if_missing(self):
         """Test if Config runs the initializer when the config file is missing."""
-        config = Config(
+        _ = Config(
             "Test Observatory",
             str(self.folder_assets),
             str(self.gaia_db),

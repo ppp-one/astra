@@ -495,7 +495,6 @@ class ImageStarMapping:
                 Defaults to False.
             **kwargs: Additional keyword arguments passed to scatter plot.
         """
-        import matplotlib.pyplot as plt
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -776,9 +775,7 @@ class PointingCorrectionHandler:
         dateobs = pd.to_datetime(header["DATE-OBS"])
         plate_scale = np.arctan(
             (header["XPIXSZ"] * 1e-6) / (header["FOCALLEN"] * 1e-3)
-        ) * (
-            180 / np.pi
-        )  # deg/pixel
+        ) * (180 / np.pi)  # deg/pixel
         return dateobs, plate_scale
 
     @staticmethod

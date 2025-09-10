@@ -40,13 +40,13 @@ import glob as g
 import logging
 import os
 import time
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from math import cos, radians
 from shutil import copyfile
-from typing import Optional, Dict, List, Tuple, Any, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from alpaca.telescope import GuideDirections, AlignmentModes, PierSide
+from alpaca.telescope import AlignmentModes, GuideDirections, PierSide
 from astropy.io import fits
 from astropy.stats import SigmaClip
 from donuts import Donuts
@@ -55,8 +55,7 @@ from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
 
 from astra import Config
-
-CONFIG = Config()
+import astra
 
 # header keyword for the current filter
 FILTER_KEYWORD = "FILTER"
@@ -165,7 +164,12 @@ class Guider:
         >>> guider.guider_loop("camera1", "/data/*.fits")
     """
 
-    def __init__(self, telescope: Any, astra: "Astra", params: Dict[str, Any]) -> None:
+    def __init__(
+        self,
+        telescope: Any,
+        astra: "astra.observatory.Observatory",
+        params: Dict[str, Any],
+    ) -> None:
         """
         Initialize the autoguider with telescope, logging, and PID parameters.
 
@@ -191,7 +195,7 @@ class Guider:
 
         # set up the image glob string
         # create reference directory if not exists
-        self.reference_dir = CONFIG.paths.images / "autoguider_ref"
+        self.reference_dir = Config().paths.images / "autoguider_ref"
         self.reference_dir.mkdir(parents=True, exist_ok=True)
 
         # pulseGuide conversions
@@ -1077,9 +1081,9 @@ class PID:
     Based on: http://code.activestate.com/recipes/577231-discrete-pid-controller/
 
     Parameters:
-        P (float, optional): Proportional gain. Defaults to 0.5.
-        I (float, optional): Integral gain. Defaults to 0.25.
-        D (float, optional): Derivative gain. Defaults to 0.0.
+        kp (float, optional): Proportional gain. Defaults to 0.5.
+        ki (float, optional): Integral gain. Defaults to 0.25.
+        kd (float, optional): Derivative gain. Defaults to 0.0.
         Derivator (float, optional): Initial derivative term. Defaults to 0.
         Integrator (float, optional): Initial integrator value. Defaults to 0.
         Integrator_max (float, optional): Maximum integrator value. Defaults to 500.
@@ -1088,17 +1092,17 @@ class PID:
 
     def __init__(
         self,
-        P: float = 0.5,
-        I: float = 0.25,
-        D: float = 0.0,
+        kp: float = 0.5,
+        ki: float = 0.25,
+        kd: float = 0.0,
         Derivator: float = 0,
         Integrator: float = 0,
         Integrator_max: float = 500,
         Integrator_min: float = -500,
     ) -> None:
-        self.Kp: float = P
-        self.Ki: float = I
-        self.Kd: float = D
+        self.Kp: float = kp
+        self.Ki: float = ki
+        self.Kd: float = kd
         self.Derivator: float = Derivator
         self.Integrator: float = Integrator
         self.Integrator_max: float = Integrator_max
@@ -1151,17 +1155,17 @@ class PID:
         """Set derivator value."""
         self.Derivator = Derivator
 
-    def setKp(self, P: float) -> None:
+    def setKp(self, kp: float) -> None:
         """Set proportional gain."""
-        self.Kp = P
+        self.Kp = kp
 
-    def setKi(self, I: float) -> None:
+    def setKi(self, ki: float) -> None:
         """Set integral gain."""
-        self.Ki = I
+        self.Ki = ki
 
-    def setKd(self, D: float) -> None:
+    def setKd(self, kd: float) -> None:
         """Set derivative gain."""
-        self.Kd = D
+        self.Kd = kd
 
     def getPoint(self) -> float:
         """Get current setpoint."""

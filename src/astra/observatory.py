@@ -35,6 +35,7 @@ Note:
 import logging
 import math
 import os
+import sqlite3
 import time
 from datetime import UTC, datetime, timedelta
 from multiprocessing import Manager
@@ -45,7 +46,6 @@ import astropy.units as u
 import numpy as np
 import pandas as pd
 import psutil
-import sqlite3
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
@@ -65,7 +65,6 @@ from astra.pointer import PointingCorrectionHandler
 from astra.schedule import process_schedule
 
 logging.getLogger("sqlite3worker").setLevel(logging.INFO)
-CONFIG = Config()
 
 
 class Observatory:
@@ -179,9 +178,9 @@ class Observatory:
 
         # read observatory config files
         # self._config = self.read_config(config_filename)
-        self._config = ObservatoryConfig.from_config(CONFIG)
+        self._config = ObservatoryConfig.from_config(Config())
         self.fits_config = pd.read_csv(
-            CONFIG.paths.observatory_config / f"{self.name}_fits_header_config.csv"
+            Config().paths.observatory_config / f"{self.name}_fits_header_config.csv"
         )
 
         # running threads list
@@ -223,16 +222,14 @@ class Observatory:
         self.robotic_switch = False
 
         # schedule
-        self.schedule_path = CONFIG.paths.schedules / f"{self.name}.jsonl"
+        self.schedule_path = Config().paths.schedules / f"{self.name}.jsonl"
         self.schedule_mtime = self.get_schedule_mtime()
         self.schedule = None
         if self.schedule_mtime != 0:
             self.schedule = self.read_schedule()
 
         # load devices
-        self.monitor_action_queue = (
-            {}
-        )  # queue for monitoring/running actions per device_name
+        self.monitor_action_queue = {}  # queue for monitoring/running actions per device_name
         self.devices = self.load_devices()
         self.last_image = None
 
@@ -294,7 +291,7 @@ class Observatory:
             name as the filename with a .db extension.
         """
 
-        db_name = CONFIG.paths.logs / f"{self.name}.db"
+        db_name = Config().paths.logs / f"{self.name}.db"
         cursor = Sqlite3Worker(db_name, max_queue_size=2000)
 
         # Enable WAL mode - critical for concurrent access
@@ -359,10 +356,9 @@ class Observatory:
             if disk_usage.percent > 90:
                 self.logger.warning(f"Disk usage {disk_usage.percent}% is high")
 
-            db_path = CONFIG.paths.logs / f"{self.name}.db"
-
+            db_path = Config().paths.logs / f"{self.name}.db"
             # create backup directory if not exists
-            archive_path = CONFIG.paths.logs / "archive"
+            archive_path = Config().paths.logs / "archive"
             archive_path.mkdir(exist_ok=True)
 
             tables = ["polling", "log", "autoguider_log", "autoguider_info_log"]
@@ -385,7 +381,7 @@ class Observatory:
                 )
                 df.to_csv(
                     os.path.join(
-                        CONFIG.paths.logs,
+                        Config().paths.logs,
                         "archive",
                         f"{self.name}_{table}_{dt_str}.csv",
                     ),
@@ -976,7 +972,6 @@ class Observatory:
                         self.logger.warning(
                             f"Device {device_types[0]} {device_names[0]} has errors."
                         )
-
                     # if no error in dome or telescope, park
                     if (
                         "Dome" not in device_types
@@ -984,7 +979,7 @@ class Observatory:
                         and ("Dome" in self.config or "Telescope" in self.config)
                     ):
                         self.logger.warning(
-                            f"Closing observatory due to no errors in Dome or Telescope"
+                            "Closing observatory due to no errors in Dome or Telescope"
                         )
                         self.close_observatory(error_sensitive=False)
 
@@ -995,7 +990,6 @@ class Observatory:
                     ):
                         for dome_config in self.config["Dome"]:
                             if dome_config.get("close_dome_on_error", False):
-
                                 if self.speculoos:
                                     self.speculoos_check_and_ack_error(close=True)
 
@@ -1099,7 +1093,7 @@ class Observatory:
         )
 
         device_type = "ObservingConditions"
-        q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{max_safe_duration*1.1} minutes')"""
+        q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{max_safe_duration * 1.1} minutes')"""
 
         rows = self.cursor.execute(q)
 
@@ -2968,7 +2962,6 @@ class Observatory:
         # find dark frame
         dark_frame = None
         if action_value.get("dark_subtraction", False):
-
             self.logger.info(
                 f"Dark subtraction enabled. Looking for matching dark frame for {row['device_name']}"
                 f" with exposure time {exptime} s in {folder}"
@@ -2997,7 +2990,7 @@ class Observatory:
         date_str = (row["start_time"] + timedelta(hours=obs_lon / 15)).strftime(
             "%Y%m%d"
         )
-        folder = CONFIG.paths.images / "pointing_model" / date_str
+        folder = Config().paths.images / "pointing_model" / date_str
         folder.mkdir(exist_ok=True)
         self.logger.info(f"{folder} created for pointing model images")
 

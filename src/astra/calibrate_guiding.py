@@ -19,16 +19,13 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import yaml
 from alpaca.telescope import GuideDirections
+from astropy.stats import SigmaClip
 from donuts import Donuts
 from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
-from astropy.stats import SigmaClip
 
 from astra.config import Config, ObservatoryConfig
-
-CONFIG = Config()
-OBSERVATORY_CONFIG = ObservatoryConfig.from_config(CONFIG)
 
 
 class CustomImageClass(Image):
@@ -107,11 +104,7 @@ class GuidingCalibrator:
         paired_devices: Dict[str, str],
         action_value: Dict[str, Any],
         hdr: Dict[str, Any],
-        save_path: Path = (
-            CONFIG.paths.images
-            / "calibrate_guiding"
-            / datetime.now(UTC).strftime("%Y%m%d")
-        ),
+        save_path: Path | None = None,
         pulse_time: float = 5000,
         exptime: float = 5,
         settle_time: float = 10,
@@ -122,7 +115,15 @@ class GuidingCalibrator:
         self.paired_devices = paired_devices
         self.action_value = action_value
         self.hdr = hdr
-        self.save_path = save_path
+        self.save_path = (
+            save_path
+            if save_path is not None
+            else (
+                Config().paths.images
+                / "calibrate_guiding"
+                / datetime.now(UTC).strftime("%Y%m%d")
+            )
+        )
         self.pulse_time = action_value.get("pulse_time", pulse_time)
         self.exptime = action_value.get("exptime", exptime)
         self.settle_time = action_value.get("settle_time", settle_time)
@@ -193,7 +194,7 @@ class GuidingCalibrator:
 
         for i in range(self.number_of_cycles):
             self.astra_observatory.logger.info(
-                f"=== Starting cycle {i+1} of {self.number_of_cycles} ==="
+                f"=== Starting cycle {i + 1} of {self.number_of_cycles} ==="
             )
             for direction in [
                 GuideDirections.guideNorth,
@@ -275,7 +276,7 @@ class GuidingCalibrator:
         """
         camera_index = self.astra_observatory.get_cam_index(self.row["device_name"])
 
-        observatory_config = ObservatoryConfig.from_config(CONFIG)
+        observatory_config = ObservatoryConfig.from_config(Config())
         observatory_config["Telescope"][camera_index]["guider"].update(
             self._calibration_config
         )

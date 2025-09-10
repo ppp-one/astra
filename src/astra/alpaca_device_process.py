@@ -18,19 +18,32 @@ import time
 from datetime import UTC, datetime
 from multiprocessing import Lock, Pipe, Process
 from threading import Thread
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
-from alpaca.camera import *
-from alpaca.covercalibrator import *
-from alpaca.dome import *
-from alpaca.exceptions import *
-from alpaca.filterwheel import *
-from alpaca.focuser import *
-from alpaca.observingconditions import *
-from alpaca.rotator import *
-from alpaca.safetymonitor import *
-from alpaca.switch import *
-from alpaca.telescope import *
+from alpaca.camera import Camera
+from alpaca.covercalibrator import CoverCalibrator
+from alpaca.dome import Dome
+from alpaca.filterwheel import FilterWheel
+from alpaca.focuser import Focuser
+from alpaca.observingconditions import ObservingConditions
+from alpaca.rotator import Rotator
+from alpaca.safetymonitor import SafetyMonitor
+from alpaca.switch import Switch
+from alpaca.telescope import Telescope
+
+
+ALPACA_DEVICE_TYPES = {
+    "Telescope": Telescope,
+    "Camera": Camera,
+    "CoverCalibrator": CoverCalibrator,
+    "Dome": Dome,
+    "FilterWheel": FilterWheel,
+    "Focuser": Focuser,
+    "ObservingConditions": ObservingConditions,
+    "Rotator": Rotator,
+    "SafetyMonitor": SafetyMonitor,
+    "Switch": Switch,
+}
 
 # https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300
 # https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio
@@ -86,7 +99,7 @@ class AlpacaDevice(Process):
             "SafetyMonitor",
             "Switch",
         ]:
-            self.device = globals()[device_type](ip, device_number)
+            self.device = ALPACA_DEVICE_TYPES[device_type](ip, device_number)
         else:
             print(f"{device_type} is not a valid device type")
             ## TODO: raise exception, does it kill the process?

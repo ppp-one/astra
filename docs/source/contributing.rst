@@ -21,6 +21,8 @@ Development Setup
       python -m venv venv
       source venv/bin/activate  # On Windows: venv\Scripts\activate
       pip install -e ".[dev]"
+      
+      pre-commit install  # Set up pre-commit hooks
 
 
 Code Style
@@ -28,8 +30,7 @@ Code Style
 
 Astra follows these coding conventions:
 
-- We use Black for code formatting
-- We use Ruff for linting
+- We use Ruff for linting and code formatting
 - Maximum line length is 88 characters
 - Docstrings follow the NumPy style
 

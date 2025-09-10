@@ -127,7 +127,8 @@ def test_repr(paired_devices):
 
 def test_missing_device_raises():
     pd = PairedDevices(
-        {"Camera": "TestCam"}, devices={"Camera": {"TestCam": DummyDevice("TestCam")}}  # type: ignore
+        {"Camera": "TestCam"},
+        devices={"Camera": {"TestCam": DummyDevice("TestCam")}},  # type: ignore
     )
     with pytest.raises(ValueError):
         _ = pd.dome
@@ -145,9 +146,7 @@ def test_from_camera_name(dummy_devices, dummy_observatory_config):
     assert pd["Dome"] == "TestDome"
 
 
-def test_from_observatory(
-    dummy_devices, dummy_observatory_config, paired_device_names
-):
+def test_from_observatory(dummy_devices, dummy_observatory_config, paired_device_names):
     class DummyObservatory:
         devices = dummy_devices
         config = dummy_observatory_config

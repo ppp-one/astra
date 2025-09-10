@@ -1,0 +1,27 @@
+repos:
+  - repo: local
+    hooks:
+      - id: sort_pyproject
+        name: sort_pyproject
+        entry: toml-sort -i --sort-table-keys --sort-inline-tables
+        language: python
+        files: ^pyproject\.toml$
+        additional_dependencies: ["toml-sort==0.24.2"]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.11
+    hooks:
+      - id: ruff-check # linter
+        types_or: [python, pyi, jupyter, toml]
+        args: [ --fix,  --config=pyproject.toml ]
+      - id: ruff-format
+        args: [ --config=pyproject.toml ]
+        types_or: [python, pyi, jupyter, toml]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: '(^docs/)|(\.csv$)|(\.min\.js$)|(\.json$)'
+      - id: check-yaml
+        exclude: docs/
+      - id: check-added-large-files
+      - id: check-merge-conflict

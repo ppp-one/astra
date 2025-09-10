@@ -24,9 +24,9 @@ Classes:
 import logging
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import astrafocus.extremum_estimators as astrafee
 import astrafocus.focus_measure_operators as astrafmo
@@ -57,8 +57,6 @@ from astra.alpaca_device_process import AlpacaDevice
 from astra.config import Config, ObservatoryConfig
 from astra.logging_handler import LoggingHandler
 from astra.paired_devices import PairedDevices
-
-CONFIG = Config()
 
 __all__ = ["AstraAutofocusDeviceManager", "Autofocuser"]
 
@@ -687,7 +685,7 @@ class Autofocuser:
 
         date = datetime.now().strftime("%Y%m%d")
 
-        self.save_path = CONFIG.paths.images / "autofocus_ref" / date
+        self.save_path = Config().paths.images / "autofocus_ref" / date
         self.save_path.mkdir(exist_ok=True, parents=True)
 
         autofocus_device_manager = AstraAutofocusDeviceManager.from_row(
@@ -876,7 +874,7 @@ class Autofocuser:
             raise ValueError(f"Error determining observatory location: {str(e)}.")
 
         try:
-            if not CONFIG.gaia_db.exists() or not action_value.get("use_gaia", True):
+            if not Config().gaia_db.exists() or not action_value.get("use_gaia", True):
                 raise ValueError("gaia_tmass_db_path not specified in config.")
 
             maximal_zenith_angle = action_value.get("maximal_zenith_angle", None)
@@ -897,7 +895,7 @@ class Autofocuser:
 
             zenith_neighbourhood_query = (
                 ZenithNeighbourhoodQuery.create_from_location_and_angle(
-                    db_path=str(CONFIG.gaia_db),
+                    db_path=str(Config().gaia_db),
                     observatory_location=observatory_location,
                     observation_time=action_value.get("observation_time", None),
                     maximal_zenith_angle=maximal_zenith_angle,
@@ -1280,8 +1278,8 @@ class Autofocuser:
             return
 
         camera_index = self.astra.get_cam_index(self.row["device_name"])
-        observatory_config = ObservatoryConfig.from_config(CONFIG)
-        observatory_config["Focuser"][camera_index][
-            "focus_position"
-        ] = self.best_focus_position
+        observatory_config = ObservatoryConfig.from_config(Config())
+        observatory_config["Focuser"][camera_index]["focus_position"] = (
+            self.best_focus_position
+        )
         observatory_config.save()

@@ -6,7 +6,6 @@ covering schedule reading, processing, time scaling, and error handling.
 """
 
 import json
-import tempfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -189,7 +188,7 @@ class TestProcessSchedule:
         # Check basic structure
         assert len(result) == 2
         assert "completed" in result.columns
-        assert result["completed"].all() == False
+        assert not result["completed"].all()
 
         # Check datetime conversion
         assert isinstance(result.iloc[0]["start_time"], pd.Timestamp)
@@ -434,7 +433,7 @@ class TestProcessSchedule:
 
         # Check that completed column is added
         assert "completed" in result.columns
-        assert result["completed"].iloc[0] == False
+        assert not result["completed"].iloc[0]
 
 
 class TestIntegration:

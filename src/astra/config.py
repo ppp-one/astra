@@ -16,7 +16,7 @@ import filecmp
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Optional, Union, Any
+from typing import Any, Dict, Optional, Union
 
 import yaml
 
@@ -63,6 +63,7 @@ class Config:
         folder_assets: Optional[Union[Path, str]] = None,
         gaia_db: Optional[Union[Path, str]] = None,
         allow_default: bool = False,
+        propagate_observatory_name: bool = False,
     ) -> None:
         """Initialise the configuration settings.
 
@@ -72,6 +73,9 @@ class Config:
             gaia_db (Path | str): The path to the Gaia database.
             allow_default (bool): Whether to raise a SystemExit
                 if observatory configuration files were left unchanged.
+            propagate_observatory_name (bool): Whether to automatically modify
+                the observatory config files by substituting the observatory name.
+                Mainly useful for testing.
         """
         if not self.CONFIG_PATH.exists():
             _ConfigInitialiser.run(observatory_name, folder_assets, gaia_db)
@@ -86,7 +90,10 @@ class Config:
         if not isinstance(self.paths, AssetPaths):
             raise TypeError(f"Expected AssetPaths, got {type(self.paths)}")
 
-        self._initialize_observatory_files(allow_default=allow_default)
+        self._initialize_observatory_files(
+            allow_default=allow_default,
+            propagate_observatory_name=propagate_observatory_name,
+        )
 
     def reset(self, remove_assets: bool = False) -> None:
         """Reset configuration by removing config file and optionally assets.
@@ -147,12 +154,10 @@ class Config:
 
         return config
 
-    def _initialize_observatory_files(self, allow_default: bool) -> None:
-        """Initialize observatory configuration files from templates.
-
-        Args:
-            allow_default: If False, raises SystemExit when files remain unchanged.
-        """
+    def _initialize_observatory_files(
+        self, allow_default: bool, propagate_observatory_name: bool
+    ) -> None:
+        """Initialize observatory configuration files from templates."""
         if not self.TEMPLATE_DIR.exists():
             raise FileNotFoundError(
                 f"Template directory {self.TEMPLATE_DIR} not found."
@@ -167,8 +172,18 @@ class Config:
             if not target_file.exists():
                 target_file.write_bytes(template_file.read_bytes())
 
-            if filecmp.cmp(template_file, target_file, shallow=False):
+            if (
+                filecmp.cmp(template_file, target_file, shallow=False)
+                and not propagate_observatory_name
+            ):
                 unchanged_files.append(target_file.name)
+
+            if propagate_observatory_name:
+                self._modify_observatory_config_files(
+                    target_file,
+                    ["observatoryname", "ORIGIN"],
+                    [self.observatory_name, self.observatory_name],
+                )
 
         if unchanged_files:
             message = (
@@ -181,6 +196,19 @@ class Config:
                 print(message)
             else:
                 raise SystemExit(message)
+
+    def _modify_observatory_config_files(
+        self, file_path, old_strings=[], new_strings=[]
+    ):
+        """Modify default template files by substituting specified strings."""
+        import re
+
+        with open(file_path, "r") as f:
+            content = f.read()
+        for old_string, new_string in zip(old_strings, new_strings):
+            content = re.sub(r"(?<!\n)" + re.escape(old_string), new_string, content)
+        with open(file_path, "w") as f:
+            f.write(content)
 
     def __repr__(self) -> str:
         return (

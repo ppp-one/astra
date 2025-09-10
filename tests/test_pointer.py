@@ -135,38 +135,37 @@ class TestImageStarMapping:
 
 
 class TestPointingCorrectionHandler:
-    @classmethod
-    def setup_class(cls):
-        """Setup method to create an image and PointingCorrectionHandler instance for testing."""
-        cls.observatory = cabaret.Observatory(
+    @pytest.fixture(autouse=True)
+    def setup_pointing(self, temp_config):
+        # if the file at Config().gaia_db is empty skip the test
+        if not temp_config.gaia_db or temp_config.gaia_db.stat().st_size == 0:
+            pytest.skip("Skipping as gaia_db is not set up")
+
+        self.observatory = cabaret.Observatory(
             name="MyObservatory",
             camera=cabaret.Camera(
                 height=1024,
                 width=1024,
             ),
         )
-
-        cls.ra = 100
-        cls.dec = 34
-        cls.real_ra, cls.real_dec = cls.ra + 0.01, cls.dec - 0.02
-        cls.dateobs = datetime.datetime(
+        self.ra = 100
+        self.dec = 34
+        self.real_ra, self.real_dec = self.ra + 0.01, self.dec - 0.02
+        self.dateobs = datetime.datetime(
             2025, 3, 1, 21, 1, 35, 86730, tzinfo=datetime.timezone.utc
         )
-
-        cls.image = cls.observatory.generate_image(
-            ra=cls.real_ra,  # right ascension in degrees
-            dec=cls.real_dec,  # declination in degrees
-            exp_time=30,  # exposure time in seconds
-            dateobs=cls.dateobs,  # time of observation
+        self.image = self.observatory.generate_image(
+            ra=self.real_ra,
+            dec=self.real_dec,
+            exp_time=30,
+            dateobs=self.dateobs,
         )
-
-        # Create the PointingCorrectionHandler instance
-        cls.pointing_corrector = PointingCorrectionHandler.from_image(
-            cls.image,
-            target_ra=cls.ra,
-            target_dec=cls.dec,
-            dateobs=cls.dateobs,
-            plate_scale=cls.observatory.camera.plate_scale / 3600,  # deg/pixel
+        self.pointing_corrector = PointingCorrectionHandler.from_image(
+            self.image,
+            target_ra=self.ra,
+            target_dec=self.dec,
+            dateobs=self.dateobs,
+            plate_scale=self.observatory.camera.plate_scale / 3600,
         )
 
     def test_pointing_correction(self):

@@ -20,16 +20,12 @@ Typical usage:
     compressed_schedule = process_schedule("schedule.jsonl", truncate_factor=25)
 """
 
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Union
 
 import pandas as pd
-import json
-
-from astra import Config
-
-CONFIG = Config()
 
 
 def update_times(df: pd.DataFrame, time_factor: float) -> pd.DataFrame:

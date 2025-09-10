@@ -1,6 +1,8 @@
 from astra.config import Config
 import importlib.metadata
 
+__all__ = ["ASTRA_VER", "Config"]
+
 try:
     # Get the version of the installed 'astra' package
     ASTRA_VER = importlib.metadata.version("astra")
