@@ -30,15 +30,15 @@ Installation Steps
 
      .. code-block:: bash
 
-       conda create -n astra python=3.11
-       conda activate astra
+       conda create -n astra_env python=3.11
+       conda activate astra_env
 
    * Using venv:
    
      .. code-block:: bash
 
-       python -m venv astra
-       source astra/bin/activate  # On Windows use: astra\Scripts\activate
+       python -m venv astra_env
+       source astra_env/bin/activate  # On Windows use: astra_env\Scripts\activate
 
 3. Install Astra in local mode:
 
