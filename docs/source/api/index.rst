@@ -1,7 +1,7 @@
-API Reference
+Module Reference
 ============
 
-This section provides detailed API documentation for all modules in Astra.
+This section provides detailed documentation for all modules in Astra.
 
 .. toctree::
    :maxdepth: 2

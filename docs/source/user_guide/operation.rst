@@ -1,7 +1,7 @@
 Operation Guide
 ================
 
-Observatory operation with Astra is designed to be as automated and safe as possible, with a focus on robotic observing. This guide covers the key aspects of operating Astra, including startup, web interface,watchdog functionality, weather safety, core logic, and troubleshooting.
+Observatory operation with Astra is designed to be as automated and safe as possible, with a focus on robotic observing. This guide covers the key aspects of operating Astra, including startup, web interface, watchdog functionality, weather safety, core logic, and troubleshooting.
 
 Startup
 -------
