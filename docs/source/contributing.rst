@@ -22,11 +22,6 @@ Development Setup
       source venv/bin/activate  # On Windows: venv\Scripts\activate
       pip install -e ".[dev]"
 
-4. Set up pre-commit hooks:
-
-   .. code-block:: bash
-
-      pre-commit install
 
 Code Style
 ---------
@@ -43,15 +38,9 @@ Pull Requests
 
 Before submitting a pull request:
 
-1. Make sure all tests pass:
-
-   .. code-block:: bash
-
-      pytest
-
+1. Make sure all tests pass
 2. Update documentation if you've changed functionality
-3. Add a note to the CHANGELOG.md file describing your changes
-4. If you've added functionality, add tests for it
+3. If you've added functionality, add tests for it
 
 Documentation
 -----------
@@ -76,13 +65,7 @@ To run the test suite:
 
 .. code-block:: bash
 
-   pytest
-
-To run tests with coverage information:
-
-.. code-block:: bash
-
-   pytest --cov=astra
+   sh ./run_tests_individually.sh
 
 Versioning
 ---------
@@ -100,14 +83,3 @@ Release Process
 2. Update version number in pyproject.toml
 3. Create a git tag for the release
 4. Push the tag to GitHub
-5. Build a new release:
-
-   .. code-block:: bash
-
-      python -m build
-
-6. Upload to PyPI:
-
-   .. code-block:: bash
-
-      twine upload dist/*

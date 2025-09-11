@@ -122,7 +122,7 @@ Astra is built around a multi-process architecture, where each device runs in it
 
    Inter-process communication in Astra with two Alpaca devices for illustration.
 
-An SQLite database is used for storing polled device data and logs. However, since SQLite does not support concurrent writes, Astra employs a thread based queuing system to manage database access. 
+An SQLite database is used for storing polled device data and logs. However, since SQLite does not support concurrent writes, Astra employs a `database worker <https://github.com/dashawn888/sqlite3worker>`_ to manage database access. 
 
 Each device process sends its polled data to the main process via the shared queue, which is then managed by the database worker that handles all database writes. This approach prevents database locks and ensures data integrity.
 
@@ -130,6 +130,7 @@ The watchdog reads from SQLite database as part of the weather safety logic, mon
 
 Pipes are used for direct communication between the main process and device processes, allowing for efficient command execution and status updates.
 
+Astra uses several open-source libraries for its core logic, namely astropy, alpyca, sqlite3worker, fastapi, pandas, twirl, photutils, donuts, psutil, pyyaml, and astrafocus. Please refer to the source code for further implementation details.
 
 
 Troubleshooting

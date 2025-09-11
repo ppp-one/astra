@@ -54,11 +54,34 @@ Once the initial setup is complete, you can run Astra.
 
         astra
 
-#. After a few moments, open your web browser and navigate to the following URL http://localhost:8000
+#. After a few moments, open your web browser and navigate to the following URL http://localhost:8000, and you should see Astra's web interface.
 
-.. figure:: _static/screenshot.jpg
+
+.. |pic1| image:: _static/ui-summary-tab.png
+   :width: 49%
+   :alt: Astra summary tab
+
+
+.. |pic2| image:: _static/ui-log-tab.png
+   :width: 49%
+   :alt: Astra log tab
+
+
+.. |pic3| image:: _static/ui-weather-tab.png
+   :width: 49%
+   :alt: Astra weather tab
+
+
+.. |pic4| image:: _static/ui-controls-tab.png
+   :width: 49%
+   :alt: Astra controls tab
+
+
+|pic1| | |pic2|
+
+|pic3| | |pic4|
+
+.. figure:: _static/ui-schedule-editor.png
    :width: 80%
    :align: center
-   :alt: Astra web interface
-
-   Astra web interface
+   :alt: Astra schedule editor

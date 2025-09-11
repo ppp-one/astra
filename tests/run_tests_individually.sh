@@ -5,7 +5,7 @@
 # 
 # Usage:
 #   ./run_tests_individually.sh                    # Run all test files
-#   ./run_tests_individually.sh tests/test_config.py  # Run specific test file
+#   ./run_tests_individually.sh ./test_config.py  # Run specific test file
 
 set -e  # Exit on any error
 
@@ -52,10 +52,10 @@ PASSED_FILES=0
 FAILED_FILES=0
 
 # Find all test files
-TEST_FILES=$(find tests/ -name "test_*.py" -type f | sort)
+TEST_FILES=$(find ./ -name "test_*.py" -type f | sort)
 
 if [ -z "$TEST_FILES" ]; then
-    echo -e "${RED}No test files found in tests/ directory${NC}"
+    echo -e "${RED}No test files found in ./ directory${NC}"
     exit 1
 fi
 
