@@ -46,6 +46,8 @@ import numpy as np
 import pandas as pd
 import psutil
 import sqlite3
+import traceback
+
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_body
 from astropy.io import fits
 from astropy.time import Time
@@ -212,21 +214,102 @@ class Observatory:
         )
 
         # optional configuration for pattern used to write filename.
+        # Test if pattern formatting fails here to validate the config to avoid it failing later during acquisition
+        def check_filename_pattern(filename_pattern, pattern_name, obj_name, device_name, image_type,
+                                   filter_name, filter_name_clean, exptime, timestamp,
+                                   timestamp_date, timestamp_time, image_sequence_n, duskdawn="*"):
+            # Check the format
+            try:
+                self.logger.info(f"Config {pattern_name} filename pattern: [{filename_pattern}] ({type(filename_pattern)})")
+
+                filename = filename_pattern.format(device=device_name,
+                                                   filter_orig=filter_name,
+                                                   filter_clean=filter_name_clean,
+                                                   object_name=obj_name,
+                                                   exptime=exptime,
+                                                   imagetype=image_type,
+                                                   timestamp=timestamp,
+                                                   timestamp_date=timestamp_date,
+                                                   timestamp_time=timestamp_time,
+                                                   sequence=image_sequence_n,
+                                                   duskdawn=duskdawn)
+                self.logger.info(f"Config filename test: {filename}")
+            except Exception as e:
+                self.logger.error("Can't parse {pattern_name} filename pattern")
+                self.logger.error(traceback.format_exception(e))
+
         self.save_config = {}
         if "raw_filename_pattern" in self.config["Misc"]: 
-            self.save_config["raw_filename_pattern"] = self.config["Misc"]["raw_filename_pattern"]
-        if "raw_filename_pattern_glob" in self.config["Misc"]: 
-            self.save_config["raw_filename_pattern_glob"] = self.config["Misc"]["raw_filename_pattern_glob"]
+            filename_pattern = self.config["Misc"]["raw_filename_pattern"]
 
-        if "bias_filename_pattern" in self.config["Misc"]: 
-            self.save_config["bias_filename_pattern"] = self.config["Misc"]["bias_filename_pattern"]
-        if "dark_filename_pattern" in self.config["Misc"]: 
-            self.save_config["dark_filename_pattern"] = self.config["Misc"]["dark_filename_pattern"]
-        if "flat_filename_pattern" in self.config["Misc"]: 
-            self.save_config["flat_filename_pattern"] = self.config["Misc"]["flat_filename_pattern"]
+            # run a check on it
+            dt = datetime.now()
+            timestamp = dt.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+            timestamp_date = dt.strftime('%Y%m%d')
+            timestamp_time = dt.strftime('%H%M%S')
+            check_filename_pattern(filename_pattern, "raw", "TestObj", "TestDevice", "Light Frame", "F'", "F", 30.0,
+                                   timestamp, timestamp_date, timestamp_time, 42)
+
+            self.save_config["raw_filename_pattern"] = filename_pattern
+
+        if "raw_filename_pattern_glob" in self.config["Misc"]:
+            filename_pattern = self.config["Misc"]["raw_filename_pattern_glob"]
+
+            dt = datetime.now()
+            timestamp = dt.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+            timestamp_date = dt.strftime('%Y%m%d')
+            timestamp_time = dt.strftime('%H%M%S')
+            check_filename_pattern(filename_pattern, "raw glob", "*", "TestDevice", "Light Frame", "*", "*", "*", "*", "*", "*", "*")
+
+            self.save_config["raw_filename_pattern_glob"] = filename_pattern
+
+        if "bias_filename_pattern" in self.config["Misc"]:
+            filename_pattern = self.config["Misc"]["bias_filename_pattern"]
+
+            # run a check on it
+            dt = datetime.now()
+            timestamp = dt.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+            timestamp_date = dt.strftime('%Y%m%d')
+            timestamp_time = dt.strftime('%H%M%S')
+            check_filename_pattern(filename_pattern, "bias", "TestObj", "TestDevice", "Light Frame", "F'", "F", 30.0,
+                                   timestamp, timestamp_date, timestamp_time, 42)
+
+            self.save_config["bias_filename_pattern"] = filename_pattern
+
+        if "dark_filename_pattern" in self.config["Misc"]:
+            filename_pattern = self.config["Misc"]["dark_filename_pattern"]
+
+            # run a check on it
+            dt = datetime.now()
+            timestamp = dt.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+            timestamp_date = dt.strftime('%Y%m%d')
+            timestamp_time = dt.strftime('%H%M%S')
+            check_filename_pattern(filename_pattern, "dark", "TestObj", "TestDevice", "Light Frame", "F'", "F", 30.0,
+                                   timestamp, timestamp_date, timestamp_time, 42)
+
+            self.save_config["dark_filename_pattern"] = filename_pattern
+
+        if "flat_filename_pattern" in self.config["Misc"]:
+            filename_pattern = self.config["Misc"]["flat_filename_pattern"]
+
+            # run a check on it
+            dt = datetime.now()
+            timestamp = dt.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+            timestamp_date = dt.strftime('%Y%m%d')
+            timestamp_time = dt.strftime('%H%M%S')
+            check_filename_pattern(filename_pattern, "flat", "TestObj", "TestDevice", "Light Frame", "F'", "F", 30.0,
+                                   timestamp, timestamp_date, timestamp_time, 42, duskdawn="Dawn")
+
+            self.save_config["flat_filename_pattern"] = filename_pattern
+
         if "utc_offset_hours" in self.config["Misc"]:
             self.save_config["utc_offset_hours"] = self.config["Misc"]["utc_offset_hours"]
-            
+
+        if (("flat_filename_pattern" in self.config["Misc"])
+            and ("{duskdawn}" in self.config["Misc"]["flat_filename_pattern"])
+            and ("utc_offset_hours" not in self.config["Misc"])):
+            self.logger.error("Missing `utc_offset_hours` in observatory config for {duskdawn} in filename pattern")
+
         # error and weather handling flags
         self.error_free = True
         self.error_source = []
@@ -2747,8 +2830,8 @@ class Observatory:
                 hdr,
                 camera.device_name,
                 dateobs,
-                folder,
                 sequence_idx,
+                folder,
                 self.save_config,
                 wcs,
             )
@@ -3307,9 +3390,9 @@ class Observatory:
 
 
         # build filename from pattern
-        if 'raw_filename_pattern_glob' in self.config:
+        if 'raw_filename_pattern_glob' in self.save_config:
             # read filename config from config file
-            filename_pattern = self.config['raw_filename_pattern_glob']
+            filename_pattern = self.save_config['raw_filename_pattern_glob']
         else:
             # use default filename
             filename_pattern = '{device}_{filter_clean}_{exptime:.3f}_{timestamp}.fits'
@@ -3334,8 +3417,8 @@ class Observatory:
                                            timestamp_time="*",
                                            sequence="*")
         # create path
-        filepath = pathlib.Path('..') / 'images' / folder / filename
-                        
+        filepath = Path('..') / 'images' / folder / filename
+
         # get glob as string
         glob_str = str(filepath)
 

@@ -261,8 +261,10 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Check file was created
@@ -275,6 +277,101 @@ class TestSaveImage:
 
             # Check file path
             expected_path = Path(temp_dir) / folder / expected_filename
+            assert result == expected_path
+
+            # Verify FITS file content
+            with fits.open(result) as hdul:
+                # Check data
+                np.testing.assert_array_equal(hdul[0].data, [[100, 300], [200, 400]])
+                # Check headers
+                assert hdul[0].header["DATE-OBS"] == "2024-05-15T12:00:00.000000"
+                assert hdul[0].header["DATE"] == "2024-05-15T12:30:45.123456"
+                assert (
+                    "UTC datetime file written" in hdul[0].header.comments["DATE-OBS"]
+                )
+
+                assert (
+                    "UTC datetime start of exposure" in hdul[0].header.comments["DATE"]
+                )
+
+    @patch("astra.image_handler.CONFIG")
+    @patch("astra.image_handler.datetime")
+    def test_save_light_frame_pattern_filename(self, mock_datetime, mock_config):
+        """Test saving a light frame image."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mock_config.paths.images = Path(temp_dir)
+
+            # Mock datetime for consistent filename
+            mock_now = datetime(2024, 5, 15, 12, 30, 45, 123456, tzinfo=UTC)
+            mock_datetime.now.return_value = mock_now
+            mock_datetime.side_effect = lambda *args, **kwargs: datetime(
+                *args, **kwargs
+            )
+
+            image = [[100, 200], [300, 400]]
+            info = self.create_mock_image_info()
+            maxadu = 65535
+            header = self.create_test_header(FILTER="r'")
+            device_name = "TestCamera"
+            dateobs = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            folder = "test_folder"
+
+            filepath = Path(temp_dir) / folder
+            filepath.mkdir(exist_ok=True)
+
+            ####################################
+            # test config filename
+            sequence_n = 1
+            saveconfig = {"raw_filename_pattern": "Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence:03d}-{filter_orig}.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            # Check file was created
+            assert result.exists()
+            assert result.is_file()
+
+            # Check filename format for light frame
+            expected_filename = "20240515-123045-M31-S001-R001-C001-r'.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Raw" / expected_filename
+            assert result == expected_path
+
+            # Verify FITS file content
+            with fits.open(result) as hdul:
+                # Check data
+                np.testing.assert_array_equal(hdul[0].data, [[100, 300], [200, 400]])
+                # Check headers
+                assert hdul[0].header["DATE-OBS"] == "2024-05-15T12:00:00.000000"
+                assert hdul[0].header["DATE"] == "2024-05-15T12:30:45.123456"
+                assert (
+                    "UTC datetime file written" in hdul[0].header.comments["DATE-OBS"]
+                )
+
+                assert (
+                    "UTC datetime start of exposure" in hdul[0].header.comments["DATE"]
+                )
+
+            ####################################
+            # test config filename
+            sequence_n = 2
+            saveconfig = {"raw_filename_pattern": "Raw/{timestamp_date}-{timestamp_time}-{object_name}-S001-R001-C{sequence:03d}-{filter_orig}.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            # Check file was created
+            assert result.exists()
+            assert result.is_file()
+
+            # Check filename format for light frame
+            expected_filename = "20240515-123045-M31-S001-R001-C002-r'.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Raw" / expected_filename
             assert result == expected_path
 
             # Verify FITS file content
@@ -316,13 +413,71 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Check filename format for bias frame
             expected_filename = "TestCamera_Bias Frame_0.000_20240515_123045.123.fits"
             assert result.name == expected_filename
+
+    @patch("astra.image_handler.CONFIG")
+    @patch("astra.image_handler.datetime")
+    def test_save_bias_frame_pattern_filename(self, mock_datetime, mock_config):
+        """Test saving a bias frame image."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mock_config.paths.images = Path(temp_dir)
+
+            mock_now = datetime(2024, 5, 15, 12, 30, 45, 123456, tzinfo=UTC)
+            mock_datetime.now.return_value = mock_now
+            mock_datetime.side_effect = lambda *args, **kwargs: datetime(
+                *args, **kwargs
+            )
+
+            image = [[50, 51], [52, 53]]
+            info = self.create_mock_image_info()
+            maxadu = 65535
+            header = self.create_test_header(IMAGETYP="Bias Frame", EXPTIME=0.0)
+            device_name = "TestCamera"
+            dateobs = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            folder = "bias_folder"
+
+            filepath = Path(temp_dir) / folder
+            filepath.mkdir(exist_ok=True)
+
+            sequence_n = 1
+            saveconfig = {"bias_filename_pattern": "Bias/{timestamp_date}-{timestamp_time}-Bias-S001-R001-C{sequence:03d}-NoFilt.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for bias frame
+            expected_filename = "20240515-123045-Bias-S001-R001-C001-NoFilt.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Bias" / expected_filename
+            assert result == expected_path
+
+            sequence_n = 2
+            saveconfig = {"bias_filename_pattern": "Bias/{timestamp_date}-{timestamp_time}-Bias-S001-R001-C{sequence:03d}-NoFilt.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for bias frame
+            expected_filename = "20240515-123045-Bias-S001-R001-C002-NoFilt.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Bias" / expected_filename
+            assert result == expected_path
 
     @patch("astra.image_handler.CONFIG")
     @patch("astra.image_handler.datetime")
@@ -348,13 +503,71 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Check filename format for dark frame
             expected_filename = "TestCamera_Dark Frame_120.000_20240515_123045.123.fits"
             assert result.name == expected_filename
+
+    @patch("astra.image_handler.CONFIG")
+    @patch("astra.image_handler.datetime")
+    def test_save_dark_frame_pattern_filename(self, mock_datetime, mock_config):
+        """Test saving a dark frame image."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mock_config.paths.images = Path(temp_dir)
+
+            mock_now = datetime(2024, 5, 15, 12, 30, 45, 123456, tzinfo=UTC)
+            mock_datetime.now.return_value = mock_now
+            mock_datetime.side_effect = lambda *args, **kwargs: datetime(
+                *args, **kwargs
+            )
+
+            image = [[75, 76], [77, 78]]
+            info = self.create_mock_image_info()
+            maxadu = 65535
+            header = self.create_test_header(IMAGETYP="Dark Frame", EXPTIME=120.0)
+            device_name = "TestCamera"
+            dateobs = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            folder = "dark_folder"
+
+            filepath = Path(temp_dir) / folder
+            filepath.mkdir(exist_ok=True)
+
+            sequence_n = 1
+            saveconfig = {"dark_filename_pattern": "Dark/{timestamp_date}-{timestamp_time}-Dark-S001-R001-C{sequence:03d}-NoFilt.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-123045-Dark-S001-R001-C001-NoFilt.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Dark" / expected_filename
+            assert result == expected_path
+
+            sequence_n = 2
+            saveconfig = {"dark_filename_pattern": "Dark/{timestamp_date}-{timestamp_time}-Dark-S001-R001-C{sequence:03d}-NoFilt.fts"}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-123045-Dark-S001-R001-C002-NoFilt.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Dark" / expected_filename
+            assert result == expected_path
 
     @patch("astra.image_handler.CONFIG")
     @patch("astra.image_handler.datetime")
@@ -380,8 +593,10 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Check filename format for other frame type
@@ -389,6 +604,122 @@ class TestSaveImage:
                 "TestCamera_V_Flat Frame_10.000_20240515_123045.123.fits"
             )
             assert result.name == expected_filename
+
+    @patch("astra.image_handler.CONFIG")
+    @patch("astra.image_handler.datetime")
+    def test_save_other_frame_type_pattern_filename_dawn(self, mock_datetime, mock_config):
+        """Test saving a frame with other image type."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mock_config.paths.images = Path(temp_dir)
+
+            mock_now = datetime(2024, 5, 15, 12, 30, 45, 123456, tzinfo=UTC)
+            mock_datetime.now.return_value = mock_now
+            mock_datetime.side_effect = lambda *args, **kwargs: datetime(
+                *args, **kwargs
+            )
+
+            image = [[150, 151], [152, 153]]
+            info = self.create_mock_image_info()
+            maxadu = 65535
+            header = self.create_test_header(IMAGETYP="Flat Frame", EXPTIME=10.0, FILTER="r'")
+            device_name = "TestCamera"
+            dateobs = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            folder = "flat_folder"
+
+            filepath = Path(temp_dir) / folder
+            filepath.mkdir(exist_ok=True)
+
+            sequence_n = 1
+            saveconfig = {"flat_filename_pattern": "Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-{sequence:03d}.fts",
+                          "utc_offset_hours": -8}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-123045-Dawn-r'-Bin1-Temp_-60-001.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Flat" / expected_filename
+            assert result == expected_path
+
+            sequence_n = 2
+            saveconfig = {"flat_filename_pattern": "Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-{sequence:03d}.fts",
+                          "utc_offset_hours": -8}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-123045-Dawn-r'-Bin1-Temp_-60-002.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Flat" / expected_filename
+            assert result == expected_path
+
+    @patch("astra.image_handler.CONFIG")
+    @patch("astra.image_handler.datetime")
+    def test_save_other_frame_type_pattern_filename_dusk(self, mock_datetime, mock_config):
+        """Test saving a frame with other image type."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mock_config.paths.images = Path(temp_dir)
+
+            mock_now = datetime(2024, 5, 15, 3, 1, 45, 123456, tzinfo=UTC)
+            mock_datetime.now.return_value = mock_now
+            mock_datetime.side_effect = lambda *args, **kwargs: datetime(
+                *args, **kwargs
+            )
+
+            image = [[150, 151], [152, 153]]
+            info = self.create_mock_image_info()
+            maxadu = 65535
+            header = self.create_test_header(IMAGETYP="Flat Frame", EXPTIME=10.0, FILTER="r'")
+            device_name = "TestCamera"
+            dateobs = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            folder = "flat_folder"
+
+            filepath = Path(temp_dir) / folder
+            filepath.mkdir(exist_ok=True)
+
+            sequence_n = 1
+            saveconfig = {"flat_filename_pattern": "Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-{sequence:03d}.fts",
+                          "utc_offset_hours": -8}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-030145-Dusk-r'-Bin1-Temp_-60-001.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Flat" / expected_filename
+            assert result == expected_path
+
+            sequence_n = 2
+            saveconfig = {"flat_filename_pattern": "Flat/{timestamp_date}-{timestamp_time}-{duskdawn}-{filter_orig}-Bin1-Temp_-60-{sequence:03d}.fts",
+                          "utc_offset_hours": -8}
+            result = save_image(
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
+            )
+
+            assert result.exists()
+
+            # Check filename format for dark frame
+            expected_filename = "20240515-030145-Dusk-r'-Bin1-Temp_-60-002.fts"
+            assert result.name == expected_filename
+
+            # Check file path
+            expected_path = Path(temp_dir) / folder / "Flat" / expected_filename
+            assert result == expected_path
 
     @patch("astra.image_handler.CONFIG")
     @patch("astra.image_handler.datetime")
@@ -421,8 +752,10 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder, wcs=wcs
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig, wcs=wcs
             )
 
             # Verify WCS was added to header
@@ -459,8 +792,10 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Check that quotes were removed from filter name in filename
@@ -488,7 +823,9 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
-            save_image(image, info, maxadu, header, device_name, dateobs, folder)
+            sequence_n = 1
+            saveconfig = {}
+            save_image(image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig)
 
             # Verify transform function was called with correct parameters
             mock_transform.assert_called_once_with(
@@ -513,8 +850,10 @@ class TestSaveImage:
             filepath = Path(temp_dir) / folder
             filepath.mkdir(exist_ok=True)
 
+            sequence_n = 1
+            saveconfig = {}
             result = save_image(
-                image, info, maxadu, header, device_name, dateobs, folder
+                image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
             )
 
             # Verify original headers are preserved
@@ -548,8 +887,10 @@ class TestSaveImage:
                     filepath = Path(temp_dir) / folder
                     filepath.mkdir(exist_ok=True)
 
+                    sequence_n = 1
+                    saveconfig = {}
                     result = save_image(
-                        image, info, maxadu, header, device_name, dateobs, folder
+                        image, info, maxadu, header, device_name, dateobs, sequence_n, folder, saveconfig
                     )
 
                     # Check that exposure time is formatted to 3 decimal places
