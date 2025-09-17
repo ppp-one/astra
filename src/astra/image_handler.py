@@ -25,6 +25,7 @@ Example:
 """
 
 from datetime import UTC, datetime, timedelta
+from datetime import time as dttime
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -137,8 +138,10 @@ def save_image(
     hdr: fits.Header,
     device_name: str,
     dateobs: datetime,
+    image_sequence_n: int,
     folder: str,
-    wcs: Optional[WCS] = None,
+    save_config: dict,
+    wcs: Optional[WCS] = None
 ) -> Path:
     """
     Save an astronomical image as a FITS file with proper headers and filename.
@@ -154,17 +157,21 @@ def save_image(
         hdr (fits.Header): FITS header containing FILTER, IMAGETYP, OBJECT, EXPTIME.
         device_name (str): Camera/device name for filename generation.
         dateobs (datetime): UTC datetime when exposure started.
+        image_sequence_n (int): number in sequence of image, for filename formatting.
         folder (str): Subfolder name within the images directory.
+        save_config: dict: dictionnary of configs for save format.
         wcs (WCS, optional): World Coordinate System information. Defaults to None.
+        site_long (float): longitude of site, for dusk/dawn check for filename
 
     Returns:
         Path: Path to the saved FITS file.
 
     Note:
-        Filename formats:
+        Filename formats, either:
         - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
         - Bias/Dark: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
         - Other: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
+        or uses format defined in config.
 
         Headers automatically updated with DATE-OBS, DATE, and WCS (if provided).
     """
@@ -194,15 +201,94 @@ def save_image(
     hdu = fits.PrimaryHDU(image_array, header=hdr)
 
     # create filename
-    filter_name = hdr["FILTER"].replace("'", "")
-    if hdr["IMAGETYP"] == "Light Frame":
-        filename = f"{device_name}_{filter_name}_{hdr['OBJECT']}_{hdr['EXPTIME']:.3f}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
-    elif hdr["IMAGETYP"] in ["Bias Frame", "Dark Frame"]:
-        filename = f"{device_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']:.3f}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
-    else:
-        filename = f"{device_name}_{filter_name}_{hdr['IMAGETYP']}_{hdr['EXPTIME']:.3f}_{date.strftime('%Y%m%d_%H%M%S.%f')[:-3]}.fits"
+    # create filename
+    filter_name_clean = hdr['FILTER'].replace("'", '')
+    filter_name = hdr['FILTER']
 
-    filepath = CONFIG.paths.images / folder / filename
+    exptime = hdr['EXPTIME']
+
+    timestamp = date.strftime('%Y%m%d_%H%M%S.%f')[:-3]
+    timestamp_date = date.strftime('%Y%m%d')
+    timestamp_time = date.strftime('%H%M%S')
+    image_type = hdr['IMAGETYPE']
+
+    if image_type == 'Light Frame':
+        if 'raw_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['raw_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{filter_clean}_{exptime:.3f}_{timestamp}.fits'
+
+        obj_name = hdr['OBJECT']
+
+        filename = filename_pattern.format(device=device_name,
+                                           filter=filter_name,
+                                           filter_clean=filter_name_clean,
+                                           object_name=obj_name,
+                                           exptime=exptime,
+                                           imagetype=image_type,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
+    elif image_type == ['Bias Frame']:
+        if 'bias_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['bias_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits'
+
+        filename = filename_pattern.format(device=device_name,
+                                           filter=filter_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
+    elif image_type == ['Dark Frame']:
+        if 'dark_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['dark_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits'
+
+        filename = filename_pattern.format(device=device_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n)
+    else:
+        # Flat
+        if 'dark_filename_pattern' in save_config:
+            # read filename config from config file
+            filename_pattern = save_config['flat_filename_pattern']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits'
+            
+        # STX has flats marked "Dusk" or "Dawn" depending on when the flat is taken, compute local time of image
+        # from UTC to check if it's a dusk or dawn flat
+        dusk_dawn = 'DuskDawn'
+        if ("utc_offset_hours" in save_config) and (date.time() + timedelta(hours=save_config["utc_offset_hours"]).time() > dttime(hour=12)):
+            dusk_dawn = 'Dusk'
+        else:
+            dusk_dawn = 'Dawn'
+            
+        filename = filename_pattern.format(device=device_name,
+                                           exptime=exptime,
+                                           timestamp=timestamp,
+                                           timestamp_date=timestamp_date,
+                                           timestamp_time=timestamp_time,
+                                           sequence=image_sequence_n,
+                                           duskdawn=dusk_dawn)
+
+    filepath = CONFIG.folder_images / folder / filename
+    # Make directory if not existing
+    filepath.parent.mkdir(exists_ok=True, parents=True)
 
     # save FITS file
     hdu.writeto(filepath)

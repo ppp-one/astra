@@ -211,6 +211,22 @@ class Observatory:
             self.config["Misc"]["backup_time"], "%H:%M"
         )
 
+        # optional configuration for pattern used to write filename.
+        self.save_config = {}
+        if "raw_filename_pattern" in self.config["Misc"]: 
+            self.save_config["raw_filename_pattern"] = self.config["Misc"]["raw_filename_pattern"]
+        if "raw_filename_pattern_glob" in self.config["Misc"]: 
+            self.save_config["raw_filename_pattern_glob"] = self.config["Misc"]["raw_filename_pattern_glob"]
+
+        if "bias_filename_pattern" in self.config["Misc"]: 
+            self.save_config["bias_filename_pattern"] = self.config["Misc"]["bias_filename_pattern"]
+        if "dark_filename_pattern" in self.config["Misc"]: 
+            self.save_config["dark_filename_pattern"] = self.config["Misc"]["dark_filename_pattern"]
+        if "flat_filename_pattern" in self.config["Misc"]: 
+            self.save_config["flat_filename_pattern"] = self.config["Misc"]["flat_filename_pattern"]
+        if "utc_offset_hours" in self.config["Misc"]:
+            self.save_config["utc_offset_hours"] = self.config["Misc"]["utc_offset_hours"]
+            
         # error and weather handling flags
         self.error_free = True
         self.error_source = []
@@ -2597,6 +2613,7 @@ class Observatory:
         self,
         camera: AlpacaDevice,
         exptime,
+        sequence_idx,
         maxadu,
         row,
         hdr,
@@ -2731,6 +2748,8 @@ class Observatory:
                 camera.device_name,
                 dateobs,
                 folder,
+                sequence_idx,
+                self.save_config,
                 wcs,
             )
 
@@ -2832,6 +2851,7 @@ class Observatory:
                 success, filepath = self.perform_exposure(
                     camera,
                     exptime,
+                    exposure,
                     maxadu,
                     row,
                     hdr,
@@ -3065,6 +3085,7 @@ class Observatory:
             success, filepath = self.perform_exposure(
                 camera,
                 exptime,
+                counter,
                 maxadu,
                 row,
                 hdr,
@@ -3284,13 +3305,39 @@ class Observatory:
         """
         self.logger.info(f"Starting guiding for {paired_devices['Telescope']}")
 
-        filter_name = action_value["filter"].replace("'", "")
-        glob_str = os.path.join(
-            "..",
-            "images",
-            folder,
-            f"{row['device_name']}_{filter_name}_{action_value['object']}_{action_value['exptime']:.3f}_*.fits",
-        )  # be careful with if custom naming is used
+
+        # build filename from pattern
+        if 'raw_filename_pattern_glob' in self.config:
+            # read filename config from config file
+            filename_pattern = self.config['raw_filename_pattern_glob']
+        else:
+            # use default filename
+            filename_pattern = '{device}_{filter_clean}_{exptime:.3f}_{timestamp}.fits'
+
+        # get values to insert into pattern
+        filter_name_clean = action_value['filter'].replace("'", "")
+        filter_name = action_value['filter']
+        exptime = action_value['exptime']
+        obj_name = action_value['object']
+        device_name = row['device_name']
+
+        # fill in pattern
+        # this is used as a glob to find image files, so fill in with "*"
+        filename = filename_pattern.format(device=device_name,
+                                           filter_orig=filter_name,
+                                           filter_clean=filter_name_clean,
+                                           object_name=obj_name,
+                                           exptime=exptime,
+                                           imagetype="*",
+                                           timestamp="*",
+                                           timestamp_date="*",
+                                           timestamp_time="*",
+                                           sequence="*")
+        # create path
+        filepath = pathlib.Path('..') / 'images' / folder / filename
+                        
+        # get glob as string
+        glob_str = str(filepath)
 
         binning = paired_devices.camera.get("BinX")
 
@@ -3677,6 +3724,7 @@ class Observatory:
                     success, filepath = self.perform_exposure(
                         camera,
                         exptime,
+                        count, 
                         maxadu,
                         row,
                         hdr,
