@@ -25,6 +25,17 @@ Focuser:
     ip: localhost:11111
     device_number: 0
     focus_position: 10000
+    autofocus:
+      exptime: 3.0
+      reduce_exposure_time: false
+      fwhm: int = 8
+      star_find_threshold: float = 5.0
+      search_range: None
+      fov_height: 11.666666 / 60
+      fov_width: 11.666666 / 60
+      g_mag_range: [0, 10]
+      j_mag_range: [0, 10]
+      airmass_threshold: 1.01
 Camera:
   - device_name: camera_observatoryname
     ip: localhost:11111

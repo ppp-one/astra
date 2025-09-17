@@ -37,7 +37,6 @@ Components:
 """
 
 import glob as g
-import logging
 import os
 import time
 from datetime import UTC, datetime
@@ -54,8 +53,8 @@ from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
 
-from astra import Config
 import astra
+from astra import Config
 
 # header keyword for the current filter
 FILTER_KEYWORD = "FILTER"
@@ -145,9 +144,7 @@ class Guider:
 
     Attributes:
         telescope: Alpaca telescope device for pulse guiding commands
-        cursor: Database cursor for logging guiding data
-        logger: Logger instance for status messages
-        error_source: List for collecting error information
+        observatory: Astra observatory instance for logging and database access
         PIX2TIME: Pixel-to-millisecond conversion factors for guide pulses
         DIRECTIONS: Mapping of guide directions to Alpaca constants
         RA_AXIS: Which axis (x/y) corresponds to Right Ascension
@@ -167,7 +164,7 @@ class Guider:
     def __init__(
         self,
         telescope: Any,
-        astra: "astra.observatory.Observatory",
+        observatory: "astra.observatory.Observatory",
         params: Dict[str, Any],
     ) -> None:
         """
@@ -175,7 +172,7 @@ class Guider:
 
         Parameters:
             telescope: Alpaca telescope device for sending pulse guide commands.
-            astra: Main Astra instance providing cursor, logger, and error_source.
+            observatory: Astra observatory instance for logging and database access.
             params (dict): Configuration dictionary containing:
                 - PIX2TIME: Pixel to millisecond conversion factors
                 - DIRECTIONS: Guide direction mappings
@@ -184,11 +181,8 @@ class Guider:
         """
         # TODO: camera angle?
 
-        # pass in objects from astra
         self.telescope = telescope
-        self.cursor: object = astra.cursor
-        self.logger: logging.Logger = astra.logger
-        self.error_source: list = astra.error_source
+        self.observatory = observatory
 
         # set up the database
         self.create_tables()  # this is assuming we're using the same db.  Should we have a separate one for guiding?
@@ -213,15 +207,10 @@ class Guider:
             elif params["DIRECTIONS"][direction] == "West":
                 self.DIRECTIONS[direction] = GuideDirections.guideWest
             else:
-                self.error_source.append(
-                    {
-                        "device_type": "Guider",
-                        "device_name": self.telescope.device_name,
-                        "error": f"Invalid guide direction {params['DIRECTIONS'][direction]}",
-                    }
-                )
-                self.logger.error(
-                    f"Invalid guide direction {params['DIRECTIONS'][direction]} for {self.telescope.device_name} config"
+                self.observatory.report_device_issue(
+                    device_type="Guider",
+                    device_name=self.telescope.device_name,
+                    message=f"Invalid guide direction {params['DIRECTIONS'][direction]} for {self.telescope.device_name} config",
                 )
 
         # RA axis alignment along x or y? TODO: can be inferred from telescope direction
@@ -232,18 +221,10 @@ class Guider:
 
         # set up variables
         # initialise the PID controllers for X and Y
-        self.PIDx: PID = PID(
-            self.PID_COEFFS["x"]["p"],
-            self.PID_COEFFS["x"]["i"],
-            self.PID_COEFFS["x"]["d"],
-        )
-        self.PIDy: PID = PID(
-            self.PID_COEFFS["y"]["p"],
-            self.PID_COEFFS["y"]["i"],
-            self.PID_COEFFS["y"]["d"],
-        )
-        self.PIDx.setPoint(self.PID_COEFFS["set_x"])
-        self.PIDy.setPoint(self.PID_COEFFS["set_y"])
+        self.PIDx: PID = PID.from_config_dict(self.PID_COEFFS["x"])
+        self.PIDy: PID = PID.from_config_dict(self.PID_COEFFS["y"])
+        self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
+        self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
 
         # ag correction buffers - used for outlier rejection
         self.BUFF_X: List[float] = []
@@ -273,7 +254,7 @@ class Guider:
                 valid_until datetime
                 );"""
 
-        self.cursor.execute(db_command_0)
+        self.observatory.cursor.execute(db_command_0)
 
         db_command_1 = """CREATE TABLE IF NOT EXISTS autoguider_log (
                 datetime timestamp default current_timestamp,
@@ -294,7 +275,7 @@ class Guider:
                 );
                 """
 
-        self.cursor.execute(db_command_1)
+        self.observatory.cursor.execute(db_command_1)
 
         db_command_2 = """CREATE TABLE IF NOT EXISTS autoguider_info_log (
                 message_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -304,7 +285,7 @@ class Guider:
                 );
                 """
 
-        self.cursor.execute(db_command_2)
+        self.observatory.cursor.execute(db_command_2)
 
     def logShiftsToDb(self, qry_args: Tuple[str, ...]) -> None:
         """
@@ -326,7 +307,7 @@ class Guider:
             '%s', '%s', '%s', '%s', '%s', '%s', '%s')
             """
 
-        self.cursor.execute(qry % qry_args)
+        self.observatory.cursor.execute(qry % qry_args)
 
     def logMessageToDb(self, camera_name: str, message: str) -> None:
         """
@@ -343,7 +324,7 @@ class Guider:
             ('%s', '%s')
             """
         qry_args = (camera_name, message)
-        self.cursor.execute(qry % qry_args)
+        self.observatory.cursor.execute(qry % qry_args)
 
     def logShiftsToFile(
         self, logfile: str, loglist: List[str], header: bool = False
@@ -511,7 +492,7 @@ class Guider:
         start_time = time.time()
         while self.telescope.get("IsPulseGuiding") and self.running:
             if time.time() - start_time > IS_PULSE_GUIDING_TIMEOUT:
-                self.logger.warning(
+                self.observatory.logger.warning(
                     f"Pulse guiding timed out after {IS_PULSE_GUIDING_TIMEOUT} seconds."
                 )
                 break
@@ -546,7 +527,7 @@ class Guider:
                 guide_time_x = guide_time_x / cos_dec
 
                 if gem is False:
-                    pass  # keep as is
+                    pass
                 elif current_pierside == PierSide.pierEast:
                     pass  # keep as is
                 else:
@@ -562,7 +543,7 @@ class Guider:
         start_time = time.time()
         while self.telescope.get("IsPulseGuiding") and self.running:
             if time.time() - start_time > IS_PULSE_GUIDING_TIMEOUT:
-                self.logger.warning(
+                self.observatory.logger.warning(
                     f"Pulse guiding timed out after {IS_PULSE_GUIDING_TIMEOUT} seconds."
                 )
                 break
@@ -613,7 +594,7 @@ class Guider:
             """
         qry_args = (field, filt, exptime, tnow, camera, pierside)
 
-        result = self.cursor.execute(qry % qry_args)
+        result = self.observatory.cursor.execute(qry % qry_args)
 
         if not result:
             ref_image = None
@@ -658,7 +639,7 @@ class Guider:
             tnow,
             pierside,
         )
-        self.cursor.execute(qry % qry_args)
+        self.observatory.cursor.execute(qry % qry_args)
 
         # copy the file to the autoguider_ref location
         print(ref_image, os.path.join(self.reference_dir, os.path.split(ref_image)[-1]))
@@ -758,7 +739,7 @@ class Guider:
         """
         self.running = True
 
-        self.logger.info(f"Starting guider loop for: {glob_str} images")
+        self.observatory.logger.info(f"Starting guider loop for: {glob_str} images")
 
         try:
             while self.running:
@@ -768,7 +749,9 @@ class Guider:
                 )
 
                 if gem:
-                    self.logger.info("Telescope is in German equatorial mode")
+                    self.observatory.logger.info(
+                        "Telescope is in German equatorial mode"
+                    )
 
                 telescope_pierside = self.telescope.get("SideOfPier")
 
@@ -864,7 +847,7 @@ class Guider:
                                     telescope_pierside, current_pierside
                                 ),
                             )
-                            self.logger.info(
+                            self.observatory.logger.info(
                                 f"Pierside changed from {telescope_pierside} to {current_pierside}, resetting guider loop..."
                             )
                             break
@@ -883,26 +866,18 @@ class Guider:
                                 camera_name,
                                 "Stabilisation complete, reseting PID loop...",
                             )
-                            self.PIDx = PID(
-                                self.PID_COEFFS["x"]["p"],
-                                self.PID_COEFFS["x"]["i"],
-                                self.PID_COEFFS["x"]["d"],
-                            )
-                            self.PIDy = PID(
-                                self.PID_COEFFS["y"]["p"],
-                                self.PID_COEFFS["y"]["i"],
-                                self.PID_COEFFS["y"]["d"],
-                            )
-                            self.PIDx.setPoint(self.PID_COEFFS["set_x"])
-                            self.PIDy.setPoint(self.PID_COEFFS["set_y"])
+                            self.PIDx = PID.from_config_dict(self.PID_COEFFS["x"])
+                            self.PIDy = PID.from_config_dict(self.PID_COEFFS["y"])
+                            self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
+                            self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
                         elif images_to_stabilise > 0:
                             self.logMessageToDb(
                                 camera_name, "Stabilising using P=1.0, I=0.0, D=0.0"
                             )
                             self.PIDx = PID(1.0, 0.0, 0.0)
                             self.PIDy = PID(1.0, 0.0, 0.0)
-                            self.PIDx.setPoint(self.PID_COEFFS["set_x"])
-                            self.PIDy.setPoint(self.PID_COEFFS["set_y"])
+                            self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
+                            self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
 
                         # test load the comparison image to get the shift
                         try:
@@ -1035,10 +1010,10 @@ class Guider:
                         self.logShiftsToDb(tuple(log_list))
 
                         # log the shifts to the logger
-                        self.logger.info(
+                        self.observatory.logger.info(
                             "Guider post_pid_x shift: {:.2f}".format(post_pid_x)
                         )
-                        self.logger.info(
+                        self.observatory.logger.info(
                             "Guider post_pid_y shift: {:.2f}".format(post_pid_y)
                         )
 
@@ -1048,27 +1023,19 @@ class Guider:
                         n_images = len(templist)
         except Exception as e:
             self.running = False
-            self.error_source.append(
-                {
-                    "device_type": "Guider",
-                    "device_name": self.telescope.device_name,
-                    "error": f"Error in guide loop: {str(e)}",
-                }
-            )
-            self.logger.error(
-                f"Error in guide loop: {str(e)}", exc_info=True, stack_info=True
+            self.observatory.report_device_issue(
+                device_type="Guider",
+                device_name=self.telescope.device_name,
+                message="Error in guide loop",
+                exception=e,
             )
 
-        self.logger.info(f"Stopping guider loop for: {glob_str} images")
+        self.observatory.logger.info(f"Stopping guider loop for: {glob_str} images")
 
 
 """
 PID loop controller
 """
-
-# : disable=invalid-name
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-instance-attributes
 
 
 class PID:
@@ -1084,10 +1051,10 @@ class PID:
         kp (float, optional): Proportional gain. Defaults to 0.5.
         ki (float, optional): Integral gain. Defaults to 0.25.
         kd (float, optional): Derivative gain. Defaults to 0.0.
-        Derivator (float, optional): Initial derivative term. Defaults to 0.
-        Integrator (float, optional): Initial integrator value. Defaults to 0.
-        Integrator_max (float, optional): Maximum integrator value. Defaults to 500.
-        Integrator_min (float, optional): Minimum integrator value. Defaults to -500.
+        derivator (float, optional): Initial derivative term. Defaults to 0.
+        integrator (float, optional): Initial integrator value. Defaults to 0.
+        integrator_max (float, optional): Maximum integrator value. Defaults to 500.
+        integrator_min (float, optional): Minimum integrator value. Defaults to -500.
     """
 
     def __init__(
@@ -1095,23 +1062,23 @@ class PID:
         kp: float = 0.5,
         ki: float = 0.25,
         kd: float = 0.0,
-        Derivator: float = 0,
-        Integrator: float = 0,
-        Integrator_max: float = 500,
-        Integrator_min: float = -500,
+        derivator: float = 0,
+        integrator: float = 0,
+        integrator_max: float = 500,
+        integrator_min: float = -500,
     ) -> None:
-        self.Kp: float = kp
-        self.Ki: float = ki
-        self.Kd: float = kd
-        self.Derivator: float = Derivator
-        self.Integrator: float = Integrator
-        self.Integrator_max: float = Integrator_max
-        self.Integrator_min: float = Integrator_min
+        self.kp: float = kp
+        self.ki: float = ki
+        self.kd: float = kd
+        self.derivator: float = derivator
+        self.integrator: float = integrator
+        self.integrator_max: float = integrator_max
+        self.integrator_min: float = integrator_min
         self.set_point: float = 0.0
         self.error: float = 0.0
-        self.P_value: float = 0.0  # included as pylint complained - jmcc
-        self.D_value: float = 0.0  # included as pylint complained - jmcc
-        self.I_value: float = 0.0  # included as pylint complained - jmcc
+        self.p_value: float = 0.0
+        self.d_value: float = 0.0
+        self.i_value: float = 0.0
 
     def update(self, current_value: float) -> float:
         """
@@ -1124,19 +1091,19 @@ class PID:
             float: PID controller output.
         """
         self.error = self.set_point - current_value
-        self.P_value = self.Kp * self.error
-        self.D_value = self.Kd * (self.error - self.Derivator)
-        self.Derivator = self.error
-        self.Integrator = self.Integrator + self.error
-        if self.Integrator > self.Integrator_max:
-            self.Integrator = self.Integrator_max
-        elif self.Integrator < self.Integrator_min:
-            self.Integrator = self.Integrator_min
-        self.I_value = self.Integrator * self.Ki
-        pid = self.P_value + self.I_value + self.D_value
+        self.p_value = self.kp * self.error
+        self.d_value = self.kd * (self.error - self.derivator)
+        self.derivator = self.error
+        self.integrator = self.integrator + self.error
+        if self.integrator > self.integrator_max:
+            self.integrator = self.integrator_max
+        elif self.integrator < self.integrator_min:
+            self.integrator = self.integrator_min
+        self.i_value = self.integrator * self.ki
+        pid = self.p_value + self.i_value + self.d_value
         return pid
 
-    def setPoint(self, set_point: float) -> None:
+    def initialize_set_point(self, set_point: float) -> None:
         """
         Initialize the PID setpoint and reset integrator/derivator.
 
@@ -1144,41 +1111,19 @@ class PID:
             set_point (float): Desired target value.
         """
         self.set_point = set_point
-        self.Integrator = 0
-        self.Derivator = 0
+        self.integrator = 0
+        self.derivator = 0
 
-    def setIntegrator(self, Integrator: float) -> None:
-        """Set integrator value."""
-        self.Integrator = Integrator
+    @classmethod
+    def from_config_dict(cls, config: Dict[str, float]) -> "PID":
+        """
+        Create a PID instance from a configuration dictionary.
 
-    def setDerivator(self, Derivator: float) -> None:
-        """Set derivator value."""
-        self.Derivator = Derivator
-
-    def setKp(self, kp: float) -> None:
-        """Set proportional gain."""
-        self.Kp = kp
-
-    def setKi(self, ki: float) -> None:
-        """Set integral gain."""
-        self.Ki = ki
-
-    def setKd(self, kd: float) -> None:
-        """Set derivative gain."""
-        self.Kd = kd
-
-    def getPoint(self) -> float:
-        """Get current setpoint."""
-        return self.set_point
-
-    def getError(self) -> float:
-        """Get current error value."""
-        return self.error
-
-    def getIntegrator(self) -> float:
-        """Get current integrator value."""
-        return self.Integrator
-
-    def getDerivator(self) -> float:
-        """Get current derivator value."""
-        return self.Derivator
+        Parameters:
+            config (dict): Configuration with keys 'p', 'i', 'd'
+        """
+        return cls(
+            kp=config["p"],
+            ki=config["i"],
+            kd=config["d"],
+        )

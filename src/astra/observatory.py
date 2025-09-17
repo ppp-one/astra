@@ -400,10 +400,12 @@ class Observatory:
             self.logger.info("Database backed up")
 
         except Exception as e:
-            self.error_source.append(
-                {"device_type": "Backup", "device_name": "backup", "error": str(e)}
+            self.report_device_issue(
+                device_type="Backup",
+                device_name="backup",
+                message="Error backing up database",
+                exception=e,
             )
-            self.logger.error(f"Error backing up database: {str(e)}")
 
     def load_devices(self) -> dict[str, dict[str, AlpacaDevice]]:
         """
@@ -449,15 +451,11 @@ class Observatory:
 
                         self.monitor_action_queue[d["device_name"]] = {}
                     except Exception as e:
-                        self.error_source.append(
-                            {
-                                "device_type": device_type,
-                                "device_name": d["device_name"],
-                                "error": str(e),
-                            }
-                        )
-                        self.logger.error(
-                            f"Error loading {device_type} {d['device_name']}: {str(e)}"
+                        self.report_device_issue(
+                            device_type=device_type,
+                            device_name=d["device_name"],
+                            message=f"Error loading {device_type} {d['device_name']}",
+                            exception=e,
                         )
 
         self.logger.info("Devices loaded")
@@ -507,15 +505,11 @@ class Observatory:
                         )  ## slow?
                         self.logger.info(f"{device_type} {device_name} connected")
                 except Exception as e:
-                    self.error_source.append(
-                        {
-                            "device_type": device_type,
-                            "device_name": device_name,
-                            "error": str(e),
-                        }
-                    )
-                    self.logger.error(
-                        f"Error connecting to {device_type} {device_name}: {str(e)}"
+                    self.report_device_issue(
+                        device_type=device_type,
+                        device_name=device_name,
+                        message=f"Error connecting to {device_type} {device_name}",
+                        exception=e,
                     )
 
         self.logger.info("Starting polling non-fixed fits headers")
@@ -546,15 +540,11 @@ class Observatory:
                                 row["device_command"], delay
                             )  # 5 second polling
                         except Exception as e:
-                            self.error_source.append(
-                                {
-                                    "device_type": device_type,
-                                    "device_name": device_name,
-                                    "error": str(e),
-                                }
-                            )
-                            self.logger.error(
-                                f"Error starting polling for {device_type} {device_name}: {str(e)}"
+                            self.report_device_issue(
+                                device_type,
+                                device_name,
+                                f"Error starting polling for {device_type} {device_name}",
+                                exception=e,
                             )
 
         if "SafetyMonitor" in self.config:
@@ -574,15 +564,11 @@ class Observatory:
                 )
                 device.start_poll("IsSafe", delay)  # 1 second polling
             except Exception as e:
-                self.error_source.append(
-                    {
-                        "device_type": device_type,
-                        "device_name": device_name,
-                        "error": str(e),
-                    }
-                )
-                self.logger.error(
-                    f"Error starting polling for {device_type} {device_name}: {str(e)}"
+                self.report_device_issue(
+                    device_type=device_type,
+                    device_name=device_name,
+                    message=f"Error starting polling for {device_type} {device_name}",
+                    exception=e,
                 )
 
         self.logger.info("Connect all sequence complete")
@@ -594,7 +580,7 @@ class Observatory:
         )  # wait for devices to connect and start polling TODO: check one device's latest polling is valid before starting watchdog
         self.start_watchdog()
 
-    def pause_polls(self, device_types: list = None) -> None:
+    def pause_polls(self, device_types: list | None = None) -> None:
         """
         Pause polling for specified device types or all devices.
 
@@ -626,18 +612,14 @@ class Observatory:
                     try:
                         self.devices[device_type][device_name].pause_polls()
                     except Exception as e:
-                        self.error_source.append(
-                            {
-                                "device_type": device_type,
-                                "device_name": device_name,
-                                "error": str(e),
-                            }
-                        )
-                        self.logger.error(
-                            f"{device_type} {device_name} could not pause polls: {str(e)}"
+                        self.report_device_issue(
+                            device_type,
+                            device_name,
+                            f"{device_type} {device_name} could not pause polls",
+                            exception=e,
                         )
 
-    def resume_polls(self, device_types: list = None) -> None:
+    def resume_polls(self, device_types: list | None = None) -> None:
         """
         Resume polling for specified device types or all devices.
 
@@ -669,15 +651,11 @@ class Observatory:
                     try:
                         self.devices[device_type][device_name].resume_polls()
                     except Exception as e:
-                        self.error_source.append(
-                            {
-                                "device_type": device_type,
-                                "device_name": device_name,
-                                "error": str(e),
-                            }
-                        )
-                        self.logger.error(
-                            f"{device_type} {device_name} could not pause polls: {str(e)}"
+                        self.report_device_issue(
+                            device_type,
+                            device_name,
+                            f"{device_type} {device_name} could not pause polls",
+                            exception=e,
                         )
 
     def start_watchdog(self) -> None:
@@ -799,14 +777,12 @@ class Observatory:
                                 )
                                 self.start_schedule()
                     except Exception as e:
-                        self.error_source.append(
-                            {
-                                "device_type": "Schedule",
-                                "device_name": "schedule",
-                                "error": str(e),
-                            }
+                        self.report_device_issue(
+                            device_type="Schedule",
+                            device_name="schedule",
+                            message="Error checking schedule",
+                            exception=e,
                         )
-                        self.logger.error(f"Error checking schedule: {str(e)}")
                         continue
 
                     # check safety monitor
@@ -821,14 +797,13 @@ class Observatory:
                         if last_update > 3 and last_update < 30:
                             self.logger.warning(f"Safety monitor {last_update}s stale")
                         elif last_update > 30:
-                            self.error_source.append(
-                                {
-                                    "device_type": "SafetyMonitor",
-                                    "device_name": sm_name,
-                                    "error": f"Stale data {last_update}s",
-                                }
+                            self.report_device_issue(
+                                device_type="SafetyMonitor",
+                                device_name=sm_name,
+                                message=f"Stale data {last_update}s",
                             )
-                            self.logger.error(f"Safety monitor {last_update}s stale")
+                            # TODO delete the next error message?
+                            # self.logger.error(f"Safety monitor {last_update}s stale")
                             continue
 
                         # action if weather unsafe
@@ -919,17 +894,11 @@ class Observatory:
                         self.close_observatory()
 
                 except Exception as e:
-                    self.error_source.append(
-                        {
-                            "device_type": "Watchdog",
-                            "device_name": "watchdog",
-                            "error": str(e),
-                        }
-                    )
-                    self.logger.error(
-                        f"Error during watchdog check: {str(e)}",
-                        exc_info=True,
-                        stack_info=True,
+                    self.report_device_issue(
+                        device_type="Watchdog",
+                        device_name="watchdog",
+                        message="Error during watchdog check",
+                        exception=e,
                     )
 
             else:
@@ -945,13 +914,12 @@ class Observatory:
                     time.sleep(30)
 
                     if len(self.error_source) == 0:
+                        # TODO Does this need to be a warning
                         self.logger.warning("No error sources found in error_source.")
-                        self.error_source.append(
-                            {
-                                "device_type": "error_source",
-                                "device_name": "error_source",
-                                "error": "No error sources found in error_source",
-                            }
+                        self.report_device_issue(
+                            device_type="error_source",
+                            device_name="error_source",
+                            message="No error sources found in error_source",
                         )
 
                     # make pandas dataframe of error_source
@@ -1213,23 +1181,18 @@ class Observatory:
                 try:
                     r = self.devices[device_type][device_name].is_alive()
                     if r is False:
-                        self.error_source.append(
-                            {
-                                "device_type": device_type,
-                                "device_name": device_name,
-                                "error": "Device unresponsive",
-                            }
+                        self.report_device_issue(
+                            device_type=device_type,
+                            device_name=device_name,
+                            message=f"{device_type} {device_name} unresponsive",
                         )
-                        self.logger.error(f"{device_type} {device_name} unresponsive")
                 except Exception as e:
-                    self.error_source.append(
-                        {
-                            "device_type": device_type,
-                            "device_name": device_name,
-                            "error": str(e),
-                        }
+                    self.report_device_issue(
+                        device_type=device_type,
+                        device_name=device_name,
+                        message=f"{device_type} {device_name} unresponsive. ",
+                        exception=e,
                     )
-                    self.logger.error(f"{device_type} {device_name} unresponsive")
                     return False
 
         return True
@@ -1290,15 +1253,11 @@ class Observatory:
                 try:
                     polled = self.devices[device_type][device_name].poll_latest()
                 except Exception as e:
-                    self.error_source.append(
-                        {
-                            "device_type": device_type,
-                            "device_name": device_name,
-                            "error": str(e),
-                        }
-                    )
-                    self.logger.error(
-                        f"Error polling {device_type} {device_name}: {str(e)}"
+                    self.report_device_issue(
+                        device_type=device_type,
+                        device_name=device_name,
+                        message=f"Error polling {device_type} {device_name}",
+                        exception=e,
                     )
                     polled = None
 
@@ -1368,27 +1327,18 @@ class Observatory:
                             f"AsTelOS errors successfully acknowledged for {telescope_name}: {messages}"
                         )
                     else:
-                        self.error_source.append(
-                            {
-                                "device_type": "Telescope",
-                                "device_name": telescope_name,
-                                "error": "AsTelOS errors not successfully acknowledged",
-                            }
-                        )
-                        self.logger.error(
-                            f"AsTelOS errors not successfully acknowledged for {telescope_name}: {messages}"
+                        self.report_device_issue(
+                            device_type="Telescope",
+                            device_name=telescope_name,
+                            message="AsTelOS errors not successfully acknowledged for"
+                            + f" {telescope_name}: {messages}",
                         )
 
                 if not valid:
-                    self.error_source.append(
-                        {
-                            "device_type": "Telescope",
-                            "device_name": telescope_name,
-                            "error": "AsTelOS errors not valid",
-                        }
-                    )
-                    self.logger.error(
-                        f"AsTelOS errors invalid for {telescope_name}: {messages}"
+                    self.report_device_issue(
+                        device_type="Telescope",
+                        device_name=telescope_name,
+                        message=f"AsTelOS errors invalid for {telescope_name}: {messages}",
                     )
 
     def open_observatory(self, paired_devices: dict | None = None) -> None:
@@ -1505,30 +1455,22 @@ class Observatory:
 
                         # timeout
                         if time.time() - start_time > 120:
-                            self.error_source.append(
-                                {
-                                    "device_type": "Telescope",
-                                    "device_name": telescope_name,
-                                    "error": "Timeout waiting for telescope to be ready",
-                                }
-                            )
-                            self.logger.error(
-                                f"Timeout waiting for {telescope_name} to be ready"
+                            self.report_device_issue(
+                                device_type="Telescope",
+                                device_name=telescope_name,
+                                message="Timeout waiting for telescope "
+                                + f"{telescope_name} to be ready",
                             )
                             break
 
                         if float(r) == 1:
                             self.logger.info(f"{telescope_name} is ready")
                         elif float(r) < 0:
-                            self.error_source.append(
-                                {
-                                    "device_type": "Telescope",
-                                    "device_name": telescope_name,
-                                    "error": f"Issue with telescope getting ready, status: {r}",
-                                }
-                            )
-                            self.logger.error(
-                                f"Issue with telescope getting ready, status: {r}"
+                            self.report_device_issue(
+                                device_type="Telescope",
+                                device_name=telescope_name,
+                                message="Issue with telescope getting ready, "
+                                + f"status: {r}",
                             )
 
     def close_observatory(
@@ -1590,15 +1532,11 @@ class Observatory:
                     self.stop_guider(device_name)
 
                 except Exception as e:
-                    self.error_source.append(
-                        {
-                            "device_type": "Guider",
-                            "device_name": device_name,
-                            "error": str(e),
-                        }
-                    )
-                    self.logger.error(
-                        f"Error stopping telescope {device_name} guiding: {str(e)}"
+                    self.report_device_issue(
+                        device_type="Guider",
+                        device_name=device_name,
+                        message=f"Error stopping telescope {device_name} guiding",
+                        exception=e,
                     )
 
                 self.monitor_action(
@@ -1653,15 +1591,11 @@ class Observatory:
                     telescope = self.devices["Telescope"][telescope_name]
                     at_park = telescope.get("AtPark")
                     if at_park is False:
-                        self.error_source.append(
-                            {
-                                "device_type": "Telescope",
-                                "device_name": telescope_name,
-                                "error": "Telescope not parked, cannot close dome during close_observatory method",
-                            }
-                        )
-                        self.logger.error(
-                            f"Telescope {telescope_name} not parked, cannot close dome during close_observatory method"
+                        self.report_device_issue(
+                            device_type="Telescope",
+                            device_name=telescope_name,
+                            message=f"Telescope {telescope_name} not parked, "
+                            "cannot close dome during close_observatory method",
                         )
                         return False
             # park dome
@@ -1767,14 +1701,9 @@ class Observatory:
                 return self.schedule
 
         except Exception as e:
-            self.error_source.append(
-                {
-                    "device_type": "Schedule",
-                    "device_name": "",
-                    "error": f"Error reading schedule: {e}",
-                }
+            self.report_device_issue(
+                "Schedule", "", "Error reading schedule", exception=e
             )
-            self.logger.error(f"Error reading schedule: {e}")
 
     def get_schedule_mtime(self) -> float:
         """
@@ -1986,14 +1915,11 @@ class Observatory:
             time.sleep(1)
 
         if self.weather_safe is None:
-            self.error_source.append(
-                {
-                    "device_type": "SafetyMonitor",
-                    "device_name": "",
-                    "error": "Weather safety check timed out",
-                }
+            self.report_device_issue(
+                device_type="SafetyMonitor",
+                device_name="",
+                message="Weather safety check timed out",
             )
-            self.logger.error("Weather safety check timed out")
             return
 
         while self.schedule_running and self.watchdog_running and self.error_free:
@@ -2137,15 +2063,14 @@ class Observatory:
                 self.final_headers()
 
             else:
-                self.error_source.append(
-                    {
-                        "device_type": "Schedule",
-                        "device_name": row["device_name"],
-                        "error": f"Invalid action_type: {row['device_name']} {row['action_type']} with {row['action_value']} is not a valid method or property for {row['device_type']} {row['device_name']}",
-                    }
-                )
-                self.logger.error(
-                    f"Invalid action_type: {row['device_name']} {row['action_type']} with {row['action_value']} is not a valid method or property for {row['device_type']} {row['device_name']}"
+                self.report_device_issue(
+                    device_type="Schedule",
+                    device_name=row["device_name"],
+                    message=(
+                        f"Invalid action_type: {row['device_name']} {row['action_type']} "
+                        f"with {row['action_value']} is not a valid method or property for "
+                        f"{row['device_type']} {row['device_name']}"
+                    ),
                 )
 
             # set 'completed' flag to True if ended under normal conditions
@@ -2165,15 +2090,8 @@ class Observatory:
 
         except Exception as e:
             self.schedule_running = False
-            self.error_source.append(
-                {
-                    "device_type": "Schedule",
-                    "device_name": row["device_name"],
-                    "error": str(e),
-                }
-            )
-            self.logger.error(
-                f"Run action error: {str(e)}", exc_info=True, stack_info=True
+            self.report_device_issue(
+                "Schedule", row["device_name"], "Run action error.", exception=e
             )
 
     def cool_camera(
@@ -2436,7 +2354,7 @@ class Observatory:
             )
 
             defocuser = Defocuser(
-                astra=self,
+                observatory=self,
                 paired_devices=paired_devices,
             )
 
@@ -2455,7 +2373,7 @@ class Observatory:
         elif "Focuser" in paired_devices:
             # Move focuser to best focus position
             defocuser = Defocuser(
-                astra=self,
+                observatory=self,
                 paired_devices=paired_devices,
             )
             defocuser.refocus()
@@ -2686,15 +2604,12 @@ class Observatory:
                 break
 
             if (exposure_end_time - exposure_start_time) > 3 * exptime + 180:
-                self.logger.error(
-                    f"Exposure timed out after 3*{exptime:.3f} + 180 seconds for {row['device_name']}."
-                )
-                self.error_source.append(
-                    {
-                        "device_type": "Camera",
-                        "device_name": row["device_name"],
-                        "error": f"Exposure timed out after 3*{exptime:.3f} + 180 seconds",
-                    }
+                # TODO should we raise a timeout here?
+                self.report_device_issue(
+                    device_type="Camera",
+                    device_name=row["device_name"],
+                    message=f"Exposure timed out after 3*{exptime:.3f} + 180 seconds "
+                    + f"for {row['device_name']}.",
                 )
                 exposure_successful = False
 
@@ -3410,15 +3325,11 @@ class Observatory:
 
         except Exception as e:
             success = False
-            self.logger.exception(
-                f"Error running guiding calibration for {row['device_name']}. Exception {str(e)}"
-            )
-            self.error_source.append(
-                {
-                    "device_type": "Camera",
-                    "device_name": row["device_name"],
-                    "error": f"Error running guiding calibration for {row['device_name']}",
-                }
+            self.report_device_issue(
+                device_type="Camera",
+                device_name=row["device_name"],
+                message=f"Error running guiding calibration for {row['device_name']}",
+                exception=e,
             )
 
         return success
@@ -3474,7 +3385,7 @@ class Observatory:
                 return False
 
             autofocuser = Autofocuser(
-                astra=self,
+                observatory=self,
                 row=row,
                 paired_devices=paired_devices,
                 action_value=action_value,
@@ -3491,16 +3402,11 @@ class Observatory:
                 autofocuser.save_best_focus_position()
 
         except Exception as e:
-            success = False
-            self.logger.exception(
-                f"Error running autofocus for {row['device_name']}. Exception {str(e)}"
-            )
-            self.error_source.append(
-                {
-                    "device_type": "Camera",
-                    "device_name": row["device_name"],
-                    "error": f"Error running autofocus for {row['device_name']}",
-                }
+            self.report_device_issue(
+                device_type="Camera",
+                device_name=row["device_name"],
+                message=f"Error running autofocus for {row['device_name']}",
+                exception=e,
             )
 
         return success
@@ -4115,15 +4021,13 @@ class Observatory:
                     else:
                         hdr[row["header"]] = (row["device_command"], row["comment"])
                         self.logger.error(f"Unknown data type: {row['dtype']}")
-                except ValueError:
-                    self.error_source.append(
-                        {
-                            "device_type": "Headers",
-                            "device_name": "",
-                            "error": "ValueError",
-                        }
+                except ValueError as e:
+                    self.report_device_issue(
+                        device_type="Headers",
+                        device_name="",
+                        message=f"Invalid value for data type: {row}",
+                        exception=e,  # TODO is this good for consistency?
                     )
-                    self.logger.error(f"Invalid value for data type: {row}")
 
         self.logger.info("Base header created")
 
@@ -4352,10 +4256,9 @@ class Observatory:
             self.logger.info("Completing headers... Done.")
 
         except Exception as e:
-            self.error_source.append(
-                {"device_type": "Headers", "device_name": "", "error": str(e)}
+            self.report_device_issue(
+                "Headers", "", "Error completing headers", exception=e
             )
-            self.logger.error(f"Error completing headers: {e}")
 
     def monitor_action(
         self,
@@ -4500,19 +4403,19 @@ class Observatory:
                 time.sleep(0.5)
 
         except Exception as e:
-            self.error_source.append(
-                {
-                    "device_type": device_type,
-                    "device_name": "",
-                    "error": str(e),
-                }
-            )
-            self.logger.error(
-                f"Monitor-action error: Device Type: {device_type}, Device Name: {device_name}, "
-                f"Monitor Command: {monitor_command}, Desired Condition: {desired_condition}, "
-                f"Run Command: {run_command}, Run Command Type: {run_command_type}, "
-                f"Absolute Tolerance: {abs_tol}, Log Message: {log_message}, Timeout: {timeout}, "
-                f"Error: {e}"
+            self.report_device_issue(
+                device_type=device_type,
+                device_name=device_name,
+                message=(
+                    f"Monitor-action error: Device Type: {device_type}, "
+                    f"Device Name: {device_name}, Monitor Command: {monitor_command}, "
+                    f"Desired Condition: {desired_condition}, "
+                    f"Run Command: {run_command}, "
+                    f"Run Command Type: {run_command_type}, "
+                    f"Absolute Tolerance: {abs_tol}, Log Message: {log_message}, "
+                    f"Timeout: {timeout}."
+                ),
+                exception=e,
             )
 
         finally:
@@ -4566,13 +4469,11 @@ class Observatory:
                     elif r["data"][0] == "warning":
                         self.logger.warning(r["data"][1])
                     elif r["data"][0] == "error":
-                        self.logger.error(r["data"][1])
-                        self.error_source.append(
-                            {
-                                "device_type": metadata["device_type"],
-                                "device_name": metadata["device_name"],
-                                "error": r["data"][1],
-                            }
+                        self.report_device_issue(
+                            device_type=metadata["device_type"],
+                            device_name=metadata["device_name"],
+                            message="Error for {metadata['device_name']}",
+                            exception=r["data"][1],
                         )
                     elif r["data"][0] == "debug":
                         self.logger.debug(r["data"][1])
@@ -4582,15 +4483,47 @@ class Observatory:
                 self.threads = [i for i in self.threads if i["thread"].is_alive()]
 
             except Exception as e:
-                error_text = f"{type(e).__name__}: {e}"
-                self.error_source.append(
-                    {
-                        "device_type": "Queue",
-                        "device_name": "queue_get",
-                        "error": error_text,
-                    }
+                self.report_device_issue(
+                    device_type="Queue",
+                    device_name="queue_get",  # TODO is this good?
+                    message=f"Error running queue_get for Queue, {type(e).__name__}",
+                    exception=e,
                 )
-                self.logger.error(
-                    f"Queue get error: {error_text}", exc_info=True, stack_info=True
-                )
+                # Error running queue_get for Queue: <error message>
                 self.queue_running = False
+
+    def report_device_issue(
+        self,
+        device_type: str,
+        device_name: str,
+        message: str,
+        exception: Exception | None = None,
+        exc_info=True,
+    ) -> None:
+        """
+        Append an error to the error source list and log it.
+
+        It appends a dictionary containing the device type, device name, and error message
+        (including exception details if provided) to the error_source list, and logs the error.
+
+        Always provide a clear message and pass the actual Exception object when possible.
+
+        Parameters:
+            device_type (str): Type of device or subsystem where the error occurred.
+            device_name (str): Name of the device or subsystem.
+            message (str): Description of the error or context.
+            exception (Exception | None, optional): Exception object for additional details.
+            exc_info (bool, optional): If True, includes exception traceback in the log. Defaults to True.
+        """
+        error = f"{message}" + (
+            f". Exception: {str(exception)}" if exception is not None else ""
+        )
+        self.error_source.append(
+            {"device_type": device_type, "device_name": device_name, "error": error}
+        )
+        self.logger.error(error, exc_info=exc_info)
+        # TODO if warning is needed
+        # if level == "warning":
+        #     self.logger.warning(error, exc_info=exc_info)
+        # else:
+        #     self.logger.error(error, exc_info=exc_info)
