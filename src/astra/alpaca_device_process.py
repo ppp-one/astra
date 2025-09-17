@@ -31,7 +31,6 @@ from alpaca.safetymonitor import SafetyMonitor
 from alpaca.switch import Switch
 from alpaca.telescope import Telescope
 
-
 ALPACA_DEVICE_TYPES = {
     "Telescope": Telescope,
     "Camera": Camera,
