@@ -1271,6 +1271,17 @@ def main():
     Parses command line arguments, configures logging, handles configuration
     reset, and starts the FastAPI server with specified options.
     """
+    from sys import platform
+    if platform == "linux":
+        # on linux, switch process launching model from fork to spawn to avoid system lockup
+        # using fork clones all variables in the same state, whereas spawsn instantiates a new interpreter and reloads all 
+        # modules.
+        # Looks like the spawn cloning makes multiple process wait on the same object. From previous debugging,
+        # urllib3 clones all connection information and then processes lock each other
+        # by having multiple instances all expecting an answer on the same cloned connection
+        import multiprocessing
+        multiprocessing.set_start_method('spawn')
+
     import argparse
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
