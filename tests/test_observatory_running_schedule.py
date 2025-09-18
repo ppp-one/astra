@@ -75,7 +75,7 @@ def setup_observatories(temp_config, server_url):
     image_handler.CONFIG = temp_config
     schedule.CONFIG = temp_config
 
-    logger.info("Reloading observatory state to defaults")
+    logger.info("Reloading observatory state to defaults during setup")
     response = requests.get(f"{server_url}/reload")
 
     assert response.status_code == 200
@@ -215,10 +215,10 @@ def create_schedule_data(
             },
             "duration": 2,  # Give it a bit more time
         },
-        # "flats": {
-        #     "action_value": {"filter": ["Clear"], "n": [1]},
-        #     "duration": 1,
-        # },  # Just 1 flat, shorter duration
+        "flats": {
+            "action_value": {"filter": ["Clear"], "n": [1]},
+            "duration": 2,
+        },  # Just 1 flat, shorter duration
     }
 
     if action_type not in action_configs:
@@ -256,12 +256,14 @@ def wait_for_schedule_completion(
     """
     # set weather to safe
     logger.info("Reloading observatory state to defaults")
-    response = requests.get(
-        server_url,
-    )
+    response = requests.get(f"{server_url}/reload")
     if response.status_code != 200:
         logger.error(f"Failed to reload observatory state: {response.text}")
         assert False, "Failed to reload observatory state."
+
+    # Prepare for flats if needed
+    if schedule_data["action_type"] == "flats":
+        prepare_flats(server_url, sunset=True)
 
     # clear all tables for schedule run
     logger.info("Clearing images and polling tables...")
@@ -379,9 +381,18 @@ def wait_for_schedule_completion(
     # count number of images in Config().paths.images
     final_n_images = len(list(config.paths.images.glob("**/*.fits")))
     n_images = final_n_images - initial_n_images
-    if schedule_data["action_type"] == "object":
+
+    if schedule_data["action_type"] == "object" and not schedule_data.get(
+        "_inject_weather_alert", False
+    ):
         print(f"Number of images taken: {n_images}")
         assert n_images != 0, "Images were not taken during object action."
+
+    if schedule_data["action_type"] == "flats" and not schedule_data.get(
+        "_inject_weather_alert", False
+    ):
+        print(f"Number of images taken: {n_images}")
+        assert n_images != 0, "Flats were not taken during flats action."
 
     # Wait for all headers to be complete
     complete_headers = 1
@@ -411,7 +422,101 @@ def wait_for_schedule_completion(
 
 def set_safety_monitor_safe(server_url):
     """Set the safety monitor to safe."""
-    requests.put(f"{server_url}/api/v1/safetymonitor/0/issafe", data={"IsSafe": True})
+    r = requests.put(
+        f"{server_url}/api/v1/safetymonitor/0/issafe", data={"IsSafe": True}
+    )
+    if r.status_code != 200:
+        logger.error(f"Failed to set safety monitor to safe: {r.text}")
+        assert False, "Failed to set safety monitor to safe."
+
+
+def prepare_flats(server_url, sunset=True):
+    """Prepare flats by setting sunlight conditions and placing
+    observatory where the sun is setting or rising."""
+    # Set system time to noon to trigger flats condition
+
+    r = requests.put(f"{server_url}/sunlight/?state=True")
+    if r.status_code != 200:
+        assert False, "Failed to set sunlight condition."
+
+    import astropy.units as u
+    import numpy as np
+    from astropy.coordinates import AltAz, EarthLocation, get_sun
+    from astropy.time import Time
+
+    def get_sun_terminator_longitude(
+        dateobs: datetime, latitude_deg: float, sunset: bool = False
+    ):
+        """
+        Return the longitude where the Sun is rising or setting at the given UTC time and latitude.
+        """
+        # Input validation
+        if not -90 <= latitude_deg <= 90:
+            raise ValueError("Latitude must be between -90 and +90 degrees")
+
+        t = Time(dateobs, scale="utc")
+        sun = get_sun(t)
+
+        # Search grid of longitudes with high resolution
+        longs = np.linspace(-180, 180, 1441) * u.deg  # ~0.25° resolution
+        lats = np.full_like(longs.value, latitude_deg) * u.deg
+
+        locs = EarthLocation.from_geodetic(longs, lats, height=0 * u.m)
+        altaz = sun.transform_to(AltAz(obstime=t, location=locs))
+        altitudes = altaz.alt.deg
+
+        # Find zero crossings (altitude changing sign)
+        sign_changes = np.diff(np.sign(altitudes))
+        idx = np.where(sign_changes != 0)[0]
+
+        if len(idx) == 0:
+            return None  # No sunrise/sunset at this latitude/time
+
+        candidates = []
+
+        for i in idx:
+            # Linear interpolation for more accurate longitude
+            x0, x1 = longs[i].value, longs[i + 1].value
+            y0, y1 = altitudes[i], altitudes[i + 1]
+
+            # Avoid division by zero
+            if y1 - y0 == 0:
+                continue
+
+            longitude = x0 - y0 * (x1 - x0) / (y1 - y0)
+
+            # Determine if this is sunrise or sunset
+            is_sunrise = sign_changes[i] > 0  # altitude increasing = sunrise
+            is_sunset = sign_changes[i] < 0  # altitude decreasing = sunset
+
+            if (sunset and is_sunset) or (not sunset and is_sunrise):
+                candidates.append(longitude)
+
+        if not candidates:
+            return None
+
+        # If multiple candidates (rare), return the first one
+        # This can happen near polar regions or at certain times of year
+        return candidates[0]
+
+    lat = -24.6252  # Paranal
+    long = get_sun_terminator_longitude(
+        datetime.now(UTC), lat, sunset=sunset
+    ) + 3 / np.cos(np.radians(lat))
+    assert long is not None, "Could not determine sun terminator longitude."
+
+    # Set observatory location
+    r = requests.put(
+        f"{server_url}/api/v1/telescope/0/sitelatitude", data={"SiteLatitude": lat}
+    )
+    if r.status_code != 200:
+        assert False, "Failed to set observatory latitude."
+
+    r = requests.put(
+        f"{server_url}/api/v1/telescope/0/sitelongitude", data={"SiteLongitude": long}
+    )
+    if r.status_code != 200:
+        assert False, "Failed to set observatory longitude."
 
 
 @pytest.mark.slow
@@ -571,6 +676,43 @@ class TestScheduleActionTypes:
             )
             assert success, (
                 f"object action did not complete successfully. Error sources: {observatory.error_source}"
+            )
+            assert completed > 0, "No actions were completed"
+
+    def test_flats_action(self, observatory, schedule_manager, server_url, temp_config):
+        """Test flats action type"""
+        set_safety_monitor_safe(server_url)
+        schedule_data = create_schedule_data("flats")
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data, server_url, temp_config
+            )
+
+            assert error_free_maintained, (
+                f"error_free became False during flats action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"flats action did not complete successfully. Error sources: {observatory.error_source}"
+            )
+            assert completed > 0, "No actions were completed"
+
+    def test_flats_action_with_weather_alert(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
+        """Test flats action type with weather alert"""
+        schedule_data = create_schedule_data("flats", inject_weather_alert=True)
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data, server_url, temp_config
+            )
+
+            assert error_free_maintained, (
+                f"error_free became False during flats action. Error sources: {observatory.error_source}"
+            )
+            assert success, (
+                f"flats action did not complete successfully. Error sources: {observatory.error_source}"
             )
             assert completed > 0, "No actions were completed"
 
