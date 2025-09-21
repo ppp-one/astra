@@ -1,15 +1,17 @@
 import logging
 import os
-from pathlib import Path
 import shutil
 import signal
 import subprocess
 import time
+from pathlib import Path
 
 import pytest
 import requests
 
 from astra.config import Config, ObservatoryConfig
+
+logger = logging.getLogger(__name__)
 
 
 def set_max_safe_duration(obj, new_value):
@@ -158,3 +160,42 @@ def temp_config(tmp_path_factory):
 
         # reset singleton
         Config._instance = None
+
+
+@pytest.fixture
+def observatory_config(temp_config):
+    return ObservatoryConfig.from_config(temp_config)
+
+
+@pytest.fixture
+def observatory(temp_config):
+    from astra.observatory import Observatory
+
+    server_url = "http://localhost:11111"
+
+    logger.info("Reloading observatory state to defaults during setup")
+    response = requests.get(f"{server_url}/reload")
+    assert response.status_code == 200
+
+    observatory_config = ObservatoryConfig.from_config(temp_config)
+    observatory = Observatory(observatory_config.observatory_name)
+
+    observatory.connect_all_devices()
+    time.sleep(5)
+
+    logger.info("Successfully loaded observatory.")
+    yield observatory
+
+    # Cleanup on teardown
+    logger.info("Tearing down observatory.")
+    if observatory.schedule_manager.running:
+        observatory.schedule_manager.stop_schedule(observatory.thread_manager)
+    # Stop watchdog
+    if observatory.watchdog_running:
+        observatory.watchdog_running = False
+    for device_type in observatory.devices:
+        for device_name in observatory.devices[device_type]:
+            try:
+                observatory.devices[device_type][device_name].stop()
+            except Exception:
+                pass

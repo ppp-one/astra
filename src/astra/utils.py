@@ -184,10 +184,10 @@ def hdr_times(
         location (EarthLocation): Observer's geographic location.
         target (SkyCoord): Target celestial coordinates.
     """
-    dateobs = pd.to_datetime(hdr["DATE-OBS"])
+    exposure_start_datetime = pd.to_datetime(hdr["DATE-OBS"])
 
-    dateend = dateobs + timedelta(seconds=float(hdr["EXPTIME"]))
-    jd = to_jd(dateobs)
+    dateend = exposure_start_datetime + timedelta(seconds=float(hdr["EXPTIME"]))
+    jd = to_jd(exposure_start_datetime)
     jdend = to_jd(dateend)
 
     mjd = jd - 2400000.5

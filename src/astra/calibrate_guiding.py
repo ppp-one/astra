@@ -25,7 +25,11 @@ from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
 
-from astra.config import Config, ObservatoryConfig
+import astra
+from astra.image_handler import ImageHandler
+from astra.config import Config
+from astra.scheduler import Action
+from astra.paired_devices import PairedDevices
 
 
 class CustomImageClass(Image):
@@ -53,12 +57,12 @@ class CustomImageClass(Image):
             (32, 32),
             filter_size=(3, 3),
             sigma_clip=sigma_clip,
-            bkg_estimator=bkg_estimator,
+            bkg_estimator=bkg_estimator,  # type: ignore
         )
         bkg_clean = self.raw_image - bkg.background
 
         med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
-        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
+        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)  # type: ignore
         image_clean = med_clean - band_corr
 
         self.raw_image = np.clip(image_clean, 1, None)
@@ -72,23 +76,10 @@ class GuidingCalibrator:
     resulting star field shifts to determine pixel-to-time scales and
     camera orientation relative to mount axes.
 
-    Args:
-        astra_observatory (Any): Observatory instance for device control.
-        row (Dict[str, Any]): Camera configuration row from schedule.
-        paired_devices (Dict[str, str]): Dictionary mapping device types to device names.
-        action_value (Dict[str, Any]): Configuration parameters for calibration.
-        hdr (Dict[str, Any]): FITS header data dictionary for images.
-        save_path (Path): Directory for saving calibration data and images.
-        pulse_time (float): Duration of guide pulses in milliseconds.
-        exptime (float): Exposure time for calibration images in seconds.
-        settle_time (float): Wait time after pulses before exposing in seconds.
-        number_of_cycles (int): Number of calibration cycles to perform.
-
     Attributes:
         astra_observatory: Observatory instance for device control.
-        row: Camera configuration row from schedule.
+        action: Action instance containing calibration information.
         paired_devices: Dictionary of paired device names.
-        action_value: Configuration parameters for calibration.
         hdr: FITS header data for images.
         save_path: Directory for saving calibration data and images.
         pulse_time: Duration of guide pulses in milliseconds.
@@ -99,11 +90,10 @@ class GuidingCalibrator:
 
     def __init__(
         self,
-        astra_observatory: Any,
-        row: Dict[str, Any],
+        astra_observatory: "astra.observatory.Observatory",  # type: ignore
+        action: Action,
         paired_devices: Dict[str, str],
-        action_value: Dict[str, Any],
-        hdr: Dict[str, Any],
+        image_handler: ImageHandler,
         save_path: Path | None = None,
         pulse_time: float = 5000,
         exptime: float = 5,
@@ -111,11 +101,10 @@ class GuidingCalibrator:
         number_of_cycles: int = 10,
     ):
         self.astra_observatory = astra_observatory
-        self.row = row
+        self.action = action
         self.paired_devices = paired_devices
-        self.action_value = action_value
-        self.hdr = hdr
-        self.save_path = (
+        self.image_handler = image_handler
+        self.image_handler.folder = (
             save_path
             if save_path is not None
             else (
@@ -124,18 +113,21 @@ class GuidingCalibrator:
                 / datetime.now(UTC).strftime("%Y%m%d")
             )
         )
-        self.pulse_time = action_value.get("pulse_time", pulse_time)
-        self.exptime = action_value.get("exptime", exptime)
-        self.settle_time = action_value.get("settle_time", settle_time)
-        self.number_of_cycles = action_value.get("number_of_cycles", number_of_cycles)
+
+        self.pulse_time = action.action_value.get("pulse_time", pulse_time)
+        self.exptime = action.action_value.get("exptime", exptime)
+        self.settle_time = action.action_value.get("settle_time", settle_time)
+        self.number_of_cycles = action.action_value.get(
+            "number_of_cycles", number_of_cycles
+        )
         self._directions = defaultdict(list)
         self._scales = defaultdict(list)
         self._calibration_config = {}
-        self._camera = astra_observatory.devices["Camera"][row["device_name"]]
+        self._camera = astra_observatory.devices["Camera"][action.device_name]
         self._telescope = astra_observatory.devices["Telescope"][
             paired_devices["Telescope"]
         ]
-        save_path.mkdir(parents=True, exist_ok=True)
+        self.image_handler.folder.mkdir(parents=True, exist_ok=True)
 
     def run(self) -> None:
         """Execute complete guiding calibration sequence.
@@ -265,7 +257,7 @@ class GuidingCalibrator:
 
     def save_calibration_config(self) -> None:
         """Save calibration configuration to YAML file."""
-        with open(self.save_path / "calibration_config.yaml", "w") as file:
+        with open(self.image_handler.folder / "calibration_config.yaml", "w") as file:
             yaml.dump(self._calibration_config, file)
 
     def update_observatory_config(self) -> None:
@@ -274,13 +266,13 @@ class GuidingCalibrator:
         Integrates the calculated calibration parameters into the observatory
         configuration file for the specific camera being calibrated.
         """
-        camera_index = self.astra_observatory.get_cam_index(self.row["device_name"])
-
-        observatory_config = ObservatoryConfig.from_config(Config())
-        observatory_config["Telescope"][camera_index]["guider"].update(
-            self._calibration_config
+        paired_devices = PairedDevices.from_observatory(
+            observatory=self.astra_observatory,
+            camera_name=self.action.device_name,
         )
-        observatory_config.save()
+        telescope_config = paired_devices.get_device_config("Telescope")
+        telescope_config["guider"].update(self._calibration_config)
+        paired_devices.observatory_config.save()
         self.astra_observatory.logger.info("Observatory config updated.")
 
     @staticmethod
@@ -389,9 +381,7 @@ class GuidingCalibrator:
             camera=self._camera,
             exptime=self.exptime,
             maxadu=self._camera.get("MaxADU"),
-            row=self.row,
-            hdr=self.hdr,
-            folder=self.save_path,
+            action=self.action,
             use_light=True,
             log_option=None,
             maximal_sleep_time=0.1,

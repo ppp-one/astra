@@ -14,7 +14,20 @@ from astra.config import Config
 
 
 @dataclass
-class BaseActionValue:
+class BaseActionConfig:
+    """
+    Examples
+    --------
+    >>> from astra.action_configs import AutofocusConfig
+    >>> autofocus_config = AutofocusConfig(exptime=3.0)
+    >>> exptime in autofocus_config
+    True
+    >>> autofocus_config['exptime']
+    3.0
+    >>> autofocus_config.get('not_available')
+
+    """
+
     def __post_init__(self):
         self.validate()
 
@@ -53,6 +66,9 @@ class BaseActionValue:
         origin = typing.get_origin(expected_type)
         args = typing.get_args(expected_type)
 
+        if expected_type is float and isinstance(val, int):
+            return None
+
         # Handle Optional/Union types
         if origin is Union:
             allowed_types = [t for t in args if t is not type(None)]
@@ -71,22 +87,28 @@ class BaseActionValue:
                 return self.format_type_error(f, origin, type(val))
             elem_type = args[0] if args else None
             if elem_type:
-                # Accept both int and float for float element types
-                if elem_type in (float, int):
+                # Handle Union types inside lists (e.g., List[float | int])
+                elem_origin = typing.get_origin(elem_type)
+                elem_args = typing.get_args(elem_type)
+                if (
+                    elem_origin is Union
+                    or isinstance(elem_type, type)
+                    and elem_type.__module__ == "types"
+                    and elem_type.__name__ == "UnionType"
+                ):
+                    allowed_elem_types = tuple(
+                        t for t in elem_args if isinstance(t, type)
+                    )
+                elif elem_type in (float, int):
                     allowed_elem_types = (float, int)
                 else:
                     allowed_elem_types = (elem_type,)
                 for v in val:
-                    elem_origin = typing.get_origin(elem_type)
-                    if elem_origin:
-                        if not isinstance(v, elem_origin):
-                            return self.format_type_error(
-                                f, elem_origin, type(v), specifier="elements"
-                            )
-                    elif not isinstance(v, allowed_elem_types):
+                    if not isinstance(v, allowed_elem_types):
                         return self.format_type_error(
                             f, allowed_elem_types, type(v), specifier="elements"
                         )
+
         # Handle dicts
         elif origin is dict:
             if not isinstance(val, dict):
@@ -138,6 +160,28 @@ class BaseActionValue:
     def get(self, key: str, default=None):
         return getattr(self, key, default)
 
+    def __getitem__(self, key: str):
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value):
+        return setattr(self, key, value)
+
+    def __contains__(self, key: str):
+        return hasattr(self, key)
+
+    def keys(self):
+        return [
+            item
+            for item in self.__dataclass_fields__.keys()
+            if not item.startswith("_")
+        ]
+
+    def __iter__(self):
+        return iter(self.keys())
+
+    def __len__(self):
+        return len(self.keys())
+
     @classmethod
     def merge_config_dicts(cls, config_dict: dict, default_dict: dict) -> dict:
         """Merge default_dict and config_dict, keeping only keys in dataclass."""
@@ -154,7 +198,7 @@ class BaseActionValue:
             if isinstance(val, Angle):
                 return val.deg
             elif isinstance(val, SkyCoord):
-                return {"ra": val.ra.deg, "dec": val.dec.deg}
+                return {"ra": val.ra.deg, "dec": val.dec.deg}  # type: ignore
             elif isinstance(val, Time):
                 return val.isot
             elif isinstance(val, dict):
@@ -170,31 +214,31 @@ class BaseActionValue:
 
 
 @dataclass
-class OpenActionValue(BaseActionValue):
+class OpenActionConfig(BaseActionConfig):
     def validate(self):
         pass
 
 
 @dataclass
-class CloseActionValue(BaseActionValue):
+class CloseActionConfig(BaseActionConfig):
     def validate(self):
         pass
 
 
 @dataclass
-class CompleteHeadersActionValue(BaseActionValue):
+class CompleteHeadersActionConfig(BaseActionConfig):
     def validate(self):
         pass
 
 
 @dataclass
-class CoolCameraActionValue(BaseActionValue):
+class CoolCameraActionConfig(BaseActionConfig):
     def validate(self):
         pass
 
 
 @dataclass
-class ObjectActionValue(BaseActionValue):
+class ObjectActionConfig(BaseActionConfig):
     object: str = field(metadata={"required": True})
     exptime: float = field(metadata={"required": True})
     ra: Optional[float] = None
@@ -218,7 +262,7 @@ class ObjectActionValue(BaseActionValue):
 
 
 @dataclass
-class CalibrationActionValue(BaseActionValue):
+class CalibrationActionConfig(BaseActionConfig):
     exptime: List[float] = field(default_factory=list, metadata={"required": True})
     n: List[int] = field(default_factory=list, metadata={"required": True})
     filter: Optional[str] = None
@@ -237,7 +281,7 @@ class CalibrationActionValue(BaseActionValue):
 
 
 @dataclass
-class FlatsActionValue(BaseActionValue):
+class FlatsActionConfig(BaseActionConfig):
     filter: List[str] = field(default_factory=list, metadata={"required": True})
     n: List[int] = field(default_factory=list, metadata={"required": True})
     dir: Optional[str] = None
@@ -255,7 +299,7 @@ class FlatsActionValue(BaseActionValue):
 
 
 @dataclass
-class CalibrateGuidingActionValue(BaseActionValue):
+class CalibrateGuidingActionConfig(BaseActionConfig):
     filter: Optional[str] = None
     pulse_time: float = 5000.0
     exptime: float = 5.0
@@ -270,7 +314,7 @@ class CalibrateGuidingActionValue(BaseActionValue):
 
 
 @dataclass
-class PointingModelActionValue(BaseActionValue):
+class PointingModelActionConfig(BaseActionConfig):
     n: int = 100
     exptime: float = 1.0
     dark_subtraction: bool = False
@@ -305,21 +349,21 @@ class SelectionMethod(Enum):
 
 
 @dataclass
-class AutofocusCalibrationFieldConfig(BaseActionValue):
+class AutofocusCalibrationFieldConfig(BaseActionConfig):
     """Configuration for automated autofocus calibration field selection."""
 
     maximal_zenith_angle: Optional[float | int | Angle] = None
     airmass_threshold: float = 1.01
     g_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
     j_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
-    fov_height: float = 11.666666 / 60
-    fov_width: float = 11.666666 / 60
+    fov_height: float | int = 11.666666 / 60
+    fov_width: float | int = 11.666666 / 60
     selection_method: SelectionMethod = SelectionMethod.SINGLE
     use_gaia: bool = True
     observation_time: Optional[Time] = None
     maximal_number_of_stars: int = 100_000
-    ra: Optional[float] = None
-    dec: Optional[float] = None
+    ra: Optional[float | int] = None
+    dec: Optional[float | int] = None
     _coordinates: Optional[SkyCoord] = None
 
     def __post_init__(self):
@@ -343,6 +387,8 @@ class AutofocusCalibrationFieldConfig(BaseActionValue):
 
         if not isinstance(self.selection_method, SelectionMethod):
             self.selection_method = SelectionMethod.from_string(self.selection_method)
+
+        self.validate()
 
     @property
     def coordinates(self) -> SkyCoord:
@@ -371,10 +417,10 @@ class AutofocusCalibrationFieldConfig(BaseActionValue):
 
 
 @dataclass
-class AutofocusConfig(BaseActionValue):
-    exptime: float = field(default=3.0, metadata={"required": True})
+class AutofocusConfig(BaseActionConfig):
+    exptime: float | int = field(default=3.0, metadata={"required": True})
     reduce_exposure_time: bool = False
-    search_range: Optional[List[int]] = None
+    search_range: Optional[List[int] | int] = None
     search_range_is_relative: bool = False
     n_steps: List[int] = field(default_factory=lambda: [30, 20])
     n_exposures: List[int] = field(default_factory=lambda: [1, 1])
@@ -414,6 +460,7 @@ class AutofocusConfig(BaseActionValue):
         self._focus_measure_operator = FocusMeasureOperatorRegistry.from_name(
             self.focus_measure_operator
         )
+        self.validate()
 
     @classmethod
     def from_dict(
@@ -455,14 +502,14 @@ class AutofocusConfig(BaseActionValue):
 
 
 ACTION_CONFIGS = {
-    "object": OpenActionValue,
-    "calibration": CalibrationActionValue,
-    "flats": FlatsActionValue,
-    "calibrate_guiding": CalibrateGuidingActionValue,
+    "object": OpenActionConfig,
+    "calibration": CalibrationActionConfig,
+    "flats": FlatsActionConfig,
+    "calibrate_guiding": CalibrateGuidingActionConfig,
     "autofocus": AutofocusConfig,
-    "pointing_model": PointingModelActionValue,
-    "open": OpenActionValue,
-    "close": CloseActionValue,
-    "cool_camera": CoolCameraActionValue,
-    "complete_headers": CompleteHeadersActionValue,
+    "pointing_model": PointingModelActionConfig,
+    "open": OpenActionConfig,
+    "close": CloseActionConfig,
+    "cool_camera": CoolCameraActionConfig,
+    "complete_headers": CompleteHeadersActionConfig,
 }

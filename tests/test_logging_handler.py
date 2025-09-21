@@ -1,5 +1,6 @@
+import io
 import logging
-from astra.logging_handler import LoggingHandler
+from astra.logger import DatabaseLoggingHandler, ObservatoryLogger, ConsoleStreamHandler
 
 
 class FakeCursor:
@@ -14,32 +15,35 @@ class FakeCursor:
 class FakeInstance:
     def __init__(self):
         self.cursor = FakeCursor()
-        self.error_free = True
+
+    def execute(self, query: str) -> None:
+        # Delegate to cursor for compatibility with DatabaseLoggingHandler
+        self.cursor.execute(query)
 
 
 def teardown_logger(name: str) -> None:
     """Remove all handlers from the named logger to avoid test interference."""
-    logger = logging.getLogger(name)
+    logger = ObservatoryLogger(name)
     for h in list(logger.handlers):
         logger.removeHandler(h)
 
 
-def test_emit_inserts_info_and_prints(capsys):
+def test_emit_inserts_info_and_prints():
     inst = FakeInstance()
     logger_name = "test_logging_handler_info"
-    logger = logging.getLogger(logger_name)
+    logger = ObservatoryLogger(logger_name)
     teardown_logger(logger_name)
     logger.setLevel(logging.DEBUG)
 
-    handler = LoggingHandler(inst)
-    logger.addHandler(handler)
+    logger.addHandler(DatabaseLoggingHandler(inst))
+    stream = io.StringIO()
+    logger.addHandler(ConsoleStreamHandler(stream=stream))
 
     logger.info("Test message")
 
-    # printed output should include the level and message
-    captured = capsys.readouterr()
-    assert "[INFO]" in captured.out
-    assert "Test message" in captured.out
+    output = stream.getvalue()
+    assert "INFO" in output, f"INFO not in {output}"
+    assert "Test message" in output
 
     # the fake cursor should have recorded an INSERT
     assert len(inst.cursor.executed) == 1
@@ -49,20 +53,21 @@ def test_emit_inserts_info_and_prints(capsys):
     assert "Test message" in sql
 
     # info level should not flip error_free
-    assert inst.error_free is True
+    assert logger.error_free is True
 
     teardown_logger(logger_name)
 
 
-def test_emit_error_sets_error_free_and_stores_exception(capsys):
+def test_emit_error_sets_error_free_and_stores_exception():
     inst = FakeInstance()
     logger_name = "test_logging_handler_error"
-    logger = logging.getLogger(logger_name)
+    logger = ObservatoryLogger(logger_name)
     teardown_logger(logger_name)
     logger.setLevel(logging.DEBUG)
 
-    handler = LoggingHandler(inst)
-    logger.addHandler(handler)
+    logger.addHandler(DatabaseLoggingHandler(inst))
+    stream = io.StringIO()
+    logger.addHandler(ConsoleStreamHandler(stream=stream))
 
     try:
         raise ValueError("boom")
@@ -70,11 +75,11 @@ def test_emit_error_sets_error_free_and_stores_exception(capsys):
         # include exception info in the log record
         logger.error("Something went wrong", exc_info=True)
 
-    captured = capsys.readouterr()
+    output = stream.getvalue()
     # printed output should include level and some exc_info representation
-    assert "[ERROR]" in captured.out
-    assert "Something went wrong" in captured.out
-    assert "ValueError" in captured.out
+    assert "ERROR" in output, f"ERROR not in {output}"
+    assert "Something went wrong" in output
+    assert "ValueError" in output
 
     # the fake cursor should have recorded an INSERT that contains the traceback
     assert len(inst.cursor.executed) == 1
@@ -85,6 +90,6 @@ def test_emit_error_sets_error_free_and_stores_exception(capsys):
     assert "ValueError" in sql
 
     # error should flip the error_free flag
-    assert inst.error_free is False
+    assert logger.error_free is False
 
     teardown_logger(logger_name)

@@ -95,6 +95,11 @@ class Config:
             propagate_observatory_name=propagate_observatory_name,
         )
 
+    @property
+    def observatory_config(self) -> "ObservatoryConfig":
+        """Load the observatory configuration."""
+        return ObservatoryConfig.from_config(self)
+
     def reset(self, remove_assets: bool = False) -> None:
         """Reset configuration by removing config file and optionally assets.
 

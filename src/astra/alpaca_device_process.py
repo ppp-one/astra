@@ -61,6 +61,7 @@ class AlpacaDevice(Process):
         device_number (int): Device number on the ALPACA server.
         device_name (str): User-friendly name for the device.
         queue: Multiprocessing queue for logging and data communication.
+        connectable (bool): Whether to attempt initial connection to the device.
         debug (bool): Enable debug logging for device operations.
 
     Attributes:
@@ -78,6 +79,7 @@ class AlpacaDevice(Process):
         device_number: int,
         device_name: str,
         queue: Any,
+        connectable: bool = True,
         debug: bool = False,
     ) -> None:
         super().__init__()
@@ -100,7 +102,20 @@ class AlpacaDevice(Process):
         ]:
             self.device = ALPACA_DEVICE_TYPES[device_type](ip, device_number)
         else:
-            print(f"{device_type} is not a valid device type")
+            self.queue.put(
+                (
+                    {
+                        "ip": ip,
+                        "device_type": device_type,
+                        "device_number": device_number,
+                        "device_name": device_name,
+                    },
+                    {
+                        "type": "log",
+                        "data": ("info", f"{device_type} is not a valid device type"),
+                    },
+                )
+            )
             ## TODO: raise exception, does it kill the process?
 
         self.ip = ip
@@ -113,6 +128,7 @@ class AlpacaDevice(Process):
             "device_number": device_number,
             "device_name": device_name,
         }
+        self.connectable = connectable
         self._poll_delays = {}  # Pairs of 'method': delay # TODO: implement
 
         self._poll_list = []
@@ -242,7 +258,18 @@ class AlpacaDevice(Process):
     def stop(self) -> None:
         """Stop the device process and clean up resources."""
         with self.lock:
-            print(f"AlpacaDevice {self.device_type} {self.device_number} stopping")
+            self.queue.put(
+                (
+                    self.metadata,
+                    {
+                        "type": "log",
+                        "data": (
+                            "info",
+                            f"AlpacaDevice {self.device_type} {self.device_number} stopping",
+                        ),
+                    },
+                )
+            )
             self.front_pipe.send("stop")
             self.join()
 
@@ -255,18 +282,39 @@ class AlpacaDevice(Process):
         and inter-process communication. Sets up signal handlers for
         graceful shutdown.
         """
-        print(
-            f"AlpacaDevice {self.device_type} {self.device_number} started with pid [{os.getpid()}]"
+        self.queue.put(
+            (
+                self.metadata,
+                {
+                    "type": "log",
+                    "data": (
+                        "info",
+                        f"AlpacaDevice {self.device_type} {self.device_number} started "
+                        f"with pid [{os.getpid()}]",
+                    ),
+                },
+            )
         )
         self.active = True
 
-        signal.signal(signal.SIGINT, self.stop_poll__)
-        signal.signal(signal.SIGTERM, self.stop_poll__)
+        signal.signal(signal.SIGINT, self.stop_poll__)  # type: ignore
+        signal.signal(signal.SIGTERM, self.stop_poll__)  # type: ignore
 
         while self.active:
             self.active = self.listenFront__()
 
-        print(f"AlpacaDevice {self.device_type} {self.device_number} stopped")
+        self.queue.put(
+            (
+                self.metadata,
+                {
+                    "type": "log",
+                    "data": (
+                        "info",
+                        f"AlpacaDevice {self.device_type} {self.device_number} stopped",
+                    ),
+                },
+            )
+        )
 
     def listenFront__(self) -> bool:
         """Listen for and process messages from the main process.
@@ -346,7 +394,7 @@ class AlpacaDevice(Process):
                     )
                 )
 
-            for i in range(2):
+            for _ in range(2):
                 try:
                     if data == "not get":
                         data = getattr(self.device, method)
@@ -366,7 +414,8 @@ class AlpacaDevice(Process):
                                         "type": "log",
                                         "data": (
                                             "debug",
-                                            f"Get method success: {self.device_type}, {self.device_name}, {method}",
+                                            "Get method success: "
+                                            f"{self.device_type}, {self.device_name}, {method}",
                                         ),
                                     },
                                 )
@@ -380,7 +429,9 @@ class AlpacaDevice(Process):
                                 "type": "log",
                                 "data": (
                                     "warning",
-                                    f"Get method failed with data {str(data)}: {self.device_type}, {self.device_name}, {method}, {str(e)}, trying again...",
+                                    f"Get method failed with data {str(data)}: "
+                                    f"{self.device_type}, {self.device_name}, {method}, "
+                                    f"{str(e)}, trying again...",
                                 ),
                             },
                         )
@@ -409,7 +460,8 @@ class AlpacaDevice(Process):
                                 "type": "log",
                                 "data": (
                                     "debug",
-                                    f"Get method success: {self.device_type}, {self.device_name}, {method}",
+                                    "Get method success: "
+                                    f"{self.device_type}, {self.device_name}, {method}",
                                 ),
                             },
                         )
@@ -430,7 +482,8 @@ class AlpacaDevice(Process):
                             "type": "log",
                             "data": (
                                 "error",
-                                f"Get method error with data {str(data)}: {self.device_type}, {self.device_name}, {method}, {str(e)}",
+                                f"Get method error with data {str(data)}: "
+                                f"{self.device_type}, {self.device_name}, {method}, {str(e)}",
                             ),
                         },
                     )
@@ -481,7 +534,8 @@ class AlpacaDevice(Process):
                                         "type": "log",
                                         "data": (
                                             "debug",
-                                            f"Set method success: {self.device_type}, {self.device_name}, {method} with data {str(data)}",
+                                            f"Set method success: {self.device_type}, "
+                                            f"{self.device_name}, {method} with data {str(data)}",
                                         ),
                                     },
                                 )
@@ -495,7 +549,9 @@ class AlpacaDevice(Process):
                                 "type": "log",
                                 "data": (
                                     "warning",
-                                    f"Set method failed with data {str(data)}: {self.device_type}, {self.device_name}, {method}, {str(e)}, trying again...",
+                                    f"Set method failed with data {str(data)}: "
+                                    f"{self.device_type}, {self.device_name}, {method}, "
+                                    f"{str(e)}, trying again...",
                                 ),
                             },
                         )
@@ -516,7 +572,8 @@ class AlpacaDevice(Process):
                                 "type": "log",
                                 "data": (
                                     "debug",
-                                    f"Set method success: {self.device_type}, {self.device_name}, {method}, with data {str(data)}",
+                                    f"Set method success: {self.device_type}, "
+                                    f"{self.device_name}, {method}, with data {str(data)}",
                                 ),
                             },
                         )
@@ -532,7 +589,8 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "error",
-                            f"Set method error: {self.device_type}, {self.device_name}, {method}, {str(e)}",
+                            f"Set method error: {self.device_type}, {self.device_name}, "
+                            f"{method}, {str(e)}",
                         ),
                     },
                 )
@@ -577,7 +635,11 @@ class AlpacaDevice(Process):
                             self.metadata,
                             {
                                 "type": "query",
-                                "data": f"INSERT INTO polling VALUES ('{self.device_type}', '{self.device_name}',  '{method}', '{val}', '{dt_str}')",
+                                "data": (
+                                    f"INSERT INTO polling VALUES "
+                                    f"('{self.device_type}', '{self.device_name}',  "
+                                    f"'{method}', '{val}', '{dt_str}')"
+                                ),
                             },
                         )
                     )
@@ -598,7 +660,8 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "error",
-                            f"Loop error: {self.device_type}, {self.device_name}, {method}, {str(e)}",
+                            f"Loop error: {self.device_type}, {self.device_name}, "
+                            f"{method}, {str(e)}",
                         ),
                     },
                 )
@@ -620,7 +683,8 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "info",
-                            f"{self.device_type}, {self.device_name}, {method} poll started with {delay} second cadence",
+                            f"{self.device_type}, {self.device_name}, {method} "
+                            f"poll started with {delay} second cadence",
                         ),
                     },
                 )
@@ -658,7 +722,9 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "info",
-                            f"{self.device_type}, {self.device_name}, {method} poll stopped. {self._poll_list} left in poll list, and {self._poll_latest} left in poll dict",
+                            f"{self.device_type}, {self.device_name}, {method} poll stopped."
+                            f"{self._poll_list} left in poll list, and {self._poll_latest} "
+                            "left in poll dict",
                         ),
                     },
                 )
@@ -671,7 +737,8 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "warning",
-                            f"Stop poll error: {self.device_type}, {self.device_name}, {method} not in poll list.",
+                            f"Stop poll error: {self.device_type}, {self.device_name}, "
+                            f"{method} not in poll list.",
                         ),
                     },
                 )
@@ -689,7 +756,8 @@ class AlpacaDevice(Process):
                         "type": "log",
                         "data": (
                             "error",
-                            f"poll_list error: {self.device_type}, {self.device_name}, {str(e)}",
+                            f"poll_list error: {self.device_type}, {self.device_name}, "
+                            f"{str(e)}",
                         ),
                     },
                 )
@@ -726,3 +794,36 @@ class AlpacaDevice(Process):
         # close pipes
         self.front_pipe.close()
         self.back_pipe.close()
+
+    def force_poll(self, method: str, **kwargs) -> None:
+        """Immediately poll a device method once and write the result to the database via the queue."""
+        try:
+            val = self.get(method, **kwargs)
+            dt = datetime.now(UTC)
+            dt_str = dt.strftime("%Y-%m-%d %H:%M:%S.%f")
+            self.queue.put(
+                (
+                    self.metadata,
+                    {
+                        "type": "query",
+                        "data": (
+                            f"INSERT INTO polling VALUES "
+                            f"('{self.device_type}', '{self.device_name}',  "
+                            f"'{method}', '{val}', '{dt_str}')"
+                        ),
+                    },
+                )
+            )
+        except Exception as e:
+            self.queue.put(
+                (
+                    self.metadata,
+                    {
+                        "type": "log",
+                        "data": (
+                            "error",
+                            f"Force poll error: {self.device_type}, {self.device_name}, {method}, {str(e)}",
+                        ),
+                    },
+                )
+            )

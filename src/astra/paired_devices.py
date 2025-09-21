@@ -174,7 +174,7 @@ class PairedDevices(dict[str, str]):
     @classmethod
     def from_observatory(
         cls,
-        observatory: "astra.observatory.Observatory",
+        observatory: "astra.observatory.Observatory",  # type: ignore
         *,
         camera_name: str | None = None,
         paired_device_names: dict[str, str] | None = None,
