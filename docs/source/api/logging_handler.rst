@@ -14,6 +14,6 @@ The ``logging_handler`` module provides customized logging facilities for the As
 Key Components
 -------------
 
-- ``LoggingHandler``: Custom logging handler that stores log records in database
+- ``DatabaseLoggingHandler``: Custom logging handler that stores log records in database
 - ``emit``: Method that handles emitting log records to the appropriate destination
 - Automatic log level detection and formatting

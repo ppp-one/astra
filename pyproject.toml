@@ -23,6 +23,7 @@ dependencies = [
   "psutil",
   "donuts",
   "httpx",
+  "jinja2",
   "matplotlib",
   "pandas",
   "fastapi[standard]",

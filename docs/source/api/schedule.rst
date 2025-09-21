@@ -1,7 +1,7 @@
 Schedule Module
 ==============
 
-.. automodule:: astra.schedule
+.. automodule:: astra.scheduler
    :members:
    :undoc-members:
    :show-inheritance:

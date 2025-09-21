@@ -20,7 +20,7 @@ Development Setup
 
       python -m venv venv
       source venv/bin/activate  # On Windows: venv\Scripts\activate
-      pip install -e ".[dev]"
+      pip install -e ".[dev, test]"
       
       pre-commit install  # Set up pre-commit hooks
 

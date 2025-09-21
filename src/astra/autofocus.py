@@ -25,8 +25,7 @@ import logging
 import os
 import time
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import astropy.units as u
 import matplotlib
@@ -48,7 +47,7 @@ from astrafocus.star_size_focus_measure_operators import StarSizeFocusMeasure
 from astrafocus.targeting import (
     ZenithNeighbourhoodQuery,
 )
-from astropy.coordinates import AltAz, Angle, EarthLocation, SkyCoord
+from astropy.coordinates import AltAz, Angle, SkyCoord
 from astropy.time import Time
 from scipy import ndimage
 from scipy.ndimage import median_filter
@@ -56,9 +55,11 @@ from scipy.ndimage import median_filter
 import astra
 from astra.action_configs import AutofocusConfig, SelectionMethod
 from astra.alpaca_device_process import AlpacaDevice
-from astra.config import Config, ObservatoryConfig
-from astra.logging_handler import LoggingHandler
+from astra.config import Config
+from astra.image_handler import ImageHandler
+from astra.logger import DatabaseLoggingHandler
 from astra.paired_devices import PairedDevices
+from astra.scheduler import Action
 
 __all__ = ["Autofocuser"]
 
@@ -72,9 +73,8 @@ class AstraCamera(CameraInterface):
     Args:
         observatory: Observatory instance for device control and logging.
         alpaca_device_camera (AlpacaDevice): ALPACA camera device instance.
-        row (Dict[str, Any]): Camera configuration parameters.
-        folder (str): Directory path for saving images.
-        hdr (Dict[str, Any]): FITS header data for images.
+        action (Action): Action configuration for the camera.
+        image_handler (ImageHandler): Image handler for saving and processing images.
         image_data_type: NumPy data type for images, auto-detected if None.
         maxadu: Maximum ADU value for camera, auto-detected if None.
     """
@@ -83,18 +83,16 @@ class AstraCamera(CameraInterface):
         self,
         observatory: Any,
         alpaca_device_camera: AlpacaDevice,
-        row: Dict[str, Any],
-        folder: Path,
-        hdr: Dict[str, Any],
+        action: Action,
+        image_handler: ImageHandler,
         image_data_type: Optional[np.dtype] = None,
         maxadu: Optional[int] = None,
     ) -> None:
         self.observatory = observatory
         self.alpaca_device_camera = alpaca_device_camera
 
-        self.row = row
-        self.folder = folder
-        self.hdr = hdr
+        self.action = action
+        self.image_handler = image_handler
         self.success = True
 
         if image_data_type is None or maxadu is None:
@@ -176,12 +174,11 @@ class AstraCamera(CameraInterface):
         exposure_successful, filepath = self.observatory.perform_exposure(
             camera=self.alpaca_device_camera,
             exptime=texp,
-            row=self.row,
-            hdr=self.hdr,
+            action=self.action,
             use_light=use_light,
             log_option=log_option,
             maximal_sleep_time=0.1,
-            folder=self.folder,
+            image_handler=self.image_handler,
             maxadu=self.alpaca_device_camera.get("MaxADU"),
         )
         self.success = exposure_successful
@@ -231,20 +228,20 @@ class AstraFocuser(FocuserInterface):
     Args:
         observatory (astra.Observatory): Main Astra instance for system coordination.
         alpaca_device_focuser (AlpacaDevice): ALPACA focuser device interface.
-        row (dict): Configuration parameters for focuser setup.
+        action (Action): Action configuration for the focuser.
     """
 
     def __init__(
         self,
         observatory: "astra.observatory.Observatory",
         alpaca_device_focuser: AlpacaDevice,
-        row: Optional[dict] = None,
+        action: Optional[Action] = None,
     ) -> None:
         if not alpaca_device_focuser.get("Absolute"):
             raise ValueError("Focuser must be absolute for autofocusing to work.")
 
         self.observatory = observatory
-        self.row = row
+        self.action = action
         self.alpaca_device_focuser = alpaca_device_focuser
 
         current_position = self.get_current_position()
@@ -322,19 +319,19 @@ class AstraTelescope(TelescopeInterface):
     Args:
         observatory (astra.observatory.Observatory): Observatory instance.
         alpaca_device_telescope (AlpacaDevice): ALPACA telescope device interface.
-        row (dict): Configuration parameters for telescope setup.
+        action (Action): Action configuration for the telescope.
     """
 
     def __init__(
         self,
         observatory: "astra.observatory.Observatory",
         alpaca_device_telescope: AlpacaDevice,
-        row: dict,
+        action: Action,
     ) -> None:
         self.observatory = observatory
         self.alpaca_device_telescope = alpaca_device_telescope
 
-        self.row = row
+        self.action = action
         super().__init__()
 
     def set_telescope_position(
@@ -357,7 +354,7 @@ class AstraTelescope(TelescopeInterface):
         while self.alpaca_device_telescope.get("Slewing"):
             if time.time() - start_time > hard_timeout:
                 raise TimeoutError("Slew timeout")
-            if not self.observatory.check_conditions(self.row):
+            if not self.observatory.check_conditions(self.action):
                 break
 
             time.sleep(1)
@@ -372,7 +369,7 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
     Args:
         observatory (astra.observatory.Observatory): Observatory instance.
         action_value (dict): Configuration values for autofocus action.
-        row (dict): Observatory configuration parameters.
+        action (Action): Action configuration for the autofocus.
         astra_camera (AstraCamera): Camera interface for image capture.
         astra_focuser (AstraFocuser): Focuser interface for position control.
         astra_telescope (Optional[AstraTelescope]): Telescope interface for positioning.
@@ -382,45 +379,43 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         self,
         observatory: "astra.observatory.Observatory",
         action_value: dict,
-        row: dict,
+        action: Action,
         astra_camera: AstraCamera,
         astra_focuser: AstraFocuser,
         astra_telescope: Optional[AstraTelescope] = None,
     ) -> None:
         self.observatory = observatory
         self.action_value = action_value
-        self.row = row
+        self.action = action
         super().__init__(
             camera=astra_camera, focuser=astra_focuser, telescope=astra_telescope
         )
 
     @classmethod
-    def from_row(
+    def from_action(
         cls,
         observatory: "astra.observatory.Observatory",
-        folder: Path,
-        row: dict,
+        image_handler: ImageHandler,
+        action: Action,
         paired_devices: PairedDevices,
     ) -> "AstraAutofocusDeviceManager":
-        """Create device manager from configuration row.
+        """Create device manager from the scheduled action.
 
         Factory method to construct an autofocus device manager from
         observatory configuration and device mappings.
 
         Args:
             observatory (astra.observatory.Observatory): Astra Observatory instance.
-            folder (Path): Directory path for saving images.
-            row (dict): Configuration row with device settings.
+            image_handler (ImageHandler): Image handler for saving and processing images.
+            action (Action): Scheduled autofocus action.
             paired_devices (PairedDevices): Device manager instance.
 
         Returns:
             AstraAutofocusDeviceManager: Configured device manager instance.
         """
-        # action_value, _, hdr = observatory.pre_sequence(row, paired_devices)
-        action_value = row["action_value"]
-        hdr = observatory.base_header(paired_devices, action_value)
+        action_value = action.action_value
 
-        alpaca_device_camera = observatory.devices["Camera"][row["device_name"]]
+        alpaca_device_camera = observatory.devices["Camera"][action.device_name]
         alpaca_device_focuser = observatory.devices["Focuser"][
             paired_devices["Focuser"]
         ]
@@ -431,21 +426,20 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         astra_camera = AstraCamera(
             observatory,
             alpaca_device_camera=alpaca_device_camera,
-            row=row,
-            folder=folder,
-            hdr=hdr,
+            action=action,
+            image_handler=image_handler,
         )
         astra_focuser = AstraFocuser(
-            observatory, alpaca_device_focuser=alpaca_device_focuser, row=row
+            observatory, alpaca_device_focuser=alpaca_device_focuser, action=action
         )
         astra_telescope = AstraTelescope(
-            observatory, alpaca_device_telescope=alpaca_device_telescope, row=row
+            observatory, alpaca_device_telescope=alpaca_device_telescope, action=action
         )
 
         return cls(
             observatory=observatory,
             action_value=action_value,
-            row=row,
+            action=action,
             astra_camera=astra_camera,
             astra_focuser=astra_focuser,
             astra_telescope=astra_telescope,
@@ -457,7 +451,7 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         Returns:
             bool: True if conditions are acceptable, False otherwise.
         """
-        return self.observatory.check_conditions(row=self.row)
+        return self.observatory.check_conditions(action=self.action)
 
 
 class Defocuser:
@@ -469,23 +463,23 @@ class Defocuser:
     Args:
         observatory (astra.observatory.Observatory): Astra observatory instance.
         paired_devices (PairedDevices): Device manager for observatory components.
-        row (Optional[dict]): Configuration parameters for defocusing operation.
+        action (Optional[Action]): Action configuration for the focuser.
     """
 
     def __init__(
         self,
         observatory: Any,
         paired_devices: PairedDevices,
-        row: Optional[dict] = None,
+        action: Optional[Action] = None,
     ) -> None:
         self.observatory = observatory
-        self.row = row
+        self.action = action
         self.paired_devices = paired_devices
 
         self._focuser = AstraFocuser(
             observatory=observatory,
             alpaca_device_focuser=paired_devices.focuser,
-            row=row,
+            action=action,
         )
         self.best_focus_position = self.load_best_focus_position_from_config()
 
@@ -582,10 +576,10 @@ class Autofocuser:
 
     Args:
         observatory (Any): Main Astra instance for system coordination.
-        row (dict): Observatory configuration parameters.
+        action (Action): Action configuration for the autofocus.
         paired_devices (PairedDevices): Device manager for observatory components.
         action_value (dict): Configuration values for autofocus action.
-        hdr (Any): Header information for image metadata.
+        image_handler (ImageHandler): Image handler for saving and processing images.
         save_path (Optional[Path]): Directory path for saving autofocus data.
         autofocuser (Optional[Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]]):
             Specific autofocus algorithm instance.
@@ -595,29 +589,37 @@ class Autofocuser:
     def __init__(
         self,
         observatory: Any,
-        row: dict,
+        action: Action,
         paired_devices: PairedDevices,
-        action_value: dict,
-        hdr: Any,
+        image_handler: ImageHandler,
         autofocuser: Optional[
             Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]
         ] = None,
         success: bool = True,
     ) -> None:
         self.observatory = observatory
-        self.row = row
+        self.action = action
         self.paired_devices = paired_devices
-        self.action_value = action_value
-        self.hdr = hdr
+        self.action_value = action.action_value
         self.autofocuser = autofocuser
         self.success = success
+        self.image_handler = image_handler
+
+        default_dict = paired_devices.get_device_config("Focuser").get("autofocus", {})
+        logging.info(f"default_dict {default_dict}")
+        if (
+            "fov_height" not in self.action_value
+            or "fov_width" not in self.action_value
+        ):
+            fov_width, fov_height = self.determine_default_field_of_view(
+                paired_devices, default_dict
+            )
 
         self.config = AutofocusConfig.from_dict(
             self.action_value,
             logger=self.observatory.logger,
-            default_dict=paired_devices.get_device_config("Focuser").get(
-                "autofocus", {}
-            ),
+            default_dict=default_dict
+            | {"fov_width": fov_width, "fov_height": fov_height},
         )
         self._initialise_logging()
         self.observatory.logger.info(f"action vals {self.action_value}")
@@ -645,7 +647,9 @@ class Autofocuser:
         Returns:
             bool: True if autofocus completed successfully, False otherwise.
         """
-        if not self.success or not self.observatory.check_conditions(row=self.row):
+        if not self.success or not self.observatory.check_conditions(
+            action=self.action
+        ):
             return False
 
         try:
@@ -654,7 +658,7 @@ class Autofocuser:
             return self.autofocuser.run()
 
         except Exception as e:
-            self.observatory.report_device_issue(
+            self.observatory.logger.report_device_issue(
                 device_type="Autofocuser",
                 device_name=self.paired_devices["Telescope"],
                 message="Error running autofocus",
@@ -675,7 +679,7 @@ class Autofocuser:
         try:
             self._setup()
         except Exception as e:
-            self.observatory.report_device_issue(
+            self.observatory.logger.report_device_issue(
                 device_type="Autofocuser",
                 device_name=self.paired_devices["Telescope"],
                 message="Error extracting action_value for autofocus",
@@ -689,10 +693,10 @@ class Autofocuser:
         Configures save paths, device managers, focus measure operators,
         and autofocus algorithms based on action values.
         """
-        autofocus_device_manager = AstraAutofocusDeviceManager.from_row(
+        autofocus_device_manager = AstraAutofocusDeviceManager.from_action(
             self.observatory,
-            folder=self.config.save_path,
-            row=self.row,
+            image_handler=self.image_handler,
+            action=self.action,
             paired_devices=self.paired_devices,
         )
         focus_measure_operator = self.determine_focus_measure_operator()
@@ -791,7 +795,7 @@ class Autofocuser:
 
         except Exception as e:
             self.success = False
-            self.observatory.report_device_issue(
+            self.observatory.logger.report_device_issue(
                 device_type="Autofocuser",
                 device_name=self.paired_devices["Telescope"],
                 message="Error determining autofocus calibration field",
@@ -815,11 +819,7 @@ class Autofocuser:
 
         self.observatory.logger.info("Determining autofocus calibration field.")
         try:
-            observatory_location = EarthLocation(
-                lat=Angle(self.hdr["LAT-OBS"], unit=u.deg),
-                lon=Angle(self.hdr["LONG-OBS"], unit=u.deg),
-                height=u.Quantity(self.hdr["ALT-OBS"], unit=u.m),
-            )
+            observatory_location = self.image_handler.get_observatory_location()
             logging.info(
                 f"Observatory location determined to be at {observatory_location}."
             )
@@ -863,14 +863,14 @@ class Autofocuser:
                 f"Retrieved {len(znqr)} stars in the neighbourhood of the zenith from the database "
                 "within the desired magnitude ranges.",
             )
-            if not self.observatory.check_conditions(row=self.row):
+            if not self.observatory.check_conditions(action=self.action):
                 return
 
             znqr.determine_stars_in_neighbourhood(
                 height=calibration_config.fov_height,
                 width=calibration_config.fov_width,
             )
-            if not self.observatory.check_conditions(row=self.row):
+            if not self.observatory.check_conditions(action=self.action):
                 return
 
             znqr.sort_values(["zenith_angle", "n"], ascending=[True, True])
@@ -898,7 +898,7 @@ class Autofocuser:
             calibration_config.coordinates = centre_coordinates
 
         except Exception as e:
-            if not self.observatory.check_conditions(row=self.row):
+            if not self.observatory.check_conditions(action=self.action):
                 return
             self.observatory.logger.warning(
                 f"Error determining autofocus target coordinates: {str(e)}. "
@@ -940,7 +940,7 @@ class Autofocuser:
         try:
             self.observatory.setup_observatory(self.paired_devices, self.action_value)
         except Exception as e:
-            self.observatory.report_device_issue(
+            self.observatory.logger.report_device_issue(
                 device_type="Autofocuser",
                 device_name=self.paired_devices["Telescope"],
                 message="Error slewing to autofocus calibration field",
@@ -1099,7 +1099,9 @@ class Autofocuser:
         """
         if logging.getLogger("astrafocus").hasHandlers():
             logging.getLogger("astrafocus").handlers.clear()
-        logging.getLogger("astrafocus").addHandler(LoggingHandler(self.observatory))
+        logging.getLogger("astrafocus").addHandler(
+            DatabaseLoggingHandler(self.observatory.database_manager)
+        )
 
     def _check_conditions(self) -> bool:
         """Verify observatory conditions are suitable for autofocus.
@@ -1110,7 +1112,7 @@ class Autofocuser:
         Returns:
             bool: True if conditions are acceptable, False otherwise.
         """
-        if not self.observatory.check_conditions(row=self.row):
+        if not self.observatory.check_conditions(action=self.action):
             self.observatory.logger.error("Autofocus aborted due to bad conditions.")
             self.success = False
 
@@ -1125,12 +1127,14 @@ class Autofocuser:
         if not self.success or not self.config.save:
             return
 
-        camera_index = self.observatory.get_cam_index(self.row["device_name"])
-        observatory_config = ObservatoryConfig.from_config(Config())
-        observatory_config["Focuser"][camera_index]["focus_position"] = (
+        self.observatory.logger.info(
+            f"Saving best focus position {self.best_focus_position} "
+            f"of type {type(self.best_focus_position)} "
+        )
+        self.paired_devices.get_device_config("Focuser")["focus_position"] = int(
             self.best_focus_position
         )
-        observatory_config.save()
+        self.paired_devices.observatory_config.save()
 
     def determine_focus_measure_operator(self):
         """Select focus measurement algorithm from configuration.
@@ -1170,3 +1174,44 @@ class Autofocuser:
             f"with parameters: {self.config.extremum_estimator_kwargs}"
         )
         return extremum_estimator
+
+    def calculate_field_of_view(self, paired_devices):
+        """
+        Calculate the field of view of the camera-telescope system.
+        """
+        try:
+            camera = paired_devices.camera
+            telescope = paired_devices.telescope
+
+            # Convert microns to meters
+            pixel_size = 1e-6 * np.array(
+                [camera.get("PixelSizeX"), camera.get("PixelSizeY")]
+            )
+            number_of_pixels = np.array([camera.get("NumX"), camera.get("NumY")])
+
+            focal_length = telescope.get("FocalLength")  # meters
+            # plate_scale = np.arctan(pixel_size / focal_length)
+
+            # field_of_view = plate_scale * number_of_pixels
+            sensor_size = pixel_size * number_of_pixels  # [sx, sy]
+
+            fov = 2.0 * np.arctan(sensor_size / (2.0 * focal_length))
+            return fov
+
+        except Exception as e:
+            field_of_view = np.array([np.nan, np.nan])
+            self.observatory.error(
+                f"Error calculating field of view from paired devices. Exception: {e}"
+            )
+
+        return field_of_view
+
+    def determine_default_field_of_view(self, paired_devices, default_dict):
+        field_of_view = self.calculate_field_of_view(paired_devices)
+        fov_width = float(default_dict.get("fov_width", field_of_view[0]))
+        fov_height = float(default_dict.get("fov_height", field_of_view[1]))
+
+        self.observatory.logger.info(
+            f"Determined field of view width={fov_width}, height={fov_height}."
+        )
+        return fov_width, fov_height

@@ -696,7 +696,7 @@ class PointingCorrectionHandler:
     @classmethod
     def from_fits_file(
         cls,
-        filepath: str | Path,
+        filepath: str | Path | None,
         dark_frame: str | Path | None = None,
         target_ra: float | None = None,
         target_dec: float | None = None,

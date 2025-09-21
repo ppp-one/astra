@@ -39,6 +39,12 @@ from fastapi.templating import Jinja2Templates
 
 from astra import ASTRA_VER, Config
 from astra.observatory import Observatory
+from astra.paired_devices import PairedDevices
+from astra.logger import ConsoleStreamHandler, CustomFormatter
+
+logger = logging.getLogger(__name__)
+logger.addHandler(ConsoleStreamHandler())
+logger.setLevel(logging.INFO)
 
 # silence httpx logging
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -87,7 +93,10 @@ def load_observatories() -> None:
 
     for config_filename in config_files:
         obs = Observatory(
-            config_filename, TRUNCATE_FACTOR, custom_observatory=CUSTOM_OBSERVATORY
+            config_filename,
+            TRUNCATE_FACTOR,
+            custom_observatory=CUSTOM_OBSERVATORY,
+            logging_level=logging.DEBUG if DEBUG else logging.INFO,
         )
         OBSERVATORIES[obs.name] = obs
 
@@ -95,7 +104,7 @@ def load_observatories() -> None:
             if "Webcam" in obs.config["Misc"]:
                 WEBCAMFEEDS[obs.name] = obs.config["Misc"]["Webcam"]
 
-        obs.connect_all()
+        obs.connect_all_devices()
 
         if "FilterWheel" in obs.devices:
             FWS[obs.name] = {}
@@ -121,12 +130,12 @@ def clean_up() -> None:
                 device = obs.devices[device_type][device_name]
                 # Stop the device
                 try:
-                    # print(f"Stopping device {device_name}")
+                    # logging.info(f"Stopping device {device_name}")
                     device.stop()
                 except Exception as e:
-                    print(f"Error stopping device {device_name}: {e}")
+                    logger.error(f"Error stopping device {device_name}: {e}")
 
-    print("Exiting clean_up")
+    logger.info("Exiting clean_up")
 
 
 def format_time(ftime: datetime.datetime) -> str | None:
@@ -292,9 +301,9 @@ def close_observatory(observatory: str):
 
     obs.logger.info("User initiated closing of observatory from web interface")
 
-    if obs.schedule_running:
+    if obs.schedule_manager.running:
         obs.logger.info("Stopping schedule for safety.")
-        obs.stop_schedule()
+        obs.schedule_manager.stop_schedule(obs.thread_manager)
 
     val = obs.close_observatory()
 
@@ -322,11 +331,15 @@ def cool_camera(observatory: str, device_name: str):
 
     row = {"device_name": device_name}
 
-    cam_index = obs.get_cam_index(row["device_name"])
+    paired_devices = PairedDevices.from_observatory(
+        observatory=obs,
+        camera_name=device_name,
+    )
+    camera_config = paired_devices.get_device_config("Camera")
 
-    set_temperature = obs.config["Camera"][cam_index]["temperature"]
-    temperature_tolerance = obs.config["Camera"][cam_index]["temperature_tolerance"]
-    cooling_timeout = obs.config["Camera"][cam_index].get("cooling_timeout", 30)
+    set_temperature = camera_config["temperature"]
+    temperature_tolerance = camera_config["temperature_tolerance"]
+    cooling_timeout = camera_config.get("cooling_timeout", 30)
 
     obs.logger.info(f"User initiated cooling of {device_name} from web interface")
 
@@ -384,8 +397,8 @@ async def start_watchdog(observatory: str):
 
     obs.logger.info("User initiated starting of watchdog from web interface")
 
-    obs.error_free = True
-    obs.error_source = []
+    obs.logger.error_free = True
+    obs.logger.error_source = []
     obs.start_watchdog()
 
     return {"status": "success", "data": "null", "message": ""}
@@ -443,7 +456,7 @@ async def start_schedule(observatory: str):
 
     obs.logger.info("User initiated starting of schedule from web interface")
 
-    obs.start_schedule()
+    obs.schedule_manager.start_schedule(obs)
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -462,7 +475,7 @@ async def stop_schedule(observatory: str):
 
     obs.logger.info("User initiated stopping of schedule from web interface")
 
-    obs.stop_schedule()
+    obs.schedule_manager.stop_schedule(obs.thread_manager)
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -479,8 +492,12 @@ async def schedule(observatory: str):
               or empty list if no schedule exists.
     """
     obs = OBSERVATORIES[observatory]
-    if obs.schedule_mtime != 0:
-        schedule = obs.schedule
+    if obs.schedule_manager.schedule_mtime != 0:
+        try:
+            schedule = obs.schedule_manager.get_schedule().to_dataframe()
+        except Exception as e:
+            obs.logger.warning(f"Error reading schedule for frontend: {e}")
+            return []
 
         schedule["start_HHMMSS"] = schedule["start_time"].apply(format_time)
         schedule["end_HHMMSS"] = schedule["end_time"].apply(format_time)
@@ -510,7 +527,7 @@ async def edit_schedule(
     """
     obs = OBSERVATORIES[observatory]
 
-    schedule_path = obs.schedule_path
+    schedule_path = obs.schedule_manager.schedule_path
 
     try:
         # Parse the JSONL data
@@ -558,7 +575,7 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
 
     try:
         # Save the uploaded file
-        file_path = obs.schedule_path
+        file_path = obs.schedule_manager.schedule_path
         with open(file_path, "wb") as f:
             f.write(await file.read())
 
@@ -710,7 +727,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
 
     data_dict = {}
     data_dict["log"] = initial_log
-    data_dict["schedule_mtime"] = obs.schedule_mtime
+    data_dict["schedule_mtime"] = obs.schedule_manager.schedule_mtime
 
     socket = True
 
@@ -718,7 +735,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
         await websocket.send_json(data_dict)
         await asyncio.sleep(1)
     except Exception:
-        print("log socket closed")
+        logger.error("log socket closed")
         socket = False
 
     while socket:
@@ -730,7 +747,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
 
         data_dict = {}
         data_dict["log"] = data
-        data_dict["schedule_mtime"] = obs.schedule_mtime
+        data_dict["schedule_mtime"] = obs.schedule_manager.schedule_mtime
 
         try:
             if len(data) > 0:
@@ -739,7 +756,7 @@ async def websocket_log(websocket: WebSocket, observatory: str):
             await asyncio.sleep(1)
         except Exception:
             db.close()
-            print("log socket closed")
+            logging.info("log socket closed")
             socket = False
 
 
@@ -785,13 +802,10 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                             k
                         ]["datetime"]
 
-        threads = [
-            {"type": i["type"], "device_name": i["device_name"], "id": i["id"]}
-            for i in obs.threads
-        ]
+        thread_summaries = obs.thread_manager.get_thread_summary()
         table0 = []
         table1 = [
-            {"item": "error free", "value": obs.error_free},
+            {"item": "error free", "value": obs.logger.error_free},
             {
                 "item": "utc time",
                 "value": datetime.datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S"),
@@ -802,7 +816,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             },
             {
                 "item": "schedule",
-                "value": "running" if obs.schedule_running else "stopped",
+                "value": "running" if obs.schedule_manager.running else "stopped",
             },
             {
                 "item": "robotic switch",
@@ -811,10 +825,16 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             {"item": "weather safe", "value": "safe" if obs.weather_safe else "unsafe"},
             {
                 "item": "error source",
-                "value": "none" if len(obs.error_source) == 0 else "hover to see",
-                "error_source": obs.error_source,
+                "value": "none"
+                if len(obs.logger.error_source) == 0
+                else "hover to see",
+                "error_source": obs.logger.error_source,
             },
-            {"item": "threads", "value": len(threads), "threads": threads},
+            {
+                "item": "threads",
+                "value": len(thread_summaries),
+                "threads": thread_summaries,
+            },
             {"item": "time to safe", "value": f"{obs.time_to_safe:.2f} mins"},
         ]
 
@@ -877,7 +897,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                         {
                             "item": "guider",
                             "name": f"{device_name}'s guider",
-                            "status": obs.guider[device_name].running,
+                            "status": obs.guider_manager.guider[device_name].running,
                             "valid": valid,
                             "last_update": "0 s ago",
                         }
@@ -945,7 +965,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                         try:
                             status = FWS[observatory][device_name][pos]
                         except Exception:
-                            print(
+                            logger.error(
                                 f"FilterWheel {device_name} position {pos} not found in fws dict",
                                 FWS,
                             )
@@ -1141,7 +1161,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                     )
 
         except Exception as e:
-            print(f"Error in websocket_endpoint: {e}")
+            logger.error(f"Error in websocket_endpoint: {e}")
 
         # if last_image_jpg is None:
         #     # use placeholder image
@@ -1165,7 +1185,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             await websocket.send_json(data)
             await asyncio.sleep(1)
         except Exception:
-            print("main socket closed")
+            logger.error("main socket closed")
             socket = False
 
 
@@ -1211,7 +1231,7 @@ async def get_schedule(request: Request, observatory: str):
     obs = OBSERVATORIES[observatory]
 
     # Read the raw JSONL file to preserve original datetime string format
-    schedule_path = obs.schedule_path
+    schedule_path = obs.schedule_manager.schedule_path
     try:
         with open(schedule_path, "r") as f:
             schedule_jsonl = f.read().strip()
@@ -1286,9 +1306,16 @@ def main():
 
     import argparse
 
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - [PID: %(process)d] - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        filename=Config().paths.log_file,
+        level=logging.DEBUG,
+    )
+
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
-    print(f"Astra version: {ASTRA_VER}")
+    logger.info(f"Astra version: {ASTRA_VER}")
 
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument(
@@ -1355,6 +1382,17 @@ def main():
         port=args.port,
         log_level=log_level,
         timeout_graceful_shutdown=None,
+        log_config={
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "custom": {
+                    "()": CustomFormatter,
+                    "fmt": "%(levelname)-8s :: %(asctime)s :: %(message)s",
+                    "datefmt": "%Y-%m-%d %H:%M:%S",
+                },
+            },
+        },
     )
 
 
