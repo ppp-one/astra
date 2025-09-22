@@ -259,16 +259,6 @@ class Schedule(list):
         for row in self:
             row.validate()
 
-        # Assume the list is sorted by start_time
-        for i in range(len(self) - 1):
-            a1 = self[i]
-            a2 = self[i + 1]
-            if a1.device_name == a2.device_name and a1.end_time > a2.start_time:
-                raise ValueError(
-                    f"Schedule conflict for device {a1.device_name} between "
-                    f"{a1.start_time} and {a2.end_time}"
-                )
-
     def get_by_device(self, device_name: str) -> List[Action]:
         return [action for action in self if action.device_name == device_name]
 

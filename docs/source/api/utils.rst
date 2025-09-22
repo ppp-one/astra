@@ -21,7 +21,6 @@ Functions for converting between different time standards used in astronomy:
 
 - ``to_jd``: Convert datetime to Julian Date
 - ``time_conversion``: Convert between different time standards
-- ``hdr_times``: Add time-related information to FITS headers
 
 Database Operations
 ~~~~~~~~~~~~~~~~~

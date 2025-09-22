@@ -49,7 +49,7 @@ from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
 
-from astra import ASTRA_VER, Config, utils
+from astra import Config, utils
 from astra.alpaca_device_process import AlpacaDevice
 from astra.autofocus import Autofocuser, Defocuser
 from astra.calibrate_guiding import GuidingCalibrator
@@ -57,7 +57,7 @@ from astra.config import ObservatoryConfig
 from astra.database_manager import DatabaseManager
 from astra.device_manager import DeviceManager
 from astra.guiding import GuiderManager
-from astra.image_handler import ImageHandler
+from astra.image_handler import HeaderManager, ImageHandler
 from astra.logger import ConsoleStreamHandler, DatabaseLoggingHandler, ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.pointer import PointingCorrectionHandler
@@ -182,9 +182,7 @@ class Observatory:
             self.logger.warning("Astra is running in debug mode")
 
         # read observatory config files
-        self.fits_config = pd.read_csv(
-            Config().paths.observatory_config / f"{self.name}_fits_header_config.csv"
-        )
+        self.fits_config = self._config.load_fits_config()
 
         # running threads list
         self.thread_manager = ThreadManager()
@@ -304,7 +302,6 @@ class Observatory:
             speculoos=self.speculoos,
         )
         self.start_watchdog()
-        self.device_manager.force_poll_observing_conditions(self.fits_config)
 
     def start_watchdog(self) -> None:
         """
@@ -1115,10 +1112,17 @@ class Observatory:
 
         # run headers completion
         self.thread_manager.start_thread(
-            target=self.final_headers,
+            target=HeaderManager.final_headers,
             device_name="astra",
             thread_type="Headers",
             thread_id="complete_headers",
+            args=(
+                self.database_manager,
+                self.logger,
+                self.config,
+                self.devices,
+                self.fits_config,
+            ),
         )
 
         self.logger.info(
@@ -1206,7 +1210,13 @@ class Observatory:
                         cooling_timeout,
                     )
             elif "complete_headers" == action.action_type:
-                self.final_headers()
+                HeaderManager.final_headers(
+                    self.database_manager,
+                    self.logger,
+                    self.config,
+                    self.devices,
+                    self.fits_config,
+                )
             else:
                 self.logger.report_device_issue(
                     device_type="Schedule",
@@ -1336,8 +1346,10 @@ class Observatory:
         try:
             image_handler = ImageHandler.from_action(
                 action=action,
-                observatory=self,
                 paired_devices=paired_devices,
+                logger=self.logger,
+                observatory_config=self.config,
+                fits_config=self.fits_config,
                 create_image_directory=create_image_directory,
             )
         except Exception as e:
@@ -1650,7 +1662,7 @@ class Observatory:
         use_light=True,
         log_option=None,
         maximal_sleep_time=0.1,
-        image_sequence_number: int = 0,
+        sequence_counter: int = 0,
         wcs=None,
     ) -> tuple[bool, Path | None]:
         """
@@ -1672,7 +1684,7 @@ class Observatory:
                 Defaults to None.
             maximal_sleep_time (float, optional): Maximum sleep interval during
                 image ready polling. Defaults to 0.1 seconds.
-            image_sequence_number (int, optional): Sequence number for the image
+            sequence_counter (int, optional): Sequence number for the image
                 in a series. Defaults to 0.
             wcs (WCS, optional): World Coordinate System solution for the image.
                 Defaults to None.
@@ -1707,7 +1719,7 @@ class Observatory:
         time.sleep(0)
 
         image_handler.header["EXPTIME"] = exptime
-        use_light = image_handler.set_imagetype_header(
+        use_light = image_handler.header.set_imagetype(
             action_type=action.action_type, use_light=use_light
         )
 
@@ -1771,7 +1783,7 @@ class Observatory:
                 device_name=camera.device_name,
                 exposure_start_datetime=exposure_start_datetime,
                 wcs=wcs,
-                image_sequence_number=image_sequence_number,
+                sequence_counter=sequence_counter,
             )
 
             self.logger.info(
@@ -1879,7 +1891,7 @@ class Observatory:
                     image_handler=image_handler,
                     log_option=log_option,
                     wcs=wcs_solve,
-                    image_sequence_number=i,
+                    sequence_counter=i,
                 )
 
                 if not success:
@@ -2115,7 +2127,7 @@ class Observatory:
                 maxadu,
                 action,
                 image_handler=image_handler,
-                image_sequence_number=counter,
+                sequence_counter=counter,
                 log_option=None,
             )
 
@@ -2589,7 +2601,7 @@ class Observatory:
                         exptime,
                         maxadu,
                         action=action,
-                        image_sequence_number=count,
+                        sequence_counter=count,
                         image_handler=image_handler,
                         log_option=log_option,
                     )
@@ -2895,361 +2907,6 @@ class Observatory:
         assert exptime is not None, "exptime should not be None here"  # for mypy
 
         return exptime
-
-    def base_header(
-        self, paired_devices: PairedDevices, action_value: dict
-    ) -> fits.Header:
-        """
-        Create a base FITS header with observatory and observation information.
-
-        Constructs a comprehensive FITS header containing fixed observatory parameters,
-        current device status, astronomical coordinates, and observation metadata.
-        The header is built from the FITS configuration file and current system state.
-
-        Parameters:
-            paired_devices (PairedDevices): Object containing the devices being used
-                for the current observation sequence.
-            action_value (dict): Dictionary containing observation parameters from
-                the schedule, including target coordinates, filters, and settings.
-
-        Returns:
-            fits.Header: A complete FITS header object containing:
-                - Fixed observatory information (location, instrument details)
-                - Current astronomical conditions (coordinates, time)
-                - Device-specific parameters (telescope pointing, filter position)
-                - Observation metadata (object name, exposure settings)
-
-        Header Categories:
-            - astra: Observatory and software version information
-            - astropy_default: Standard astronomical coordinate systems
-            - Device-specific: Current status from telescopes, cameras, etc.
-
-        Note:
-            - Some header values are populated from real-time device polling
-            - Coordinate transformations are performed for various reference frames
-            - Observatory location and timing information is automatically included
-        """
-
-        self.logger.info("Creating base header")
-
-        hdr = fits.Header()
-        for _, fits_row in self.fits_config.iterrows():
-            if fits_row["device_type"] == "astra" and fits_row["fixed"] is True:
-                # custom headers
-                if fits_row["header"] == "FILTER":
-                    device = paired_devices.filter_wheel
-                    pos = device.get("Position")
-                    names = device.get("Names")
-                    hdr[fits_row["header"]] = (names[pos], fits_row["comment"])
-                elif fits_row["header"] == "XPIXSZ":
-                    device = paired_devices.camera
-                    binx = device.get("BinX")
-                    xpixsize = device.get("PixelSizeX")
-                    hdr[fits_row["header"]] = (binx * xpixsize, fits_row["comment"])
-                elif fits_row["header"] == "YPIXSZ":
-                    device = paired_devices.camera
-                    biny = device.get("BinY")
-                    ypixsize = device.get("PixelSizeY")
-                    hdr[fits_row["header"]] = (biny * ypixsize, fits_row["comment"])
-                elif fits_row["header"] == "APTAREA":
-                    device = paired_devices.telescope
-                    val = device.get("ApertureArea") * 1e6
-                    hdr[fits_row["header"]] = (val, fits_row["comment"])
-                elif fits_row["header"] == "APTDIA":
-                    device = paired_devices.telescope
-                    val = device.get("ApertureDiameter") * 1e3
-                    hdr[fits_row["header"]] = (val, fits_row["comment"])
-                elif fits_row["header"] == "FOCALLEN":
-                    device = paired_devices.telescope
-                    val = device.get("FocalLength") * 1e3
-                    hdr[fits_row["header"]] = (val, fits_row["comment"])
-                elif fits_row["header"] == "OBJECT":
-                    if fits_row["header"].lower() in action_value:
-                        hdr[fits_row["header"]] = (
-                            action_value[fits_row["header"].lower()],
-                            fits_row["comment"],
-                        )
-                elif fits_row["header"] in ["EXPTIME", "IMAGETYP"]:
-                    hdr[fits_row["header"]] = (None, fits_row["comment"])
-                elif fits_row["header"] == "ASTRA":
-                    hdr[fits_row["header"]] = (ASTRA_VER, fits_row["comment"])
-                else:
-                    self.logger.warning(f"Unknown header: {fits_row['header']}")
-
-            elif (
-                fits_row["device_type"]
-                not in ["astropy_default", "astra", "astra_fixed", ""]
-            ) and fits_row["fixed"] is True:
-                # direct ascom command headers
-                device_type = fits_row["device_type"]
-
-                if device_type in self.devices:
-                    device_name = paired_devices[device_type]
-                    device = self.devices[device_type][device_name]
-
-                    val = device.get(fits_row["device_command"])
-
-                    hdr[fits_row["header"]] = (val, fits_row["comment"])
-
-            elif fits_row["device_type"] == "astra_fixed":
-                # fixed headers, ensure datatype
-                try:
-                    if fits_row["dtype"] == "float":
-                        hdr[fits_row["header"]] = (
-                            float(fits_row["device_command"]),
-                            fits_row["comment"],
-                        )
-                    elif fits_row["dtype"] == "int":
-                        hdr[fits_row["header"]] = (
-                            int(fits_row["device_command"]),
-                            fits_row["comment"],
-                        )
-                    elif fits_row["dtype"] == "str":
-                        hdr[fits_row["header"]] = (
-                            str(fits_row["device_command"]),
-                            fits_row["comment"],
-                        )
-                    elif fits_row["dtype"] == "bool":
-                        hdr[fits_row["header"]] = (
-                            bool(fits_row["device_command"]),
-                            fits_row["comment"],
-                        )
-                    else:
-                        hdr[fits_row["header"]] = (
-                            fits_row["device_command"],
-                            fits_row["comment"],
-                        )
-                        self.logger.error(f"Unknown data type: {fits_row['dtype']}")
-                except ValueError as e:
-                    self.logger.report_device_issue(
-                        device_type="Headers",
-                        device_name="",
-                        message=f"Invalid value for data type: {fits_row}",
-                        exception=e,
-                    )
-
-        self.logger.info("Base header created")
-
-        return hdr
-
-    def final_headers(self) -> None:
-        """
-        Complete FITS headers with interpolated device data.
-
-        Post-processes captured images by adding dynamic header information that
-        wasn't available at exposure time. Uses polled device data to interpolate
-        accurate values for each image timestamp, ensuring complete and accurate
-        FITS headers for scientific analysis.
-
-        The process:
-        1. Retrieves incomplete images from the database
-        2. Groups images by camera for efficient processing
-        3. Queries polled device data around image timestamps
-        4. Interpolates device values to exact exposure times
-        5. Updates FITS files with complete headers
-        6. Marks images as header-complete in database
-
-        Key Features:
-        - Time-interpolated device values for precise timestamps
-        - Handles multiple cameras and device types simultaneously
-        - Preserves original headers while adding missing information
-        - Robust error handling with detailed logging
-
-        Data Sources:
-        - Device polling data from database
-        - FITS configuration file for header mapping
-        - Original image FITS headers for timing information
-
-        Error Handling:
-        - Individual image failures don't stop batch processing
-        - All errors are logged and added to error_source
-        - Database consistency maintained even with partial failures
-
-        Note:
-            - Typically run after observation sequences complete
-            - Critical for ensuring complete scientific metadata
-            - May take significant time for large image sets
-        """
-
-        try:
-            self.logger.info("Completing headers")
-            # get images from sql
-            df_images = self.database_manager.execute_select_to_df(
-                "SELECT * FROM images WHERE complete_hdr = 0;", table="images"
-            )
-            if df_images.empty:
-                self.logger.info("No headers to complete, as there are no images.")
-                return
-
-            # loop through cameras (usually just one)
-            for cam in df_images["camera_name"].unique():
-                # filter image dataframe by camera
-                df_images_filt = df_images[df_images["camera_name"] == cam]
-
-                # get paired devices for camera
-                paired_devices = PairedDevices.from_camera_name(
-                    camera_name=cam,
-                    devices=self.devices,
-                    observatory_config=self.config,
-                )
-
-                # convert date_obs to datetime type, sort by date_obs, and convert to jd
-                df_images_filt["date_obs"] = pd.to_datetime(
-                    df_images_filt["date_obs"], format="%Y-%m-%d %H:%M:%S.%f"
-                )
-                df_images_filt = df_images_filt.sort_values(by="date_obs").reset_index(
-                    drop=True
-                )
-                df_images_filt["jd_obs"] = (
-                    df_images_filt["date_obs"].apply(utils.to_jd).sort_values()
-                )
-
-                # add small time increment to avoid duplicate jd, this adds 0.0864 ms to each image that has duplicate jd_obs
-                while df_images_filt["jd_obs"].duplicated().sum() > 0:
-                    df_images_filt["jd_obs"] = df_images_filt["jd_obs"].mask(
-                        df_images_filt["jd_obs"].duplicated(),
-                        df_images_filt["jd_obs"] + 1e-9,
-                    )
-
-                df_images_filt = df_images_filt.sort_values(by="jd_obs").reset_index()
-
-                # get polled data from ascom devices +- 10 seconds of first and last image
-                t0 = pd.to_datetime(df_images_filt["date_obs"].iloc[0]) - pd.Timedelta(
-                    "10 sec"
-                )
-                t1 = pd.to_datetime(df_images_filt["date_obs"].iloc[-1]) + pd.Timedelta(
-                    "10 sec"
-                )
-
-                df_poll = self.database_manager.execute_select_to_df(
-                    f'SELECT * FROM polling WHERE datetime BETWEEN "{str(t0)}" AND "{str(t1)}";',
-                    table="polling",
-                )
-                df_poll["jd"] = pd.to_datetime(
-                    df_poll["datetime"], format="%Y-%m-%d %H:%M:%S.%f"
-                ).apply(utils.to_jd)
-
-                # find unique headers in polled commands
-                df_poll_unique = df_poll[
-                    ["device_type", "device_name", "device_command"]
-                ].drop_duplicates()
-
-                # drop row that have device_type and device_command that are not in fits_config to avoid errors later
-                df_poll_unique = df_poll_unique[
-                    df_poll_unique.apply(
-                        lambda x: (
-                            x["device_type"] in self.fits_config["device_type"].values
-                        )
-                        and (
-                            x["device_command"]
-                            in self.fits_config["device_command"].values
-                        ),
-                        axis=1,
-                    )
-                ]
-
-                # get header and comment from fits_config
-                df_poll_unique["header"] = df_poll_unique.apply(
-                    lambda x: (
-                        self.fits_config[
-                            (self.fits_config["device_type"] == x["device_type"])
-                            & (
-                                self.fits_config["device_command"]
-                                == x["device_command"]
-                            )
-                        ]["header"].values[0]
-                    ),
-                    axis=1,
-                )
-                df_poll_unique["comment"] = df_poll_unique.apply(
-                    lambda x: (
-                        self.fits_config[
-                            (self.fits_config["device_type"] == x["device_type"])
-                            & (
-                                self.fits_config["device_command"]
-                                == x["device_command"]
-                            )
-                        ]["comment"].values[0]
-                    ),
-                    axis=1,
-                )
-
-                # keep rows that only have device_name in paired_devices
-                df_poll_unique = df_poll_unique[
-                    df_poll_unique["device_name"].isin(paired_devices.values())
-                ]
-
-                # form interpolated dataframe
-                df_inp = pd.DataFrame(
-                    columns=df_poll_unique["header"], index=df_images_filt["jd_obs"]
-                )
-
-                # interpolate polled data onto image times
-                for i, row in df_poll_unique.iterrows():
-                    df_poll_filtered = df_poll[
-                        (df_poll["device_type"] == row["device_type"])
-                        & (df_poll["device_name"] == row["device_name"])
-                        & (df_poll["device_command"] == row["device_command"])
-                    ]
-
-                    df_poll_filtered = df_poll_filtered.sort_values(by="jd")
-                    df_poll_filtered = df_poll_filtered.set_index("jd")
-
-                    df_poll_filtered["device_value"] = (
-                        df_poll_filtered["device_value"]
-                        .replace({"True": 1.0, "False": 0.0})
-                        .astype(float)
-                    )
-
-                    df_inp[row["header"]] = utils.interpolate_dfs(
-                        df_images_filt["jd_obs"], df_poll_filtered["device_value"]
-                    )["device_value"].fillna(0)
-
-                # update files
-                for i, row in df_images_filt.iterrows():
-                    try:
-                        with fits.open(row["filepath"], mode="update") as filehandle:
-                            hdr = filehandle[0].header  # type: ignore
-                            for header in df_inp.columns:
-                                hdr[header] = (
-                                    df_inp.iloc[i][header],
-                                    df_poll_unique[df_poll_unique["header"] == header][
-                                        "comment"
-                                    ].values[0],
-                                )
-
-                            hdr["RA"] = hdr["RA"] * (360 / 24)  # convert to degrees
-
-                            location = EarthLocation(
-                                lat=hdr["LAT-OBS"] * u.deg,
-                                lon=hdr["LONG-OBS"] * u.deg,
-                                height=hdr["ALT-OBS"] * u.m,
-                            )
-                            target = SkyCoord(
-                                hdr["RA"], hdr["DEC"], unit=(u.deg, u.deg), frame="icrs"
-                            )
-
-                            utils.hdr_times(hdr, self.fits_config, location, target)
-                            filehandle[0].add_checksum()  # type: ignore
-
-                            self.database_manager.execute(
-                                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row["filepath"]}"'''
-                            )
-                    except FileNotFoundError:
-                        self.logger.warning(
-                            f"Error completing headers: {row['filepath']}"
-                        )
-                    finally:
-                        self.database_manager.execute(
-                            f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row["filepath"]}"'''
-                        )
-
-            self.logger.info("Completing headers... Done.")
-
-        except Exception as e:
-            self.logger.report_device_issue(
-                "Headers", "", "Error completing headers", exception=e
-            )
 
     def execute_and_monitor_device_task(
         self,

@@ -14,12 +14,13 @@ from astra.image_handler import (
     FilenameTemplates,
     ImageHandler,
     JinjaFilenameTemplates,
+    ObservatoryHeader,
 )
 
 
 class TestImageHandler:
     def test_initialization(self):
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         image_directory = Path("/tmp/test_images")
         templates = FilenameTemplates()
         handler = ImageHandler(header, image_directory, templates)
@@ -105,7 +106,7 @@ class TestImageHandler:
         }
         defaults.update(kwargs)
 
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         for key, value in defaults.items():
             header[key] = value
         return header
@@ -237,7 +238,7 @@ class TestImageHandler:
         np.testing.assert_array_equal(result, [[1, 3], [2, 4]])
 
     def test_save_image_updates_last_path_and_timestamp(self, temp_config):
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         image_directory = Path(temp_config.paths.images) / "handler_test"
         image_directory.mkdir(exist_ok=True)
         templates = FilenameTemplates()
@@ -258,23 +259,23 @@ class TestImageHandler:
         # assert handler.last_image_timestamp == exposure_start_datetime
 
     def test_set_imagetype_header(self):
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         handler = ImageHandler(header)
         handler.header["EXPTIME"] = 0
         use_light = True
-        use_light = handler.set_imagetype_header("calibration", use_light)
+        use_light = handler.header.set_imagetype("calibration", use_light)
         assert handler.header["IMAGETYP"] == "Bias Frame"
         assert use_light is False
         handler.header["EXPTIME"] = 10
-        use_light = handler.set_imagetype_header("calibration", use_light)
+        use_light = handler.header.set_imagetype("calibration", use_light)
         assert handler.header["IMAGETYP"] == "Dark Frame"
         assert use_light is False
-        use_light = handler.set_imagetype_header("object", use_light)
+        use_light = handler.header.set_imagetype("object", use_light)
         assert handler.header["IMAGETYP"] == "Light Frame"
         assert use_light is True
 
     def test_get_observatory_location(self):
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         header["LAT-OBS"] = 10.0
         header["LONG-OBS"] = 20.0
         header["ALT-OBS"] = 100.0
@@ -436,7 +437,7 @@ class TestImageHandler:
 
     def test_save_image_missing_header_keys(self, temp_config):
         # Missing FILTER, IMAGETYP, OBJECT, EXPTIME
-        header = fits.Header()
+        header = ObservatoryHeader.get_test_header()
         image_directory = Path(temp_config.paths.images) / "neg_missing_keys"
         image_directory.mkdir(exist_ok=True)
         handler = ImageHandler(header, image_directory)

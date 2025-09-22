@@ -18,6 +18,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
+import pandas as pd
 import yaml
 
 
@@ -513,3 +514,18 @@ class ObservatoryConfig(dict):
             raise TypeError(f"Expected Config, got {type(config)}")
 
         return cls(config.paths.observatory_config, config.observatory_name)
+
+    def load_fits_config(self) -> pd.DataFrame:
+        """
+        Load the FITS header configuration as a pandas DataFrame.
+
+        Args:
+            observatory_name (str): Name of the observatory.
+
+        Returns:
+            pd.DataFrame: DataFrame containing FITS header configuration.
+        """
+        fits_config_path = (
+            self.config_path / f"{self.observatory_name}_fits_header_config.csv"
+        )
+        return pd.read_csv(fits_config_path, index_col="header")

@@ -210,7 +210,6 @@ class DeviceManager:
         self.logger.info("Connect all sequence complete")
         time.sleep(1)  # wait for devices to connect and start polling
         # TODO: check one device's latest polling is valid before starting watchdog
-        # self.check_devices_alive()
 
     def pause_polls(self, device_types=None):
         """

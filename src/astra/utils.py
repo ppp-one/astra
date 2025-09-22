@@ -16,7 +16,7 @@ Key capabilities:
 import math
 import sqlite3
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Tuple, Union
 
@@ -167,70 +167,6 @@ def time_conversion(
     )
 
     return hjd, bjd, lstsec, ha
-
-
-def hdr_times(
-    hdr: dict, fits_config: pd.DataFrame, location: Any, target: SkyCoord
-) -> None:
-    """Add comprehensive time information to FITS header.
-
-    Calculates and adds various time formats to FITS header including
-    Julian Day variants, Modified Julian Day, and astronomical time corrections.
-    Also computes airmass from altitude.
-
-    Args:
-        hdr (dict): FITS header dictionary to modify in-place.
-        fits_config (pd.DataFrame): Configuration with header specifications.
-        location (EarthLocation): Observer's geographic location.
-        target (SkyCoord): Target celestial coordinates.
-    """
-    exposure_start_datetime = pd.to_datetime(hdr["DATE-OBS"])
-
-    dateend = exposure_start_datetime + timedelta(seconds=float(hdr["EXPTIME"]))
-    jd = to_jd(exposure_start_datetime)
-    jdend = to_jd(dateend)
-
-    mjd = jd - 2400000.5
-    mjdend = jdend - 2400000.5
-
-    hjd, bjd, lstsec, ha = time_conversion(jd, location, target)
-
-    for i, row in fits_config[fits_config["fixed"] == False].iterrows():  # noqa: E712
-        if row["device_type"] == "astra":
-            if row["header"] == "JD-OBS":
-                hdr[row["header"]] = (jd, row["comment"])
-            elif row["header"] == "JD-END":
-                hdr[row["header"]] = (jdend, row["comment"])
-            elif row["header"] == "HJD-OBS":
-                hdr[row["header"]] = (hjd, row["comment"])
-            elif row["header"] == "BJD-OBS":
-                hdr[row["header"]] = (bjd, row["comment"])
-            elif row["header"] == "MJD-OBS":
-                hdr[row["header"]] = (mjd, row["comment"])
-            elif row["header"] == "MJD-END":
-                hdr[row["header"]] = (mjdend, row["comment"])
-            elif row["header"] == "DATE-END":
-                hdr[row["header"]] = (
-                    dateend.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                    row["comment"],
-                )
-            elif row["header"] == "LST":
-                hdr[row["header"]] = (lstsec, row["comment"])
-            elif row["header"] == "HA":
-                hdr[row["header"]] = (ha, row["comment"])
-            else:
-                pass
-
-    z = (90 - hdr["ALTITUDE"]) * np.pi / 180
-    hdr["AIRMASS"] = (
-        (1.002432 * np.cos(z) ** 2 + 0.148386 * np.cos(z) + 0.0096467)
-        / (
-            np.cos(z) ** 3
-            + 0.149864 * np.cos(z) ** 2
-            + 0.0102963 * np.cos(z)
-            + 0.000303978
-        )
-    )  # https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)
 
 
 ## for flat fielding

@@ -1195,7 +1195,7 @@ class Autofocuser:
             # field_of_view = plate_scale * number_of_pixels
             sensor_size = pixel_size * number_of_pixels  # [sx, sy]
 
-            fov = 2.0 * np.arctan(sensor_size / (2.0 * focal_length))
+            fov = 2.0 * np.arctan(sensor_size / (2.0 * focal_length)) * (180.0 / np.pi)
             return fov
 
         except Exception as e:

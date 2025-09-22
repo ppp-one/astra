@@ -13,7 +13,6 @@ from astra.utils import (
     to_jd,
     getLightTravelTimes,
     time_conversion,
-    hdr_times,
     is_sun_rising,
 )
 
@@ -172,21 +171,6 @@ def test_time_conversion_bjd_vs_hjd_difference():
     assert not np.isclose(hjd, bjd, rtol=0, atol=0)
 
 
-def make_fits_config(headers):
-    """Helper to create a DataFrame for testing hdr_times."""
-    return pd.DataFrame(
-        [
-            {
-                "header": h,
-                "comment": f"comment for {h}",
-                "device_type": "astra",
-                "fixed": False,
-            }
-            for h in headers
-        ]
-    )
-
-
 @pytest.fixture
 def base_inputs():
     hdr = {
@@ -197,86 +181,6 @@ def base_inputs():
     location = EarthLocation.of_site("greenwich")
     target = SkyCoord(ra=10 * u.deg, dec=20 * u.deg, frame="icrs")
     return hdr, location, target
-
-
-def test_hdr_times_adds_expected_keys(base_inputs):
-    hdr, location, target = base_inputs
-    headers_to_add = [
-        "JD-OBS",
-        "JD-END",
-        "HJD-OBS",
-        "BJD-OBS",
-        "MJD-OBS",
-        "MJD-END",
-        "DATE-END",
-        "LST",
-        "HA",
-    ]
-    fits_config = make_fits_config(headers_to_add)
-
-    hdr_times(hdr, fits_config, location, target)
-
-    for h in headers_to_add:
-        assert h in hdr
-        value, comment = hdr[h]
-        assert isinstance(comment, str)
-        assert comment.startswith("comment")
-
-
-def test_hdr_times_date_end_format(base_inputs):
-    hdr, location, target = base_inputs
-    fits_config = make_fits_config(["DATE-END"])
-    hdr_times(hdr, fits_config, location, target)
-    val, comment = hdr["DATE-END"]
-    # Ensure correct format: YYYY-MM-DDTHH:MM:SS.microseconds
-    datetime.strptime(val, "%Y-%m-%dT%H:%M:%S.%f")
-
-
-def test_hdr_times_airmass_reasonable(base_inputs):
-    hdr, location, target = base_inputs
-    fits_config = make_fits_config(["AIRMASS"])
-    hdr_times(hdr, fits_config, location, target)
-    assert "AIRMASS" in hdr
-    assert 1.0 <= hdr["AIRMASS"] <= 2.0  # with altitude=45°, airmass should be ~1.4
-
-
-def test_hdr_times_only_writes_astra_entries(base_inputs):
-    hdr, location, target = base_inputs
-    fits_config = pd.DataFrame(
-        [
-            {
-                "header": "JD-OBS",
-                "comment": "test",
-                "device_type": "other",
-                "fixed": False,
-            },
-            {
-                "header": "JD-END",
-                "comment": "test",
-                "device_type": "astra",
-                "fixed": False,
-            },
-        ]
-    )
-    hdr_times(hdr, fits_config, location, target)
-    assert "JD-END" in hdr
-    assert "JD-OBS" not in hdr
-
-
-def test_hdr_times_skips_fixed_entries(base_inputs):
-    hdr, location, target = base_inputs
-    fits_config = pd.DataFrame(
-        [
-            {
-                "header": "JD-OBS",
-                "comment": "test",
-                "device_type": "astra",
-                "fixed": True,
-            },
-        ]
-    )
-    hdr_times(hdr, fits_config, location, target)
-    assert "JD-OBS" not in hdr
 
 
 @pytest.fixture

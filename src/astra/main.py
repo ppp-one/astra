@@ -40,6 +40,7 @@ from fastapi.templating import Jinja2Templates
 from astra import ASTRA_VER, Config
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
+from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, CustomFormatter
 
 logger = logging.getLogger(__name__)
@@ -375,7 +376,13 @@ def complete_headers(observatory: str):
 
     obs.logger.info("User initiated completion of headers from web interface")
 
-    obs.final_headers()
+    HeaderManager.final_headers(
+        obs.database_manager,
+        obs.logger,
+        obs.config,
+        obs.devices,
+        obs.fits_config,
+    )
 
     return {"status": "success", "data": "null", "message": ""}
 
