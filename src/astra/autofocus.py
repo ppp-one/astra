@@ -605,7 +605,7 @@ class Autofocuser:
         self.success = success
         self.image_handler = image_handler
 
-        default_dict = paired_devices.get_device_config("Focuser").get("autofocus", {})
+        default_dict = paired_devices.get_device_config("Camera").get("autofocus", {})
         logging.info(f"default_dict {default_dict}")
         if (
             "fov_height" not in self.action_value

@@ -25,12 +25,6 @@ Focuser:
     ip: localhost:11111
     device_number: 0
     focus_position: 10000
-    autofocus:
-      airmass_threshold: 1.01
-      exptime: 3.0
-      g_mag_range:
-      - 0
-      - 10
 Camera:
   - device_name: camera_observatoryname
     ip: localhost:11111
@@ -51,6 +45,12 @@ Camera:
       FilterWheel: fw_observatoryname
       ObservingConditions: weather_observatoryname
       SafetyMonitor: safety_observatoryname
+    autofocus:
+      airmass_threshold: 1.01
+      exptime: 3.0
+      g_mag_range:
+      - 0
+      - 10
 Dome:
   - device_name: dome_observatoryname
     ip: localhost:11111
