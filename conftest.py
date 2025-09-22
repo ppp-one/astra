@@ -8,8 +8,10 @@ from pathlib import Path
 
 import pytest
 import requests
+from unittest.mock import create_autospec, MagicMock
 
 from astra.config import Config, ObservatoryConfig
+from astra.logger import ObservatoryLogger
 
 logger = logging.getLogger(__name__)
 
@@ -199,3 +201,14 @@ def observatory(temp_config):
                 observatory.devices[device_type][device_name].stop()
             except Exception:
                 pass
+
+
+@pytest.fixture
+def mock_observatory_logger():
+    logger = create_autospec(ObservatoryLogger, instance=True)
+    logger.info = MagicMock()
+    logger.warning = MagicMock()
+    logger.error = MagicMock()
+    logger.report_device_issue = MagicMock()
+    logger.debug = MagicMock()
+    return logger

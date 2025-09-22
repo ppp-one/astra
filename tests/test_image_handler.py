@@ -20,11 +20,11 @@ from astra.image_handler import (
 class TestImageHandler:
     def test_initialization(self):
         header = fits.Header()
-        folder = Path("/tmp/test_images")
+        image_directory = Path("/tmp/test_images")
         templates = FilenameTemplates()
-        handler = ImageHandler(header, folder, templates)
+        handler = ImageHandler(header, image_directory, templates)
         assert handler.header is header
-        assert handler.folder == folder
+        assert handler.image_directory == image_directory
         assert isinstance(handler.filename_templates, FilenameTemplates)
         assert handler.last_image_path is None
         assert handler.last_image_timestamp is None
@@ -238,10 +238,10 @@ class TestImageHandler:
 
     def test_save_image_updates_last_path_and_timestamp(self, temp_config):
         header = fits.Header()
-        folder = Path(temp_config.paths.images) / "handler_test"
-        folder.mkdir(exist_ok=True)
+        image_directory = Path(temp_config.paths.images) / "handler_test"
+        image_directory.mkdir(exist_ok=True)
         templates = FilenameTemplates()
-        handler = ImageHandler(header, folder, templates)
+        handler = ImageHandler(header, image_directory, templates)
         image = [[1, 2], [3, 4]]
         info = Mock(spec=ImageMetadata)
         info.ImageElementType = 0
@@ -284,13 +284,13 @@ class TestImageHandler:
         assert loc.lon.value == 20.0
         assert abs(loc.height.value - 100.0) < 1e-6
 
-    def _prepare_save_args(self, temp_config, image, header_kwargs, folder):
+    def _prepare_save_args(self, temp_config, image, header_kwargs, image_directory):
         info = self.create_mock_image_info(0, 2)
         maxadu = 65535
         header = self.create_test_header(**header_kwargs)
         device_name = "TestCamera"
         exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
-        filepath = Path(temp_config.paths.images) / folder
+        filepath = Path(temp_config.paths.images) / image_directory
         filepath.mkdir(exist_ok=True)
         handler = ImageHandler(header, filepath)
         return handler, image, info, maxadu, device_name, exposure_start_datetime
@@ -301,7 +301,7 @@ class TestImageHandler:
                 temp_config,
                 [[100, 200], [300, 400]],
                 {},
-                "test_folder",
+                "test_image_directory",
             )
         )
         handler.header["IMAGETYP"] = "light"
@@ -311,7 +311,9 @@ class TestImageHandler:
         assert result.exists()
         assert result.is_file()
         assert result.name.startswith("TestCamera_V_M31_60.000_")
-        expected_path = Path(temp_config.paths.images) / "test_folder" / result.name
+        expected_path = (
+            Path(temp_config.paths.images) / "test_image_directory" / result.name
+        )
         assert result == expected_path
         with fits.open(result) as hdul:
             np.testing.assert_array_equal(hdul[0].data, [[100, 300], [200, 400]])
@@ -325,7 +327,7 @@ class TestImageHandler:
                 temp_config,
                 [[10, 11], [12, 13]],
                 {"IMAGETYP": "Bias Frame", "EXPTIME": 0.0},
-                "bias_folder",
+                "bias_image_directory",
             )
         )
         result = handler.save_image(
@@ -345,7 +347,7 @@ class TestImageHandler:
                 temp_config,
                 [[20, 21], [22, 23]],
                 {"IMAGETYP": "Dark Frame", "EXPTIME": 120.0},
-                "dark_folder",
+                "dark_image_directory",
             )
         )
         result = handler.save_image(
@@ -365,7 +367,7 @@ class TestImageHandler:
                 temp_config,
                 [[30, 31], [32, 33]],
                 {"IMAGETYP": "Flat Frame", "EXPTIME": 10.0},
-                "flat_folder",
+                "flat_image_directory",
             )
         )
         result = handler.save_image(
@@ -381,7 +383,7 @@ class TestImageHandler:
 
     def test_save_image_no_header_raises(self, temp_config):
         handler = ImageHandler(
-            header=None, folder=Path(temp_config.paths.images) / "neg_test"
+            header=None, image_directory=Path(temp_config.paths.images) / "neg_test"
         )
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
@@ -393,15 +395,15 @@ class TestImageHandler:
                 image, info, maxadu, device_name, exposure_start_datetime
             )
 
-    def test_save_image_no_folder_raises(self, temp_config):
+    def test_save_image_no_image_directory_raises(self, temp_config):
         header = self.create_test_header()
-        handler = ImageHandler(header=header, folder=None)
+        handler = ImageHandler(header=header, image_directory=None)
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
         exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
-        with pytest.raises(ValueError, match="No folder specified to save image."):
+        with pytest.raises(ValueError, match="Image directory is not set."):
             handler.save_image(
                 image, info, maxadu, device_name, exposure_start_datetime
             )
@@ -414,9 +416,9 @@ class TestImageHandler:
 
     def test_save_image_invalid_wcs(self, temp_config):
         header = self.create_test_header()
-        folder = Path(temp_config.paths.images) / "neg_test"
-        folder.mkdir(exist_ok=True)
-        handler = ImageHandler(header, folder)
+        image_directory = Path(temp_config.paths.images) / "neg_test"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory)
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
@@ -435,9 +437,9 @@ class TestImageHandler:
     def test_save_image_missing_header_keys(self, temp_config):
         # Missing FILTER, IMAGETYP, OBJECT, EXPTIME
         header = fits.Header()
-        folder = Path(temp_config.paths.images) / "neg_missing_keys"
-        folder.mkdir(exist_ok=True)
-        handler = ImageHandler(header, folder)
+        image_directory = Path(temp_config.paths.images) / "neg_missing_keys"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory)
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
@@ -452,9 +454,9 @@ class TestImageHandler:
 
     def test_save_image_exptime_string(self, temp_config):
         header = self.create_test_header(EXPTIME="not_a_float")
-        folder = Path(temp_config.paths.images) / "neg_exptime_str"
-        folder.mkdir(exist_ok=True)
-        handler = ImageHandler(header, folder)
+        image_directory = Path(temp_config.paths.images) / "neg_exptime_str"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory)
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
@@ -468,9 +470,9 @@ class TestImageHandler:
 
     def test_save_image_corrupted_data(self, temp_config):
         header = self.create_test_header()
-        folder = Path(temp_config.paths.images) / "neg_corrupt_data"
-        folder.mkdir(exist_ok=True)
-        handler = ImageHandler(header, folder)
+        image_directory = Path(temp_config.paths.images) / "neg_corrupt_data"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory)
         image = "not_an_array"
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
@@ -483,9 +485,9 @@ class TestImageHandler:
 
     def test_save_image_illegal_device_name(self, temp_config):
         header = self.create_test_header()
-        folder = Path(temp_config.paths.images) / "neg_illegal_device"
-        folder.mkdir(exist_ok=True)
-        handler = ImageHandler(header, folder)
+        image_directory = Path(temp_config.paths.images) / "neg_illegal_device"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory)
         image = [[1, 2], [3, 4]]
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
@@ -502,14 +504,14 @@ class TestImageHandler:
 
     def test_save_image_template_missing_arg(self, temp_config):
         header = self.create_test_header()
-        folder = Path(temp_config.paths.images) / "neg_template_missing_arg"
-        folder.mkdir(exist_ok=True)
+        image_directory = Path(temp_config.paths.images) / "neg_template_missing_arg"
+        image_directory.mkdir(exist_ok=True)
         # Create a template that references a missing argument
         with pytest.raises(ValueError, match="missing_arg"):
             bad_templates = FilenameTemplates(
                 light="{device}_{missing_arg}_{exptime:.3f}_{timestamp}.fits"
             )
-            handler = ImageHandler(header, folder, bad_templates)
+            handler = ImageHandler(header, image_directory, bad_templates)
             image = [[1, 2], [3, 4]]
             info = self.create_mock_image_info(0, 2)
             maxadu = 1000

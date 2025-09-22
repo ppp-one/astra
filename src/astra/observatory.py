@@ -62,6 +62,7 @@ from astra.logger import ConsoleStreamHandler, DatabaseLoggingHandler, Observato
 from astra.paired_devices import PairedDevices
 from astra.pointer import PointingCorrectionHandler
 from astra.queue_manager import QueueManager
+from astra.safety_monitor import SafetyMonitor
 from astra.scheduler import Action, ScheduleManager
 from astra.thread_manager import ThreadManager
 
@@ -203,8 +204,6 @@ class Observatory:
         self.speculoos = custom_observatory == "speculoos"
 
         # error and weather handling flags
-        self.weather_safe = None
-        self.time_to_safe = 0
 
         # watchdog/schedule running flags, robotic switch
         self.watchdog_running = False
@@ -225,10 +224,16 @@ class Observatory:
             thread_manager=self.thread_manager,
         )
         self.device_manager.load_devices()
-        self.last_image = None
+        self.last_image = None  # TODO replace with image_handler
 
         # for each telescope, create a donuts guider
         self.guider_manager = GuiderManager.from_observatory(self)
+        self.safety_monitor = SafetyMonitor(
+            observatory_config=self.config,
+            logger=self.logger,
+            database_manager=self.database_manager,
+            device_manager=self.device_manager,
+        )
 
         self.logger.info("Astra initialized")
 
@@ -257,15 +262,47 @@ class Observatory:
         return self._config
 
     @property
-    def devices(self):
+    def devices(self) -> dict[str, dict[str, AlpacaDevice]]:
+        """Get the dictionary of connected devices."""
         return self.device_manager.devices
 
+    @property
+    def weather_safe(self) -> bool | None:
+        return self.safety_monitor.weather_safe
+
+    @property
+    def time_to_safe(self) -> float:
+        return self.safety_monitor.time_to_safe
+
     def connect_all_devices(self):
+        """
+        Connect to all loaded devices and start polling for FITS header data.
+
+        Establishes connections to all initialized devices and begins regular polling
+        of device properties needed for FITS headers. Different polling intervals
+        are used based on device criticality:
+        - Most devices: 5-second intervals
+        - SafetyMonitor: 1-second intervals for safety-critical data
+
+        The method:
+        1. Connects to all devices in the devices dictionary
+        2. Starts polling threads for non-fixed FITS header properties
+        3. Sets up special high-frequency polling for safety monitors
+        4. Starts the watchdog process after all connections are established
+
+        Raises:
+            Exception: Device connection errors are logged and added to error_source,
+                but do not prevent other devices from being connected.
+
+        Note:
+            - SPECULOOS observatories skip focuser connection due to compatibility issues
+            - A 1-second delay is added after connections before starting the watchdog
+              to ensure devices are ready
+        """
         self.device_manager.connect_all(
             fits_config=self.fits_config,
             speculoos=self.speculoos,
         )
-        time.sleep(0.1)
         self.start_watchdog()
         self.device_manager.force_poll_observing_conditions(self.fits_config)
 
@@ -308,428 +345,148 @@ class Observatory:
         actions to ensure safe and efficient operation. The watchdog is the
         central control system that coordinates all observatory activities.
 
-        Key monitoring functions:
-        - Safety monitor status and weather conditions
-        - Device health and responsiveness
-        - System errors and error recovery
-        - Schedule execution and timing
-        - System resource usage (CPU, memory, disk)
-        - Telescope altitude limits and safety boundaries
-
-        Automated actions taken:
-        - Close observatory when unsafe conditions detected
-        - Start/stop scheduling based on conditions
-        - Handle system errors and device failures
-        - Perform daily database backups
-        - Update system heartbeat for external monitoring
-
-        The watchdog runs in a continuous loop with 0.5-second intervals and
-        coordinates with the schedule runner to ensure safe autonomous operation.
-
-        Note:
-            - Exits when watchdog_running flag is set to False
-            - Sets schedule_running and robotic_switch to False on exit
-            - Handles both weather-dependent and weather-independent operations
+        See class docstring for full behavior.
         """
-
         self.logger.info("Starting watchdog")
-
         self.watchdog_running = True
 
-        # initial safety monitor check
-        if "SafetyMonitor" in self.config:
-            self.logger.info("Safety monitor found")
-
-            try:
-                max_safe_duration = self.config["SafetyMonitor"][0]["max_safe_duration"]
-            except KeyError:
-                max_safe_duration = 30
-                self.logger.warning(
-                    "No max_safe_duration in user config, "
-                    f"defaulting to {max_safe_duration} minutes."
-                )
-
-            device_type = "SafetyMonitor"
-            sm_name = self.config[device_type][0]["device_name"]
-            safety_monitor = self.devices[device_type][sm_name]
-        else:
-            max_safe_duration = 0
-            self.logger.warning("No safety monitor found")
-
-        # observatory weather_log_warning flag, used to prevent multiple logging of weather unsafe
-        weather_log_warning = False
-
         while self.watchdog_running:
-            # check if any devices unresponsive - hopefully never happens
             self.device_manager.check_devices_alive()
-
-            # update heartbeat dictionary
             self.update_heartbeat()
-
-            # if no errors, proceed with remaining watchdog checks/actions
-            if self.logger.error_free is True:
-                try:
-                    # check if schedule file updated
-                    try:
-                        reloaded: bool = self.schedule_manager.reload_if_updated()
-                        if reloaded:
-                            if self.robotic_switch is True:
-                                self.logger.warning(
-                                    "Robotic switch is on, starting schedule"
-                                )
-                                self.start_schedule()
-                    except Exception as e:
-                        self.logger.report_device_issue(
-                            device_type="Schedule",
-                            device_name="schedule",
-                            message="Error checking schedule",
-                            exception=e,
-                        )
-                        continue
-
-                    # check safety monitor
-                    if "SafetyMonitor" in self.config:
-                        sm_poll = safety_monitor.poll_latest()
-
-                        # check if stale
-                        last_update = (
-                            datetime.now(UTC) - sm_poll["IsSafe"]["datetime"]
-                        ).total_seconds()
-
-                        if last_update > 3 and last_update < 30:
-                            self.logger.warning(f"Safety monitor {last_update}s stale")
-                        elif last_update > 30:
-                            self.logger.report_device_issue(
-                                device_type="SafetyMonitor",
-                                device_name=sm_name,
-                                message=f"Stale data {last_update}s",
-                            )
-                            continue
-
-                        # action if weather unsafe
-                        if sm_poll["IsSafe"]["value"] is False:
-                            self.weather_safe = False
-
-                            # log message saying weather unsafe
-                            if weather_log_warning is False:
-                                self.logger.warning("Weather unsafe from SafetyMonitor")
-
-                        # check weather history for weather unsafe
-                        weather_unsafe_stats = self.database_manager.execute_select(
-                            f"SELECT COUNT(*), MAX(datetime) FROM polling WHERE "
-                            f"device_type = 'SafetyMonitor' AND device_value = 'False' "
-                            f"AND datetime > datetime('now', '-{max_safe_duration} minutes')"
-                        )
-                    else:
-                        self.logger.warning("No safety monitor found")
-                        weather_unsafe_stats = [(0, None)]
-
-                    # check internal safety monitor
-                    (
-                        internal_safety,
-                        internal_time_to_safe,
-                        internal_max_safe_duration,
-                    ) = self.internal_safety_weather_monitor()
-
-                    # if internal safety monitor is False, act on it
-                    if internal_safety is False:
-                        self.weather_safe = False
-
-                        # log message saying weather unsafe
-                        if weather_log_warning is False:
-                            self.logger.warning(
-                                "Weather unsafe from internal safety monitor"
-                            )
-
-                    # set time_to_safe if weather unsafe
-                    if weather_unsafe_stats[0][0] > 0 or internal_time_to_safe > 0:
-                        if weather_unsafe_stats[0][1] is not None:
-                            time_since_last_unsafe = pd.to_datetime(
-                                datetime.now(UTC)
-                            ) - pd.to_datetime(weather_unsafe_stats[0][1], utc=True)
-                        else:
-                            time_since_last_unsafe = pd.to_timedelta(0)
-
-                        current_time_to_safe = (
-                            max_safe_duration
-                            - time_since_last_unsafe.total_seconds() / 60
-                        )
-
-                        if weather_unsafe_stats[0][0] == 0:
-                            self.time_to_safe = internal_time_to_safe
-                        else:
-                            self.time_to_safe = max(
-                                current_time_to_safe, internal_time_to_safe
-                            )
-                    else:
-                        self.time_to_safe = 0
-
-                    self.logger.debug(
-                        f"Watchdog: {weather_unsafe_stats} instances of weather unsafe "
-                        f"found in last {max(max_safe_duration, internal_max_safe_duration)} minutes"
-                    )
-
-                    # if no weather unsafe in last max_safe_duration minutes, weather is "safe"
-                    if (weather_unsafe_stats[0][0] == 0) and internal_safety:
-                        self.weather_safe = True
-                        if weather_log_warning:
-                            self.logger.info(
-                                f"Weather safe for the last "
-                                f"{max(max_safe_duration, internal_max_safe_duration)} minutes"
-                            )
-                            # reset weather_log_warning flag
-                            weather_log_warning = False
-                    elif (
-                        weather_unsafe_stats[0][0] > 0 and internal_safety
-                    ):  # just in case isSafe value switches during realtime check
-                        self.weather_safe = False
-
-                        # log message saying weather unsafe
-                        if weather_log_warning is False:
-                            self.logger.warning(
-                                "Weather unsafe from SafetyMonitor IsSafe history, "
-                                "internal safety monitor is True. Are the internal "
-                                "safety monitor limits higher than SafetyMonitor values?"
-                            )
-                            weather_log_warning = True
-                    else:
-                        weather_log_warning = True
-
-                    if self.weather_safe is False:
-                        self.close_observatory()
-
-                except Exception as e:
-                    self.logger.report_device_issue(
-                        device_type="Watchdog",
-                        device_name="watchdog",
-                        message="Error during watchdog check",
-                        exception=e,
-                    )
-
-            else:
-                try:
-                    # stop schedule
-                    self.schedule_manager.running = False
-                    self.robotic_switch = False
-
-                    # wait a bit to see if it's a multi-device error?
-                    self.logger.info(
-                        "Waiting 30 seconds to see if error is multi-device. Main watchdog thread exited."
-                    )
-                    time.sleep(30)
-
-                    if len(self.logger.error_source) == 0:
-                        self.logger.report_device_issue(
-                            device_type="error_source",
-                            device_name="error_source",
-                            message="No error sources found in error_source",
-                            level="warning",
-                        )
-
-                    # make pandas dataframe of error_source
-                    df = pd.DataFrame(self.logger.error_source)
-
-                    device_types = df.device_type.unique()
-                    device_names = df.device_name.unique()
-
-                    # multiple devices have errors
-                    if len(device_names) > 1:
-                        self.logger.error("Multiple devices have errors. Panic.")
-                        for error_source in self.logger.error_source:
-                            self.logger.error(
-                                f"Device {error_source['device_type']} {error_source['device_name']} has error: {error_source['error']}"
-                            )
-                        # TODO: Panic mode
-                    elif len(device_names) == 1 and len(device_types) == 1:
-                        self.logger.warning(
-                            f"Device {device_types[0]} {device_names[0]} has errors."
-                        )
-                    # if no error in dome or telescope, park
-                    if (
-                        "Dome" not in device_types
-                        and "Telescope" not in device_types
-                        and ("Dome" in self.config or "Telescope" in self.config)
-                    ):
-                        self.logger.warning(
-                            "Closing observatory due to no errors in Dome or Telescope"
-                        )
-                        self.close_observatory(error_sensitive=False)
-
-                    elif (
-                        "Dome" not in device_types
-                        and "Telescope" in device_types
-                        and "Dome" in self.config
-                    ):
-                        for dome_config in self.config["Dome"]:
-                            if dome_config.get("close_dome_on_error", False):
-                                if self.speculoos:
-                                    self.speculoos_check_and_ack_error(close=True)
-
-                                device_name = dome_config["device_name"]
-                                self.logger.warning(
-                                    f"Closing Dome {device_name} due to errors."
-                                )
-                                self.execute_and_monitor_device_task(
-                                    "Dome",
-                                    "ShutterStatus",
-                                    1,
-                                    "CloseShutter",
-                                    device_name=device_name,
-                                    log_message=f"Closing Dome shutter of {device_name}",
-                                    weather_sensitive=False,
-                                    error_sensitive=False,
-                                )
-
-                    # update heartbeat dictionary for last status
-                    self.update_heartbeat()
-
-                except Exception as e:
-                    self.logger.error(
-                        f"Error during error handling: {str(e)}",
-                        exc_info=True,
-                        stack_info=True,
-                    )
-                    # TODO: Panic mode
-
-                break  # exit watchdog loop
-
-            # run backup once a day
+            self._watchdog_step()
             self.database_manager.maybe_run_backup(self.thread_manager)
+            time.sleep(0.5)
 
-            time.sleep(0.5)  # twice the safety monitor polling time
-
-        self.schedule_manager.running = False  # stop schedule if watchdog stopped
+        # Stop watchdog with clean exit
+        self.schedule_manager.running = False
         self.robotic_switch = False
         self.watchdog_running = False
         self.logger.warning("Watchdog stopped")
 
-    def internal_safety_weather_monitor(self) -> tuple[bool, float, float]:
-        """
-        Monitor internal safety systems and weather conditions.
-
-        Evaluates weather conditions against configured safety limits and determines
-        if operations can continue safely. Checks observing conditions parameters
-        against their defined closing limits and calculates time to safe operation.
-
-        Returns:
-            tuple: A tuple containing:
-                - bool: True if weather conditions are safe for operation
-                - float: Time in seconds until conditions become safe (0 if already safe)
-                - float: Maximum safe duration in seconds for current conditions
-
-        The method examines each parameter in the closing_limits configuration:
-        - Compares current values against upper and lower thresholds
-        - Calculates time until conditions improve if currently unsafe
-        - Determines maximum safe operating duration under current conditions
-
-        Note:
-            - Returns (True, 0, 0) if no ObservingConditions devices are configured
-            - Used by the watchdog to make decisions about observatory operations
-            - Critical for autonomous safety management
-        """
-
-        longest_time_to_safe = 0
-        longest_max_safe_duration = 0
-
-        if "ObservingConditions" not in self.config:
-            return True, 0, 0
-
-        if "closing_limits" not in self.config["ObservingConditions"][0]:
-            return True, 0, 0
-
-        closing_limits = self.config["ObservingConditions"][0]["closing_limits"]
-        # find largest max_safe_duration
-        max_safe_duration = max(
-            limit.get("max_safe_duration", 0)
-            for limits in closing_limits.values()
-            for limit in limits
-        )
-
-        querey = f"""SELECT * FROM polling WHERE device_type = 'ObservingConditions' 
-            AND datetime > datetime('now', '-{max_safe_duration * 1.1} minutes')"""
-        df = self.database_manager.execute_select_to_df(querey, table="polling")
-
-        if df.shape[0] == 0:
-            self.logger.warning("No data found for internal safety weather monitor")
-            return True, 0, 0
-
-        # Pivot: datetime as index, device_command as columns
-        df = df.pivot(index="datetime", columns="device_command", values="device_value")
-
-        # Ensure datetime index and numeric values
-        df.index = pd.to_datetime(df.index, utc=True)
-        df = df.sort_index()
-        df = df.apply(pd.to_numeric, errors="coerce")
-
-        # interpolate
-        df = df.interpolate(method="time")
-
-        if "SkyTemperature" in df.columns and "Temperature" in df.columns:
-            df["RelativeSkyTemp"] = df["SkyTemperature"] - df["Temperature"]
-
-        # Check each parameter and its limits
-        for parameter, limits in closing_limits.items():
-            if parameter not in df.columns:
-                self.logger.warning(f"Parameter '{parameter}' not found in DataFrame")
-                continue
-
-            for limit in limits:
-                max_safe_duration = limit.get("max_safe_duration", 0)
-                lower_limit = limit.get("lower")
-                upper_limit = limit.get("upper")
-
-                if lower_limit is not None and upper_limit is not None:
-                    condition = (df[parameter] < lower_limit) | (
-                        df[parameter] > upper_limit
+    def _watchdog_step(self):
+        if self.logger.error_free:
+            try:
+                # Check schedule
+                try:
+                    reloaded = self.schedule_manager.reload_if_updated()
+                    if reloaded and self.robotic_switch:
+                        self.logger.warning("Robotic switch is on, starting schedule")
+                        self.start_schedule()
+                except Exception as e:
+                    self.logger.report_device_issue(
+                        device_type="Schedule",
+                        device_name="schedule",
+                        message="Error checking schedule",
+                        exception=e,
                     )
-                elif lower_limit is not None:
-                    condition = df[parameter] < lower_limit
-                elif upper_limit is not None:
-                    condition = df[parameter] > upper_limit
-                else:
-                    continue  # no limits defined
+                    return
 
-                # Apply the condition to the DataFrame
-                _df = df[
-                    condition
-                    & (
-                        df.index
-                        > (
-                            pd.Timestamp.now(tz="UTC")
-                            - pd.Timedelta(minutes=max_safe_duration)
+                # Check safety monitor
+                if not self.safety_monitor:
+                    self.logger.warning("No safety monitor configured")
+                    return
+
+                if not self.safety_monitor.update_status():
+                    self.close_observatory()
+            except Exception as e:
+                self.logger.report_device_issue(
+                    device_type="Watchdog",
+                    device_name="watchdog",
+                    message="Error during watchdog check",
+                    exception=e,
+                )
+        else:
+            self._handle_watchdog_errors()
+            return
+
+    def _handle_watchdog_errors(self) -> None:
+        """Handle system errors detected by the watchdog loop."""
+        try:
+            # stop schedule + automation
+            self.schedule_manager.running = False
+            self.robotic_switch = False
+
+            # wait to see if multiple devices report errors
+            self.logger.info(
+                "Waiting 30 seconds to see if error is multi-device. Main watchdog thread exited."
+            )
+            time.sleep(30)
+
+            if len(self.logger.error_source) == 0:
+                self.logger.report_device_issue(
+                    device_type="error_source",
+                    device_name="error_source",
+                    message="No error sources found in error_source",
+                    level="warning",
+                )
+
+            df = pd.DataFrame(self.logger.error_source)
+            device_types = df.device_type.unique()
+            device_names = df.device_name.unique()
+
+            # Multiple device errors → panic
+            if len(device_names) > 1:
+                self.logger.error("Multiple devices have errors. Panic.")
+                for error_source in self.logger.error_source:
+                    self.logger.error(
+                        f"Device {error_source['device_type']} {error_source['device_name']} "
+                        f"has error: {error_source['error']}"
+                    )
+                # TODO: Panic mode
+
+            # Single device error
+            elif len(device_names) == 1 and len(device_types) == 1:
+                self.logger.warning(
+                    f"Device {device_types[0]} {device_names[0]} has errors."
+                )
+
+            # Close observatory if telescope/dome are unaffected
+            if (
+                "Dome" not in device_types
+                and "Telescope" not in device_types
+                and ("Dome" in self.config or "Telescope" in self.config)
+            ):
+                self.logger.warning(
+                    "Closing observatory due to no errors in Dome or Telescope"
+                )
+                self.close_observatory(error_sensitive=False)
+
+            # Dome-specific closure logic
+            elif (
+                "Dome" not in device_types
+                and "Telescope" in device_types
+                and "Dome" in self.config
+            ):
+                for dome_config in self.config["Dome"]:
+                    if dome_config.get("close_dome_on_error", False):
+                        if self.speculoos:
+                            self.speculoos_check_and_ack_error(close=True)
+
+                        device_name = dome_config["device_name"]
+                        self.logger.warning(
+                            f"Closing Dome {device_name} due to errors."
                         )
-                    )
-                ]
+                        self.execute_and_monitor_device_task(
+                            "Dome",
+                            "ShutterStatus",
+                            1,
+                            "CloseShutter",
+                            device_name=device_name,
+                            log_message=f"Closing Dome shutter of {device_name}",
+                            weather_sensitive=False,
+                            error_sensitive=False,
+                        )
 
-                count = _df.shape[0]
+            # Final heartbeat update
+            self.update_heartbeat()
 
-                # if count == 0:
-                #     max_datetime = None
-                # else:
-                #     max_datetime = _df.index.max()
-
-                if count > 0:
-                    max_datetime = _df.index.max()
-
-                    time_since_last_unsafe = pd.to_datetime(
-                        datetime.now(UTC)
-                    ) - pd.to_datetime(max_datetime, utc=True)
-
-                    current_time_to_safe = (
-                        max_safe_duration - time_since_last_unsafe.total_seconds() / 60
-                    )
-
-                    if current_time_to_safe > longest_time_to_safe:
-                        longest_time_to_safe = current_time_to_safe
-
-                    if max_safe_duration > longest_max_safe_duration:
-                        longest_max_safe_duration = max_safe_duration
-
-        return (
-            longest_time_to_safe == 0,
-            longest_time_to_safe,
-            longest_max_safe_duration,
-        )
+        except Exception as e:
+            self.logger.error(
+                f"Error during error handling: {str(e)}",
+                exc_info=True,
+                stack_info=True,
+            )
+            # TODO: Panic mode
 
     def update_heartbeat(self) -> None:
         """
@@ -1547,7 +1304,7 @@ class Observatory:
         )
 
     def pre_sequence(
-        self, action: Action, paired_devices: dict, create_folder: bool = True
+        self, action: Action, paired_devices: dict, create_image_directory: bool = True
     ) -> ImageHandler:
         """
         Prepare the observatory and metadata for a sequence.
@@ -1581,7 +1338,7 @@ class Observatory:
                 action=action,
                 observatory=self,
                 paired_devices=paired_devices,
-                create_folder=create_folder,
+                create_image_directory=create_image_directory,
             )
         except Exception as e:
             self.logger.report_device_issue(
@@ -2242,7 +1999,9 @@ class Observatory:
 
         self.logger.info(action.summary_string(verbose=True))
 
-        image_handler = self.pre_sequence(action, paired_devices, create_folder=True)
+        image_handler = self.pre_sequence(
+            action, paired_devices, create_image_directory=True
+        )
         action_value = action.action_value
 
         # number of points
@@ -2260,11 +2019,13 @@ class Observatory:
         if action_value.get("dark_subtraction", False):
             self.logger.info(
                 f"Dark subtraction enabled. Looking for matching dark frame for {action.device_name}"
-                f" with exposure time {exptime} s in {image_handler.folder}"
+                f" with exposure time {exptime} s in {image_handler.image_directory}"
             )
             # TODO is this also just the last image?
             darks = list(
-                Path(image_handler.folder).glob(f"*Dark Frame_{exptime:.3f}*.fits")
+                Path(image_handler.image_directory).glob(
+                    f"*Dark Frame_{exptime:.3f}*.fits"
+                )
             )
 
             if len(darks) > 0:
@@ -2272,7 +2033,7 @@ class Observatory:
                 self.logger.info(f"Using dark frame {dark_frame}")
             else:
                 self.logger.warning(
-                    f"No dark frame found in {image_handler.folder}. Dark subtraction will not be applied."
+                    f"No dark frame found in {image_handler.image_directory}. Dark subtraction will not be applied."
                 )
 
         # get location

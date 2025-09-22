@@ -873,7 +873,7 @@ class Guider:
             while self.running:
                 # Initial reference image setup
                 last_timestamp = image_handler.last_image_timestamp
-                LOGFILE = os.path.join(str(image_handler.folder), "guider.log")
+                LOGFILE = os.path.join(str(image_handler.image_directory), "guider.log")
                 self.logShiftsToFile(LOGFILE, [], header=True)
                 # Wait for the first image
                 newest_image, current_field, current_filter, current_exptime = (
@@ -1062,7 +1062,7 @@ class Guider:
                         else:
                             break
                     log_list = [
-                        str(image_handler.folder),
+                        str(image_handler.image_directory),
                         os.path.basename(ref_file),
                         check_file,
                         stabilised,

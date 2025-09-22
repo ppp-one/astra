@@ -104,7 +104,7 @@ class GuidingCalibrator:
         self.action = action
         self.paired_devices = paired_devices
         self.image_handler = image_handler
-        self.image_handler.folder = (
+        self.inage_handler.image_directory = (
             save_path
             if save_path is not None
             else (
@@ -127,7 +127,7 @@ class GuidingCalibrator:
         self._telescope = astra_observatory.devices["Telescope"][
             paired_devices["Telescope"]
         ]
-        self.image_handler.folder.mkdir(parents=True, exist_ok=True)
+        self.inage_handler.image_directory.mkdir(parents=True, exist_ok=True)
 
     def run(self) -> None:
         """Execute complete guiding calibration sequence.
@@ -257,7 +257,9 @@ class GuidingCalibrator:
 
     def save_calibration_config(self) -> None:
         """Save calibration configuration to YAML file."""
-        with open(self.image_handler.folder / "calibration_config.yaml", "w") as file:
+        with open(
+            self.inage_handler.image_directory / "calibration_config.yaml", "w"
+        ) as file:
             yaml.dump(self._calibration_config, file)
 
     def update_observatory_config(self) -> None:

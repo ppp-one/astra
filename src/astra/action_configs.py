@@ -15,17 +15,22 @@ from astra.config import Config
 
 @dataclass
 class BaseActionConfig:
-    """
-    Examples
-    --------
-    >>> from astra.action_configs import AutofocusConfig
-    >>> autofocus_config = AutofocusConfig(exptime=3.0)
-    >>> exptime in autofocus_config
-    True
-    >>> autofocus_config['exptime']
-    3.0
-    >>> autofocus_config.get('not_available')
+    """Base class for action configurations.
 
+    This class serves as a base for specific action configurations,
+    providing validation and dictionary-like access to its fields.
+    It supports type validation, required fields, and merging with default values,
+    centralizing common functionality for all action configurations and ensuring
+    that the action values passed by the user are valid.
+
+    Examples:
+        >>> from astra.action_configs import AutofocusConfig
+        >>> autofocus_config = AutofocusConfig(exptime=3.0)
+        >>> exptime in autofocus_config
+        True
+        >>> autofocus_config['exptime']
+        3.0
+        >>> autofocus_config.get('not_available')
     """
 
     def __post_init__(self):

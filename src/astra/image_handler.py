@@ -15,13 +15,6 @@ The module handles various image types including light frames, bias frames,
 dark frames, and calibration images, ensuring proper metadata preservation
 and file organization for astronomical data processing pipelines.
 
-Example:
-    # Create directory and save an astronomical image
-    folder = create_image_dir(schedule_start_time, site_longitude)
-    filepath = save_image(
-        image_data, image_info, maxadu, header,
-        camera_name, obs_time, folder_name
-    )
 """
 
 import datetime
@@ -45,7 +38,12 @@ __all__ = ["ImageHandler", "FilenameTemplates", "JinjaFilenameTemplates"]
 
 @dataclass
 class FilenameTemplates:
-    """
+    """Filename templates using Python str.format() syntax.
+
+    The templates can be customised by passing a dictionary to
+    `FilenameTemplates.from_dict()`, which is the constructor used in astra.
+    If the templates contain Jinja2 syntax, the `JinjaFilenameTemplates` class will
+    be used instead, which allows more advanced logic (see examples below).
 
     Examples:
 
@@ -66,15 +64,16 @@ class FilenameTemplates:
     ...     + "{{ datetime_timestamp.strftime('%Y%m%d_%H%M%S.%f')[:-5] }}_"
     ...     # Add custom logic
     ...     + "{{ 'Dusk' if (datetime_timestamp + datetime.timedelta(hours=5)).hour > 12 else 'Dawn' }}"
+    ...     + "_sequence_{{ '%03d'|format(sequence) }}"
     ...     + ".fits"
     ... )
     >>> filename_templates = FilenameTemplates.from_dict(
     ...     {"flat": flat_template}
     ... )
     >>> filename_templates.render_filename(
-    ... **filename_templates.TEST_ARGS | {"imagetype": "flat frame"}
+    ... **filename_templates.TEST_ARGS | {"imagetype": "flat"}
     ... )
-    'FLAT/TestCamera_20250101_000000.0_Dawn.fits'
+    'FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits'
 
     """
 
@@ -157,6 +156,32 @@ class FilenameTemplates:
 
 @dataclass
 class JinjaFilenameTemplates(FilenameTemplates):
+    """Filename templates using Jinja2 syntax.
+
+    Examples:
+
+    Lets create a template with more advanced logic using using Jinja2
+    >>> from astra.image_handler import JinjaFilenameTemplates
+    >>> flat_template = (
+    ...     # use subdirs
+    ...     "{{ imagetype.split('_')[0].upper() }}/{{ device }}_"
+    ...     # customise timestamp format
+    ...     + "{{ datetime_timestamp.strftime('%Y%m%d_%H%M%S.%f')[:-5] }}_"
+    ...     # Add custom logic
+    ...     + "{{ 'Dusk' if (datetime_timestamp + datetime.timedelta(hours=5)).hour > 12 else 'Dawn' }}"
+    ...     + "_sequence_{{ '%03d'|format(sequence) }}"
+    ...     + ".fits"
+    ... )
+    >>> filename_templates = FilenameTemplates.from_dict(
+    ...     {"flat": flat_template}
+    ... )
+    >>> filename_templates.render_filename(
+    ... **filename_templates.TEST_ARGS | {"imagetype": "flat"}
+    ... )
+    'FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits'
+
+    """
+
     light: str = "{{ device }}_{{ filter_name }}_{{ object_name }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"
     bias: str = (
         "{{ device }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"
@@ -203,19 +228,47 @@ class JinjaFilenameTemplates(FilenameTemplates):
 
 class ImageHandler:
     """
-    Class that stores folder and header.
-    Can be passed around instead of (folder, hdr) tuple.
-    # TODO rename folder to directory?
+    Class that stores image_directory and header.
+
+    Attributes:
+        header (fits.Header): FITS header template for images.
+        image_directory (Path | None): Directory path to save images.
+            If None, must be set before saving images.
+        last_image_path (Path | None): Path of the last saved image.
+        last_image_timestamp (datetime | None): Timestamp of the last saved image.
+        filename_templates (FilenameTemplates): Templates for generating filenames.
+            Uses Python str.format() syntax by default. For more advanced logic,
+            use JinjaFilenameTemplates class.
+
+    Methods:
+        save_image(...): Save an image as a FITS file with proper headers and filename.
+        create_image_dir(...): Create a directory for storing images.
+        from_action(...): Create an ImageHandler instance from an action and observatory.
+        set_imagetype_header(...): Set the IMAGETYP header based on action type.
+        get_observatory_location(): Get the observatory location as an EarthLocation object.
+        has_image_directory(): Check if the image_directory is set.
+
+    Examples:
+        >>> from astra.image_handler import ImageHandler
+        >>> from pathlib import Path
+        >>> from astropy.io import fits
+        >>> header = fits.Header()
+        >>> header['FILTER'] = 'V'
+        >>> image_handler = ImageHandler(header=header, image_directory=Path("images"))
+        >>> image_handler.image_directory
+        PosixPath('images')
+        >>> image_handler.header['FILTER']
+        'V'
     """
 
     def __init__(
         self,
         header: fits.Header,
-        folder: Path | None = None,
+        image_directory: Path | None = None,
         filename_templates: FilenameTemplates | None = None,
     ):
         self.header = header
-        self._folder = folder
+        self._image_directory = Path(image_directory) if image_directory else None
         self.last_image_path: Path | None = None
         self.last_image_timestamp: datetime.datetime | None = None
 
@@ -226,17 +279,17 @@ class ImageHandler:
         )
 
     @property
-    def folder(self) -> Path:
-        if self._folder is None:
-            raise ValueError("No folder specified to save image.")
-        return self._folder
+    def image_directory(self) -> Path:
+        if self._image_directory is None:
+            raise ValueError("Image directory is not set.")
+        return self._image_directory
 
-    @folder.setter
-    def folder(self, folder: Path | str) -> None:
-        self._folder = Path(folder)
+    @image_directory.setter
+    def image_directory(self, image_directory: Path | str) -> None:
+        self._image_directory = Path(image_directory)
 
-    def has_folder(self) -> bool:
-        return self._folder is not None
+    def has_image_directory(self) -> bool:
+        return self._image_directory is not None
 
     @classmethod
     def from_action(
@@ -244,19 +297,20 @@ class ImageHandler:
         action: Action | dict,
         observatory: "astra.Observatory",  # type: ignore
         paired_devices: PairedDevices,
-        create_folder=True,
+        create_image_directory=True,
     ):
+        """Create ImageHandler from an action and observatory."""
         action_value = action["action_value"]
         hdr = observatory.base_header(paired_devices, action_value)
         cls._add_action_and_image_type(action, observatory, hdr)
 
-        folder = cls.create_image_dir(
+        image_directory = cls.create_image_dir(
             schedule_start_time=action_value.get(
                 "schedule_start_time", datetime.datetime.now(datetime.UTC)
             ),
             site_long=hdr.get("LONG-OBS"),
             user_specified_dir=action_value.get("dir"),
-            create_folder=create_folder,
+            create_image_directory=create_image_directory,
         )
 
         filename_templates = FilenameTemplates.from_dict(
@@ -265,7 +319,7 @@ class ImageHandler:
 
         return cls(
             header=hdr,
-            folder=folder,
+            image_directory=image_directory,
             filename_templates=filename_templates,
         )
 
@@ -278,7 +332,7 @@ class ImageHandler:
         exposure_start_datetime: datetime.datetime,
         image_sequence_number: int = 0,
         hdr: fits.Header | None = None,
-        folder: str | Path | None = None,
+        image_directory: str | Path | None = None,
         wcs: Optional[WCS] = None,
     ) -> Path:
         """
@@ -295,7 +349,7 @@ class ImageHandler:
             hdr (fits.Header): FITS header containing FILTER, IMAGETYP, OBJECT, EXPTIME.
             device_name (str): Camera/device name for filename generation.
             exposure_start_datetime (datetime): UTC datetime when exposure started.
-            folder (str): Subfolder name within the images directory.
+            image_directory (str): Subdirectory name within the images directory.
             wcs (WCS, optional): World Coordinate System information. Defaults to None.
 
         Returns:
@@ -309,10 +363,10 @@ class ImageHandler:
 
             Headers automatically updated with DATE-OBS, DATE, and WCS (if provided).
         """
-        if folder is None:
-            if self.folder is None:
-                raise ValueError("No folder specified to save image.")
-            folder = self.folder
+        if image_directory is None:
+            if self.image_directory is None:
+                raise ValueError("No image directory specified to save image.")
+            image_directory = self.image_directory
 
         if hdr is None:
             if self.header is None:
@@ -343,7 +397,7 @@ class ImageHandler:
             timestamp_time=date.strftime("%H%M%S.%f")[:-3],
             sequence=image_sequence_number,
         )
-        filepath = Config().paths.images / folder / filename
+        filepath = Config().paths.images / image_directory / filename
 
         # Ensure that directory exists
         filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -358,7 +412,7 @@ class ImageHandler:
         schedule_start_time: datetime.datetime | None = None,
         site_long: float = 0,
         user_specified_dir: Optional[str] = None,
-        create_folder: bool = True,
+        create_image_directory: bool = True,
     ) -> Path | None:
         """
         Create a directory for storing astronomical images.
@@ -382,22 +436,22 @@ class ImageHandler:
             Auto-generated directory format is YYYYMMDD based on local date calculated
             as schedule_start_time + (site_long / 15) hours.
         """
-        if not create_folder:
+        if not create_image_directory:
             return None
 
         if schedule_start_time is None:
             schedule_start_time = datetime.datetime.now(datetime.UTC)
 
         if user_specified_dir:
-            folder = Path(user_specified_dir)
+            image_directory = Path(user_specified_dir)
         else:
             date_str = (
                 schedule_start_time + datetime.timedelta(hours=site_long / 15)
             ).strftime("%Y%m%d")
-            folder = Config().paths.images / date_str
-        folder.mkdir(parents=True, exist_ok=True)
+            image_directory = Config().paths.images / date_str
+        image_directory.mkdir(parents=True, exist_ok=True)
 
-        return folder
+        return image_directory
 
     @staticmethod
     def _transform_image_to_array(
@@ -506,3 +560,12 @@ class ImageHandler:
             height=u.Quantity(obs_alt, u.m),
         )
         return obs_location
+
+    def __repr__(self):
+        return (
+            f"ImageHandler(header={dict(self.header)}, "
+            f"image_directory={self.image_directory}, "
+            f"last_image_path={self.last_image_path}, "
+            f"last_image_timestamp={self.last_image_timestamp}, "
+            f"filename_templates={self.filename_templates})"
+        )

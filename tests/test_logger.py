@@ -1,6 +1,8 @@
 import io
 import logging
-from astra.logger import DatabaseLoggingHandler, ObservatoryLogger, ConsoleStreamHandler
+from unittest.mock import MagicMock
+
+from astra.logger import ConsoleStreamHandler, DatabaseLoggingHandler, ObservatoryLogger
 
 
 class FakeCursor:
@@ -26,6 +28,58 @@ def teardown_logger(name: str) -> None:
     logger = ObservatoryLogger(name)
     for h in list(logger.handlers):
         logger.removeHandler(h)
+
+
+def test_initialization():
+    logger = ObservatoryLogger("test_logger")
+    assert logger.error_free is True
+    assert logger.error_source == []
+    assert logger.name == "test_logger"
+
+
+def test_error_sets_error_free():
+    logger = ObservatoryLogger("test_logger")
+    logger.error = MagicMock(wraps=logger.error)
+    logger.error("Test error")
+    assert logger.error_free is False
+
+
+def test_critical_sets_error_free():
+    logger = ObservatoryLogger("test_logger")
+    logger.critical = MagicMock(wraps=logger.critical)
+    logger.critical("Test critical")
+    assert logger.error_free is False
+
+
+def test_report_device_issue_error():
+    logger = ObservatoryLogger("test_logger")
+    logger.error = MagicMock()
+    logger.warning = MagicMock()
+    logger.report_device_issue(
+        device_type="Camera",
+        device_name="cam1",
+        message="Failure",
+        exception=Exception("fail"),
+        level="error",
+    )
+    assert any("Camera" in e["device_type"] for e in logger.error_source)
+    assert logger.error.call_count == 1
+    assert logger.warning.call_count == 0
+
+
+def test_report_device_issue_warning():
+    logger = ObservatoryLogger("test_logger")
+    logger.error = MagicMock()
+    logger.warning = MagicMock()
+    logger.report_device_issue(
+        device_type="Mount",
+        device_name="mount1",
+        message="Warning",
+        level="warning",
+    )
+    assert any("Mount" in e["device_type"] for e in logger.error_source)
+    assert logger.warning.call_count == 1
+    assert logger.error.call_count == 0
 
 
 def test_emit_inserts_info_and_prints():

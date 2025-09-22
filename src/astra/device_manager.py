@@ -10,7 +10,28 @@ from astra.thread_manager import ThreadManager
 
 class DeviceManager:
     """
-    Manages loading, connecting, polling, pausing/resuming, and monitoring all Alpaca devices for an observatory.
+    Manages loading, connecting, polling, pausing/resuming,
+    and monitoring all Alpaca devices for an observatory.
+
+    This class handles the lifecycle of devices including:
+    - Loading device configurations
+    - Establishing connections
+    - Starting/stopping polling for FITS header data
+    - Pausing/resuming polls during critical operations
+    - Checking device responsiveness for watchdog monitoring
+    - Forcing immediate polls for specific device types
+    It interacts with the ObservatoryConfig for device settings,
+    uses the ObservatoryLogger for logging, and relies on
+    QueueManager and ThreadManager for asynchronous operations.
+
+    Attributes:
+        observatory_config (ObservatoryConfig): Configuration for the observatory.
+        logger (ObservatoryLogger): Logger for logging messages and errors.
+        queue_manager (QueueManager): Manages the queue for inter-thread communication.
+        thread_manager (ThreadManager): Manages threads for concurrent operations.
+        devices (dict): Dictionary of loaded devices organized by type and name.
+        device_task_monitor_queue (dict): Tracks tasks for monitoring device status.
+
     """
 
     def __init__(
@@ -24,6 +45,7 @@ class DeviceManager:
         self.logger = logger
         self.queue_manager = queue_manager
         self.thread_manager = thread_manager
+
         self.devices: dict[str, dict[str, AlpacaDevice]] = {}
         self.device_task_monitor_queue = {}
 
@@ -51,16 +73,8 @@ class DeviceManager:
 
         return self._observatory_config
 
-    @classmethod
-    def from_observatory(cls, observatory):
-        return cls(
-            observatory_config=observatory.observatory_config,
-            logger=observatory.logger,
-            queue_manager=observatory.queue_manager,
-            thread_manager=observatory.thread_manager,
-        )
-
     def load_devices(self):
+        """Load and initialize Alpaca devices based on the observatory configuration."""
         self.logger.info("Loading devices")
         debug = self.logger.getEffectiveLevel() == logging.DEBUG
         devices: dict[str, dict[str, AlpacaDevice]] = {}
@@ -95,6 +109,30 @@ class DeviceManager:
         self.logger.info("Devices loaded")
 
     def connect_all(self, fits_config, speculoos=False):
+        """
+        Connect to all loaded devices and start polling for FITS header data.
+
+        Establishes connections to all initialized devices and begins regular polling
+        of device properties needed for FITS headers. Different polling intervals
+        are used based on device criticality:
+        - Most devices: 5-second intervals
+        - SafetyMonitor: 1-second intervals for safety-critical data
+
+        The method:
+        1. Connects to all devices in the devices dictionary
+        2. Starts polling threads for non-fixed FITS header properties
+        3. Sets up special high-frequency polling for safety monitors
+        4. Starts the watchdog process after all connections are established
+
+        Raises:
+            Exception: Device connection errors are logged and added to error_source,
+                but do not prevent other devices from being connected.
+
+        Note:
+            - SPECULOOS observatories skip focuser connection due to compatibility issues
+            - A 1-second delay is added after connections before starting the watchdog
+              to ensure devices are ready
+        """
         self.logger.info("Connecting to devices")
         for device_type in self.devices:
             for device_name in self.devices[device_type]:
@@ -291,6 +329,7 @@ class DeviceManager:
         return True
 
     def force_poll_observing_conditions(self, fits_config):
+        """Force an immediate poll of all ObservingConditions devices."""
         if "ObservingConditions" in self.devices:
             for _, device in self.devices["ObservingConditions"].items():
                 for _, fits_row in fits_config.iterrows():
