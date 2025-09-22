@@ -1,8 +1,6 @@
 name: Format and test
 
-on:
-  - push
-  - pull_request
+on: [push, pull_request]
 
 jobs:
   run-test:
