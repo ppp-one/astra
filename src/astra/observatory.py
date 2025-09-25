@@ -222,7 +222,8 @@ class Observatory:
             thread_manager=self.thread_manager,
         )
         self.device_manager.load_devices()
-        self.last_image = None  # TODO replace with image_handler
+
+        self._image_handler: ImageHandler | None = None
 
         # for each telescope, create a donuts guider
         self.guider_manager = GuiderManager.from_observatory(self)
@@ -271,6 +272,32 @@ class Observatory:
     @property
     def time_to_safe(self) -> float:
         return self.safety_monitor.time_to_safe
+
+    @property
+    def image_handler(self) -> ImageHandler:
+        """
+        Get the ImageHandler instance for image processing and FITS header management.
+
+        This property provides access to the ImageHandler instance, which is responsible
+        for image processing tasks such as FITS header management, WCS solution,
+        and image storage. The ImageHandler must be initialized using the
+        setup_image_handler() method before accessing this property.
+
+        Returns:
+            ImageHandler: The current ImageHandler instance.
+        """
+        if self._image_handler is None:
+            raise ValueError(
+                "ImageHandler not initialized. "
+                "Call the method setup_image_handler first."
+            )
+        return self._image_handler
+
+    @image_handler.setter
+    def image_handler(self, value: ImageHandler) -> None:
+        if not isinstance(value, ImageHandler):
+            raise ValueError("image_handler must be an instance of ImageHandler")
+        self._image_handler = value
 
     def connect_all_devices(self):
         """
@@ -1315,7 +1342,7 @@ class Observatory:
 
     def pre_sequence(
         self, action: Action, paired_devices: dict, create_image_directory: bool = True
-    ) -> ImageHandler:
+    ):
         """
         Prepare the observatory and metadata for a sequence.
 
@@ -1327,9 +1354,6 @@ class Observatory:
         Parameters:
             action (Action): An Action object containing information about the action to be performed.
             paired_devices (dict): A list of paired devices required for the sequence.
-
-        Returns:
-            ImageHandler: An ImageHandler object for managing image capture and metadata.
         """
         if not isinstance(paired_devices, PairedDevices):
             paired_devices = PairedDevices.from_observatory(
@@ -1343,8 +1367,17 @@ class Observatory:
         self.setup_observatory(paired_devices, action.action_value)
 
         # Create image handler
+        self.setup_image_handler(
+            action=action,
+            paired_devices=paired_devices,
+            create_image_directory=create_image_directory,
+        )
+
+        self.logger.debug(f"Finished pre_sequence for {action.summary_string()}")
+
+    def setup_image_handler(self, action, paired_devices, create_image_directory):
         try:
-            image_handler = ImageHandler.from_action(
+            self.image_handler = ImageHandler.from_action(
                 action=action,
                 paired_devices=paired_devices,
                 logger=self.logger,
@@ -1352,6 +1385,7 @@ class Observatory:
                 fits_config=self.fits_config,
                 create_image_directory=create_image_directory,
             )
+            self.logger.debug(f"Created image handler for {action.device_name}")
         except Exception as e:
             self.logger.report_device_issue(
                 device_type="ImageHandler",
@@ -1360,10 +1394,6 @@ class Observatory:
                 exception=e,
             )
             raise e
-
-        self.logger.debug(f"Finished pre_sequence for {action.summary_string()}")
-
-        return image_handler
 
     def setup_observatory(
         self,
@@ -1658,7 +1688,6 @@ class Observatory:
         exptime,
         maxadu,
         action: Action,
-        image_handler: ImageHandler,
         use_light=True,
         log_option=None,
         maximal_sleep_time=0.1,
@@ -1677,7 +1706,6 @@ class Observatory:
             exptime (float): Exposure time in seconds.
             maxadu (int): Maximum ADU value for the camera.
             action (Action): The action object containing action_type and device_name.
-            image_handler (ImageHandler): Object for handling image saving and headers.
             use_light (bool, optional): Whether to use light during exposure.
                 False for dark frames. Defaults to True.
             log_option (str, optional): Additional text for logging messages.
@@ -1718,8 +1746,8 @@ class Observatory:
         # Yield to other threads
         time.sleep(0)
 
-        image_handler.header["EXPTIME"] = exptime
-        use_light = image_handler.header.set_imagetype(
+        self.image_handler.header["EXPTIME"] = exptime
+        use_light = self.image_handler.header.set_imagetype(
             action_type=action.action_type, use_light=use_light
         )
 
@@ -1727,8 +1755,8 @@ class Observatory:
         log_option_tmp = "" if log_option is None else f"{log_option} "
         self.logger.info(
             f"Exposing {log_option_tmp}{action.device_name} "
-            f"{image_handler.header['IMAGETYP']} "
-            f"for exposure time {image_handler.header['EXPTIME']:.3f} s"
+            f"{self.image_handler.header['IMAGETYP']} "
+            f"for exposure time {self.image_handler.header['EXPTIME']:.3f} s"
         )
 
         # Start exposure
@@ -1776,7 +1804,7 @@ class Observatory:
             image = camera.get("ImageArray")
             image_info = camera.get("ImageArrayInfo")
 
-            filepath = image_handler.save_image(
+            filepath = self.image_handler.save_image(
                 image=image,
                 image_info=image_info,
                 maxadu=maxadu,
@@ -1791,8 +1819,6 @@ class Observatory:
                 f"Acquired in {(time.time() - exposure_end_time):.3f} s after ImageReady was True, "
                 f"and {(time.time() - exposure_start_time - exptime):.3f} s after exposure integration should have ended."
             )
-
-            self.last_image = filepath
 
             self.database_manager.execute(
                 f"INSERT INTO images VALUES ('{filepath}', '{camera.device_name}', "
@@ -1845,7 +1871,7 @@ class Observatory:
             f"starting {action.start_time} and ending {action.end_time}"
         )
 
-        image_handler = self.pre_sequence(action, paired_devices)
+        self.pre_sequence(action, paired_devices)
         action_value = action.action_value
 
         camera = paired_devices.camera
@@ -1885,10 +1911,9 @@ class Observatory:
 
                 success, filepath = self.perform_exposure(
                     camera,
-                    exptime,
-                    maxadu,
-                    action,
-                    image_handler=image_handler,
+                    exptime=exptime,
+                    maxadu=maxadu,
+                    action=action,
                     log_option=log_option,
                     wcs=wcs_solve,
                     sequence_counter=i,
@@ -1945,7 +1970,7 @@ class Observatory:
                 ):
                     guiding = self.guider_manager.start_guider(
                         action_value=action_value,
-                        image_handler=image_handler,
+                        image_handler=self.image_handler,
                         paired_devices=paired_devices,
                         thread_manager=self.thread_manager,
                     )
@@ -2011,9 +2036,7 @@ class Observatory:
 
         self.logger.info(action.summary_string(verbose=True))
 
-        image_handler = self.pre_sequence(
-            action, paired_devices, create_image_directory=True
-        )
+        self.pre_sequence(action, paired_devices, create_image_directory=True)
         action_value = action.action_value
 
         # number of points
@@ -2031,11 +2054,11 @@ class Observatory:
         if action_value.get("dark_subtraction", False):
             self.logger.info(
                 f"Dark subtraction enabled. Looking for matching dark frame for {action.device_name}"
-                f" with exposure time {exptime} s in {image_handler.image_directory}"
+                f" with exposure time {exptime} s in {self.image_handler.image_directory}"
             )
             # TODO is this also just the last image?
             darks = list(
-                Path(image_handler.image_directory).glob(
+                Path(self.image_handler.image_directory).glob(
                     f"*Dark Frame_{exptime:.3f}*.fits"
                 )
             )
@@ -2045,11 +2068,11 @@ class Observatory:
                 self.logger.info(f"Using dark frame {dark_frame}")
             else:
                 self.logger.warning(
-                    f"No dark frame found in {image_handler.image_directory}. Dark subtraction will not be applied."
+                    f"No dark frame found in {self.image_handler.image_directory}. Dark subtraction will not be applied."
                 )
 
         # get location
-        obs_location = image_handler.get_observatory_location()
+        obs_location = self.image_handler.get_observatory_location()
         MOON_LIMIT = u.Quantity(20, u.deg)  # pointing distance to the moon in degrees
 
         # create pointing_model folder
@@ -2067,8 +2090,8 @@ class Observatory:
         t_shift = 0
 
         # update header
-        image_handler.header["IMAGETYP"] = "Light Frame"
-        image_handler.header["OBJECT"] = "Pointing Model"
+        self.image_handler.header["IMAGETYP"] = "Light Frame"
+        self.image_handler.header["OBJECT"] = "Pointing Model"
         action_value["object"] = "Pointing Model"
 
         # open dome and unpark telescope
@@ -2126,7 +2149,6 @@ class Observatory:
                 exptime,
                 maxadu,
                 action,
-                image_handler=image_handler,
                 sequence_counter=counter,
                 log_option=None,
             )
@@ -2342,7 +2364,7 @@ class Observatory:
         """
         self.logger.info(f"Running guiding calibration for {action.device_name}")
         try:
-            image_handler = self.pre_sequence(action, paired_devices)
+            self.pre_sequence(action, paired_devices)
             if not self.check_conditions(action=action):
                 return False
 
@@ -2350,7 +2372,7 @@ class Observatory:
                 astra_observatory=self,
                 action=action,
                 paired_devices=paired_devices,
-                image_handler=image_handler,
+                image_handler=self.image_handler,
             )
             guiding_calibrator.slew_telescope_one_hour_east_of_sidereal_meridian()
             guiding_calibrator.perform_calibration_cycles()
@@ -2415,7 +2437,7 @@ class Observatory:
         """
         self.logger.info(f"Running autofocus for {action.device_name}")
         try:
-            image_handler = self.pre_sequence(action, paired_devices)
+            self.pre_sequence(action, paired_devices)
             if not self.check_conditions(action=action):
                 return False
 
@@ -2423,7 +2445,6 @@ class Observatory:
                 observatory=self,
                 action=action,
                 paired_devices=paired_devices,
-                image_handler=image_handler,
             )
             autofocuser.determine_autofocus_calibration_field()
             autofocuser.slew_to_calibration_field()
@@ -2492,7 +2513,7 @@ class Observatory:
         )
 
         # creates folder for images, writes base header, and sets filter to first filter in list
-        image_handler = self.pre_sequence(action, paired_devices)
+        self.pre_sequence(action, paired_devices)
 
         # target adu and camera offset needed for flat exposure time calculation
         camera_config = paired_devices.get_device_config("Camera")
@@ -2507,7 +2528,7 @@ class Observatory:
         upper_exptime_limit = camera_config["flats"]["upper_exptime_limit"]
 
         # get location to determine if sun is up
-        obs_location = image_handler.get_observatory_location()
+        obs_location = self.image_handler.get_observatory_location()
 
         # wait for sun to be in right position
         sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
@@ -2588,8 +2609,8 @@ class Observatory:
                     self.logger.info("Moving on...")
                     continue
 
-                image_handler.header["EXPTIME"] = exptime
-                image_handler.header["FILTER"] = filter_name
+                self.image_handler.header["EXPTIME"] = exptime
+                self.image_handler.header["FILTER"] = filter_name
 
                 while self.check_conditions(action) and (
                     count < action.action_value["n"][i]
@@ -2602,7 +2623,6 @@ class Observatory:
                         maxadu,
                         action=action,
                         sequence_counter=count,
-                        image_handler=image_handler,
                         log_option=log_option,
                     )
 
@@ -2645,7 +2665,7 @@ class Observatory:
                                         f"{target_adu[1]} of {target_adu[0]}"
                                     )
 
-                        image_handler.header["EXPTIME"] = exptime
+                        self.image_handler.header["EXPTIME"] = exptime
 
                         count += 1
 
