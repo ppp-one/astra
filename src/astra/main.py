@@ -20,7 +20,6 @@ import json
 import logging
 import os
 import sqlite3
-import time
 from contextlib import asynccontextmanager
 from datetime import UTC
 from glob import glob
@@ -38,10 +37,10 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
 from astra import ASTRA_VER, Config
+from astra.image_handler import HeaderManager
+from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
-from astra.image_handler import HeaderManager
-from astra.logger import ConsoleStreamHandler, CustomFormatter
 
 logger = logging.getLogger(__name__)
 logger.addHandler(ConsoleStreamHandler())
@@ -1311,14 +1310,16 @@ def main():
 
         multiprocessing.set_start_method("spawn")
 
-    import argparse
+        import argparse
 
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - [PID: %(process)d] - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        filename=Config().paths.log_file,
-        level=logging.DEBUG,
-    )
+    logging.getLogger().addHandler(FileHandler(filename=Config().paths.log_file))
+    # logging.basicConfig(
+    #     format="%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s",
+    #     datefmt="%Y-%m-%d %H:%M:%S",
+    #     filename=Config().paths.log_file,
+    #     level=logging.DEBUG,
+    # )
+    # logging.Formatter.converter = time.gmtime
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
@@ -1349,14 +1350,6 @@ def main():
         "--reset", action="store_true", help="reset the Astra's base config"
     )
     args = parser.parse_args()
-
-    logging.basicConfig(
-        format="%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        filename=Config().paths.log_file,
-        level=logging.DEBUG,
-    )
-    logging.Formatter.converter = time.gmtime
 
     if args.debug:
         DEBUG = True

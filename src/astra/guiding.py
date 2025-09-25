@@ -898,7 +898,7 @@ class Guider:
                     camera_name,
                     telescope_pierside,
                 )
-                if not ref_file:
+                if not ref_file or not os.path.exists(ref_file):
                     self.setReferenceImage(
                         current_field,
                         current_filter,
