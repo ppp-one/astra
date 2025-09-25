@@ -319,7 +319,7 @@ class Schedule(list):
     def reset_completion(self):
         for action in self:
             action.completed = False
-            action.action.set_status(ActionStatus.PENDING)
+            action.set_status(ActionStatus.PENDING)
 
     def __str__(self) -> str:
         actions = ",\n".join(
