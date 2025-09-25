@@ -36,6 +36,7 @@ import logging
 import sys
 import traceback
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any, Literal, Optional, Protocol
 
 
@@ -151,6 +152,44 @@ class DatabaseLoggingHandler(logging.Handler):
 class ConsoleStreamHandler(logging.StreamHandler):
     def __init__(self, log_traceback: bool = True, **kwargs) -> None:
         super().__init__(**kwargs)
+        self.setFormatter(CustomFormatter())
+        self.log_traceback = log_traceback
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            msg = self.format(record)
+            # If error or critical, append traceback if present
+            if (
+                self.log_traceback
+                and record.levelno >= logging.ERROR
+                and isinstance(record.exc_info, tuple)
+                and any(record.exc_info)
+            ):
+                # Add demarkations for clarity around the traceback
+                msg += (
+                    "\n"
+                    + "-" * 35
+                    + "TRACEBACK"
+                    + "-" * 36
+                    + f"\n{traceback.format_exception(*record.exc_info)}\n"
+                    + "-" * 80
+                    + "\n"
+                )
+            if not self.stream.closed:
+                self.stream.write(msg + self.terminator)
+                self.flush()
+            else:
+                print(f"Stream closed. Log: {msg}")
+
+        except Exception:
+            self.handleError(record)
+
+
+class FileHandler(logging.FileHandler):
+    def __init__(
+        self, filename: str | Path, log_traceback: bool = True, **kwargs
+    ) -> None:
+        super().__init__(filename, **kwargs)
         self.setFormatter(CustomFormatter())
         self.log_traceback = log_traceback
 
