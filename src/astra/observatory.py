@@ -1134,6 +1134,9 @@ class Observatory:
             # exit while loop if reached end of schedule
             if schedule[-1].end_time < datetime.now(UTC):
                 break
+            if self.schedule_manager.get_schedule().is_completed():
+                self.logger.info("All scheduled actions completed. Ending schedule.")
+                break
 
             time.sleep(1)
 

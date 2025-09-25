@@ -599,6 +599,9 @@ class ImageHandler:
         # save FITS file
         hdu.writeto(filepath)
 
+        self.last_image_path = filepath
+        self.last_image_timestamp = date
+
         return filepath
 
     def get_file_path(
