@@ -1264,6 +1264,7 @@ class Observatory:
                     in ["calibration", "close", "cool_camera", "complete_headers"]
                 ) or self.weather_safe:
                     action.completed = True
+                    action.set_status("FINISHED")
             self.logger.info(
                 f"{action.action_type} sequence ended for {action.device_name}"
             )

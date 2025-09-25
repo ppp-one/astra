@@ -2,6 +2,7 @@ import json
 import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Type, Union
 
@@ -12,6 +13,15 @@ from astra.action_configs import (
     BaseActionConfig,
 )
 from astra.logger import ObservatoryLogger
+
+
+class ActionStatus(Enum):
+    """Status of a scheduled action."""
+
+    PENDING = "pending"
+    RUNNING = "running"
+    FINISHED = "finished"
+    FAILED = "failed"
 
 
 @dataclass
@@ -26,7 +36,8 @@ class Action:
     >>> action = Action(
     ...     device_name="test_camera",
     ...     action_type="object",
-    ...     action_value=ObjectActionConfig(
+    ...     action_value={},
+    ...     action_config=ObjectActionConfig(
     ...         object="M42",
     ...         exptime=10.0,
     ...     ),
@@ -43,6 +54,7 @@ class Action:
     start_time: datetime
     end_time: datetime
     completed: bool = False
+    status: ActionStatus = ActionStatus.PENDING
 
     def __post__init__(self):
         # TODO enforce start_time, end_time are datetime / UTC?
@@ -110,6 +122,11 @@ class Action:
             )
         return f"{self.device_name} {self.action_type} {self.action_value}"
 
+    def set_status(self, status: ActionStatus | str):
+        if isinstance(status, str):
+            status = ActionStatus[status.upper()]
+        self.status = status
+
     def __str__(self) -> str:
         # Every property on a new line, slightly indented
         return (
@@ -120,6 +137,7 @@ class Action:
             f"  start_time={self.start_time!r},\n"
             f"  end_time={self.end_time!r},\n"
             f"  completed={self.completed!r},\n"
+            f"  status={self.status!r}\n"
             ")"
         )
 
@@ -279,6 +297,7 @@ class Schedule(list):
                 "start_time": getattr(action, "start_time", None),
                 "end_time": getattr(action, "end_time", None),
                 "completed": getattr(action, "completed", False),
+                "status": getattr(action, "status", ActionStatus.PENDING).value,
             }
             data.append(row)
         return pd.DataFrame(data)
@@ -300,6 +319,7 @@ class Schedule(list):
     def reset_completion(self):
         for action in self:
             action.completed = False
+            action.action.set_status(ActionStatus.PENDING)
 
     def __str__(self) -> str:
         actions = ",\n".join(
@@ -444,21 +464,11 @@ class ScheduleManager:
                         self.logger.warning(
                             f"Truncating schedule by factor: {self.truncate_factor}"
                         )
-                    # schedule = process_schedule(
-                    #     self.schedule_path,
-                    #     truncate_factor=self.truncate_factor,
-                    # )
-                    # TODO: ScheduleLoader class? Potentially useful to store schedule_path_path and truncate_factor
                     schedule = Schedule.from_file(
                         self.schedule_path, truncate_factor=self.truncate_factor
                     )
                     schedule.validate()
-                    # schedule_text = schedule.to_jsonl_string()
                     schedule_text = schedule.to_one_line_string()
-
-                    # dump text of schedule to log by reading raw file
-                    # with open(self.schedule_path, "r") as f:
-                    #     schedule_text = f.read()
                     self.logger.info(f"Schedule read: {schedule_text}")
                     self.schedule = schedule
 
