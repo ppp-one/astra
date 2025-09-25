@@ -56,7 +56,6 @@ import astra
 from astra.action_configs import AutofocusConfig, SelectionMethod
 from astra.alpaca_device_process import AlpacaDevice
 from astra.config import Config
-from astra.image_handler import ImageHandler
 from astra.logger import DatabaseLoggingHandler
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
@@ -74,7 +73,6 @@ class AstraCamera(CameraInterface):
         observatory: Observatory instance for device control and logging.
         alpaca_device_camera (AlpacaDevice): ALPACA camera device instance.
         action (Action): Action configuration for the camera.
-        image_handler (ImageHandler): Image handler for saving and processing images.
         image_data_type: NumPy data type for images, auto-detected if None.
         maxadu: Maximum ADU value for camera, auto-detected if None.
     """
@@ -84,7 +82,6 @@ class AstraCamera(CameraInterface):
         observatory: Any,
         alpaca_device_camera: AlpacaDevice,
         action: Action,
-        image_handler: ImageHandler,
         image_data_type: Optional[np.dtype] = None,
         maxadu: Optional[int] = None,
     ) -> None:
@@ -92,14 +89,12 @@ class AstraCamera(CameraInterface):
         self.alpaca_device_camera = alpaca_device_camera
 
         self.action = action
-        self.image_handler = image_handler
         self.success = True
 
         if image_data_type is None or maxadu is None:
-            self.determine_image_data_type_and_maxadu()
-        else:
-            self.image_data_type = image_data_type
-            self.maxadu = maxadu
+            maxadu, image_data_type = self.determine_image_data_type_and_maxadu()  # type: ignore
+        self.maxadu = maxadu
+        self.image_data_type = image_data_type
 
         super().__init__()
 
@@ -178,7 +173,6 @@ class AstraCamera(CameraInterface):
             use_light=use_light,
             log_option=log_option,
             maximal_sleep_time=0.1,
-            image_handler=self.image_handler,
             maxadu=self.alpaca_device_camera.get("MaxADU"),
         )
         self.success = exposure_successful
@@ -188,7 +182,7 @@ class AstraCamera(CameraInterface):
             self.observatory.logger.warning("Exposure failed.")
             # raise ValueError("Exposure failed.")
 
-    def determine_image_data_type_and_maxadu(self) -> None:
+    def determine_image_data_type_and_maxadu(self):
         """Determine camera image data type and maximum ADU value.
 
         Takes a test exposure to determine the camera's image data type
@@ -216,8 +210,7 @@ class AstraCamera(CameraInterface):
         else:
             raise ValueError(f"Unknown ImageElementType: {imginfo.ImageElementType}")
 
-        self.image_data_type = image_data_type
-        self.maxadu = maxadu
+        return maxadu, image_data_type
 
 
 class AstraFocuser(FocuserInterface):
@@ -395,7 +388,6 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
     def from_action(
         cls,
         observatory: "astra.observatory.Observatory",
-        image_handler: ImageHandler,
         action: Action,
         paired_devices: PairedDevices,
     ) -> "AstraAutofocusDeviceManager":
@@ -406,7 +398,6 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
 
         Args:
             observatory (astra.observatory.Observatory): Astra Observatory instance.
-            image_handler (ImageHandler): Image handler for saving and processing images.
             action (Action): Scheduled autofocus action.
             paired_devices (PairedDevices): Device manager instance.
 
@@ -427,7 +418,6 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
             observatory,
             alpaca_device_camera=alpaca_device_camera,
             action=action,
-            image_handler=image_handler,
         )
         astra_focuser = AstraFocuser(
             observatory, alpaca_device_focuser=alpaca_device_focuser, action=action
@@ -579,7 +569,6 @@ class Autofocuser:
         action (Action): Action configuration for the autofocus.
         paired_devices (PairedDevices): Device manager for observatory components.
         action_value (dict): Configuration values for autofocus action.
-        image_handler (ImageHandler): Image handler for saving and processing images.
         save_path (Optional[Path]): Directory path for saving autofocus data.
         autofocuser (Optional[Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]]):
             Specific autofocus algorithm instance.
@@ -591,7 +580,6 @@ class Autofocuser:
         observatory: Any,
         action: Action,
         paired_devices: PairedDevices,
-        image_handler: ImageHandler,
         autofocuser: Optional[
             Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]
         ] = None,
@@ -603,7 +591,6 @@ class Autofocuser:
         self.action_value = action.action_value
         self.autofocuser = autofocuser
         self.success = success
-        self.image_handler = image_handler
 
         default_dict = paired_devices.get_device_config("Camera").get("autofocus", {})
         logging.info(f"default_dict {default_dict}")
@@ -695,7 +682,6 @@ class Autofocuser:
         """
         autofocus_device_manager = AstraAutofocusDeviceManager.from_action(
             self.observatory,
-            image_handler=self.image_handler,
             action=self.action,
             paired_devices=self.paired_devices,
         )
@@ -819,7 +805,9 @@ class Autofocuser:
 
         self.observatory.logger.info("Determining autofocus calibration field.")
         try:
-            observatory_location = self.image_handler.get_observatory_location()
+            observatory_location = (
+                self.observatory.image_handler.get_observatory_location()
+            )
             logging.info(
                 f"Observatory location determined to be at {observatory_location}."
             )

@@ -1175,10 +1175,10 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
         # TODO: need to make it less CPU intensive if multiple clients
-        if LAST_IMAGE is not obs.last_image:
-            LAST_IMAGE = obs.last_image
+        if LAST_IMAGE is not obs.image_handler.last_image_path:
+            LAST_IMAGE = obs.image_handler.last_image_path
             LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
-                LAST_IMAGE, observatory
+                str(LAST_IMAGE), observatory
             )
 
         data = {
