@@ -58,7 +58,12 @@ from astra.database_manager import DatabaseManager
 from astra.device_manager import DeviceManager
 from astra.guiding import GuiderManager
 from astra.image_handler import HeaderManager, ImageHandler
-from astra.logger import ConsoleStreamHandler, DatabaseLoggingHandler, ObservatoryLogger
+from astra.logger import (
+    ConsoleStreamHandler,
+    DatabaseLoggingHandler,
+    ObservatoryLogger,
+    FileHandler,
+)
 from astra.paired_devices import PairedDevices
 from astra.pointer import PointingCorrectionHandler
 from astra.queue_manager import QueueManager
@@ -172,6 +177,7 @@ class Observatory:
         self.logger = ObservatoryLogger(self.name, level=logging_level)
         self.logger.addHandler(DatabaseLoggingHandler(self.database_manager))
         self.logger.addHandler(ConsoleStreamHandler())
+        self.logger.addHandler(FileHandler(Config().paths.log_file))
 
         # log start up
         self.logger.debug("Database and DatabaseLoggingHandler initialized")
@@ -1345,8 +1351,8 @@ class Observatory:
         )
 
     def pre_sequence(
-        self, action: Action, paired_devices: dict, create_image_directory: bool = True
-    ):
+        self, action: Action, paired_devices: dict | PairedDevices
+    ) -> None:
         """
         Prepare the observatory and metadata for a sequence.
 
@@ -1371,15 +1377,11 @@ class Observatory:
         self.setup_observatory(paired_devices, action.action_value)
 
         # Create image handler
-        self.setup_image_handler(
-            action=action,
-            paired_devices=paired_devices,
-            create_image_directory=create_image_directory,
-        )
+        self.setup_image_handler(action=action, paired_devices=paired_devices)
 
         self.logger.debug(f"Finished pre_sequence for {action.summary_string()}")
 
-    def setup_image_handler(self, action, paired_devices, create_image_directory):
+    def setup_image_handler(self, action, paired_devices):
         try:
             self.image_handler = ImageHandler.from_action(
                 action=action,
@@ -1387,7 +1389,6 @@ class Observatory:
                 logger=self.logger,
                 observatory_config=self.config,
                 fits_config=self.fits_config,
-                create_image_directory=create_image_directory,
             )
             self.logger.debug(f"Created image handler for {action.device_name}")
         except Exception as e:
@@ -1754,13 +1755,15 @@ class Observatory:
         use_light = self.image_handler.header.set_imagetype(
             action_type=action.action_type, use_light=use_light
         )
+        self.image_handler.header.set_action_type(action)
 
         # Log information about the exposure
         log_option_tmp = "" if log_option is None else f"{log_option} "
         self.logger.info(
             f"Exposing {log_option_tmp}{action.device_name} "
             f"{self.image_handler.header['IMAGETYP']} "
-            f"for exposure time {self.image_handler.header['EXPTIME']:.3f} s"
+            f"for exposure time {self.image_handler.header['EXPTIME']:.3f} s "
+            f"from {self.image_handler.header['ASTRATYP']} sequence."
         )
 
         # Start exposure
@@ -2040,7 +2043,7 @@ class Observatory:
 
         self.logger.info(action.summary_string(verbose=True))
 
-        self.pre_sequence(action, paired_devices, create_image_directory=True)
+        self.pre_sequence(action, paired_devices)
         action_value = action.action_value
 
         # number of points

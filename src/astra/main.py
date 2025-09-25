@@ -20,11 +20,13 @@ import json
 import logging
 import os
 import sqlite3
+import time
 from contextlib import asynccontextmanager
 from datetime import UTC
 from glob import glob
 from io import BytesIO
 from pathlib import Path
+
 
 import httpx
 import matplotlib.pyplot as plt
@@ -1174,7 +1176,10 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
         # TODO: need to make it less CPU intensive if multiple clients
-        if LAST_IMAGE is not obs.image_handler.last_image_path:
+        if (
+            obs._image_handler is not None
+            and LAST_IMAGE != obs.image_handler.last_image_path
+        ):
             LAST_IMAGE = obs.image_handler.last_image_path
             LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
                 str(LAST_IMAGE), observatory
@@ -1310,16 +1315,16 @@ def main():
 
         multiprocessing.set_start_method("spawn")
 
-        import argparse
+    import argparse
 
-    logging.getLogger().addHandler(FileHandler(filename=Config().paths.log_file))
-    # logging.basicConfig(
-    #     format="%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s",
-    #     datefmt="%Y-%m-%d %H:%M:%S",
-    #     filename=Config().paths.log_file,
-    #     level=logging.DEBUG,
-    # )
-    # logging.Formatter.converter = time.gmtime
+    Config().paths.archive_log_file()
+    logging.basicConfig(
+        format=FileHandler.FORMAT,
+        datefmt=FileHandler.DATEFMT,
+        filename=Config().paths.log_file,
+        level=logging.DEBUG,
+    )
+    logging.Formatter.converter = time.gmtime
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 

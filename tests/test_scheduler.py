@@ -73,13 +73,14 @@ class TestSchedule:
             }
         )
         schedule = Schedule.from_dataframe(df)
-        scaled = Schedule.update_times(schedule, 2.0)
-        assert len(scaled) == 2
-        first_duration = scaled[0].end_time - scaled[0].start_time
-        assert abs(first_duration.total_seconds() - 1800) < 2  # 1 hour / 2 = 1800s
-        gap_between = scaled[1].start_time - scaled[0].start_time
+        Schedule.update_times(schedule, 2.0)
+        assert len(schedule) == 2
+        assert (
+            abs(schedule[0].duration.total_seconds() - 1800) < 2
+        )  # 1 hour / 2 = 1800s
+        gap_between = schedule[1].start_time - schedule[0].start_time
         assert abs(gap_between.total_seconds() - 3600) < 2  # (1h duration + 1h gap) / 2
-        second_duration = scaled[1].end_time - scaled[1].start_time
+        second_duration = schedule[1].end_time - schedule[1].start_time
         assert abs(second_duration.total_seconds() - 2700) < 2  # 1.5h / 2
 
     def test_validate_conflict(self):

@@ -1,21 +1,18 @@
 """Unit tests for image_handler module."""
 
+import datetime
 import tempfile
-from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
 from alpaca.camera import ImageMetadata
 from astropy.io import fits
 
-from astra.image_handler import (
-    FilenameTemplates,
-    ImageHandler,
-    JinjaFilenameTemplates,
-    ObservatoryHeader,
-)
+from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
+from astra.header_manager import ObservatoryHeader
+from astra.image_handler import ImageHandler
 
 
 class TestImageHandler:
@@ -30,65 +27,6 @@ class TestImageHandler:
         assert handler.last_image_path is None
         assert handler.last_image_timestamp is None
 
-    def test_create_image_dir_user_specified(self):
-        """Test creating directory with user-specified path."""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            user_dir = Path(temp_dir) / "custom_dir"
-
-            result = ImageHandler.create_image_dir(user_specified_dir=str(user_dir))
-
-            assert result == user_dir
-            assert user_dir.exists()
-            assert user_dir.is_dir()
-
-    def test_create_image_dir_already_exists(self):
-        """Test behavior when user-specified directory already exists."""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            user_dir = Path(temp_dir) / "existing_dir"
-            user_dir.mkdir()
-
-            result = ImageHandler.create_image_dir(user_specified_dir=str(user_dir))
-
-            assert result == user_dir
-            assert user_dir.exists()
-
-    def test_create_image_dir_auto_generated(self, temp_config):
-        """Test creating directory with auto-generated date-based path."""
-        schedule_time = datetime(2024, 5, 15, 10, 0, 0, tzinfo=UTC)
-        site_long = -120.0  # 8 hours west
-
-        result = ImageHandler.create_image_dir(schedule_time, site_long)
-
-        # Local date should be 2024-05-15 10:00 - 8:00 = 2024-05-15 02:00
-        expected_date = "20240515"
-        expected_path = Path(temp_config.paths.images) / expected_date
-
-        assert result == expected_path
-        assert expected_path.exists()
-        assert expected_path.is_dir()
-
-    def test_create_image_dir_date_calculation(self, temp_config):
-        """Test date calculation for auto-generated directory."""
-        # Test crossing date boundary
-        schedule_time = datetime(2024, 5, 15, 2, 0, 0, tzinfo=UTC)
-        site_long = 120.0  # 8 hours east
-
-        result = ImageHandler.create_image_dir(schedule_time, site_long)
-
-        # Local date should be 2024-05-15 02:00 + 8:00 = 2024-05-15 10:00
-        expected_date = "20240515"
-        expected_path = Path(temp_config.paths.images) / expected_date
-
-        assert result == expected_path
-
-    def test_create_image_dir_default_parameters(self, temp_config):
-        """Test function with default parameters."""
-        result = ImageHandler.create_image_dir()
-        expected_date = datetime.now(UTC).strftime("%Y%m%d")
-        expected_path = Path(temp_config.paths.images) / expected_date
-        assert result == expected_path
-        assert expected_path.exists()
-
     def create_mock_image_info(self, element_type: int, rank: int) -> ImageMetadata:
         """Helper to create mock ImageMetadata."""
         mock_info = Mock(spec=ImageMetadata)
@@ -96,7 +34,7 @@ class TestImageHandler:
         mock_info.Rank = rank
         return mock_info
 
-    def create_test_header(self, **kwargs) -> fits.Header:
+    def create_test_header(self, **kwargs) -> ObservatoryHeader:
         """Helper to create FITS header with default values."""
         defaults = {
             "FILTER": "V",
@@ -113,7 +51,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_uint16_type_0(self):
         """Test transformation with ImageElementType 0."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
 
@@ -125,7 +63,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_uint16_type_1(self):
         """Test transformation with ImageElementType 1."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(1, 2)
         maxadu = 1000
 
@@ -136,7 +74,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_uint16_type_2_low_maxadu(self):
         """Test transformation with ImageElementType 2 and low maxadu."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(2, 2)
         maxadu = 65535
 
@@ -146,7 +84,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_int32_type_2_high_maxadu(self):
         """Test transformation with ImageElementType 2 and high maxadu."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(2, 2)
         maxadu = 70000
 
@@ -156,7 +94,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_float64_type_3(self):
         """Test transformation with ImageElementType 3."""
-        image = [[1.5, 2.7], [3.1, 4.9]]
+        image = np.array([[1.5, 2.7], [3.1, 4.9]])
         info = self.create_mock_image_info(3, 2)
         maxadu = 1000
 
@@ -168,7 +106,7 @@ class TestImageHandler:
     def test_3d_image_rank_3(self):
         """Test transformation with 3D image (Rank 3)."""
         # RGB image: 2x2 pixels, 3 channels
-        image = [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]]
+        image = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
         info = self.create_mock_image_info(0, 3)
         maxadu = 1000
 
@@ -193,7 +131,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_invalid_type(self):
         """Test error handling for invalid ImageElementType."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(4, 2)
         maxadu = 1000
 
@@ -203,7 +141,7 @@ class TestImageHandler:
     def test_transform_image_to_array_3d_rank_3(self):
         """Test transformation with 3D image (Rank 3)."""
         # RGB image: 2x2 pixels, 3 channels
-        image = [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]]
+        image = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
         info = self.create_mock_image_info(0, 3)
         maxadu = 1000
 
@@ -228,7 +166,7 @@ class TestImageHandler:
 
     def test_transform_image_to_array_list_input(self):
         """Test transformation with list input."""
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
 
@@ -243,13 +181,15 @@ class TestImageHandler:
         image_directory.mkdir(exist_ok=True)
         templates = FilenameTemplates()
         handler = ImageHandler(header, image_directory, templates)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = Mock(spec=ImageMetadata)
         info.ImageElementType = 0
         info.Rank = 2
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
         )
@@ -257,6 +197,17 @@ class TestImageHandler:
         # Optionally, check that last_image_path and last_image_timestamp are updated
         # assert handler.last_image_path == result
         # assert handler.last_image_timestamp == exposure_start_datetime
+
+    def test_filename_templates_render_same(self):
+        jinja_templates = JinjaFilenameTemplates()
+        standard_templates = FilenameTemplates()
+        test_kwargs = FilenameTemplates.TEST_KWARGS
+        test_kwargs.pop("action_type", None)
+
+        for key in standard_templates.__dataclass_fields__.keys():
+            jinja_result = jinja_templates.render_filename(key, **test_kwargs)
+            standard_result = standard_templates.render_filename(key, **test_kwargs)
+            assert jinja_result == standard_result, f"Mismatch in template '{key}'"
 
     def test_set_imagetype_header(self):
         header = ObservatoryHeader.get_test_header()
@@ -290,10 +241,15 @@ class TestImageHandler:
         maxadu = 65535
         header = self.create_test_header(**header_kwargs)
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         filepath = Path(temp_config.paths.images) / image_directory
         filepath.mkdir(exist_ok=True)
         handler = ImageHandler(header, filepath)
+        handler.last_action_start_time = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         return handler, image, info, maxadu, device_name, exposure_start_datetime
 
     def test_save_light_frame(self, temp_config):
@@ -306,6 +262,7 @@ class TestImageHandler:
             )
         )
         handler.header["IMAGETYP"] = "light"
+        handler.header["ASTRATYP"] = "object"
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
         )
@@ -313,7 +270,10 @@ class TestImageHandler:
         assert result.is_file()
         assert result.name.startswith("TestCamera_V_M31_60.000_")
         expected_path = (
-            Path(temp_config.paths.images) / "test_image_directory" / result.name
+            Path(temp_config.paths.images)
+            / "test_image_directory"
+            / "20240515"
+            / result.name
         )
         assert result == expected_path
         with fits.open(result) as hdul:
@@ -331,12 +291,20 @@ class TestImageHandler:
                 "bias_image_directory",
             )
         )
+        handler.header["ASTRATYP"] = "calibration"
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
         )
         assert result.exists()
         assert result.is_file()
         assert result.name.startswith("TestCamera_bias_0.000_")
+        expected_path = (
+            Path(temp_config.paths.images)
+            / "bias_image_directory"
+            / "20240515"
+            / result.name
+        )
+        assert result == expected_path
         with fits.open(result) as hdul:
             np.testing.assert_array_equal(hdul[0].data, [[10, 12], [11, 13]])
             assert hdul[0].header["IMAGETYP"] == "Bias Frame"
@@ -351,12 +319,20 @@ class TestImageHandler:
                 "dark_image_directory",
             )
         )
+        handler.header["ASTRATYP"] = "calibration"
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
         )
         assert result.exists()
         assert result.is_file()
         assert result.name.startswith("TestCamera_dark_120.000_")
+        expected_path = (
+            Path(temp_config.paths.images)
+            / "dark_image_directory"
+            / "20240515"
+            / result.name
+        )
+        assert result == expected_path
         with fits.open(result) as hdul:
             np.testing.assert_array_equal(hdul[0].data, [[20, 22], [21, 23]])
             assert hdul[0].header["IMAGETYP"] == "Dark Frame"
@@ -371,12 +347,20 @@ class TestImageHandler:
                 "flat_image_directory",
             )
         )
+        handler.header["ASTRATYP"] = "flats"
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
         )
         assert result.exists()
         assert result.is_file()
         assert result.name.startswith("TestCamera_V_flat_10.000_")
+        expected_path = (
+            Path(temp_config.paths.images)
+            / "flat_image_directory"
+            / "20240515"
+            / result.name
+        )
+        assert result == expected_path
         with fits.open(result) as hdul:
             np.testing.assert_array_equal(hdul[0].data, [[30, 32], [31, 33]])
             assert hdul[0].header["IMAGETYP"] == "Flat Frame"
@@ -386,11 +370,13 @@ class TestImageHandler:
         handler = ImageHandler(
             header=None, image_directory=Path(temp_config.paths.images) / "neg_test"
         )
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         with pytest.raises(ValueError, match="No FITS header specified to save image."):
             handler.save_image(
                 image, info, maxadu, device_name, exposure_start_datetime
@@ -399,32 +385,30 @@ class TestImageHandler:
     def test_save_image_no_image_directory_raises(self, temp_config):
         header = self.create_test_header()
         handler = ImageHandler(header=header, image_directory=None)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         with pytest.raises(ValueError, match="Image directory is not set."):
             handler.save_image(
                 image, info, maxadu, device_name, exposure_start_datetime
             )
-
-    def test_create_image_dir_invalid_path(self):
-        # Try to create a directory with an invalid path (should raise OSError or similar)
-        invalid_path = "/invalid_path/\0bad_dir"
-        with pytest.raises(Exception):
-            ImageHandler.create_image_dir(user_specified_dir=invalid_path)
 
     def test_save_image_invalid_wcs(self, temp_config):
         header = self.create_test_header()
         image_directory = Path(temp_config.paths.images) / "neg_test"
         image_directory.mkdir(exist_ok=True)
         handler = ImageHandler(header, image_directory)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
 
         class BadWCS:
             def to_header(self):
@@ -441,11 +425,13 @@ class TestImageHandler:
         image_directory = Path(temp_config.paths.images) / "neg_missing_keys"
         image_directory.mkdir(exist_ok=True)
         handler = ImageHandler(header, image_directory)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         # Should not raise, but filename will contain 'NA' and exptime will be nan
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
@@ -458,11 +444,13 @@ class TestImageHandler:
         image_directory = Path(temp_config.paths.images) / "neg_exptime_str"
         image_directory.mkdir(exist_ok=True)
         handler = ImageHandler(header, image_directory)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         # Should raise ValueError when converting EXPTIME to float
         with pytest.raises(ValueError):
             handler.save_image(
@@ -478,7 +466,9 @@ class TestImageHandler:
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "TestCamera"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         with pytest.raises(Exception):
             handler.save_image(
                 image, info, maxadu, device_name, exposure_start_datetime
@@ -489,11 +479,13 @@ class TestImageHandler:
         image_directory = Path(temp_config.paths.images) / "neg_illegal_device"
         image_directory.mkdir(exist_ok=True)
         handler = ImageHandler(header, image_directory)
-        image = [[1, 2], [3, 4]]
+        image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
         maxadu = 1000
         device_name = "Test/Camera:Bad|Name"
-        exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
         # Should create a file, possibly in a subdirectory
         result = handler.save_image(
             image, info, maxadu, device_name, exposure_start_datetime
@@ -509,54 +501,119 @@ class TestImageHandler:
         image_directory.mkdir(exist_ok=True)
         # Create a template that references a missing argument
         with pytest.raises(ValueError, match="missing_arg"):
-            bad_templates = FilenameTemplates(
-                light="{device}_{missing_arg}_{exptime:.3f}_{timestamp}.fits"
+            bad_templates = FilenameTemplates.from_dict(
+                {"object": "{device}_{missing_arg}_{exptime:.3f}_{timestamp}.fits"}
             )
             handler = ImageHandler(header, image_directory, bad_templates)
-            image = [[1, 2], [3, 4]]
+            image = np.array([[1, 2], [3, 4]])
             info = self.create_mock_image_info(0, 2)
             maxadu = 1000
             device_name = "TestCamera"
-            exposure_start_datetime = datetime(2024, 5, 15, 12, 0, 0, tzinfo=UTC)
+            exposure_start_datetime = datetime.datetime(
+                2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+            )
             handler.save_image(
                 image, info, maxadu, device_name, exposure_start_datetime
             )
 
+    def test_has_image_directory(self):
+        header = ObservatoryHeader.get_test_header()
+        handler = ImageHandler(header, image_directory=Path("/tmp/test"))
+        assert handler.has_image_directory() is True
+        handler = ImageHandler(header, image_directory=None)
+        assert handler.has_image_directory() is False
 
-class FilenameTemplateTests:
-    def test_filename_templates(self):
-        templates = FilenameTemplates()
-        jinja_templates = JinjaFilenameTemplates()
-        test_types = ["light", "bias", "dark", "flat", "default"]
-        expected = {
-            "light": "TestCamera_TestFilter_TestObject_300.123_2025-01-01_00-00-00.fits",
-            "bias": "TestCamera_bias_300.123_2025-01-01_00-00-00.fits",
-            "dark": "TestCamera_dark_300.123_2025-01-01_00-00-00.fits",
-            "flat": "TestCamera_TestFilter_flat_300.123_2025-01-01_00-00-00.fits",
-            "default": "TestCamera_TestFilter_default_300.123_2025-01-01_00-00-00.fits",
-        }
-        for imagetype in test_types:
-            filename = templates.render_filename(
-                **templates.TEST_ARGS | {"imagetype": imagetype}
+    def test_get_default_action_start_time(self):
+        # Test with default longitude
+        result = ImageHandler.get_default_action_start_time()
+        assert isinstance(result, datetime.datetime)
+        # Test with custom longitude
+        result_custom = ImageHandler.get_default_action_start_time(longitude=120.0)
+        assert isinstance(result_custom, datetime.datetime)
+        # Should be offset by longitude/15 hours
+        expected_offset = datetime.timedelta(hours=120.0 / 15)
+        assert (
+            abs(
+                (result_custom - result).total_seconds()
+                - expected_offset.total_seconds()
             )
-
-            assert filename == expected[imagetype], (
-                f"For {imagetype}, got {filename}, expected {expected[imagetype]}"
-            )
-
-            assert filename == jinja_templates.render_filename(
-                **jinja_templates.TEST_ARGS | {"imagetype": imagetype}
-            ), (
-                "JinjaFilenameTemplates template does not match standard template. "
-                f"For {imagetype}, got {filename}, expected {expected[imagetype]}"
-            )
-
-    def test_filename_template_with_subdir(self):
-        templates = JinjaFilenameTemplates(
-            dark="{{ imagetype.split(' ')[0].upper() }}/" + JinjaFilenameTemplates.dark
+            < 1
         )
-        filename = templates.render_filename(
-            **templates.TEST_ARGS | {"imagetype": "dark"}
+
+    def test_set_image_dir(self, temp_config):
+        # Test user-specified directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            user_dir = Path(temp_dir) / "custom"
+            result = ImageHandler.set_image_dir(user_specified_dir=str(user_dir))
+            assert result == user_dir
+            assert user_dir.exists()
+        # Test default (None)
+        result_default = ImageHandler.set_image_dir()
+        assert result_default == temp_config.paths.images
+
+    @patch("astra.image_handler.HeaderManager.get_base_header")
+    @patch("astra.image_handler.FilenameTemplates.from_dict")
+    @patch("astra.image_handler.ImageHandler.get_default_action_start_time")
+    def test_from_action(self, mock_get_time, mock_from_dict, mock_get_header):
+        mock_action = Mock()
+        mock_action.action_value = {"dir": "/tmp/test"}
+        mock_paired_devices = Mock()
+        mock_observatory_config = Mock()
+        mock_observatory_config.get.return_value = {}
+        mock_fits_config = Mock()
+        mock_logger = Mock()
+        mock_get_header.return_value = ObservatoryHeader.get_test_header()
+        mock_from_dict.return_value = FilenameTemplates()
+        mock_get_time.return_value = datetime.datetime.now(datetime.UTC)
+
+        handler = ImageHandler.from_action(
+            mock_action,
+            mock_paired_devices,
+            mock_observatory_config,
+            mock_fits_config,
+            mock_logger,
         )
-        expected = "DARK/TestCamera_dark_300.123_2025-01-01_00-00-00.fits"
-        assert filename == expected, f"Got {filename}, expected {expected}"
+        assert isinstance(handler, ImageHandler)
+        assert handler.image_directory == Path("/tmp/test")
+
+    def test_get_file_path(self, temp_config):
+        header = ObservatoryHeader.get_test_header()
+        header["ASTRATYP"] = "object"
+        header["IMAGETYP"] = "Light Frame"
+        header["FILTER"] = "V"
+        header["OBJECT"] = "M31"
+        header["EXPTIME"] = 60.0
+        image_directory = Path(temp_config.paths.images) / "test"
+        handler = ImageHandler(header, image_directory)
+        handler.last_action_start_time = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
+        date = datetime.datetime(2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC)
+        filepath = handler.get_file_path("TestCamera", header, date, 0, image_directory)
+        assert filepath.name.startswith("TestCamera_V_M31_60.000_")
+        assert filepath.parent == image_directory / "20240515"
+
+    def test_resolve_image_directory(self, temp_config):
+        header = ObservatoryHeader.get_test_header()
+        handler = ImageHandler(header, Path(temp_config.paths.images))
+        # Test with None (uses instance directory)
+        result = handler._resolve_image_directory(None)
+        assert result == Path(temp_config.paths.images)
+        # Test with relative path
+        result_rel = handler._resolve_image_directory("subdir")
+        assert result_rel == Path(temp_config.paths.images) / "subdir"
+        # Test with absolute path
+        abs_path = Path("/tmp/abs")
+        result_abs = handler._resolve_image_directory(abs_path)
+        assert result_abs == abs_path
+
+    def test_image_directory_property(self):
+        header = ObservatoryHeader.get_test_header()
+        handler = ImageHandler(header)
+        # Test setter
+        handler.image_directory = "/tmp/new_dir"
+        assert handler.image_directory == Path("/tmp/new_dir")
+        # Test getter with None raises
+        handler._image_directory = None
+        with pytest.raises(ValueError, match="Image directory is not set."):
+            _ = handler.image_directory

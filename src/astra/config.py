@@ -14,6 +14,7 @@ Classes:
 
 import filecmp
 import os
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -207,8 +208,6 @@ class Config:
         self, file_path, old_strings=[], new_strings=[]
     ):
         """Modify default template files by substituting specified strings."""
-        import re
-
         with open(file_path, "r") as f:
             content = f.read()
         for old_string, new_string in zip(old_strings, new_strings):
@@ -247,6 +246,21 @@ class AssetPaths:
 
         self._initialize_folders_and_log_file()
 
+    def archive_log_file(self) -> None:
+        """Archive the current log file with a timestamp."""
+        with open(self.log_file, "r") as file:
+            first_line = file.readline()
+            match = re.match(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", first_line)
+            if match:
+                timestamp = match.group(1)
+            else:
+                timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+
+        archive_file_path = self.logs / "archive" / f"{timestamp}_astra.log"
+        archive_file_path.parent.mkdir(exist_ok=True)
+        self.log_file.rename(archive_file_path)
+        self.log_file.touch()
+
     def _initialize_folders_and_log_file(self) -> None:
         """Create necessary folders and the log file if they do not exist."""
         for folder in (
@@ -260,6 +274,7 @@ class AssetPaths:
                 folder.mkdir(parents=True)
                 print(f"Created folder {folder}")
 
+        self.log_file.parent.mkdir(parents=True, exist_ok=True)
         self.log_file.touch(exist_ok=True)
 
     def __repr__(self) -> str:

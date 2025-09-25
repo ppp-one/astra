@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from astropy.coordinates import EarthLocation, SkyCoord
 
-from astra.image_handler import ObservatoryHeader
+from astra.header_manager import ObservatoryHeader
 
 
 def make_fits_config(headers):
@@ -108,3 +108,27 @@ def test_add_times_skips_fixed_entries(base_inputs):
     )
     hdr.add_times(fits_config, location, target)
     assert "JD-OBS" not in hdr
+
+
+class TestObservatoryHeader:
+    def test_validate(self):
+        header = ObservatoryHeader.get_test_header()
+        header["ALTITUDE"] = 45.0
+        header["EXPTIME"] = 60.0
+        header["DATE-OBS"] = "2024-05-15T12:00:00"
+        header.validate()  # Should not raise
+        del header["LONG-OBS"]
+        with pytest.raises(ValueError, match="Missing required header keys"):
+            header.validate()
+
+    def test_convert_ra_from_hours_to_degrees(self):
+        header = ObservatoryHeader.get_test_header()
+        original_ra = header.ra
+        header.convert_ra_from_hours_to_degrees()
+        assert header["RA"] == original_ra * (360 / 24)
+
+    def test_get_target_sky_coordinates(self):
+        header = ObservatoryHeader.get_test_header()
+        coords = header.get_target_sky_coordinates()
+        assert coords.ra.value == header.ra  # RA in hours, as SkyCoord handles it
+        assert coords.dec.value == header.dec
