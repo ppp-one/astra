@@ -175,7 +175,7 @@ class ConsoleStreamHandler(logging.StreamHandler):
                     + "-" * 80
                     + "\n"
                 )
-            if not self.stream.closed:
+            if self.stream is not None and not self.stream.closed:
                 self.stream.write(msg + self.terminator)
                 self.flush()
             else:
@@ -186,12 +186,16 @@ class ConsoleStreamHandler(logging.StreamHandler):
 
 
 class FileHandler(logging.FileHandler):
+    FORMAT = "%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s"
+    DATEFMT = "%Y-%m-%d %H:%M:%S"
+
     def __init__(
         self, filename: str | Path, log_traceback: bool = True, **kwargs
     ) -> None:
         super().__init__(filename, **kwargs)
-        self.setFormatter(CustomFormatter())
         self.log_traceback = log_traceback
+        self.setFormatter(logging.Formatter(self.FORMAT, self.DATEFMT))
+        self.setLevel(logging.ERROR)
 
     def emit(self, record: logging.LogRecord) -> None:
         try:
@@ -213,7 +217,7 @@ class FileHandler(logging.FileHandler):
                     + "-" * 80
                     + "\n"
                 )
-            if not self.stream.closed:
+            if self.stream is not None and not self.stream.closed:
                 self.stream.write(msg + self.terminator)
                 self.flush()
             else:

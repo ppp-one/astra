@@ -1,10 +1,11 @@
+import shutil
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
 import yaml
 
-from astra.config import Config, _ConfigInitialiser
+from astra.config import AssetPaths, Config, _ConfigInitialiser
 
 
 class TestConfigInitialiser:
@@ -230,3 +231,38 @@ class TestConfig:
         with pytest.raises(FileNotFoundError):
             Config("Test Observatory", str(self.folder_assets), str(self.gaia_db))
             Config("Test Observatory", str(self.folder_assets), str(self.gaia_db))
+
+
+class TestAssetPaths:
+    def test_initialize_folders_and_log_file(self, tmp_path):
+        ap = AssetPaths(tmp_path)
+        assert ap.assets == tmp_path
+        assert ap.observatory_config.exists()
+        assert ap.schedules.exists()
+        assert ap.images.exists()
+        assert ap.logs.exists()
+        assert ap.log_file.exists()
+
+    def test_archive_parses_date_at_line_start(self, tmp_path):
+        ap = AssetPaths(tmp_path)
+        # first line starts with the expected YYYY-MM-DD HH:MM:SS
+        ap.log_file.write_text("2025-09-27 00:11:18 something\nnext\n")
+        ap.archive_log_file()
+        expected = ap.logs / "archive" / "2025-09-27 00:11:18_astra.log"
+        assert expected.exists(), f"archive file not found: {expected}"
+        # current log recreated and empty
+        assert ap.log_file.exists()
+        assert ap.log_file.read_text() == ""
+
+    def test_archive_creates_archive_directory(self, tmp_path):
+        ap = AssetPaths(tmp_path)
+        # ensure archive dir absent initially
+        archive_dir = ap.logs / "archive"
+        if archive_dir.exists():
+            shutil.rmtree(archive_dir)
+        ap.log_file.write_text("2025-09-27 00:11:18 log\n")
+        ap.archive_log_file()
+        assert archive_dir.exists()
+        # archived file present
+        archived_files = list(archive_dir.glob("*_astra.log"))
+        assert archived_files, "no archived files created"

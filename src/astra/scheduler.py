@@ -182,33 +182,9 @@ class Schedule(list):
         self.sort_by_start_time()
 
     @classmethod
-    def update_times(cls, actions: List[Action], time_factor: float) -> "Schedule":
-        """
-        Update the start and end times to present day factored by the time factor.
-        Returns a new Schedule instance with updated times.
-        """
-        new_actions = []
-        for i, action in enumerate(actions):
-            if i == 0:
-                new_start_time = datetime.now(UTC)
-            else:
-                ss_time_diff = action.start_time - actions[i - 1].start_time
-                ss_time_diff = ss_time_diff / time_factor
-                new_start_time = new_actions[-1].start_time + ss_time_diff
-
-            new_actions.append(
-                action.update_times(
-                    time_factor=time_factor, new_start_time=new_start_time
-                )
-            )
-
-        return cls(new_actions)
-
-    @classmethod
     def from_file(
         cls,
         filename: Union[str, Path],
-        truncate_factor: float | None = None,
     ) -> "Schedule":
         """
         Read a schedule file and return a Schedule instance with parsed schedule data.
@@ -237,13 +213,12 @@ class Schedule(list):
             schedule.end_time, utc=True, format="mixed"
         )
         schedule = schedule.sort_values(by=["start_time"])
-        return cls.from_dataframe(schedule, truncate_factor)
+        return cls.from_dataframe(schedule)
 
     @classmethod
     def from_dataframe(
         cls,
         df: pd.DataFrame,
-        truncate_factor: float | None = None,
     ) -> "Schedule":
         """
         Construct a Schedule instance from a pandas DataFrame.
@@ -269,9 +244,31 @@ class Schedule(list):
                     end_time=action["end_time"],
                 )
             )
-        if truncate_factor:
-            return cls.update_times(actions, truncate_factor)
         return cls(actions)
+
+    def update_times(self, time_factor: float):
+        """
+        Update the start and end times of all actions in this Schedule to present day,
+        factored by the time factor. Modifies the schedule in-place.
+        """
+        new_actions = []
+
+        for i, action in enumerate(self):
+            if i == 0:
+                new_start_time = datetime.now(UTC)
+            else:
+                ss_time_diff = action.start_time - self[i - 1].start_time
+                ss_time_diff = ss_time_diff / time_factor
+                new_start_time = new_actions[-1].start_time + ss_time_diff
+
+            new_actions.append(
+                action.update_times(
+                    time_factor=time_factor, new_start_time=new_start_time
+                )
+            )
+
+        for i, updated_action in enumerate(new_actions):
+            self[i] = updated_action
 
     def validate(self):
         for row in self:
@@ -460,16 +457,15 @@ class ScheduleManager:
                 self.schedule_mtime = schedule_mtime
 
                 try:
-                    if self.truncate_factor:
-                        self.logger.warning(
-                            f"Truncating schedule by factor: {self.truncate_factor}"
-                        )
-                    schedule = Schedule.from_file(
-                        self.schedule_path, truncate_factor=self.truncate_factor
-                    )
+                    schedule = Schedule.from_file(self.schedule_path)
                     schedule.validate()
-                    schedule_text = schedule.to_one_line_string()
-                    self.logger.info(f"Schedule read: {schedule_text}")
+                    self.logger.info(f"Schedule read: {schedule.to_one_line_string()}")
+                    if self.truncate_factor is not None:
+                        schedule.update_times(self.truncate_factor)
+                        self.logger.info(
+                            f"Schedule truncated by factor {self.truncate_factor}. "
+                            f"Truncated schedule: {schedule.to_one_line_string()}"
+                        )
                     self.schedule = schedule
 
                     return schedule
