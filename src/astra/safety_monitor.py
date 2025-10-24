@@ -1,9 +1,21 @@
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+
 import pandas as pd
+
+from astra.config import ObservatoryConfig
+from astra.database_manager import DatabaseManager
+from astra.device_manager import DeviceManager
+from astra.logger import ObservatoryLogger
 
 
 class SafetyMonitor:
-    def __init__(self, observatory_config, database_manager, logger, device_manager):
+    def __init__(
+        self,
+        observatory_config: ObservatoryConfig,
+        database_manager: DatabaseManager,
+        logger: ObservatoryLogger,
+        device_manager: DeviceManager,
+    ):
         self.config = observatory_config
         self.database_manager = database_manager
         self.logger = logger
@@ -120,6 +132,7 @@ class SafetyMonitor:
             return True, 0, 0
 
         closing_limits = self.config["ObservingConditions"][0]["closing_limits"]
+
         # find largest max_safe_duration
         max_safe_duration = max(
             limit.get("max_safe_duration", 0)
@@ -127,9 +140,9 @@ class SafetyMonitor:
             for limit in limits
         )
 
-        querey = f"""SELECT * FROM polling WHERE device_type = 'ObservingConditions' 
+        query = f"""SELECT * FROM polling WHERE device_type = 'ObservingConditions' 
             AND datetime > datetime('now', '-{max_safe_duration * 1.1} minutes')"""
-        df = self.database_manager.execute_select_to_df(querey, table="polling")
+        df = self.database_manager.execute_select_to_df(query, table="polling")
 
         if df.shape[0] == 0:
             self.logger.warning("No data found for internal safety weather monitor")

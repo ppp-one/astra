@@ -2290,8 +2290,8 @@ class Observatory:
             f"Pointing correction of {angular_separation * 60:.2f}' "
             f"required as it is outside threshold of {pointing_threshold * 60:.2f}'"
         )
-        self.logger.info(f"RA shift: {pointing_correction.offset_ra}")
-        self.logger.info(f"DEC shift: {pointing_correction.offset_dec}")
+        self.logger.info(f"RA shift: {pointing_correction.offset_ra * 60:.2f}'")
+        self.logger.info(f"DEC shift: {pointing_correction.offset_dec * 60:.2f}'")
 
         pointing_complete = False
 
