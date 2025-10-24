@@ -178,6 +178,7 @@ class Observatory:
         self.logger.addHandler(DatabaseLoggingHandler(self.database_manager))
         self.logger.addHandler(ConsoleStreamHandler())
         self.logger.addHandler(FileHandler(Config().paths.log_file))
+        self.database_manager.logger = self.logger
 
         # log start up
         self.logger.debug("Database and DatabaseLoggingHandler initialized")

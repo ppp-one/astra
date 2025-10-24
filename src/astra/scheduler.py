@@ -402,7 +402,7 @@ class ScheduleManager:
         self.running = False
         self.schedule_mtime = self.get_mtime()
 
-        if self.schedule_mtime == 0:
+        if self.schedule_mtime != 0:
             self.read()
 
     def get_schedule(self) -> Schedule:
