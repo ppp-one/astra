@@ -18,18 +18,6 @@ The system continuously monitors incoming images, compares them to reference
 images, calculates pointing errors, and applies corrective pulse guide commands
 to keep the telescope accurately tracking celestial objects.
 
-Typical Usage:
-    # Initialize guider with telescope and configuration
-    guider = Guider(telescope, astra_instance, guider_params)
-
-    # Start the main guiding loop
-    guider.guider_loop(
-        camera_name="main_camera",
-        glob_str="/path/to/images/*.fits",
-        wait_time=10,
-        binning=1
-    )
-
 Components:
     CustomImageClass: Image preprocessing for robust star detection
     Guider: Main autoguiding class with PID control
@@ -52,11 +40,10 @@ from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
 
-import astra
 from astra import Config
-from astra.logger import ObservatoryLogger
 from astra.database_manager import DatabaseManager
 from astra.image_handler import ImageHandler
+from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.thread_manager import ThreadManager
 
@@ -129,7 +116,6 @@ class GuiderManager:
 
     def start_guider(
         self,
-        action_value: dict,
         image_handler: ImageHandler,
         paired_devices: PairedDevices,
         thread_manager: ThreadManager,
@@ -174,7 +160,6 @@ class GuiderManager:
             args=(
                 paired_devices["Camera"],
                 image_handler,
-                action_value["exptime"] * 2,
                 binning,
             ),
             thread_type="guider",
@@ -261,7 +246,9 @@ class CustomImageClass(Image):
         )
         bkg_clean = self.raw_image - bkg.background
 
-        med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
+        med_clean = ndimage.median_filter(
+            bkg_clean, size=5, mode="mirror"
+        )  # slow but needed
         band_corr = np.median(med_clean, axis=1).reshape(-1, 1)  # type: ignore
         image_clean = med_clean - band_corr
 
@@ -354,11 +341,14 @@ class Guider:
                     message=f"Invalid guide direction {params['DIRECTIONS'][direction]} for {self.telescope.device_name} config",
                 )
 
-        # RA axis alignment along x or y? TODO: can be inferred from telescope direction
+        # RA axis alignment along x or y
         self.RA_AXIS = params["RA_AXIS"]
 
         # PID loop coefficients
         self.PID_COEFFS = params["PID_COEFFS"]
+
+        # minimum guide interval
+        self.MIN_GUIDE_INTERVAL = params.get("MIN_GUIDE_INTERVAL", 30.0)
 
         # set up variables
         # initialise the PID controllers for X and Y
@@ -799,67 +789,61 @@ class Guider:
 
     def waitForImage(
         self,
-        last_timestamp: datetime,
         camera_name: str,
-        image_handler: "astra.image_handler.ImageHandler",  # type: ignore
-        wait_time: int = 10,
+        image_handler: ImageHandler,
     ) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
         """
         Wait for new images to appear in the monitoring directory.
 
         Parameters:
-            n_images (int): Number of images previously seen.
             camera_name (str): Camera name for logging.
-            glob_str (str): Glob pattern to match image files.
-            wait_time (int, optional): Base wait time in seconds. Defaults to 10.
+            image_handler (ImageHandler): Image handler instance to monitor.
 
         Returns:
             tuple: (newest_image, newest_field, newest_filter, newest_exptime)
                 Returns (None, None, None, None) if self.running becomes False.
         """
-        start_time = datetime.now(UTC)
-        wait_time = max(wait_time, 30)
-
+        start_timestamp = datetime.now(UTC)
         while self.running:
             # Check if a new image has appeared
-            current_timestamp = image_handler.last_image_timestamp
-            if current_timestamp is not None and current_timestamp != last_timestamp:
+            last_image_timestamp = image_handler.last_image_timestamp
+            current_timestamp = datetime.now(UTC)
+
+            # if no images yet, wait
+            if last_image_timestamp is None:
+                time.sleep(0.1)
+                continue
+
+            # check if we have waited long enough
+            if (
+                current_timestamp - start_timestamp
+            ).total_seconds() < self.MIN_GUIDE_INTERVAL:
+                time.sleep(0.1)
+                continue
+
+            # check if a new image has appeared to guide on
+            if (current_timestamp - last_image_timestamp).total_seconds() < 5:
                 newest_image = image_handler.last_image_path
                 try:
-                    with fits.open(newest_image) as fitsfile:
-                        newest_filter = (
-                            fitsfile[0].header[FILTER_KEYWORD].replace("'", "")  # type: ignore
-                        )
-                        newest_field = fitsfile[0].header[FIELD_KEYWORD]  # type: ignore
-                        newest_exptime = fitsfile[0].header[EXPTIME_KEYWORD]  # type: ignore
-                except FileNotFoundError:
-                    # if the file cannot be accessed (not completely written to disc yet)
+                    header = fits.getheader(newest_image)
+                    newest_filter = str(header[FILTER_KEYWORD]).strip("'")
+                    newest_field = header[FIELD_KEYWORD]
+                    newest_exptime = header[EXPTIME_KEYWORD]
+                except Exception as e:
                     self.logMessageToDb(
                         camera_name,
-                        f"Problem accessing fits file {newest_image}, skipping...",
-                    )
-                    continue
-                except OSError:
-                    self.logMessageToDb(
-                        camera_name,
-                        f"Problem accessing fits file {newest_image}, skipping...",
+                        f"Problem accessing fits file {newest_image}, skipping... Error: {e}",
                     )
                     continue
 
                 return newest_image, newest_field, newest_filter, newest_exptime
-
-            # Wait a bit before checking again
-            if wait_time < (datetime.now(UTC) - start_time).seconds:
-                break
-            time.sleep(0.1)
 
         return None, None, None, None
 
     def guider_loop(
         self,
         camera_name: str,
-        image_handler: "astra.image_handler.ImageHandler",  # type: ignore
-        wait_time: int = 10,
+        image_handler: ImageHandler,  # type: ignore
         binning: int = 1,
     ) -> None:
         """
@@ -868,29 +852,34 @@ class Guider:
         processes new images, updates reference images, measures shifts, and applies guiding corrections.
         """
         self.running = True
-        self.logger.info("Starting guider loop.")
+        self.logger.info(f"Starting guider loop for {camera_name}")
         try:
             while self.running:
-                # Initial reference image setup
-                last_timestamp = image_handler.last_image_timestamp
-                LOGFILE = os.path.join(str(image_handler.image_directory), "guider.log")
-                self.logShiftsToFile(LOGFILE, [], header=True)
-                # Wait for the first image
-                newest_image, current_field, current_filter, current_exptime = (
-                    self.waitForImage(
-                        last_timestamp, camera_name, image_handler, wait_time
-                    )
-                )
-                if newest_image is None:
-                    self.logger.warning("No image found to start guiding.")
-                    return
                 # Get telescope alignment mode
                 gem = (
                     self.telescope.get("AlignmentMode") == AlignmentModes.algGermanPolar
                 )
-                telescope_pierside = self.telescope.get("SideOfPier")
-                # Reference image logic
 
+                if gem:
+                    self.logger.info("Telescope is in German equatorial mode")
+
+                telescope_pierside = self.telescope.get("SideOfPier")
+
+                # Initial reference image setup
+                LOGFILE = os.path.join(
+                    str(image_handler.last_image_path.parent), "guider.log"
+                )
+                self.logShiftsToFile(LOGFILE, [], header=True)
+
+                # Wait for the first image
+                newest_image, current_field, current_filter, current_exptime = (
+                    self.waitForImage(camera_name, image_handler)
+                )
+                if newest_image is None:
+                    self.logger.warning("No image found to start guiding.")
+                    return
+
+                # Reference image logic
                 ref_file = self.getReferenceImage(
                     current_field,
                     current_filter,
@@ -898,6 +887,7 @@ class Guider:
                     camera_name,
                     telescope_pierside,
                 )
+
                 if not ref_file or not os.path.exists(ref_file):
                     self.setReferenceImage(
                         current_field,
@@ -910,7 +900,10 @@ class Guider:
                     ref_file = os.path.join(
                         self.reference_dir, os.path.basename(newest_image)
                     )
+                    self.logMessageToDb(camera_name, f"Ref_File created: {ref_file}")
+
                 self.logMessageToDb(camera_name, f"Ref_File: {ref_file}")
+
                 donuts_ref = Donuts(
                     ref_file,
                     normalise=False,
@@ -918,169 +911,185 @@ class Guider:
                     downweight_edges=False,
                     image_class=CustomImageClass,
                 )
+
                 images_to_stabilise = IMAGES_TO_STABILISE
                 stabilised = "n"
 
-            # Main guiding loop
-            while self.running:
-                last_timestamp = image_handler.last_image_timestamp
-                (
-                    check_file,
-                    current_field,
-                    current_filter,
-                    current_exptime,
-                ) = self.waitForImage(
-                    last_timestamp, camera_name, image_handler, wait_time
-                )
-                if check_file is None:
-                    continue
-                time.sleep(1)  # ensure file is fully written
-                # Check pierside change
-                if gem:
-                    current_pierside = self.telescope.get("SideOfPier")
-                    if current_pierside != telescope_pierside:
-                        self.logMessageToDb(
-                            camera_name,
-                            f"Pierside changed from {telescope_pierside} to {current_pierside}, resetting guider loop...",
-                        )
-                        self.logger.info(
-                            f"Pierside changed from {telescope_pierside} to {current_pierside}, resetting guider loop..."
-                        )
-                        break
-                if self.running:
-                    self.logMessageToDb(
-                        camera_name,
-                        f"REF: {ref_file} CHECK: {check_file} [{current_filter}]",
-                    )
-                    images_to_stabilise -= 1
-                    # PID reset logic
-                    if images_to_stabilise == 0:
-                        self.logMessageToDb(
-                            camera_name,
-                            "Stabilisation complete, reseting PID loop...",
-                        )
-                        self.PIDx = PID.from_config_dict(self.PID_COEFFS["x"])
-                        self.PIDy = PID.from_config_dict(self.PID_COEFFS["y"])
-                        self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
-                        self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
-                    elif images_to_stabilise > 0:
-                        self.logMessageToDb(
-                            camera_name, "Stabilising using P=1.0, I=0.0, D=0.0"
-                        )
-                        self.PIDx = PID(1.0, 0.0, 0.0)
-                        self.PIDy = PID(1.0, 0.0, 0.0)
-                        self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
-                        self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
-                    # Load comparison image and measure shift
-                    try:
-                        h2 = fits.open(check_file)
-                        del h2
-                    except IOError:
-                        self.logMessageToDb(
-                            camera_name,
-                            f"Problem opening CHECK: {check_file}...",
-                        )
-                        self.logMessageToDb(
-                            camera_name, "Breaking back to look for new file..."
-                        )
+                # Main guiding loop
+                while self.running:
+                    (
+                        check_file,
+                        current_field,
+                        current_filter,
+                        current_exptime,
+                    ) = self.waitForImage(camera_name, image_handler)
+                    if check_file is None:
                         continue
-                    culled_max_shift_x = "n"
-                    culled_max_shift_y = "n"
-                    shift = donuts_ref.measure_shift(check_file)
-                    shift_x = shift.x.value  # type: ignore
-                    shift_y = shift.y.value  # type: ignore
-                    self.logMessageToDb(camera_name, f"x shift: {float(shift_x):.2f}")
-                    self.logMessageToDb(camera_name, f"y shift: {float(shift_y):.2f}")
-                    if (
-                        abs(shift_x) <= 2.0
-                        and abs(shift_y) < 2.0
-                        and images_to_stabilise > 0
-                    ):
-                        images_to_stabilise = 1
-                    # Error culling logic
-                    if images_to_stabilise < 0:
-                        stabilised = "y"
-                        if abs(shift_x) > MAX_ERROR_PIXELS:
+
+                    # Check pierside change
+                    if gem:
+                        current_pierside = self.telescope.get("SideOfPier")
+                        if current_pierside != telescope_pierside:
                             self.logMessageToDb(
                                 camera_name,
-                                f"X shift > {MAX_ERROR_PIXELS}, applying no correction",
+                                f"Pierside changed from {telescope_pierside} to {current_pierside}, resetting guider loop...",
                             )
-                            culled_max_shift_x = "y"
-                        else:
-                            pre_pid_x = shift_x
-                        if abs(shift_y) > MAX_ERROR_PIXELS:
-                            self.logMessageToDb(
-                                camera_name,
-                                f"Y shift > {MAX_ERROR_PIXELS}, applying no correction",
+                            self.logger.info(
+                                f"Pierside changed from {telescope_pierside} to {current_pierside}, resetting guider loop..."
                             )
-                            culled_max_shift_y = "y"
-                        else:
-                            pre_pid_y = shift_y
-                    else:
+                            break
+
+                    if self.running:
                         self.logMessageToDb(
                             camera_name,
-                            "Allowing field to stabilise, imposing new max error clip",
+                            f"REF: {ref_file} CHECK: {check_file} [{current_filter}]",
                         )
-                        stabilised = "n"
-                        if shift_x > MAX_ERROR_STABIL_PIXELS:
-                            pre_pid_x = MAX_ERROR_STABIL_PIXELS
-                        elif shift_x < -MAX_ERROR_STABIL_PIXELS:
-                            pre_pid_x = -MAX_ERROR_STABIL_PIXELS
+                        images_to_stabilise -= 1
+                        # PID reset logic
+                        if images_to_stabilise == 0:
+                            self.logMessageToDb(
+                                camera_name,
+                                "Stabilisation complete, reseting PID loop...",
+                            )
+                            self.PIDx = PID.from_config_dict(self.PID_COEFFS["x"])
+                            self.PIDy = PID.from_config_dict(self.PID_COEFFS["y"])
+                            self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
+                            self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
+                        elif images_to_stabilise > 0:
+                            self.logMessageToDb(
+                                camera_name, "Stabilising using P=1.0, I=0.0, D=0.0"
+                            )
+                            self.PIDx = PID(1.0, 0.0, 0.0)
+                            self.PIDy = PID(1.0, 0.0, 0.0)
+                            self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
+                            self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
+                        # Load comparison image and measure shift
+                        try:
+                            h2 = fits.open(check_file)
+                            del h2
+                        except IOError:
+                            self.logMessageToDb(
+                                camera_name,
+                                f"Problem opening CHECK: {check_file}...",
+                            )
+                            self.logMessageToDb(
+                                camera_name, "Breaking back to look for new file..."
+                            )
+                            continue
+
+                        # reset culled tags
+                        culled_max_shift_x = "n"
+                        culled_max_shift_y = "n"
+
+                        # work out shift here
+                        shift = donuts_ref.measure_shift(check_file)
+                        shift_x = shift.x.value  # type: ignore
+                        shift_y = shift.y.value  # type: ignore
+                        self.logMessageToDb(
+                            camera_name, f"x shift: {float(shift_x):.2f}"
+                        )
+                        self.logMessageToDb(
+                            camera_name, f"y shift: {float(shift_y):.2f}"
+                        )
+
+                        # revoke stabilisation early if shift less than 2 pixels
+                        if (
+                            abs(shift_x) <= 2.0
+                            and abs(shift_y) < 2.0
+                            and images_to_stabilise > 0
+                        ):
+                            images_to_stabilise = 1
+
+                        # Check if shift greater than max allowed error in post pull in state
+                        if images_to_stabilise < 0:
+                            stabilised = "y"
+                            if abs(shift_x) > MAX_ERROR_PIXELS:
+                                self.logMessageToDb(
+                                    camera_name,
+                                    f"X shift > {MAX_ERROR_PIXELS}, applying no correction",
+                                )
+                                culled_max_shift_x = "y"
+                            else:
+                                pre_pid_x = shift_x
+                            if abs(shift_y) > MAX_ERROR_PIXELS:
+                                self.logMessageToDb(
+                                    camera_name,
+                                    f"Y shift > {MAX_ERROR_PIXELS}, applying no correction",
+                                )
+                                culled_max_shift_y = "y"
+                            else:
+                                pre_pid_y = shift_y
                         else:
-                            pre_pid_x = shift_x
-                        if shift_y > MAX_ERROR_STABIL_PIXELS:
-                            pre_pid_y = MAX_ERROR_STABIL_PIXELS
-                        elif shift_y < -MAX_ERROR_STABIL_PIXELS:
-                            pre_pid_y = -MAX_ERROR_STABIL_PIXELS
-                        else:
-                            pre_pid_y = shift_y
-                    if culled_max_shift_x == "y" or culled_max_shift_y == "y":
-                        (
-                            pre_pid_x,
-                            pre_pid_y,
-                            post_pid_x,
-                            post_pid_y,
-                            std_buff_x,
-                            std_buff_y,
-                        ) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-                    else:
-                        if self.running:
+                            self.logMessageToDb(
+                                camera_name,
+                                "Allowing field to stabilise, imposing new max error clip",
+                            )
+                            stabilised = "n"
+                            if shift_x > MAX_ERROR_STABIL_PIXELS:
+                                pre_pid_x = MAX_ERROR_STABIL_PIXELS
+                            elif shift_x < -MAX_ERROR_STABIL_PIXELS:
+                                pre_pid_x = -MAX_ERROR_STABIL_PIXELS
+                            else:
+                                pre_pid_x = shift_x
+
+                            if shift_y > MAX_ERROR_STABIL_PIXELS:
+                                pre_pid_y = MAX_ERROR_STABIL_PIXELS
+                            elif shift_y < -MAX_ERROR_STABIL_PIXELS:
+                                pre_pid_y = -MAX_ERROR_STABIL_PIXELS
+                            else:
+                                pre_pid_y = shift_y
+
+                        # if either axis is off by > MAX error then stop everything, no point guiding
+                        # in 1 axis, need to figure out the source of the problem and run again
+                        if culled_max_shift_x == "y" or culled_max_shift_y == "y":
                             (
-                                applied,
+                                pre_pid_x,
+                                pre_pid_y,
                                 post_pid_x,
                                 post_pid_y,
                                 std_buff_x,
                                 std_buff_y,
-                            ) = self.guide(
-                                pre_pid_x,
-                                pre_pid_y,
-                                images_to_stabilise,
-                                camera_name,
-                                binning,
-                                gem,
-                            )
+                            ) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                         else:
-                            break
-                    log_list = [
-                        str(image_handler.image_directory),
-                        os.path.basename(ref_file),
-                        check_file,
-                        stabilised,
-                        str(round(shift_x, 3)),
-                        str(round(shift_y, 3)),
-                        str(round(pre_pid_x, 3)),
-                        str(round(pre_pid_y, 3)),
-                        str(round(post_pid_x, 3)),
-                        str(round(post_pid_y, 3)),
-                        str(round(std_buff_x, 3)),
-                        str(round(std_buff_y, 3)),
-                        culled_max_shift_x,
-                        culled_max_shift_y,
-                    ]
-                    self.logShiftsToFile(LOGFILE, log_list)
-                    self.logShiftsToDb(tuple(log_list))
-                    self.logger.info(f"Guider post_pid_x shift: {post_pid_x:.2f}")
-                    self.logger.info(f"Guider post_pid_y shift: {post_pid_y:.2f}")
+                            if self.running:
+                                (
+                                    applied,
+                                    post_pid_x,
+                                    post_pid_y,
+                                    std_buff_x,
+                                    std_buff_y,
+                                ) = self.guide(
+                                    pre_pid_x,
+                                    pre_pid_y,
+                                    images_to_stabilise,
+                                    camera_name,
+                                    binning,
+                                    gem,
+                                )
+                            else:
+                                break
+
+                        log_list = [
+                            str(image_handler.image_directory.parent),
+                            os.path.basename(ref_file),
+                            str(check_file),
+                            stabilised,
+                            str(round(shift_x, 3)),
+                            str(round(shift_y, 3)),
+                            str(round(pre_pid_x, 3)),
+                            str(round(pre_pid_y, 3)),
+                            str(round(post_pid_x, 3)),
+                            str(round(post_pid_y, 3)),
+                            str(round(std_buff_x, 3)),
+                            str(round(std_buff_y, 3)),
+                            culled_max_shift_x,
+                            culled_max_shift_y,
+                        ]
+
+                        self.logShiftsToFile(LOGFILE, log_list)
+                        self.logShiftsToDb(tuple(log_list))
+                        self.logger.info(f"Guider post_pid_x shift: {post_pid_x:.2f}")
+                        self.logger.info(f"Guider post_pid_y shift: {post_pid_y:.2f}")
         except Exception as e:
             self.running = False
             self.logger.report_device_issue(

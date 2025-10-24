@@ -279,8 +279,10 @@ class TestImageHandler:
         with fits.open(result) as hdul:
             np.testing.assert_array_equal(hdul[0].data, [[100, 300], [200, 400]])
             assert hdul[0].header["DATE-OBS"] == "2024-05-15T12:00:00.000000"
-            assert "UTC datetime file written" in hdul[0].header.comments["DATE-OBS"]
-            assert "UTC datetime start of exposure" in hdul[0].header.comments["DATE"]
+            assert "UTC datetime file written" in hdul[0].header.comments["DATE"]
+            assert (
+                "UTC datetime start of exposure" in hdul[0].header.comments["DATE-OBS"]
+            )
 
     def test_save_bias_frame(self, temp_config):
         handler, image, info, maxadu, device_name, exposure_start_datetime = (

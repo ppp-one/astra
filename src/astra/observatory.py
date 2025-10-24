@@ -61,8 +61,8 @@ from astra.image_handler import HeaderManager, ImageHandler
 from astra.logger import (
     ConsoleStreamHandler,
     DatabaseLoggingHandler,
-    ObservatoryLogger,
     FileHandler,
+    ObservatoryLogger,
 )
 from astra.paired_devices import PairedDevices
 from astra.pointer import PointingCorrectionHandler
@@ -427,6 +427,7 @@ class Observatory:
                 )
         else:
             self._handle_watchdog_errors()
+            self.watchdog_running = False
             return
 
     def _handle_watchdog_errors(self) -> None:
@@ -1142,6 +1143,7 @@ class Observatory:
                 break
             if self.schedule_manager.get_schedule().is_completed():
                 self.logger.info("All scheduled actions completed. Ending schedule.")
+                self.schedule_manager.running = False
                 break
 
             time.sleep(1)
@@ -1976,7 +1978,6 @@ class Observatory:
                     and pointing_complete is True
                 ):
                     guiding = self.guider_manager.start_guider(
-                        action_value=action_value,
                         image_handler=self.image_handler,
                         paired_devices=paired_devices,
                         thread_manager=self.thread_manager,
