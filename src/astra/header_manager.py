@@ -28,6 +28,8 @@ from astropy.io import fits
 
 import astra
 from astra import utils
+from astra.config import ObservatoryConfig
+from astra.database_manager import DatabaseManager
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
@@ -82,7 +84,7 @@ class ObservatoryHeader(fits.Header):
 
     @property
     def ra(self) -> float:
-        """Right Ascension, by default in hours."""
+        """Right Ascension"""
         return float(self["RA"])  # type: ignore
 
     @property
@@ -382,7 +384,11 @@ class HeaderManager:
 
     @staticmethod
     def final_headers(
-        database_manager, logger, observatory_config, devices, fits_config
+        database_manager: DatabaseManager,
+        logger: ObservatoryLogger,
+        observatory_config: ObservatoryConfig,
+        devices: dict,
+        fits_config: pd.DataFrame,
     ) -> None:
         """
         Complete FITS headers with interpolated device data.
@@ -429,9 +435,13 @@ class HeaderManager:
                 return
 
             for camera_name in df_images["camera_name"].unique():
+                logger.info(f"Processing images from camera: {camera_name}")
+
                 df_images_filt = HeaderManager._filter_images_by_camera(
                     df_images, camera_name
                 )
+                logger.info(f"{df_images_filt.shape[0]} images to process.")
+
                 paired_devices = HeaderManager._get_paired_devices(
                     camera_name, devices, observatory_config
                 )
@@ -478,7 +488,7 @@ class HeaderManager:
         )
 
     @staticmethod
-    def _prepare_image_times(df_images_filt):
+    def _prepare_image_times(df_images_filt: pd.DataFrame) -> pd.DataFrame:
         df_images_filt["date_obs"] = pd.to_datetime(
             df_images_filt["date_obs"], format="%Y-%m-%d %H:%M:%S.%f"
         )
@@ -496,7 +506,9 @@ class HeaderManager:
         return df_images_filt.sort_values(by="jd_obs").reset_index(drop=True)
 
     @staticmethod
-    def _get_polling_data(database_manager, df_images_filt):
+    def _get_polling_data(
+        database_manager: DatabaseManager, df_images_filt: pd.DataFrame
+    ) -> pd.DataFrame:
         t0 = df_images_filt["date_obs"].iloc[0] - pd.Timedelta("10 sec")
         t1 = df_images_filt["date_obs"].iloc[-1] + pd.Timedelta("10 sec")
         df_poll = database_manager.execute_select_to_df(
@@ -509,7 +521,9 @@ class HeaderManager:
         return df_poll
 
     @staticmethod
-    def _get_unique_poll_headers(df_poll, fits_config, paired_devices):
+    def _get_unique_poll_headers(
+        df_poll: pd.DataFrame, fits_config: pd.DataFrame, paired_devices: pd.DataFrame
+    ) -> pd.DataFrame:
         df_poll_unique = df_poll[
             ["device_type", "device_name", "device_command"]
         ].drop_duplicates()
@@ -542,7 +556,11 @@ class HeaderManager:
         return df_poll_unique
 
     @staticmethod
-    def _interpolate_poll_data(df_poll, df_poll_unique, df_images_filt):
+    def _interpolate_poll_data(
+        df_poll: pd.DataFrame,
+        df_poll_unique: pd.DataFrame,
+        df_images_filt: pd.DataFrame,
+    ) -> pd.DataFrame:
         df_inp = pd.DataFrame(
             columns=df_poll_unique["header"], index=df_images_filt["jd_obs"]
         )
@@ -556,11 +574,14 @@ class HeaderManager:
                 .sort_values(by="jd")
                 .set_index("jd")
             )
-            df_poll_filtered["device_value"] = (
-                df_poll_filtered["device_value"]
-                .replace({"True": 1.0, "False": 0.0})
-                .astype(float)
-            )
+
+            df_poll_filtered["device_value"] = pd.to_numeric(
+                df_poll_filtered["device_value"].replace(
+                    {"True": "1.0", "False": "0.0"}
+                ),
+                errors="coerce",
+            ).fillna(-1)
+
             df_inp[poll_row["header"]] = utils.interpolate_dfs(
                 df_images_filt["jd_obs"], df_poll_filtered["device_value"]
             )["device_value"].fillna(0)
@@ -568,7 +589,12 @@ class HeaderManager:
 
     @staticmethod
     def _update_fits_files(
-        df_images_filt, df_inp, df_poll_unique, database_manager, logger, fits_config
+        df_images_filt: pd.DataFrame,
+        df_inp: pd.DataFrame,
+        df_poll_unique: pd.DataFrame,
+        database_manager: DatabaseManager,
+        logger: ObservatoryLogger,
+        fits_config: pd.DataFrame,
     ):
         for row_index, row in df_images_filt.iterrows():
             try:
@@ -577,8 +603,6 @@ class HeaderManager:
                     row,
                     df_inp,
                     df_poll_unique,
-                    database_manager,
-                    logger,
                     fits_config,
                 )
                 time.sleep(0)
@@ -591,7 +615,11 @@ class HeaderManager:
 
     @staticmethod
     def _update_single_fits_file(
-        row_index, row, df_inp, df_poll_unique, database_manager, logger, fits_config
+        row_index: int,
+        row: pd.Series,
+        df_inp: pd.DataFrame,
+        df_poll_unique: pd.DataFrame,
+        fits_config: pd.DataFrame,
     ):
         with fits.open(row["filepath"], mode="update") as filehandle:
             header = ObservatoryHeader(filehandle[0].header)  # type: ignore
@@ -607,7 +635,8 @@ class HeaderManager:
             target = header.get_target_sky_coordinates()
             header.add_times(fits_config, location, target)
             header.add_airmass(fits_config)
+
+            # Assign the modified header back to the HDU
+            filehandle[0].header = header
             filehandle[0].add_checksum()  # type: ignore
-            database_manager.execute(
-                f'''UPDATE images SET complete_hdr = 1 WHERE filename="{row["filepath"]}"'''
-            )
+            filehandle.flush()
