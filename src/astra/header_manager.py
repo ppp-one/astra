@@ -131,12 +131,12 @@ class ObservatoryHeader(fits.Header):
     ) -> datetime.datetime:
         self["DATE-OBS"] = (
             exposure_start_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-            "UTC datetime file written",
+            "UTC datetime start of exposure",
         )
         date = datetime.datetime.now(datetime.UTC)
         self["DATE"] = (
             date.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-            "UTC datetime start of exposure",
+            "UTC datetime file written",
         )
         return date
 

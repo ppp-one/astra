@@ -12,7 +12,6 @@ Classes:
 
 import time
 from collections import defaultdict
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
@@ -26,10 +25,10 @@ from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
 
 import astra
-from astra.image_handler import ImageHandler
 from astra.config import Config
-from astra.scheduler import Action
+from astra.image_handler import ImageHandler
 from astra.paired_devices import PairedDevices
+from astra.scheduler import Action
 
 
 class CustomImageClass(Image):
@@ -105,13 +104,7 @@ class GuidingCalibrator:
         self.paired_devices = paired_devices
         self.image_handler = image_handler
         self.image_handler.image_directory = (
-            save_path
-            if save_path is not None
-            else (
-                Config().paths.images
-                / "calibrate_guiding"
-                / datetime.now(UTC).strftime("%Y%m%d")
-            )
+            save_path if save_path is not None else (Config().paths.images)
         )
 
         self.pulse_time = action.action_value.get("pulse_time", pulse_time)
@@ -136,10 +129,11 @@ class GuidingCalibrator:
         completion, and saves results to observatory configuration.
         """
         self.slew_telescope_one_hour_east_of_sidereal_meridian()
-        self.perform_calibration_cycles()
-        self.complete_calibration_config()
-        self.save_calibration_config()
-        self.update_observatory_config()
+        success = self.perform_calibration_cycles()
+        if success:
+            self.complete_calibration_config()
+            self.save_calibration_config()
+            self.update_observatory_config()
 
     def slew_telescope_one_hour_east_of_sidereal_meridian(self) -> None:
         """Position telescope one hour east of meridian for calibration.
@@ -153,9 +147,14 @@ class GuidingCalibrator:
         """
         local_sidereal_time = self._telescope.get("SiderealTime")
         target_right_ascension = local_sidereal_time - 1
+        # Normalize RA to 0-24 hours
+        if target_right_ascension < 0:
+            target_right_ascension += 24
+        elif target_right_ascension >= 24:
+            target_right_ascension -= 24
 
         self.astra_observatory.logger.info(
-            f"Local sidereal time: {local_sidereal_time:.2f} hours."
+            f"Local sidereal time: {local_sidereal_time:.2f} hours. "
             f"Slewing one hour east to: RA = {target_right_ascension:.2f} hours, "
             "Dec = 0 degrees..."
         )
@@ -181,7 +180,13 @@ class GuidingCalibrator:
         and West directions, measuring star field shifts to determine pixel
         scales and camera orientation. Each cycle improves measurement accuracy.
         """
+        success = False
+
         image_path = self._perform_exposure()
+
+        if image_path is None:
+            return success
+
         donuts_ref = self._apply_donuts(image_path)
 
         for i in range(self.number_of_cycles):
@@ -197,6 +202,9 @@ class GuidingCalibrator:
                 # Nudging to determine the scale and orientation of the camera
                 self._pulse_guide_telescope(direction, self.pulse_time)
                 image_path = self._perform_exposure()
+
+                if image_path is None:
+                    return success
 
                 shift = donuts_ref.measure_shift(image_path)
                 direction_literal, magnitude = self._determine_shift_direction(shift)
@@ -217,6 +225,10 @@ class GuidingCalibrator:
         self.astra_observatory.logger.info(
             f"Directions: {str(self._directions)}; Scales: {str(self._scales)}"
         )
+
+        success = True
+
+        return success
 
     def complete_calibration_config(self) -> None:
         """Generate final calibration configuration from measurements.
@@ -390,6 +402,6 @@ class GuidingCalibrator:
             wcs=None,
         )
         if not success:
-            raise ValueError("Exposure failed.")
+            return None
 
         return file_path

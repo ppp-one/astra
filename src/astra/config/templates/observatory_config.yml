@@ -20,6 +20,7 @@ Telescope:
         "y": { "p": 0.50, "i": 0.02, "d": 0.0 }
         "set_x": 0.0
         "set_y": 0.0
+      MIN_GUIDE_INTERVAL: 30.0 # seconds
 Focuser:
   - device_name: focuser_observatoryname
     ip: localhost:11111
