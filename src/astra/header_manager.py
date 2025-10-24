@@ -18,6 +18,7 @@ and file organization for astronomical data processing pipelines.
 """
 
 import datetime
+import time
 
 import numpy as np
 import pandas as pd
@@ -580,6 +581,7 @@ class HeaderManager:
                     logger,
                     fits_config,
                 )
+                time.sleep(0)
             except FileNotFoundError:
                 logger.warning(f"Error completing headers: {row['filepath']}")
             finally:
