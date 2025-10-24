@@ -64,12 +64,8 @@ class ObservatoryHeader(fits.Header):
     REQUIRED_KEYS = [
         "LONG-OBS",
         "LAT-OBS",
-        "ALT-OBS",
         "RA",
         "DEC",
-        "ALTITUDE",
-        "AIRMASS",
-        "DATE-END",
         "EXPTIME",
         "DATE-OBS",
     ]
