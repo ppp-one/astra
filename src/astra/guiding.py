@@ -63,7 +63,7 @@ PIERSIDE_KEYWORD = "PIERSIDE"
 GUIDE_BUFFER_LENGTH = 20
 
 # number images allowed during pull in period
-IMAGES_TO_STABILISE = 10
+IMAGES_TO_STABILISE = 3
 
 # outlier rejection sigma
 SIGMA_BUFFER = 10
@@ -235,7 +235,7 @@ class CustomImageClass(Image):
         sigma_clip = SigmaClip(sigma=3.0)
         bkg_estimator = MedianBackground()
 
-        self.raw_image = self.raw_image.astype(np.int16)
+        self.raw_image = self.raw_image.astype(np.float32).filled(fill_value=np.nan)
 
         bkg = Background2D(
             self.raw_image,
@@ -244,15 +244,14 @@ class CustomImageClass(Image):
             sigma_clip=sigma_clip,
             bkg_estimator=bkg_estimator,  # type: ignore
         )
+
         bkg_clean = self.raw_image - bkg.background
 
         med_clean = ndimage.median_filter(
             bkg_clean, size=5, mode="mirror"
         )  # slow but needed
-        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)  # type: ignore
-        image_clean = med_clean - band_corr
 
-        self.raw_image = np.clip(image_clean, 1, None)
+        self.raw_image = np.clip(med_clean, 1, None)
 
 
 class Guider:
@@ -456,27 +455,6 @@ class Guider:
             """
         qry_args = (camera_name, message)
         self.database_manager.execute(qry % qry_args)
-
-    def logShiftsToFile(
-        self, logfile: str, loglist: List[str], header: bool = False
-    ) -> None:
-        """
-        Log guiding corrections to a text file alongside image data.
-
-        Parameters:
-            logfile (str): Path to the log file.
-            loglist (list): List of values to log (see logShiftsToDb for order).
-            header (bool, optional): Whether to write column headers. Defaults to False.
-        """
-        if header:
-            line = (
-                "night  ref  check  stable  shift_x  shift_y  pre_pid_x  pre_pid_y  "
-                "post_pid_x  post_pid_y  std_buff_x  std_buff_y  culled_x  culled_y"
-            )
-        else:
-            line = "  ".join(loglist)
-        with open(logfile, "a") as outfile:
-            outfile.write("{}\n".format(line))
 
     def guide(
         self,
@@ -865,12 +843,6 @@ class Guider:
 
                 telescope_pierside = self.telescope.get("SideOfPier")
 
-                # Initial reference image setup
-                LOGFILE = os.path.join(
-                    str(image_handler.last_image_path.parent), "guider.log"
-                )
-                self.logShiftsToFile(LOGFILE, [], header=True)
-
                 # Wait for the first image
                 newest_image, current_field, current_filter, current_exptime = (
                     self.waitForImage(camera_name, image_handler)
@@ -1070,7 +1042,7 @@ class Guider:
                                 break
 
                         log_list = [
-                            str(image_handler.image_directory.parent),
+                            str(image_handler.last_image_path.parent),
                             os.path.basename(ref_file),
                             str(check_file),
                             stabilised,
@@ -1086,7 +1058,6 @@ class Guider:
                             culled_max_shift_y,
                         ]
 
-                        self.logShiftsToFile(LOGFILE, log_list)
                         self.logShiftsToDb(tuple(log_list))
                         self.logger.info(f"Guider post_pid_x shift: {post_pid_x:.2f}")
                         self.logger.info(f"Guider post_pid_y shift: {post_pid_y:.2f}")

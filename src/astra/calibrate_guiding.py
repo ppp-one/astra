@@ -39,17 +39,17 @@ class CustomImageClass(Image):
     star detection and shift measurements during guiding calibration.
     """
 
-    def preconstruct_hook(self):
-        """Apply background subtraction and image cleaning preprocessing.
+    def preconstruct_hook(self) -> None:
+        """
+        Apply image preprocessing before Donuts star detection.
 
-        Performs sigma-clipped background estimation, median filtering,
-        and horizontal banding correction to prepare images for accurate
-        star position measurements during guiding calibration.
+        Performs background subtraction, noise reduction, and systematic
+        correction to improve star detection reliability.
         """
         sigma_clip = SigmaClip(sigma=3.0)
         bkg_estimator = MedianBackground()
 
-        self.raw_image = self.raw_image.astype(np.int16)
+        self.raw_image = self.raw_image.astype(np.float32).filled(fill_value=np.nan)
 
         bkg = Background2D(
             self.raw_image,
@@ -58,13 +58,14 @@ class CustomImageClass(Image):
             sigma_clip=sigma_clip,
             bkg_estimator=bkg_estimator,  # type: ignore
         )
+
         bkg_clean = self.raw_image - bkg.background
 
-        med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
-        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)  # type: ignore
-        image_clean = med_clean - band_corr
+        med_clean = ndimage.median_filter(
+            bkg_clean, size=5, mode="mirror"
+        )  # slow but needed
 
-        self.raw_image = np.clip(image_clean, 1, None)
+        self.raw_image = np.clip(med_clean, 1, None)
 
 
 class GuidingCalibrator:
