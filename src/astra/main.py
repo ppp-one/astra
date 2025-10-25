@@ -27,7 +27,6 @@ from glob import glob
 from io import BytesIO
 from pathlib import Path
 
-
 import httpx
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -1176,14 +1175,27 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
         #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
         # TODO: need to make it less CPU intensive if multiple clients
-        if (
-            obs._image_handler is not None
-            and LAST_IMAGE != obs.image_handler.last_image_path
-        ):
-            LAST_IMAGE = obs.image_handler.last_image_path
-            LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
-                str(LAST_IMAGE), observatory
-            )
+        # Check all image handlers for the most recent image
+        if obs._image_handlers:
+            # Find the most recent image across all cameras
+            most_recent_path = None
+            most_recent_time = None
+
+            for camera_name, handler in obs._image_handlers.items():
+                if handler.last_image_path is not None:
+                    if most_recent_time is None or (
+                        handler.last_image_timestamp is not None
+                        and handler.last_image_timestamp > most_recent_time
+                    ):
+                        most_recent_path = handler.last_image_path
+                        most_recent_time = handler.last_image_timestamp
+
+            # Convert to JPEG if we have a new image
+            if most_recent_path is not None and LAST_IMAGE != most_recent_path:
+                LAST_IMAGE = most_recent_path
+                LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
+                    str(LAST_IMAGE), observatory
+                )
 
         data = {
             "table0": table0,

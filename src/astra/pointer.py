@@ -59,7 +59,6 @@ from pathlib import Path
 from typing import Optional, Tuple, Union
 
 import astropy.units as u
-from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import twirl
@@ -68,6 +67,7 @@ from astropy.io import fits
 from astropy.stats import SigmaClip, sigma_clipped_stats
 from astropy.units import Quantity
 from astropy.wcs.utils import WCS, pixel_to_skycoord
+from matplotlib import pyplot as plt
 from photutils.background import Background2D, MedianBackground
 from photutils.detection import DAOStarFinder
 from scipy import ndimage

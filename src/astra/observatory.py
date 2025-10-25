@@ -230,7 +230,7 @@ class Observatory:
         )
         self.device_manager.load_devices()
 
-        self._image_handler: ImageHandler | None = None
+        self._image_handlers: dict[str, ImageHandler] = {}
 
         # for each telescope, create a donuts guider
         self.guider_manager = GuiderManager.from_observatory(self)
@@ -285,26 +285,56 @@ class Observatory:
         """
         Get the ImageHandler instance for image processing and FITS header management.
 
-        This property provides access to the ImageHandler instance, which is responsible
-        for image processing tasks such as FITS header management, WCS solution,
-        and image storage. The ImageHandler must be initialized using the
-        setup_image_handler() method before accessing this property.
+        DEPRECATED for multi-camera observatories. Use get_image_handler(camera_name) instead.
+
+        This property provides backward compatibility but will raise an error if multiple
+        ImageHandlers are active (indicating multi-camera use). For new code, use
+        get_image_handler(camera_name) to explicitly specify which camera's ImageHandler
+        to retrieve.
 
         Returns:
             ImageHandler: The current ImageHandler instance.
+
+        Raises:
+            ValueError: If multiple ImageHandlers are active or if no ImageHandler is initialized.
         """
-        if self._image_handler is None:
+        if len(self._image_handlers) > 1:
             raise ValueError(
-                "ImageHandler not initialized. "
-                "Call the method setup_image_handler first."
+                "Multiple ImageHandlers active. Use get_image_handler(camera_name) instead."
             )
-        return self._image_handler
+        if not self._image_handlers:
+            raise ValueError(
+                "ImageHandler not initialized. Call setup_image_handler first."
+            )
+        return list(self._image_handlers.values())[0]
 
     @image_handler.setter
     def image_handler(self, value: ImageHandler) -> None:
-        if not isinstance(value, ImageHandler):
-            raise ValueError("image_handler must be an instance of ImageHandler")
-        self._image_handler = value
+        """DEPRECATED: Setting image_handler directly is no longer supported."""
+        raise DeprecationWarning(
+            "Setting image_handler directly is deprecated. "
+            "ImageHandlers are now managed per-camera via setup_image_handler()."
+        )
+
+    def get_image_handler(self, camera_name: str) -> ImageHandler:
+        """
+        Get the ImageHandler for a specific camera.
+
+        Parameters:
+            camera_name (str): The name of the camera device.
+
+        Returns:
+            ImageHandler: The ImageHandler instance for the specified camera.
+
+        Raises:
+            ValueError: If ImageHandler for the specified camera is not initialized.
+        """
+        if camera_name not in self._image_handlers:
+            raise ValueError(
+                f"ImageHandler for camera '{camera_name}' not initialized. "
+                "Call setup_image_handler first."
+            )
+        return self._image_handlers[camera_name]
 
     def connect_all_devices(self):
         """
@@ -1386,14 +1416,16 @@ class Observatory:
 
     def setup_image_handler(self, action, paired_devices):
         try:
-            self.image_handler = ImageHandler.from_action(
+            camera_name = action.device_name
+            image_handler = ImageHandler.from_action(
                 action=action,
                 paired_devices=paired_devices,
                 logger=self.logger,
                 observatory_config=self.config,
                 fits_config=self.fits_config,
             )
-            self.logger.debug(f"Created image handler for {action.device_name}")
+            self._image_handlers[camera_name] = image_handler
+            self.logger.debug(f"Created image handler for camera '{camera_name}'")
         except Exception as e:
             self.logger.report_device_issue(
                 device_type="ImageHandler",
@@ -1754,19 +1786,23 @@ class Observatory:
         # Yield to other threads
         time.sleep(0)
 
-        self.image_handler.header["EXPTIME"] = exptime
-        use_light = self.image_handler.header.set_imagetype(
+        # Get the image handler for this specific camera
+        camera_name = camera.device_name
+        image_handler = self.get_image_handler(camera_name)
+
+        image_handler.header["EXPTIME"] = exptime
+        use_light = image_handler.header.set_imagetype(
             action_type=action.action_type, use_light=use_light
         )
-        self.image_handler.header.set_action_type(action)
+        image_handler.header.set_action_type(action)
 
         # Log information about the exposure
         log_option_tmp = "" if log_option is None else f"{log_option} "
         self.logger.info(
             f"Exposing {log_option_tmp}{action.device_name} "
-            f"{self.image_handler.header['IMAGETYP']} "
-            f"for exposure time {self.image_handler.header['EXPTIME']:.3f} s "
-            f"from {self.image_handler.header['ASTRATYP']} sequence."
+            f"{image_handler.header['IMAGETYP']} "
+            f"for exposure time {image_handler.header['EXPTIME']:.3f} s "
+            f"from {image_handler.header['ASTRATYP']} sequence."
         )
 
         # Start exposure
@@ -1814,7 +1850,7 @@ class Observatory:
             image = camera.get("ImageArray")
             image_info = camera.get("ImageArrayInfo")
 
-            filepath = self.image_handler.save_image(
+            filepath = image_handler.save_image(
                 image=image,
                 image_info=image_info,
                 maxadu=maxadu,
@@ -1979,7 +2015,7 @@ class Observatory:
                     and pointing_complete is True
                 ):
                     guiding = self.guider_manager.start_guider(
-                        image_handler=self.image_handler,
+                        image_handler=self.get_image_handler(camera.device_name),
                         paired_devices=paired_devices,
                         thread_manager=self.thread_manager,
                     )
@@ -2000,6 +2036,12 @@ class Observatory:
                 device_name=paired_devices["Telescope"],
                 log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
             )
+
+        # Clean up the image handler for this camera
+        camera_name = camera.device_name
+        if camera_name in self._image_handlers:
+            del self._image_handlers[camera_name]
+            self.logger.debug(f"Cleaned up image handler for camera '{camera_name}'")
 
     def pointing_model_sequence(
         self, action: Action, paired_devices: PairedDevices
@@ -2058,16 +2100,19 @@ class Observatory:
         camera = self.devices["Camera"][action.device_name]
         maxadu = camera.get("MaxADU")
 
+        # Get the image handler for this camera
+        image_handler = self.get_image_handler(camera.device_name)
+
         # find dark frame
         dark_frame = None
         if action_value.get("dark_subtraction", False):
             self.logger.info(
                 f"Dark subtraction enabled. Looking for matching dark frame for {action.device_name}"
-                f" with exposure time {exptime} s in {self.image_handler.image_directory}"
+                f" with exposure time {exptime} s in {image_handler.image_directory}"
             )
             # TODO is this also just the last image?
             darks = list(
-                Path(self.image_handler.image_directory).glob(
+                Path(image_handler.image_directory).glob(
                     f"*Dark Frame_{exptime:.3f}*.fits"
                 )
             )
@@ -2077,11 +2122,11 @@ class Observatory:
                 self.logger.info(f"Using dark frame {dark_frame}")
             else:
                 self.logger.warning(
-                    f"No dark frame found in {self.image_handler.image_directory}. Dark subtraction will not be applied."
+                    f"No dark frame found in {image_handler.image_directory}. Dark subtraction will not be applied."
                 )
 
         # get location
-        obs_location = self.image_handler.get_observatory_location()
+        obs_location = image_handler.get_observatory_location()
         MOON_LIMIT = u.Quantity(20, u.deg)  # pointing distance to the moon in degrees
 
         # create pointing_model folder
@@ -2099,8 +2144,8 @@ class Observatory:
         t_shift = 0
 
         # update header
-        self.image_handler.header["IMAGETYP"] = "Light Frame"
-        self.image_handler.header["OBJECT"] = "Pointing Model"
+        image_handler.header["IMAGETYP"] = "Light Frame"
+        image_handler.header["OBJECT"] = "Pointing Model"
         action_value["object"] = "Pointing Model"
 
         # open dome and unpark telescope
@@ -2185,6 +2230,12 @@ class Observatory:
 
             counter += 1
 
+        # Clean up the image handler for this camera
+        camera_name = camera.device_name
+        if camera_name in self._image_handlers:
+            del self._image_handlers[camera_name]
+            self.logger.debug(f"Cleaned up image handler for camera '{camera_name}'")
+
     def pointing_correction(
         self,
         action: Action,
@@ -2252,8 +2303,6 @@ class Observatory:
             self.logger.info(
                 f"Plate solve succeeded using {number_of_stars_to_use} identified stars and "
                 f"{len(pointing_corrector_handler.image_star_mapping.gaia_stars_in_image)} catalog stars. "
-                f"{pointing_corrector_handler.image_star_mapping.number_of_matched_stars()} stars matched, "
-                f"meeting the Astra requirement of at least {np.floor(number_of_stars_to_use * 0.8):.0f} stars (80% of {number_of_stars_to_use})."
             )
 
         except Exception as e:
@@ -2381,7 +2430,7 @@ class Observatory:
                 astra_observatory=self,
                 action=action,
                 paired_devices=paired_devices,
-                image_handler=self.image_handler,
+                image_handler=self.get_image_handler(action.device_name),
             )
             guiding_calibrator.slew_telescope_one_hour_east_of_sidereal_meridian()
             guiding_calibrator.perform_calibration_cycles()
@@ -2400,6 +2449,14 @@ class Observatory:
                 message=f"Error running guiding calibration for {action.device_name}",
                 exception=e,
             )
+        finally:
+            # Clean up the image handler for this camera
+            camera_name = action.device_name
+            if camera_name in self._image_handlers:
+                del self._image_handlers[camera_name]
+                self.logger.debug(
+                    f"Cleaned up image handler for camera '{camera_name}'"
+                )
 
         return success
 
@@ -2472,6 +2529,14 @@ class Observatory:
                 message=f"Error running autofocus for {action.device_name}",
                 exception=e,
             )
+        finally:
+            # Clean up the image handler for this camera
+            camera_name = action.device_name
+            if camera_name in self._image_handlers:
+                del self._image_handlers[camera_name]
+                self.logger.debug(
+                    f"Cleaned up image handler for camera '{camera_name}'"
+                )
 
         return success
 
@@ -2537,7 +2602,9 @@ class Observatory:
         upper_exptime_limit = camera_config["flats"]["upper_exptime_limit"]
 
         # get location to determine if sun is up
-        obs_location = self.image_handler.get_observatory_location()
+        obs_location = self.get_image_handler(
+            action.device_name
+        ).get_observatory_location()
 
         # wait for sun to be in right position
         sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
@@ -2618,8 +2685,10 @@ class Observatory:
                     self.logger.info("Moving on...")
                     continue
 
-                self.image_handler.header["EXPTIME"] = exptime
-                self.image_handler.header["FILTER"] = filter_name
+                # Get the image handler for this camera
+                image_handler = self.get_image_handler(camera.device_name)
+                image_handler.header["EXPTIME"] = exptime
+                image_handler.header["FILTER"] = filter_name
 
                 while self.check_conditions(action) and (
                     count < action.action_value["n"][i]
@@ -2674,7 +2743,7 @@ class Observatory:
                                         f"{target_adu[1]} of {target_adu[0]}"
                                     )
 
-                        self.image_handler.header["EXPTIME"] = exptime
+                        image_handler.header["EXPTIME"] = exptime
 
                         count += 1
 
@@ -2687,6 +2756,12 @@ class Observatory:
 
                 self.logger.info("Moving on...")
                 break
+
+        # Clean up the image handler for this camera
+        camera_name = camera.device_name
+        if camera_name in self._image_handlers:
+            del self._image_handlers[camera_name]
+            self.logger.debug(f"Cleaned up image handler for camera '{camera_name}'")
 
     def flats_position(
         self, obs_location: EarthLocation, paired_devices: dict, action: Action
