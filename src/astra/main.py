@@ -88,33 +88,30 @@ def load_observatories() -> None:
     global WEBCAMFEEDS
     global FWS
 
-    config_files = glob(
-        str(Config().paths.observatory_config / "*_config.yml")
-    )  # should we use Config().config['observatory_name'] here instead?
+    config_file = (
+        Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
+    )
 
-    for config_filename in config_files:
-        obs = Observatory(
-            config_filename,
-            TRUNCATE_FACTOR,
-            custom_observatory=CUSTOM_OBSERVATORY,
-            logging_level=logging.DEBUG if DEBUG else logging.INFO,
-        )
-        OBSERVATORIES[obs.name] = obs
+    obs = Observatory(
+        config_file,
+        TRUNCATE_FACTOR,
+        custom_observatory=CUSTOM_OBSERVATORY,
+        logging_level=logging.DEBUG if DEBUG else logging.INFO,
+    )
+    OBSERVATORIES[obs.name] = obs
 
-        if "Misc" in obs.config:
-            if "Webcam" in obs.config["Misc"]:
-                WEBCAMFEEDS[obs.name] = obs.config["Misc"]["Webcam"]
+    if "Misc" in obs.config:
+        if "Webcam" in obs.config["Misc"]:
+            WEBCAMFEEDS[obs.name] = obs.config["Misc"]["Webcam"]
 
-        obs.connect_all_devices()
+    obs.connect_all_devices()
 
-        if "FilterWheel" in obs.devices:
-            FWS[obs.name] = {}
-            for fw_name in obs.devices["FilterWheel"].keys():
-                filter_names = obs.devices["FilterWheel"][fw_name].get("Names")
-                obs.logger.info(f"FilterWheel {fw_name} has filters: {filter_names}")
-                FWS[obs.name][fw_name] = obs.devices["FilterWheel"][fw_name].get(
-                    "Names"
-                )
+    if "FilterWheel" in obs.devices:
+        FWS[obs.name] = {}
+        for fw_name in obs.devices["FilterWheel"].keys():
+            filter_names = obs.devices["FilterWheel"][fw_name].get("Names")
+            obs.logger.info(f"FilterWheel {fw_name} has filters: {filter_names}")
+            FWS[obs.name][fw_name] = obs.devices["FilterWheel"][fw_name].get("Names")
 
 
 def clean_up() -> None:
