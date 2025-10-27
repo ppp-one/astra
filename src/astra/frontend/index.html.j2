@@ -2,10 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Astra
-        {% for observatory in observatories %}
-        - {{ observatory }}
-        {% endfor %}
+    <title>Astra - {{ observatory }}
     </title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +37,6 @@
 
     <div class="flex flex-wrap h-screen items-center justify-center md:p-10">
         <div id="particles-js" class="absolute w-full h-full -z-0 max-lg:hidden"></div>
-        {% for observatory in observatories %}
         <div id="{{ observatory }}" class="flex flex-col 
         inset-0 h-full w-screen sm:lg:max-w-screen-sm md:max-w-screen-md max-h-full
         gap-4 space-y-4 p-4 bg-neutral-900/80 shadow-black/50 shadow-xl rounded-xl z-10">
@@ -276,8 +272,8 @@
                                 <span>Start watchdog</span>
                             </button>
 
-                            {% if configs[observatory]['Camera'] %}
-                            {% for camera in configs[observatory]['Camera'] %}
+                            {% if config['Camera'] %}
+                            {% for camera in config['Camera'] %}
                             <button
                                 class="text-white/50 text-sm font-medium rounded-xl aspect-square bg-gray-600/20 hover:bg-gray-700/20 px-5 py-2.5"
                                 onclick="coolCamera('{{observatory}}', '{{camera['device_name']}}', '{{camera['temperature']}}')">
@@ -311,15 +307,14 @@
                 {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
 
 
 
     <script>
 
-        // log configs
-        console.log("configs: ", {{ configs | tojson }});
+        // log config
+        console.log("config: ", {{ config | tojson }});
 
         particlesJS.load('particles-js', '/js/particlesjs-config.json', function () {
             console.log('callback - particles.js config loaded');
@@ -1025,8 +1020,6 @@
             }
         }
 
-        {% for observatory in observatories %}
-
         document.getElementById('robotic-switch--{{ observatory }}').addEventListener('change', function () {
 
             // add alert and confirm and improve styling
@@ -1080,8 +1073,6 @@
         setInterval(function () {
             updateWeatherChart('{{observatory}}', update = true);
         }, 30000);
-
-        {% endfor %}
 
     </script>
 

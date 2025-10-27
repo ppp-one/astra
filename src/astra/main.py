@@ -52,8 +52,8 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # global variables
 FRONTEND_PATH = Path(__file__).parent / "frontend"
-OBSERVATORIES: dict[str, Observatory] = {}
-WEBCAMFEEDS = {}
+OBSERVATORY: Observatory = None
+WEBCAMFEED = {}
 FWS = {}
 DEBUG = False
 FRONTEND = Jinja2Templates(directory=FRONTEND_PATH)
@@ -64,7 +64,7 @@ TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
 
 
-def observatory_db(name: str) -> sqlite3.Connection:
+def observatory_db() -> sqlite3.Connection:
     """Get database connection for observatory logging.
 
     Args:
@@ -73,7 +73,7 @@ def observatory_db(name: str) -> sqlite3.Connection:
     Returns:
         sqlite3.Connection: Database connection object.
     """
-    db = sqlite3.connect(Config().paths.logs / f"{name}.db")
+    db = sqlite3.connect(Config().paths.logs / f"{Config().observatory_name}.db")
     return db
 
 
@@ -82,10 +82,10 @@ def load_observatories() -> None:
 
     Discovers observatory config files, creates Observatory instances,
     establishes device connections, and sets up filter wheel mappings.
-    Updates global OBSERVATORIES, WEBCAMFEEDS, and FWS dictionaries.
+    Updates global OBSERVATORY, WEBCAMFEED, and FWS dictionaries.
     """
-    global OBSERVATORIES  # not sure if this is necessary
-    global WEBCAMFEEDS
+    global OBSERVATORY  # not sure if this is necessary
+    global WEBCAMFEED
     global FWS
 
     config_file = (
@@ -98,20 +98,20 @@ def load_observatories() -> None:
         custom_observatory=CUSTOM_OBSERVATORY,
         logging_level=logging.DEBUG if DEBUG else logging.INFO,
     )
-    OBSERVATORIES[obs.name] = obs
+    OBSERVATORY = obs
 
     if "Misc" in obs.config:
         if "Webcam" in obs.config["Misc"]:
-            WEBCAMFEEDS[obs.name] = obs.config["Misc"]["Webcam"]
+            WEBCAMFEED = obs.config["Misc"]["Webcam"]
 
     obs.connect_all_devices()
 
     if "FilterWheel" in obs.devices:
-        FWS[obs.name] = {}
+        FWS = {}
         for fw_name in obs.devices["FilterWheel"].keys():
             filter_names = obs.devices["FilterWheel"][fw_name].get("Names")
             obs.logger.info(f"FilterWheel {fw_name} has filters: {filter_names}")
-            FWS[obs.name][fw_name] = obs.devices["FilterWheel"][fw_name].get("Names")
+            FWS[fw_name] = obs.devices["FilterWheel"][fw_name].get("Names")
 
 
 def clean_up() -> None:
@@ -120,18 +120,18 @@ def clean_up() -> None:
     Iterates through all observatories and device types to safely
     stop all connected devices. Handles exceptions during shutdown.
     """
-    for obs in OBSERVATORIES.values():
-        # Get all the devices
-        for device_type in obs.devices:
-            for device_name in obs.devices[device_type]:
-                # Get the device
-                device = obs.devices[device_type][device_name]
-                # Stop the device
-                try:
-                    # logging.info(f"Stopping device {device_name}")
-                    device.stop()
-                except Exception as e:
-                    logger.error(f"Error stopping device {device_name}: {e}")
+    obs = OBSERVATORY
+    # Get all the devices
+    for device_type in obs.devices:
+        for device_name in obs.devices[device_type]:
+            # Get the device
+            device = obs.devices[device_type][device_name]
+            # Stop the device
+            try:
+                # logging.info(f"Stopping device {device_name}")
+                device.stop()
+            except Exception as e:
+                logger.error(f"Error stopping device {device_name}: {e}")
 
     logger.info("Exiting clean_up")
 
@@ -152,7 +152,7 @@ def format_time(ftime: datetime.datetime) -> str | None:
         return None
 
 
-def convert_fits_to_jpg(fits_file: str, observatory: str) -> tuple[str, dict]:
+def convert_fits_to_jpg(fits_file: str) -> tuple[str, dict]:
     """Convert FITS astronomical image to JPEG for web display.
 
     Opens FITS file, extracts image data and headers, applies Z-scale
@@ -184,7 +184,7 @@ def convert_fits_to_jpg(fits_file: str, observatory: str) -> tuple[str, dict]:
     vmin, vmax = interval.get_limits(image_data)
 
     # delete previous jpgs
-    old_img_path = str(FRONTEND_PATH / f"*{observatory}*.jpg")
+    old_img_path = str(FRONTEND_PATH / f"*{OBSERVATORY.name}*.jpg")
     for file in glob(old_img_path):
         os.remove(file)
 
@@ -236,7 +236,7 @@ async def get_video(request: Request, observatory: str, filename: str = None):
         StreamingResponse: Proxied video content with appropriate headers.
     """
     headers = request.headers
-    base_url = WEBCAMFEEDS[observatory]
+    base_url = WEBCAMFEED
     target_url = f"{base_url}/{filename}"
 
     async with httpx.AsyncClient() as client:
@@ -266,20 +266,9 @@ async def heartbeat(observatory: str):
     Returns:
         dict: JSON response with heartbeat status data.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     return {"status": "success", "data": obs.heartbeat, "message": ""}
-
-
-# @app.get("/api/open/{observatory}")
-# def open_observatory(observatory: str):
-#     obs = OBSERVATORIES[observatory]
-
-#     obs.logger.info(f"User initiated opening of observatory from web interface")
-
-#     obs.open_observatory()
-
-#     return {"status": "success", "data": "null", "message": ""}
 
 
 @app.get("/api/close/{observatory}")
@@ -295,7 +284,7 @@ def close_observatory(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated closing of observatory from web interface")
 
@@ -325,7 +314,7 @@ def cool_camera(observatory: str, device_name: str):
     Returns:
         dict: JSON response with operation status and cooling details.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     row = {"device_name": device_name}
 
@@ -369,7 +358,7 @@ def complete_headers(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated completion of headers from web interface")
 
@@ -397,7 +386,7 @@ async def start_watchdog(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated starting of watchdog from web interface")
 
@@ -418,7 +407,7 @@ async def stop_watchdog(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated stopping of watchdog from web interface")
 
@@ -437,7 +426,7 @@ async def roboticswitch(observatory: str):
     Returns:
         dict: JSON response with current robotic switch state.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated robotic switch from web interface")
 
@@ -456,7 +445,7 @@ async def start_schedule(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated starting of schedule from web interface")
 
@@ -475,7 +464,7 @@ async def stop_schedule(observatory: str):
     Returns:
         dict: JSON response with operation status.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     obs.logger.info("User initiated stopping of schedule from web interface")
 
@@ -495,7 +484,7 @@ async def schedule(observatory: str):
         list: Schedule items with start/end times formatted as HH:MM:SS,
               or empty list if no schedule exists.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
     if obs.schedule_manager.schedule_mtime != 0:
         try:
             schedule = obs.schedule_manager.get_schedule().to_dataframe()
@@ -529,7 +518,7 @@ async def edit_schedule(
     Returns:
         dict: Status response with success/error information.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     schedule_path = obs.schedule_manager.schedule_path
 
@@ -575,7 +564,7 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
     Returns:
         dict: Upload status response with success/error information.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     try:
         # Save the uploaded file
@@ -617,7 +606,7 @@ async def polling(
     Returns:
         dict: Processed polling data with safety limits and latest values.
     """
-    db = observatory_db(observatory)
+    db = observatory_db()
     if since:
         # Only fetch new records since the given timestamp
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > '{since}'"""
@@ -653,7 +642,7 @@ async def polling(
             df_groupby["SkyTemperature"] - df_groupby["Temperature"]
         )
 
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
     if "ObservingConditions" in obs.config:
         # Safety limits
         closing_limits = obs.config["ObservingConditions"][0]["closing_limits"]
@@ -697,7 +686,7 @@ async def log(observatory: str, datetime: str, limit: int = 100):
     Returns:
         list: Log entries as dictionary records.
     """
-    db = observatory_db(observatory)
+    db = observatory_db()
     q = f"""SELECT * FROM (SELECT * FROM log WHERE datetime < '{datetime}' ORDER BY datetime DESC LIMIT {limit}) a ORDER BY datetime ASC"""
 
     df = pd.read_sql_query(q, db)
@@ -719,9 +708,9 @@ async def websocket_log(websocket: WebSocket, observatory: str):
         observatory (str): Observatory name for log streaming.
     """
     await websocket.accept()
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
-    db = observatory_db(observatory)
+    db = observatory_db()
     q = """SELECT * FROM (SELECT * FROM log ORDER BY datetime DESC LIMIT 100) a ORDER BY datetime ASC"""
     initial_df = pd.read_sql_query(q, db)
 
@@ -780,7 +769,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
 
     await websocket.accept()
 
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     socket = True
     while socket:
@@ -967,7 +956,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                         status = "moving"
                     else:
                         try:
-                            status = FWS[observatory][device_name][pos]
+                            status = FWS[device_name][pos]
                         except Exception:
                             logger.error(
                                 f"FilterWheel {device_name} position {pos} not found in fws dict",
@@ -999,7 +988,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
                             "valid": valid,
                             "last_update": f"{last_update:.0f} s ago",
                             "polled": polled,
-                            "filter_names": FWS[observatory][device_name],
+                            "filter_names": FWS[device_name],
                         }
                     )
 
@@ -1190,9 +1179,7 @@ async def websocket_endpoint(websocket: WebSocket, observatory: str):
             # Convert to JPEG if we have a new image
             if most_recent_path is not None and LAST_IMAGE != most_recent_path:
                 LAST_IMAGE = most_recent_path
-                LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(
-                    str(LAST_IMAGE), observatory
-                )
+                LAST_IMAGE_JPG, USEFUL_HEADERS = convert_fits_to_jpg(str(LAST_IMAGE))
 
         data = {
             "table0": table0,
@@ -1226,9 +1213,9 @@ async def autofocus(request: Request):
         "autofocus.html.j2",
         {
             "request": request,
-            # "observatories": list(OBSERVATORIES.keys()),
-            # "webcamfeeds": WEBCAMFEEDS,
-            # "configs": {obs.name: obs.config for obs in OBSERVATORIES.values()},
+            # "observatories": list(OBSERVATORY.keys()),
+            # "webcamfeeds": WEBCAMFEED,
+            # "configs": {obs.name: obs.config for obs in OBSERVATORY.values()},
         },
         request=request,
     )
@@ -1248,7 +1235,7 @@ async def get_schedule(request: Request, observatory: str):
     Returns:
         TemplateResponse: HTML template with schedule editor and data.
     """
-    obs = OBSERVATORIES[observatory]
+    obs = OBSERVATORY
 
     # Read the raw JSONL file to preserve original datetime string format
     schedule_path = obs.schedule_manager.schedule_path
@@ -1262,7 +1249,7 @@ async def get_schedule(request: Request, observatory: str):
         "schedule.html.j2",
         {
             "request": request,
-            "observatory": observatory,
+            "observatory": OBSERVATORY.name,
             "schedule": schedule_jsonl,
         },
         request=request,
@@ -1289,9 +1276,9 @@ async def serve_files(request: Request, path: str = ""):
             "index.html.j2",
             {
                 "request": request,
-                "observatories": list(OBSERVATORIES.keys()),
-                "webcamfeeds": WEBCAMFEEDS,
-                "configs": {obs.name: obs.config for obs in OBSERVATORIES.values()},
+                "observatory": OBSERVATORY.name,
+                "webcamfeeds": WEBCAMFEED,
+                "config": OBSERVATORY.config,
             },
             request=request,
         )
