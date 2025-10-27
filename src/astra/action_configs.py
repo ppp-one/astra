@@ -256,6 +256,8 @@ class ObjectActionConfig(BaseActionConfig):
     pointing: bool = False
     bin: int = 1
     dir: Optional[str] = None
+    execute_parallel: bool = False
+    disable_telescope_movement: bool = False
 
     def validate(self):
         missing = []
@@ -273,6 +275,7 @@ class CalibrationActionConfig(BaseActionConfig):
     filter: Optional[str] = None
     dir: Optional[str] = None
     bin: int = 1
+    execute_parallel: bool = False
 
     def validate(self):
         missing = []
@@ -291,6 +294,8 @@ class FlatsActionConfig(BaseActionConfig):
     n: List[int] = field(default_factory=list, metadata={"required": True})
     dir: Optional[str] = None
     bin: int = 1
+    execute_parallel: bool = False
+    disable_telescope_movement: bool = False
 
     def validate(self):
         missing = []
@@ -507,7 +512,7 @@ class AutofocusConfig(BaseActionConfig):
 
 
 ACTION_CONFIGS = {
-    "object": OpenActionConfig,
+    "object": ObjectActionConfig,
     "calibration": CalibrationActionConfig,
     "flats": FlatsActionConfig,
     "calibrate_guiding": CalibrateGuidingActionConfig,
