@@ -1,8 +1,10 @@
 import json
 from datetime import UTC, datetime, timedelta
+
 import pandas as pd
-from astra.scheduler import Schedule, Action
+
 from astra.action_configs import BaseActionConfig, ObjectActionConfig
+from astra.scheduler import Action, Schedule
 
 
 class TestSchedule:
@@ -89,16 +91,14 @@ class TestSchedule:
             Action(
                 device_name="cam1",
                 action_type="open",
-                action_value={},
-                action_config=BaseActionConfig(),
+                action_value=BaseActionConfig(),
                 start_time=now,
                 end_time=now + timedelta(minutes=10),
             ),
             Action(
                 device_name="cam1",
                 action_type="close",
-                action_value={},
-                action_config=ObjectActionConfig(object="M31", exptime="invalid"),
+                action_value=ObjectActionConfig(object="M31", exptime="invalid"),
                 start_time=now + timedelta(minutes=5),
                 end_time=now + timedelta(minutes=15),
             ),
@@ -113,16 +113,14 @@ class TestSchedule:
             Action(
                 device_name="cam1",
                 action_type="open",
-                action_value={},
-                action_config=BaseActionConfig(),
+                action_value=BaseActionConfig(),
                 start_time=now,
                 end_time=now + timedelta(minutes=10),
             ),
             Action(
                 device_name="cam2",
                 action_type="close",
-                action_value={},
-                action_config=BaseActionConfig(),
+                action_value=BaseActionConfig(),
                 start_time=now + timedelta(minutes=15),
                 end_time=now + timedelta(minutes=25),
             ),
@@ -140,16 +138,14 @@ class TestSchedule:
             Action(
                 device_name="cam1",
                 action_type="open",
-                action_value={},
-                action_config=BaseActionConfig(),
+                action_value=BaseActionConfig(),
                 start_time=now,
                 end_time=now + timedelta(minutes=10),
             ),
             Action(
                 device_name="cam2",
                 action_type="close",
-                action_value={},
-                action_config=BaseActionConfig(),
+                action_value=BaseActionConfig(),
                 start_time=now + timedelta(minutes=15),
                 end_time=now + timedelta(minutes=25),
             ),
@@ -175,7 +171,6 @@ class TestSchedule:
                 device_name="cam1",
                 action_type="open",
                 action_value={},
-                action_config=BaseActionConfig(),
                 start_time=now,
                 end_time=now + timedelta(minutes=10),
             ),
@@ -183,7 +178,6 @@ class TestSchedule:
                 device_name="cam2",
                 action_type="close",
                 action_value={},
-                action_config=BaseActionConfig(),
                 start_time=now + timedelta(minutes=15),
                 end_time=now + timedelta(minutes=25),
             ),
