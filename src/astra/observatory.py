@@ -1166,8 +1166,9 @@ class Observatory:
                         args=(action,),
                     )
 
-                    # wait for thread to finish
-                    th.join()
+                    if "execute_parallel" not in action.action_value:
+                        # wait for thread to finish
+                        th.join()
 
             # exit while loop if reached end of schedule
             if schedule[-1].end_time < datetime.now(UTC):
@@ -1475,6 +1476,7 @@ class Observatory:
         self.logger.debug(
             f"Running setup_observatory for {paired_devices} {action_value}"
         )
+
         if not isinstance(paired_devices, PairedDevices):
             paired_devices = PairedDevices.from_observatory(
                 observatory=self,
@@ -1483,8 +1485,8 @@ class Observatory:
 
         # unpark and slew to target
         if (
-            ("ra" in action_value)
-            and ("dec" in action_value)
+            (action_value.get("ra", None) is not None)
+            and (action_value.get("dec", None) is not None)
             and self.check_conditions()
         ):
             if "Telescope" in paired_devices:
@@ -1522,7 +1524,7 @@ class Observatory:
 
         # set filter
         if (
-            "filter" in action_value
+            (action_value.get("filter", None) is not None)
             and "FilterWheel" in paired_devices
             and self.logger.error_free
         ):
@@ -1557,25 +1559,21 @@ class Observatory:
 
         if (
             (
-                "focus_shift" in action_value
-                or "focus_position" in action_value
-                or filter_focus_shift
+                (action_value.get("focus_shift", None) is not None)
+                or (action_value.get("focus_position", None) is not None)
+                or (filter_focus_shift is not None)
             )
             and ("Focuser" in paired_devices)
             and self.logger.error_free
         ):
-            self.logger.info(
-                f"Defocusing Focuser {paired_devices['Focuser']} with {action_value}."
-            )
-
             defocuser = Defocuser(
                 observatory=self,
                 paired_devices=paired_devices,
             )
 
-            if "focus_position" in action_value:
+            if action_value.get("focus_position", None) is not None:
                 new_focus_position = action_value["focus_position"]
-            elif "focus_shift" in action_value:
+            elif action_value.get("focus_shift", None) is not None:
                 new_focus_position = (
                     defocuser.best_focus_position + action_value["focus_shift"]
                 )
@@ -1935,7 +1933,7 @@ class Observatory:
             n_exposures_list = action_value["n"]
         else:
             exptime_list = [action_value["exptime"]]
-            if "n" in action_value:
+            if action_value.get("n", None):
                 n_exposures_list = [int(action_value["n"])]
             else:
                 n_exposures_list = [
@@ -1954,7 +1952,7 @@ class Observatory:
             n_exposures = n_exposures_list[i]
 
             for exposure in range(n_exposures):
-                if "n" in action_value:
+                if action_value.get("n", None):
                     log_option = f"{exposure + 1}/{n_exposures}"
                 else:
                     log_option = None
@@ -2315,7 +2313,8 @@ class Observatory:
         except Exception as e:
             self.logger.warning(
                 f"Failed running pointing correction for {action_value['object']}"
-                f" with {action.device_name}: {str(e)}"
+                f" with {action.device_name}: {str(e)}",
+                exc_info=True,
             )
             pointing_complete = True
             return (pointing_complete, None)

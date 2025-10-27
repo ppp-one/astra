@@ -36,8 +36,7 @@ class Action:
     >>> action = Action(
     ...     device_name="test_camera",
     ...     action_type="object",
-    ...     action_value={},
-    ...     action_config=ObjectActionConfig(
+    ...     action_value=ObjectActionConfig(
     ...         object="M42",
     ...         exptime=10.0,
     ...     ),
@@ -48,9 +47,8 @@ class Action:
     """
 
     device_name: str
-    action_type: str  # TODO rename to type?
-    action_value: dict  # TODO rename to config / parameters / value
-    action_config: BaseActionConfig
+    action_type: str
+    action_value: BaseActionConfig
     start_time: datetime
     end_time: datetime
     completed: bool = False
@@ -76,7 +74,7 @@ class Action:
     def validate(self):
         # Validate action_value
         try:
-            self.action_config.validate()
+            self.action_value.validate()
         except Exception as e:
             raise ValueError(
                 f"ActionConfig validation failed for {self.action_type} "
@@ -108,7 +106,6 @@ class Action:
             device_name=self.device_name,
             action_type=self.action_type,
             action_value=self.action_value,
-            action_config=self.action_config,
             start_time=new_start_time,
             end_time=new_end_time,
             completed=self.completed,
@@ -142,7 +139,7 @@ class Action:
         )
 
 
-class Schedule(list):
+class Schedule(list[Action]):
     """A list of scheduled actions.
 
     Examples
@@ -154,16 +151,14 @@ class Schedule(list):
     ...     Action(
     ...         device_name="test_camera",
     ...         action_type="open",
-    ...         action_value={},
-    ...         action_config=OpenActionConfig(),
+    ...         action_value=OpenActionConfig(),
     ...         start_time=datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
     ...         end_time=datetime(2024, 1, 1, 12, 30, 0, tzinfo=UTC),
     ...     ),
     ...     Action(
     ...         device_name="test_camera",
     ...         action_type="object",
-    ...         action_value={},
-    ...         action_config=ObjectActionConfig(
+    ...         action_value=ObjectActionConfig(
     ...             object="M42",
     ...             exptime=10.0,
     ...         ),
@@ -192,8 +187,6 @@ class Schedule(list):
         schedule_path = Path(filename)
         if schedule_path.exists() is False:
             raise FileNotFoundError(f"File not found: {filename}")
-        if schedule_path.suffix == ".csv":
-            schedule = pd.read_csv(schedule_path)
         elif schedule_path.suffix == ".jsonl":
             data = []
             with open(schedule_path, "r") as f:
@@ -230,16 +223,12 @@ class Schedule(list):
             if config_cls is None:
                 raise ValueError(f"Unknown action_type: {action_type}")
             action_value = {} if not action["action_value"] else action["action_value"]
-            if isinstance(action_value, str):
-                action_value = cls.convert_action_value_string(action_value)
 
-            action_config = config_cls.from_dict(action_value)
             actions.append(
                 Action(
                     device_name=action["device_name"],
                     action_type=action_type,
-                    action_value=action_value,
-                    action_config=action_config,
+                    action_value=config_cls.from_dict(action_value),
                     start_time=action["start_time"],
                     end_time=action["end_time"],
                 )
@@ -289,7 +278,6 @@ class Schedule(list):
             row = {
                 "device_name": getattr(action, "device_name", ""),
                 "action_type": getattr(action, "action_type", ""),
-                "action_config": getattr(action.action_config, "__dict__", {}),
                 "action_value": getattr(action, "action_value", ""),
                 "start_time": getattr(action, "start_time", None),
                 "end_time": getattr(action, "end_time", None),
@@ -307,7 +295,6 @@ class Schedule(list):
             filename = str(filename) + ".csv"
 
         df = self.to_dataframe()
-        df.drop(columns=["action_config"], inplace=True)
         df.to_csv(filename, index=False)
 
     def is_completed(self) -> bool:
