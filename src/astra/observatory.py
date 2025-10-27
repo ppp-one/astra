@@ -1166,9 +1166,9 @@ class Observatory:
                         args=(action,),
                     )
 
-                    if "execute_parallel" not in action.action_value:
+                    if action.action_value.get("execute_parallel", False) is False:
                         # wait for thread to finish
-                        th.join()
+                        th.join()  # TODO: join last parallel thread?
 
             # exit while loop if reached end of schedule
             if schedule[-1].end_time < datetime.now(UTC):
@@ -1487,6 +1487,7 @@ class Observatory:
         if (
             (action_value.get("ra", None) is not None)
             and (action_value.get("dec", None) is not None)
+            and (action_value.get("disable_telescope_movement", False) is False)
             and self.check_conditions()
         ):
             if "Telescope" in paired_devices:
@@ -2805,6 +2806,9 @@ class Observatory:
             - Position affects uniformity and quality of flat frames
             - Coordinates with flats_exptime for complete flat acquisition
         """
+
+        if action.action_value.get("disable_telescope_movement", False) is True:
+            return
 
         if "Telescope" in paired_devices:
             # check if ready to take flats
