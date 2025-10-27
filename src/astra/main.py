@@ -131,7 +131,7 @@ def clean_up() -> None:
                 # logging.info(f"Stopping device {device_name}")
                 device.stop()
             except Exception as e:
-                logger.error(f"Error stopping device {device_name}: {e}")
+                logger.error(f"Error stopping device {device_name}: {e}", exc_info=True)
 
     logger.info("Exiting clean_up")
 
@@ -543,7 +543,7 @@ async def edit_schedule(schedule_data: str = Body(..., media_type="text/plain"))
         }
 
     except Exception as e:
-        obs.logger.error(f"Error updating schedule: {e}")
+        obs.logger.error(f"Error updating schedule: {e}", exc_info=True)
         return {
             "status": "error",
             "data": None,
@@ -724,7 +724,6 @@ async def websocket_log(websocket: WebSocket):
         await websocket.send_json(data_dict)
         await asyncio.sleep(1)
     except Exception:
-        logger.error("log socket closed")
         socket = False
 
     while socket:
@@ -953,7 +952,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     else:
                         try:
                             status = FWS[device_name][pos]
-                        except Exception:
+                        except KeyError:
                             logger.error(
                                 f"FilterWheel {device_name} position {pos} not found in fws dict",
                                 FWS,
@@ -1150,7 +1149,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
 
         except Exception as e:
-            logger.error(f"Error in websocket_endpoint: {e}")
+            logger.error(f"Error in websocket_endpoint: {e}", exc_info=True)
 
         # if last_image_jpg is None:
         #     # use placeholder image
@@ -1188,7 +1187,6 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_json(data)
             await asyncio.sleep(1)
         except Exception:
-            logger.error("main socket closed")
             socket = False
 
 
