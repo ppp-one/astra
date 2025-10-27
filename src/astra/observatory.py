@@ -1199,7 +1199,7 @@ class Observatory:
             f"{self.schedule_manager.get_completed_percentage()}% of actions completed."
         )
 
-    def run_action(self, action) -> None:
+    def run_action(self, action: Action) -> None:
         """
         Execute the action specified in the schedule (Action object).
 
@@ -1234,6 +1234,13 @@ class Observatory:
                         temperature_tolerance,
                         cooling_timeout,
                     )
+            else:
+                self.robotic_switch = False
+                self.schedule_manager.running = False
+                self.logger.warning(
+                    f"Camera {action.device_name} not found in observatory devices."
+                )
+                return
             if not self.check_conditions(action):
                 return
             if "object" == action.action_type:
