@@ -818,24 +818,31 @@ class PointingCorrectionHandler:
         Returns:
             np.ndarray: Cleaned image data with background removed and artifacts corrected.
         """
+        sigma_clip = SigmaClip(sigma=3.0)
+        bkg_estimator = MedianBackground()
 
-        data = data.astype(np.int16)
+        # Convert to float32, handling both regular and masked arrays
+        data = data.astype(np.float32)
+        if np.ma.isMaskedArray(data):
+            data = data.filled(fill_value=np.nan)
 
         bkg = Background2D(
             data,
             (32, 32),
             filter_size=(3, 3),
-            sigma_clip=SigmaClip(sigma=3.0),
-            bkg_estimator=MedianBackground(),
+            sigma_clip=sigma_clip,
+            bkg_estimator=bkg_estimator,  # type: ignore
         )
+
         bkg_clean = data - bkg.background
 
-        med_clean = ndimage.median_filter(bkg_clean, size=5, mode="mirror")
-        band_corr = np.median(med_clean, axis=1).reshape(-1, 1)
-        image_clean = med_clean - band_corr
-        image_clean = np.clip(image_clean, 1, None)
+        med_clean = ndimage.median_filter(
+            bkg_clean, size=5, mode="mirror"
+        )  # slow but needed
 
-        return image_clean
+        data = np.clip(med_clean, 1, None)
+
+        return data
 
     @staticmethod
     def _verify_offset_within_fov(
