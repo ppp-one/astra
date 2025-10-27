@@ -665,7 +665,7 @@
                 // Show uploading state
                 showUploadingState();
 
-                const response = await fetch(`/api/uploadschedule/${observatoryName}`, {
+                const response = await fetch(`/api/uploadschedule`, {
                     method: 'POST',
                     body: formData
                 });
@@ -1016,7 +1016,7 @@
                     return JSON.stringify(coreItem);
                 }).join('\n');
 
-                const response = await fetch(`/api/editschedule/${observatoryName}`, {
+                const response = await fetch(`/api/editschedule`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain',

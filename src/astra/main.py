@@ -220,8 +220,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/video/{observatory}/{filename:path}", include_in_schema=False)
-async def get_video(request: Request, observatory: str, filename: str = None):
+@app.get("/video/{filename:path}", include_in_schema=False)
+async def get_video(request: Request, filename: str = None):
     """Proxy video streams from observatory webcams.
 
     Forwards HTTP requests to webcam feeds, handling both MP4 video
@@ -256,8 +256,8 @@ async def get_video(request: Request, observatory: str, filename: str = None):
         return HTMLResponse(content, status_code=status_code, headers=headers)
 
 
-@app.get("/api/heartbeat/{observatory}")
-async def heartbeat(observatory: str):
+@app.get("/api/heartbeat")
+async def heartbeat():
     """Get observatory heartbeat status for health monitoring.
 
     Args:
@@ -271,8 +271,8 @@ async def heartbeat(observatory: str):
     return {"status": "success", "data": obs.heartbeat, "message": ""}
 
 
-@app.get("/api/close/{observatory}")
-def close_observatory(observatory: str):
+@app.get("/api/close")
+def close_observatory():
     """Close observatory and stop all operations safely.
 
     Stops running schedule if active and closes the observatory.
@@ -300,8 +300,8 @@ def close_observatory(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/cool_camera/{observatory}/{device_name}")
-def cool_camera(observatory: str, device_name: str):
+@app.get("/api/cool_camera/{device_name}")
+def cool_camera(device_name: str):
     """Initiate camera cooling to configured target temperature.
 
     Gets camera configuration and starts cooling process to the
@@ -348,8 +348,8 @@ def cool_camera(observatory: str, device_name: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/complete_headers/{observatory}")
-def complete_headers(observatory: str):
+@app.get("/api/complete_headers")
+def complete_headers():
     """Complete FITS header processing for observatory images.
 
     Args:
@@ -373,8 +373,8 @@ def complete_headers(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/startwatchdog/{observatory}")
-async def start_watchdog(observatory: str):
+@app.get("/api/startwatchdog")
+async def start_watchdog():
     """Start observatory watchdog monitoring system.
 
     Resets error states and starts the watchdog process for
@@ -397,8 +397,8 @@ async def start_watchdog(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/stopwatchdog/{observatory}")
-async def stop_watchdog(observatory: str):
+@app.get("/api/stopwatchdog")
+async def stop_watchdog():
     """Stop observatory watchdog monitoring system.
 
     Args:
@@ -416,8 +416,8 @@ async def stop_watchdog(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/roboticswitch/{observatory}")
-async def roboticswitch(observatory: str):
+@app.get("/api/roboticswitch")
+async def roboticswitch():
     """Toggle observatory robotic operation mode.
 
     Args:
@@ -435,8 +435,8 @@ async def roboticswitch(observatory: str):
     return {"status": "success", "data": obs.robotic_switch, "message": ""}
 
 
-@app.get("/api/startschedule/{observatory}")
-async def start_schedule(observatory: str):
+@app.get("/api/startschedule")
+async def start_schedule():
     """Start executing the observatory's observation schedule.
 
     Args:
@@ -454,8 +454,8 @@ async def start_schedule(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/stopschedule/{observatory}")
-async def stop_schedule(observatory: str):
+@app.get("/api/stopschedule")
+async def stop_schedule():
     """Stop executing the observatory's observation schedule.
 
     Args:
@@ -473,8 +473,8 @@ async def stop_schedule(observatory: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/schedule/{observatory}")
-async def schedule(observatory: str):
+@app.get("/api/schedule")
+async def schedule():
     """Get current observatory schedule with formatted times.
 
     Args:
@@ -503,10 +503,8 @@ async def schedule(observatory: str):
         return []
 
 
-@app.post("/api/editschedule/{observatory}")
-async def edit_schedule(
-    observatory: str, schedule_data: str = Body(..., media_type="text/plain")
-):
+@app.post("/api/editschedule")
+async def edit_schedule(schedule_data: str = Body(..., media_type="text/plain")):
     """Update observatory schedule from web editor.
 
     Parses JSONL schedule data and saves to observatory schedule file.
@@ -553,8 +551,8 @@ async def edit_schedule(
         }
 
 
-@app.post("/api/uploadschedule/{observatory}")
-async def upload_schedule(observatory: str, file: UploadFile = File(...)):
+@app.post("/api/uploadschedule")
+async def upload_schedule(file: UploadFile = File(...)):
     """Upload schedule file to replace current observatory schedule.
 
     Args:
@@ -588,10 +586,8 @@ async def upload_schedule(observatory: str, file: UploadFile = File(...)):
         }
 
 
-@app.get("/api/db/polling/{observatory}/{device_type}")
-async def polling(
-    observatory: str, device_type: str, day: float = 1, since: str = None
-):
+@app.get("/api/db/polling/{device_type}")
+async def polling(device_type: str, day: float = 1, since: str = None):
     """Get device polling data from observatory database.
 
     Retrieves and processes telemetry data for specific device types,
@@ -674,8 +670,8 @@ async def polling(
         }
 
 
-@app.get("/api/log/{observatory}")
-async def log(observatory: str, datetime: str, limit: int = 100):
+@app.get("/api/log")
+async def log(datetime: str, limit: int = 100):
     """Get observatory log entries before specified datetime.
 
     Args:
@@ -696,8 +692,8 @@ async def log(observatory: str, datetime: str, limit: int = 100):
     return df.to_dict(orient="records")
 
 
-@app.websocket("/ws/log/{observatory}")
-async def websocket_log(websocket: WebSocket, observatory: str):
+@app.websocket("/ws/log")
+async def websocket_log(websocket: WebSocket):
     """WebSocket endpoint for real-time log streaming.
 
     Provides initial log history and streams new log entries as they
@@ -753,8 +749,8 @@ async def websocket_log(websocket: WebSocket, observatory: str):
             socket = False
 
 
-@app.websocket("/ws/{observatory}")
-async def websocket_endpoint(websocket: WebSocket, observatory: str):
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     """Main WebSocket endpoint for real-time observatory status updates.
 
     Streams comprehensive observatory status including device polling data,
@@ -1221,8 +1217,8 @@ async def autofocus(request: Request):
     )
 
 
-@app.get("/schedule/{observatory}")
-async def get_schedule(request: Request, observatory: str):
+@app.get("/schedule")
+async def get_schedule(request: Request):
     """Serve schedule editor page with current schedule data.
 
     Loads raw JSONL schedule file preserving original datetime
