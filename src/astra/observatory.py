@@ -68,7 +68,7 @@ from astra.paired_devices import PairedDevices
 from astra.pointer import calculate_pointing_correction_from_fits
 from astra.queue_manager import QueueManager
 from astra.safety_monitor import SafetyMonitor
-from astra.scheduler import Action, ScheduleManager
+from astra.scheduler import Action, BaseActionConfig, ScheduleManager
 from astra.thread_manager import ThreadManager
 
 logging.getLogger("sqlite3worker").setLevel(logging.INFO)
@@ -129,7 +129,7 @@ class Observatory:
 
     def __init__(
         self,
-        config_filename: str,
+        config_filename: Path | str,
         truncate_factor: float | None = None,
         custom_observatory: str = "",
         logging_level: int = logging.INFO,
@@ -1230,7 +1230,7 @@ class Observatory:
                 cooling_timeout = camera_config.get("cooling_timeout", 30)
                 if action.action_type not in ["close", "open"]:
                     self.cool_camera(
-                        action,
+                        action.device_name,
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
@@ -1260,7 +1260,7 @@ class Observatory:
                 if "Camera" in self.config:
                     self.open_observatory(paired_devices)
                     self.cool_camera(
-                        action,
+                        action.device_name,
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
@@ -1271,7 +1271,7 @@ class Observatory:
                 if "Camera" in self.config:
                     self.close_observatory(paired_devices)
                     self.cool_camera(
-                        action,
+                        action.device_name,
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
@@ -1281,7 +1281,7 @@ class Observatory:
             elif "cool_camera" == action.action_type:
                 if "Camera" in self.config:
                     self.cool_camera(
-                        action,
+                        action.device_name,
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
@@ -1301,7 +1301,7 @@ class Observatory:
                     message=(
                         f"Invalid action_type: {action.device_name} {action.action_type} "
                         f"with {action.action_value} is not a valid method or property for "
-                        f"{action.device_type} {action.device_name}"
+                        f"{action.device_name}"
                     ),
                 )
             if (
@@ -1329,7 +1329,7 @@ class Observatory:
 
     def cool_camera(
         self,
-        action: Action,
+        device_name: str,
         set_temperature: float,
         temperature_tolerance: float = 1,
         cooling_timeout: int = 30,
@@ -1342,8 +1342,7 @@ class Observatory:
         to reduce thermal noise and ensure consistent camera performance.
 
         Parameters:
-            action (dict): Schedule action containing camera device information,
-                specifically the 'device_name' field.
+            device_name (str): Name of the camera device to be cooled.
             set_temperature (float): Target temperature in degrees Celsius
                 for the camera CCD.
             temperature_tolerance (float, optional): Acceptable temperature
@@ -1372,8 +1371,8 @@ class Observatory:
             "CoolerOn",
             True,
             "CoolerOn",
-            device_name=action.device_name,
-            log_message=f"Turning on camera cooler for {action.device_name}",
+            device_name=device_name,
+            log_message=f"Turning on camera cooler for {device_name}",
             weather_sensitive=False,
         )
 
@@ -1383,10 +1382,10 @@ class Observatory:
             "CCDTemperature",
             set_temperature,
             "SetCCDTemperature",
-            device_name=action.device_name,
+            device_name=device_name,
             run_command_type="set",
             abs_tol=temperature_tolerance,
-            log_message=f"Setting camera {action.device_name} temperature to {set_temperature}C with tolerance of {temperature_tolerance}C",
+            log_message=f"Setting camera {device_name} temperature to {set_temperature}C with tolerance of {temperature_tolerance}C",
             timeout=60 * cooling_timeout,
             weather_sensitive=False,
         )
@@ -1474,8 +1473,8 @@ class Observatory:
 
     def setup_observatory(
         self,
-        paired_devices: dict | PairedDevices,
-        action_value: dict,
+        paired_devices: PairedDevices | dict,
+        action_value: BaseActionConfig | dict,
         filter_list_index: int = 0,
     ) -> None:
         """
@@ -1514,8 +1513,8 @@ class Observatory:
 
         # unpark and slew to target
         if (
-            (action_value.get("ra", None) is not None)
-            and (action_value.get("dec", None) is not None)
+            (action_value.get("ra") is not None)
+            and (action_value.get("dec") is not None)
             and (action_value.get("disable_telescope_movement", False) is False)
             and self.check_conditions()
         ):
@@ -1554,7 +1553,7 @@ class Observatory:
 
         # set filter
         if (
-            (action_value.get("filter", None) is not None)
+            (action_value.get("filter") is not None)
             and "FilterWheel" in paired_devices
             and self.logger.error_free
         ):
@@ -1589,8 +1588,8 @@ class Observatory:
 
         if (
             (
-                (action_value.get("focus_shift", None) is not None)
-                or (action_value.get("focus_position", None) is not None)
+                (action_value.get("focus_shift") is not None)
+                or (action_value.get("focus_position") is not None)
                 or (filter_focus_shift is not None)
             )
             and ("Focuser" in paired_devices)
@@ -1601,9 +1600,9 @@ class Observatory:
                 paired_devices=paired_devices,
             )
 
-            if action_value.get("focus_position", None) is not None:
+            if action_value.get("focus_position") is not None:
                 new_focus_position = action_value["focus_position"]
-            elif action_value.get("focus_shift", None) is not None:
+            elif action_value.get("focus_shift") is not None:
                 new_focus_position = (
                     defocuser.best_focus_position + action_value["focus_shift"]
                 )
@@ -1963,7 +1962,7 @@ class Observatory:
             n_exposures_list = action_value["n"]
         else:
             exptime_list = [action_value["exptime"]]
-            if action_value.get("n", None):
+            if action_value.get("n"):
                 n_exposures_list = [int(action_value["n"])]
             else:
                 n_exposures_list = [
@@ -1982,7 +1981,7 @@ class Observatory:
             n_exposures = n_exposures_list[i]
 
             for exposure in range(n_exposures):
-                if action_value.get("n", None):
+                if action_value.get("n"):
                     log_option = f"{exposure + 1}/{n_exposures}"
                 else:
                     log_option = None
@@ -2126,10 +2125,10 @@ class Observatory:
         action_value = action.action_value
 
         # number of points
-        N = action_value.get("n", 100)
+        N: int = action_value.get("n", 100)  # type: ignore
 
         # set exptime to 1 if not specified
-        exptime = action_value.get("exptime", 1)  # default to 1 second
+        exptime: float = action_value.get("exptime", 1)  # type: ignore
 
         # get camera
         camera = self.devices["Camera"][action.device_name]
@@ -2848,7 +2847,7 @@ class Observatory:
             # check if ready to take flats
             take_flats = False
             while self.check_conditions(action) and (take_flats is False):
-                sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+                _, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
 
                 if take_flats is False:
                     time.sleep(1)

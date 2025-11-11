@@ -52,7 +52,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # global variables
 FRONTEND_PATH = Path(__file__).parent / "frontend"
-OBSERVATORY: Observatory = None
+OBSERVATORY: Observatory = None  # type: ignore
 WEBCAMFEED = {}
 FWS = {}
 DEBUG = False
@@ -91,6 +91,7 @@ def load_observatories() -> None:
     config_file = (
         Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
     )
+    assert CUSTOM_OBSERVATORY is not None, "CUSTOM_OBSERVATORY must be set"
 
     obs = Observatory(
         config_file,
@@ -171,13 +172,11 @@ def convert_fits_to_jpg(fits_file: str) -> tuple[str, dict]:
     headers = {}
     with fits.open(fits_file) as hdulist:
         # Get the image data from the primary HDU
-        image_data = hdulist[0].data
-        headers["EXPTIME"] = hdulist[0].header["EXPTIME"]
-        headers["DATE-OBS"] = hdulist[0].header["DATE-OBS"]
-        headers["FILTER"] = hdulist[0].header["FILTER"]
-        headers["IMAGETYP"] = hdulist[0].header["IMAGETYP"]
+        image_data = hdulist[0].data  # type: ignore
+        for key in ["EXPTIME", "DATE-OBS", "FILTER", "IMAGETYP"]:
+            headers[key] = hdulist[0].header[key]  # type: ignore
         if headers["IMAGETYP"] == "Light":
-            headers["OBJECT"] = hdulist[0].header["OBJECT"]
+            headers["OBJECT"] = hdulist[0].header["OBJECT"]  # type: ignore
 
     # Normalize the image data to the 8-bit range (0-255)
     interval = ZScaleInterval(contrast=0.005)
@@ -221,7 +220,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/video/{filename:path}", include_in_schema=False)
-async def get_video(request: Request, filename: str = None):
+async def get_video(request: Request, filename: str):
     """Proxy video streams from observatory webcams.
 
     Forwards HTTP requests to webcam feeds, handling both MP4 video
@@ -316,8 +315,6 @@ def cool_camera(device_name: str):
     """
     obs = OBSERVATORY
 
-    row = {"device_name": device_name}
-
     paired_devices = PairedDevices.from_observatory(
         observatory=obs,
         camera_name=device_name,
@@ -339,7 +336,7 @@ def cool_camera(device_name: str):
     )
 
     obs.cool_camera(
-        row,
+        device_name=device_name,
         set_temperature=set_temperature,
         temperature_tolerance=temperature_tolerance,
         cooling_timeout=cooling_timeout,
@@ -449,7 +446,7 @@ async def start_schedule():
 
     obs.logger.info("User initiated starting of schedule from web interface")
 
-    obs.schedule_manager.start_schedule(obs)
+    obs.start_schedule()
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -587,7 +584,7 @@ async def upload_schedule(file: UploadFile = File(...)):
 
 
 @app.get("/api/db/polling/{device_type}")
-async def polling(device_type: str, day: float = 1, since: str = None):
+async def polling(device_type: str, day: float = 1, since: str | None = None):
     """Get device polling data from observatory database.
 
     Retrieves and processes telemetry data for specific device types,
@@ -603,7 +600,7 @@ async def polling(device_type: str, day: float = 1, since: str = None):
         dict: Processed polling data with safety limits and latest values.
     """
     db = observatory_db()
-    if since:
+    if since is not None:
         # Only fetch new records since the given timestamp
         q = f"""SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > '{since}'"""
     else:
@@ -1204,14 +1201,14 @@ async def autofocus(request: Request):
         TemplateResponse: HTML template for autofocus interface.
     """
     return FRONTEND.TemplateResponse(
-        "autofocus.html.j2",
-        {
+        request=request,
+        name="autofocus.html.j2",
+        context={
             "request": request,
             # "observatories": list(OBSERVATORY.keys()),
             # "webcamfeeds": WEBCAMFEED,
             # "configs": {obs.name: obs.config for obs in OBSERVATORY.values()},
         },
-        request=request,
     )
 
 
@@ -1240,13 +1237,13 @@ async def get_schedule(request: Request):
         schedule_jsonl = ""
 
     return FRONTEND.TemplateResponse(
-        "schedule.html.j2",
-        {
+        request=request,
+        name="schedule.html.j2",
+        context={
             "request": request,
             "observatory": OBSERVATORY.name,
             "schedule": schedule_jsonl,
         },
-        request=request,
     )
 
 
@@ -1267,14 +1264,14 @@ async def serve_files(request: Request, path: str = ""):
     """
     if path == "":
         return FRONTEND.TemplateResponse(
-            "index.html.j2",
-            {
+            request=request,
+            name="index.html.j2",
+            context={
                 "request": request,
                 "observatory": OBSERVATORY.name,
                 "webcamfeeds": WEBCAMFEED,
                 "config": OBSERVATORY.config,
             },
-            request=request,
         )
     elif path == "favicon.svg":
         return FileResponse(str(FRONTEND_PATH / "favicon.svg"))

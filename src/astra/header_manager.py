@@ -32,7 +32,7 @@ from astra.config import ObservatoryConfig
 from astra.database_manager import DatabaseManager
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
-from astra.scheduler import Action
+from astra.scheduler import Action, BaseActionConfig
 
 __all__ = ["HeaderManager", "ObservatoryHeader"]
 
@@ -239,7 +239,7 @@ class HeaderManager:
     @staticmethod
     def get_base_header(
         paired_devices: PairedDevices,
-        action_value: dict,
+        action_value: BaseActionConfig,
         fits_config: pd.DataFrame,
         logger: ObservatoryLogger,
     ) -> ObservatoryHeader:

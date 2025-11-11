@@ -98,7 +98,7 @@ class TestConfigInitialiser:
 
     def test_validate_paths_invalid_type(self):
         with pytest.raises(TypeError):
-            _ConfigInitialiser._validate_paths(123, str(self.path_to_db))
+            _ConfigInitialiser._validate_paths(123, str(self.path_to_db))  # type: ignore
 
     def test_validate_paths_file_not_exist(self, monkeypatch):
         """Test that FileNotFoundError is raised if Gaia DB does not exist."""
@@ -213,7 +213,7 @@ class TestConfig:
         with pytest.raises(TypeError):
             Config(
                 observatory_name="Test Observatory",
-                folder_assets=123,
+                folder_assets=123,  # type: ignore
                 gaia_db=self.gaia_db,
             )
 
@@ -221,7 +221,7 @@ class TestConfig:
             Config(
                 observatory_name="Test Observatory",
                 folder_assets=self.folder_assets,
-                gaia_db=456,
+                gaia_db=456,  # type: ignore
             )
 
     def test_config_initialize_observatory_files_raises_error(self, monkeypatch):
