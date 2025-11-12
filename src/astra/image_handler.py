@@ -212,7 +212,7 @@ class ImageHandler:
         )
 
         # save FITS file
-        hdu.writeto(filepath)
+        hdu.writeto(filepath, output_verify="silentfix")
 
         self.last_image_path = filepath
         self.last_image_timestamp = date

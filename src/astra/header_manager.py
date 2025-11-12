@@ -644,4 +644,4 @@ class HeaderManager:
             # Assign the modified header back to the HDU
             filehandle[0].header = header
             filehandle[0].add_checksum()  # type: ignore
-            filehandle.flush()
+            filehandle.flush(output_verify="silentfix")
