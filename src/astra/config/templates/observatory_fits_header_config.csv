@@ -53,9 +53,9 @@ FOCUSTEM,float,false,Focuser,Temperature,[Celsius] Focuser temperature
 ,,,,,
 RA,float,false,Telescope,RightAscension,[deg] Target Right Ascension
 DEC,float,false,Telescope,Declination,[deg] Target Declination
-APTAREA,float,true,astra,ApertureArea,[mm^2] Aperture area of telescope
-APTDIA,float,true,astra,ApertureDiameter,[mm] Aperture diameter of telescope
-FOCALLEN,float,true,astra,FocalLength,[mm] Focal length of telescope
+APTAREA,float,true,astra,ApertureArea,[m^2] Aperture area of telescope
+APTDIA,float,true,astra,ApertureDiameter,[m] Aperture diameter of telescope
+FOCALLEN,float,true,astra,FocalLength,[m] Focal length of telescope
 ALT-OBS,float,true,Telescope,SiteElevation,[m] Altitude above mean sea level
 LAT-OBS,float,true,Telescope,SiteLatitude,[deg +N WGS84] Geodetic latitude
 LONG-OBS,float,true,Telescope,SiteLongitude,[deg +E WGS84] Geodetic longitude

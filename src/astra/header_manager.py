@@ -297,15 +297,15 @@ class HeaderManager:
                     hdr[row_header] = (biny * ypixsize, fits_row["comment"])
                 elif row_header == "APTAREA":
                     device = paired_devices.telescope
-                    val = device.get("ApertureArea") * 1e6
+                    val = device.get("ApertureArea")
                     hdr[row_header] = (val, fits_row["comment"])
                 elif row_header == "APTDIA":
                     device = paired_devices.telescope
-                    val = device.get("ApertureDiameter") * 1e3
+                    val = device.get("ApertureDiameter")
                     hdr[row_header] = (val, fits_row["comment"])
                 elif row_header == "FOCALLEN":
                     device = paired_devices.telescope
-                    val = device.get("FocalLength") * 1e3
+                    val = device.get("FocalLength")
                     hdr[row_header] = (val, fits_row["comment"])
                 elif row_header == "OBJECT":
                     if row_header.lower() in action_value:
