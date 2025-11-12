@@ -544,3 +544,23 @@ class ObservatoryConfig(dict):
             self.config_path / f"{self.observatory_name}_fits_header_config.csv"
         )
         return pd.read_csv(fits_config_path, index_col="header")
+
+    def get_device_config(self, device_type: str, device_name: str) -> Dict[str, Any]:
+        """Return configuration dict for a specific device.
+
+        Args:
+            device_type: Type of the device (e.g., 'Telescope', 'Camera').
+            device_name: Name of the specific device.
+
+        Returns:
+            dict: Configuration dictionary for the specified device, or {}
+                  if not found.
+        """
+        devices = self.get(device_type, [])
+        if isinstance(devices, dict):
+            raise TypeError(f"Expected list of devices, got dict for {device_type}")
+
+        for device_config in devices:
+            if device_config.get("name") == device_name:
+                return device_config
+        return {}
