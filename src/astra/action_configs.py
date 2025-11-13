@@ -206,6 +206,8 @@ class BaseActionConfig:
                 return {"ra": val.ra.deg, "dec": val.dec.deg}  # type: ignore
             elif isinstance(val, Time):
                 return val.isot
+            elif isinstance(val, Enum):
+                return val.value
             elif isinstance(val, dict):
                 return {k: convert(v) for k, v in val.items()}
             elif isinstance(val, list):

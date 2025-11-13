@@ -20,6 +20,7 @@ from multiprocessing import Lock, Pipe, Process
 from threading import Thread
 from typing import Any, Dict, List, Optional, Union
 
+import requests
 from alpaca.camera import Camera
 from alpaca.covercalibrator import CoverCalibrator
 from alpaca.dome import Dome
@@ -46,6 +47,63 @@ ALPACA_DEVICE_TYPES = {
 
 # https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300
 # https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio
+
+
+class AlpacaDeviceError(Exception):
+    """Base error for AlpacaDevice failures (IPC or remote)."""
+
+    @staticmethod
+    def from_device(
+        device: "AlpacaDevice",
+        exc: Exception,
+        method_name: str,
+        method: str | None = None,
+    ) -> "AlpacaDeviceError":
+        """Create an appropriate AlpacaDeviceError subclass from a device and original exception."""
+        if method is not None:
+            method_name = f"{method}('{method_name}')"
+
+        msg = f"{device.device_type} {device.device_name}: '{method_name}' failed: {str(exc)}"
+
+        # classify the exception as remote/network if it looks like a requests/HTTP error
+        is_remote = False
+        try:
+            if isinstance(exc, requests.RequestException):
+                is_remote = True
+        except Exception:
+            # requests may not be available or exc may not be the same class object;
+            # fall back to message heuristics
+            pass
+
+        if not is_remote:
+            s = str(exc).lower()
+            if (
+                "connection refused" in s
+                or "max retries exceeded" in s
+                or "newconnectionerror" in s
+            ):
+                is_remote = True
+
+        if is_remote:
+            e = RemoteDeviceError(msg)
+        else:
+            e = AlpacaDeviceIPCError(msg)
+
+        # preserve original exception as cause so callers can inspect it
+        try:
+            e.__cause__ = exc
+        except Exception:
+            pass
+
+        return e
+
+
+class AlpacaDeviceIPCError(AlpacaDeviceError):
+    """Error communicating with the device subprocess (IPC)."""
+
+
+class RemoteDeviceError(AlpacaDeviceError):
+    """Remote/network error when the device subprocess fails to contact ALPACA HTTP server."""
 
 
 class AlpacaDevice(Process):
@@ -112,11 +170,13 @@ class AlpacaDevice(Process):
                     },
                     {
                         "type": "log",
-                        "data": ("info", f"{device_type} is not a valid device type"),
+                        "data": (
+                            "warning",
+                            f"{device_type} is not a valid device type",
+                        ),
                     },
                 )
             )
-            ## TODO: raise exception, does it kill the process?
 
         self.ip = ip
         self.device_number = device_number
@@ -129,7 +189,6 @@ class AlpacaDevice(Process):
             "device_name": device_name,
         }
         self.connectable = connectable
-        self._poll_delays = {}  # Pairs of 'method': delay # TODO: implement
 
         self._poll_list = []
         self._poll_latest = {}
@@ -165,7 +224,9 @@ class AlpacaDevice(Process):
             self.front_pipe.send(["get", {"method": method, **kwargs}])
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
-                raise msg
+                raise AlpacaDeviceError.from_device(
+                    self, msg, method_name="get", method=method
+                )
             else:
                 return msg
 
@@ -187,7 +248,9 @@ class AlpacaDevice(Process):
             self.front_pipe.send(["set", {"method": method, "value": value}])
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
-                raise msg
+                raise AlpacaDeviceError.from_device(
+                    self, msg, method_name="set", method=method
+                )
             else:
                 return msg
 
@@ -233,7 +296,9 @@ class AlpacaDevice(Process):
             self.front_pipe.send("poll_list")
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
-                raise msg
+                raise AlpacaDeviceError.from_device(
+                    device=self, exc=msg, method_name="poll_list"
+                )
             else:
                 return msg
 
@@ -251,7 +316,9 @@ class AlpacaDevice(Process):
             self.front_pipe.send("poll_latest")
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
-                raise msg
+                raise AlpacaDeviceError.from_device(
+                    device=self, exc=msg, method_name="poll_latest"
+                )
             else:
                 return msg
 
@@ -630,19 +697,44 @@ class AlpacaDevice(Process):
                     dt = datetime.now(UTC)
                     dt_str = dt.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-                    self.queue.put(
-                        (
-                            self.metadata,
-                            {
-                                "type": "query",
-                                "data": (
-                                    f"INSERT INTO polling VALUES "
-                                    f"('{self.device_type}', '{self.device_name}',  "
-                                    f"'{method}', '{val}', '{dt_str}')"
-                                ),
-                            },
+                    # Safely enqueue the polling result; if the queue is closed or
+                    # otherwise unavailable, stop this poll thread gracefully instead
+                    # of letting the exception crash the thread.
+                    try:
+                        self.queue.put(
+                            (
+                                self.metadata,
+                                {
+                                    "type": "query",
+                                    "data": (
+                                        f"INSERT INTO polling VALUES "
+                                        f"('{self.device_type}', '{self.device_name}',  "
+                                        f"'{method}', '{val}', '{dt_str}')"
+                                    ),
+                                },
+                            )
                         )
-                    )
+                    except Exception as q_exc:
+                        # Common failures include BrokenPipeError when the manager
+                        # or parent process has exited. Record a minimal local
+                        # failure state and stop polling this method.
+                        dt = datetime.now(UTC)
+                        self._poll_latest[method]["datetime"] = dt
+                        self._poll_latest[method]["value"] = "null"
+                        try:
+                            print(
+                                f"loop__: queue.put failed for {self.device_type} {self.device_name} {method}: {q_exc}"
+                            )
+                        except Exception:
+                            # best effort to not raise from the exception handler
+                            pass
+                        # remove this method from the poll list to stop the loop
+                        try:
+                            if method in self._poll_list:
+                                self._poll_list.remove(method)
+                        except Exception:
+                            pass
+                        break
 
                     self._poll_latest[method]["value"] = val
                     self._poll_latest[method]["datetime"] = dt
@@ -653,19 +745,36 @@ class AlpacaDevice(Process):
             dt = datetime.now(UTC)
             self._poll_latest[method]["datetime"] = dt
             self._poll_latest[method]["value"] = "null"
-            self.queue.put(
-                (
-                    self.metadata,
-                    {
-                        "type": "log",
-                        "data": (
-                            "error",
-                            f"Loop error: {self.device_type}, {self.device_name}, "
-                            f"{method}, {str(e)}",
-                        ),
-                    },
+
+            # try to enqueue an error log; if the queue is gone, fallback to
+            # printing and stop polling this method.
+            try:
+                self.queue.put(
+                    (
+                        self.metadata,
+                        {
+                            "type": "log",
+                            "data": (
+                                "error",
+                                f"Loop error: {self.device_type}, {self.device_name}, "
+                                f"{method}, {str(e)}",
+                            ),
+                        },
+                    )
                 )
-            )
+            except Exception as q_exc:
+                try:
+                    print(
+                        f"loop__: failed to queue loop error for {self.device_type} {self.device_name} {method}: {q_exc}"
+                    )
+                except Exception:
+                    pass
+            # ensure the poll is stopped
+            try:
+                if method in self._poll_list:
+                    self._poll_list.remove(method)
+            except Exception:
+                pass
 
     def start_poll__(self, method: str, delay: float) -> None:
         """Start a new polling thread for the specified method.

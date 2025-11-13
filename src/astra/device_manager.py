@@ -1,7 +1,11 @@
 import logging
 import time
 
-from astra.alpaca_device_process import AlpacaDevice
+from astra.alpaca_device_process import (
+    AlpacaDevice,
+    AlpacaDeviceIPCError,
+    RemoteDeviceError,
+)
 from astra.config import ObservatoryConfig
 from astra.logger import ObservatoryLogger
 from astra.queue_manager import QueueManager
@@ -108,7 +112,7 @@ class DeviceManager:
         self.devices = devices
         self.logger.info("Devices loaded")
 
-    def connect_all(self, fits_config, speculoos=False):
+    def connect_all(self, fits_config):
         """
         Connect to all loaded devices and start polling for FITS header data.
 
@@ -134,20 +138,34 @@ class DeviceManager:
               to ensure devices are ready
         """
         self.logger.info("Connecting to devices")
+        successful_connections = []
         for device_type in self.devices:
             for device_name in self.devices[device_type]:
                 try:
-                    if device_type == "Focuser" and speculoos:
-                        # TODO add a keyword to config to skip certain devices
-                        # if self.devices[device_type][device_name].connectable
-                        self.logger.warning(
-                            f"{device_type} {device_name} skipping connecting, because method not valid. - SPECULOOS specific"
-                        )
-                    else:
+                    if self.devices[device_type][device_name].connectable:
                         self.devices[device_type][device_name].set(
                             "Connected", True
                         )  ## slow?
                         self.logger.info(f"{device_type} {device_name} connected")
+                        successful_connections.append(f"{device_type}_{device_name}")
+                    else:
+                        self.logger.warning(
+                            f"{device_type} {device_name} skipping connection as marked not connectable"
+                        )
+                except RemoteDeviceError as e:
+                    self.logger.report_device_issue(
+                        device_type=device_type,
+                        device_name=device_name,
+                        message=f"{device_type} {device_name} not responding (network/HTTP error).",
+                        exception=e,
+                    )
+                except AlpacaDeviceIPCError as e:
+                    self.logger.report_device_issue(
+                        device_type=device_type,
+                        device_name=device_name,
+                        message=f"IPC error with device process for {device_type} {device_name}.",
+                        exception=e,
+                    )
                 except Exception as e:
                     self.logger.report_device_issue(
                         device_type=device_type,
@@ -155,6 +173,24 @@ class DeviceManager:
                         message=f"Error connecting to {device_type} {device_name}",
                         exception=e,
                     )
+
+        if len(successful_connections) == 0:
+            self.logger.critical(
+                "No devices connected successfully. "
+                "Check network and astra configuration. Exiting."
+            )
+            self.stop_all_devices()
+            raise Exception("Some devices failed to connect.")
+        elif len(successful_connections) < sum(
+            self.devices[device_type][device_name].connectable
+            for device_type in self.devices
+            for device_name in self.devices[device_type]
+        ):
+            self.logger.error(
+                f"Some devices failed to connect ({len(successful_connections)} successful). "
+                "Check logs for details. "
+            )
+
         self.logger.info("Starting polling non-fixed fits headers")
         for _, fits_row in fits_config.iterrows():
             if (
@@ -285,6 +321,22 @@ class DeviceManager:
                             exception=e,
                         )
 
+    def stop_all_devices(self):
+        """Stop all devices and their associated processes."""
+        self.logger.info("Stopping all devices")
+        for device_type in self.devices:
+            for device_name in self.devices[device_type]:
+                try:
+                    self.devices[device_type][device_name].stop()
+                except Exception as e:
+                    self.logger.report_device_issue(
+                        device_type,
+                        device_name,
+                        f"Error stopping {device_type} {device_name}",
+                        exception=e,
+                    )
+        self.logger.info("All devices stopped")
+
     def check_devices_alive(self):
         """
         Check if all connected devices are responsive and alive.
@@ -317,6 +369,7 @@ class DeviceManager:
                             device_name=device_name,
                             message=f"{device_type} {device_name} unresponsive",
                         )
+                        return False
                 except Exception as e:
                     self.logger.report_device_issue(
                         device_type=device_type,
@@ -337,3 +390,16 @@ class DeviceManager:
                         and not fits_row["fixed"]
                     ):
                         device.force_poll(fits_row["device_command"])
+
+    def list_device_names(self, device_type: str, paired_devices=None) -> list:
+        """List device names of a given type, optionally filtered by paired devices."""
+        if paired_devices is not None:
+            return (
+                [] if device_type not in device_type else [paired_devices[device_type]]
+            )
+
+        return (
+            []
+            if device_type not in self.devices
+            else list(self.devices[device_type].keys())
+        )

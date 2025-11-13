@@ -158,23 +158,6 @@ class ConsoleStreamHandler(logging.StreamHandler):
     def emit(self, record: logging.LogRecord) -> None:
         try:
             msg = self.format(record)
-            # If error or critical, append traceback if present
-            if (
-                self.log_traceback
-                and record.levelno >= logging.ERROR
-                and isinstance(record.exc_info, tuple)
-                and any(record.exc_info)
-            ):
-                # Add demarkations for clarity around the traceback
-                msg += (
-                    "\n"
-                    + "-" * 35
-                    + "TRACEBACK"
-                    + "-" * 36
-                    + f"\n{traceback.format_exception(*record.exc_info)}\n"
-                    + "-" * 80
-                    + "\n"
-                )
             if self.stream is not None and not self.stream.closed:
                 self.stream.write(msg + self.terminator)
                 self.flush()
@@ -200,23 +183,6 @@ class FileHandler(logging.FileHandler):
     def emit(self, record: logging.LogRecord) -> None:
         try:
             msg = self.format(record)
-            # If error or critical, append traceback if present
-            if (
-                self.log_traceback
-                and record.levelno >= logging.ERROR
-                and isinstance(record.exc_info, tuple)
-                and any(record.exc_info)
-            ):
-                # Add demarkations for clarity around the traceback
-                msg += (
-                    "\n"
-                    + "-" * 35
-                    + "TRACEBACK"
-                    + "-" * 36
-                    + f"\n{traceback.format_exception(*record.exc_info)}\n"
-                    + "-" * 80
-                    + "\n"
-                )
             if self.stream is not None and not self.stream.closed:
                 self.stream.write(msg + self.terminator)
                 self.flush()
@@ -333,4 +299,54 @@ class CustomFormatter(logging.Formatter):
         """Format the log record according to the specified log level's formatting."""
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt, datefmt=self.datefmt)
-        return formatter.format(record)
+
+        # Temporarily hide exc_info so base Formatter does not append it automatically
+        exc_info = getattr(record, "exc_info", None)
+        exc_text = getattr(record, "exc_text", None)
+        record.exc_info = None
+        record.exc_text = None
+
+        try:
+            s = formatter.format(record)
+        finally:
+            record.exc_info = exc_info
+            record.exc_text = exc_text
+
+        # If error or critical, append traceback if present
+        if (
+            exc_info
+            and record.levelno >= logging.ERROR
+            and isinstance(exc_info, tuple)
+            and any(exc_info)
+        ):
+            msg_contains_tb = False
+            tb_marker = "Traceback (most recent call last):"
+            # inspect both the already-formatted string and the original message
+            if tb_marker in s or (
+                isinstance(record.msg, str) and tb_marker in record.msg
+            ):
+                msg_contains_tb = True
+            # also detect common library prefixes (requests/urllib3)
+            if (
+                not msg_contains_tb
+                and isinstance(record.msg, str)
+                and ("requests.exceptions" in record.msg or "urllib3" in record.msg)
+            ):
+                msg_contains_tb = True
+
+            if not msg_contains_tb:
+                traceback_msg = (
+                    "\n"
+                    + "-" * 35
+                    + "TRACEBACK"
+                    + "-" * 36
+                    + "\n"
+                    + "".join(traceback.format_exception(*exc_info)).rstrip("\n")
+                    + "\n"
+                    + "-" * 80
+                )
+                if self._console_supports_colors():
+                    traceback_msg = self.red + traceback_msg + self.reset
+            s += traceback_msg if exc_info and not msg_contains_tb else ""
+
+        return s

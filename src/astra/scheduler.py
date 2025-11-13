@@ -124,6 +124,31 @@ class Action:
             status = ActionStatus[status.upper()]
         self.status = status
 
+    def to_dict(self, iso: bool = False) -> dict:
+        """Return a JSON-serializable dict representation of this Action.
+
+        iso: if True, format datetimes as ISO strings (for JSONL); otherwise
+             keep datetime objects (for DataFrame).
+        """
+        av = getattr(self, "action_value", "")
+        av = av if not hasattr(av, "to_jsonable") else av.to_jsonable()
+
+        start = getattr(self, "start_time", None)
+        end = getattr(self, "end_time", None)
+        if iso:
+            start = start.isoformat() if hasattr(start, "isoformat") else start
+            end = end.isoformat() if hasattr(end, "isoformat") else end
+
+        return {
+            "device_name": getattr(self, "device_name", ""),
+            "action_type": getattr(self, "action_type", ""),
+            "action_value": av,
+            "start_time": start,
+            "end_time": end,
+            "completed": getattr(self, "completed", False),
+            "status": getattr(self, "status", ActionStatus.PENDING).value,
+        }
+
     def __str__(self) -> str:
         # Every property on a new line, slightly indented
         return (
@@ -273,18 +298,7 @@ class Schedule(list[Action]):
         sorted(self, key=lambda action: action.start_time)
 
     def to_dataframe(self) -> pd.DataFrame:
-        data = []
-        for action in self:
-            row = {
-                "device_name": getattr(action, "device_name", ""),
-                "action_type": getattr(action, "action_type", ""),
-                "action_value": getattr(action, "action_value", ""),
-                "start_time": getattr(action, "start_time", None),
-                "end_time": getattr(action, "end_time", None),
-                "completed": getattr(action, "completed", False),
-                "status": getattr(action, "status", ActionStatus.PENDING).value,
-            }
-            data.append(row)
+        data = [action.to_dict(iso=False) for action in self]
         return pd.DataFrame(data)
 
     def save_to_csv(self, filename: Union[str, Path]):
@@ -313,17 +327,7 @@ class Schedule(list[Action]):
 
     def to_jsonl_string(self) -> str:
         """Convert the schedule to a JSONL string."""
-        lines = []
-        for action in self:
-            row = {
-                "device_name": action["device_name"],
-                "action_type": action["action_type"],
-                "action_value": action["action_value"],
-                "start_time": action["start_time"].isoformat(),
-                "end_time": action["end_time"].isoformat(),
-                "completed": getattr(action, "completed", False),
-            }
-            lines.append(json.dumps(row))
+        lines = [json.dumps(action.to_dict(iso=True)) for action in self]
         return "\n".join(lines)
 
     def to_one_line_string(self) -> str:
@@ -364,16 +368,6 @@ class Schedule(list[Action]):
 
         return action_value
 
-    @staticmethod
-    def parse_datetime_with_utc_default(dt_str):
-        # TODO delete?
-        dt = pd.to_datetime(dt_str, utc=False, format="mixed")
-
-        if isinstance(dt, pd.Timestamp) and dt.tzinfo is None:
-            dt = dt.tz_localize("UTC")
-
-        return dt
-
 
 class ScheduleManager:
     def __init__(
@@ -400,7 +394,7 @@ class ScheduleManager:
             raise ValueError("No valid schedule loaded.")
         return self.schedule
 
-    def read(self):
+    def read(self) -> Schedule | None:
         """
         Read and process the observatory schedule from CSV file.
 
