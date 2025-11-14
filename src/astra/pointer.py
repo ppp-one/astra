@@ -86,6 +86,8 @@ def calculate_pointing_correction_from_fits(
     target_ra: float | None = None,
     target_dec: float | None = None,
     filter_band: Optional[str] = None,
+    fraction_of_stars_to_match: float = 0.70,
+    or_min_number_of_stars_to_match: int = 8,
 ):
     """
     Calculate pointing correction from a FITS file.
@@ -102,6 +104,10 @@ def calculate_pointing_correction_from_fits(
         target_dec (float, optional): Target declination in degrees. If not
             provided, it's read from FITS header. Defaults to None.
         filter_band (str, optional): Filter band used for observation. Defaults to None.
+        fraction_of_stars_to_match (float, optional): Fraction of detected stars
+            required to be matched for a valid plate solve. Defaults to 0.70.
+        or_min_number_of_stars_to_match (int, optional): Minimum number of stars
+            required to be matched for a valid plate solve. Defaults to 8.
 
     Returns:
         Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
@@ -134,6 +140,8 @@ def calculate_pointing_correction_from_fits(
         dateobs=dateobs,
         plate_scale=plate_scale,
         filter_band=filter_band,
+        fraction_of_stars_to_match=fraction_of_stars_to_match,
+        or_min_number_of_stars_to_match=or_min_number_of_stars_to_match,
     )
 
 
@@ -144,6 +152,8 @@ def calculate_pointing_correction_from_image(
     dateobs: datetime,
     plate_scale: float,
     filter_band: Optional[str] = None,
+    fraction_of_stars_to_match: float = 0.70,
+    or_min_number_of_stars_to_match: int = 8,
 ):
     """
     Calculate pointing correction from an image array.
@@ -158,6 +168,10 @@ def calculate_pointing_correction_from_image(
         dateobs (datetime): Observation date for proper motion corrections.
         plate_scale (float): Image plate scale in degrees per pixel.
         filter_band (str, optional): Filter band used for observation.
+        fraction_of_stars_to_match (float, optional): Fraction of detected stars
+            required to be matched for a valid plate solve. Defaults to 0.70.
+        or_min_number_of_stars_to_match (int, optional): Minimum number of stars
+            required to be matched for a valid plate solve. Defaults to 8.
 
     Returns:
         Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
@@ -193,7 +207,7 @@ def calculate_pointing_correction_from_image(
         dateobs,
         plate_scale,
         filter_band=filter_band,
-        fov_scale=1.1,
+        fov_scale=1.25,
         limit=int(2 * stars_in_image_used),
     )
 
@@ -216,7 +230,8 @@ def calculate_pointing_correction_from_image(
 
     _verify_plate_solve(
         image_star_mapping,
-        fraction_of_stars_to_match=0.75,
+        fraction_of_stars_to_match=fraction_of_stars_to_match,
+        or_min_number_of_stars_to_match=or_min_number_of_stars_to_match,
     )
 
     return pointing_correction, image_star_mapping, stars_in_image_used
@@ -730,7 +745,8 @@ def _verify_offset_within_fov(
 def _verify_plate_solve(
     image_star_mapping: ImageStarMapping,
     pixel_threshold: int = 20,
-    fraction_of_stars_to_match: float = 0.75,
+    fraction_of_stars_to_match: float = 0.70,
+    or_min_number_of_stars_to_match: int = 8,
 ):
     """
     Verify the plate solve by checking the number of matched stars.
@@ -739,13 +755,14 @@ def _verify_plate_solve(
         image_star_mapping (ImageStarMapping): The image-star mapping object.
         pixel_threshold (int, optional): Pixel distance threshold for a match.
             Defaults to 20.
-        number_of_stars_to_match (int, optional): Minimum number of stars to match.
-            Defaults to 4.
+        fraction_of_stars_to_match (float, optional): Minimum fraction of stars
+            that must be matched. Defaults to 0.70.
+        or_min_number_of_stars_to_match (int, optional): Minimum absolute number
+            of stars that must be matched. Defaults to 8.
 
     Raises:
         Exception: If too few stars are matched.
     """
-    # Check that we have at least a certain number of stars matched
     number_of_matched_stars = image_star_mapping.number_of_matched_stars(
         pixel_threshold=pixel_threshold
     )
@@ -753,14 +770,24 @@ def _verify_plate_solve(
     num_gaia_stars = len(image_star_mapping.gaia_stars_in_image)
     num_image_stars = len(image_star_mapping.stars_in_image)
 
-    if num_gaia_stars >= num_image_stars:
-        if number_of_matched_stars / num_image_stars < fraction_of_stars_to_match:
-            raise Exception(
-                f"Plate solve failed: only {number_of_matched_stars / num_image_stars:.2%} stars matched"
-            )
-    else:
+    # Check if match criteria are met (fraction OR absolute minimum)
+    match_fraction = number_of_matched_stars / num_image_stars
+    meets_fraction_threshold = match_fraction >= fraction_of_stars_to_match
+    meets_absolute_threshold = (
+        number_of_matched_stars >= or_min_number_of_stars_to_match
+    )
+
+    if not (meets_fraction_threshold or meets_absolute_threshold):
         raise Exception(
-            f"Plate solve failed: not enough Gaia stars in image. Only {num_gaia_stars} Gaia stars found, whereas {num_image_stars} stars detected in image."
+            f"Plate solve failed: only {match_fraction:.2%} ({number_of_matched_stars}/{num_image_stars}) stars matched. "
+            f"Required: {fraction_of_stars_to_match:.0%} or minimum {or_min_number_of_stars_to_match} stars."
+        )
+
+    # Check if we have fewer Gaia stars than detected image stars (only fail if min threshold not met)
+    if num_gaia_stars < num_image_stars and not meets_absolute_threshold:
+        raise Exception(
+            f"Plate solve failed: not enough Gaia stars in image. "
+            f"Only {num_gaia_stars} Gaia stars found, whereas {num_image_stars} stars detected in image."
         )
 
 

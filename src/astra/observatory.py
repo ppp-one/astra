@@ -2304,16 +2304,16 @@ class Observatory:
                 target_ra=action_value["ra"],
                 target_dec=action_value["dec"],
                 filter_band=action_value.get("filter", None),
+                fraction_of_stars_to_match=0.70,
+                or_min_number_of_stars_to_match=8,
             )
 
             number_of_matched_stars = image_star_mapping.number_of_matched_stars()
 
             self.logger.info(
                 f"Plate solve succeeded for {action_value['object']}: "
-                f"Used {stars_in_image_used} detected stars and "
-                f"{len(image_star_mapping.gaia_stars_in_image)} Gaia catalog stars, "
-                f"matched {number_of_matched_stars} stars "
-                f"({number_of_matched_stars / stars_in_image_used * 100:.1f}% match rate of 75% threshold)"
+                f"Detected {stars_in_image_used} stars, queried {len(image_star_mapping.gaia_stars_in_image)} Gaia catalog stars, "
+                f"matched {number_of_matched_stars} stars."
             )
 
         except Exception as e:
