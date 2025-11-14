@@ -14,17 +14,18 @@ Key capabilities:
 """
 
 import math
-import sqlite3
 import time
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 import astropy.units as u
 import numpy as np
 import pandas as pd
 from astropy.coordinates import AltAz, Angle, SkyCoord, get_sun
+from astropy.stats import SigmaClip
 from astropy.time import Time
+from photutils.background import Background2D, MedianBackground
+from scipy import ndimage
 
 
 ## for final fits header
@@ -218,51 +219,40 @@ def is_sun_rising(obs_location: Any) -> Tuple[bool, bool, AltAz]:
     return sun_rising, flat_ready, sun_altaz0
 
 
-def db_query(
-    db: Union[str, Path], min_dec: float, max_dec: float, min_ra: float, max_ra: float
-) -> pd.DataFrame:
-    """Query astronomical database for objects within coordinate bounds.
+def clean_image(data: np.ndarray) -> np.ndarray:
+    """
+    Clean an image by subtracting the background.
 
-    Performs federated query across sharded SQLite database tables to retrieve
-    astronomical catalog data within specified declination and right ascension ranges.
-
-    Args:
-        db (Union[str, Path]): Path to the SQLite database file.
-        min_dec (float): Minimum declination in degrees.
-        max_dec (float): Maximum declination in degrees.
-        min_ra (float): Minimum right ascension in degrees.
-        max_ra (float): Maximum right ascension in degrees.
+    Parameters:
+        data (np.ndarray): The 2D image data.
 
     Returns:
-        pd.DataFrame: Combined results from all relevant database shards.
+        np.ndarray: The background-subtracted image.
     """
 
-    conn = sqlite3.connect(db)
+    sigma_clip = SigmaClip(sigma=3.0)
+    bkg_estimator = MedianBackground()
 
-    if min_dec < -90:
-        min_dec = -90
+    # Convert to float32, handling both regular and masked arrays
+    data = data.astype(np.float32)
+    if np.ma.isMaskedArray(data):
+        data = data.filled(fill_value=np.nan)
 
-    if max_dec > 90:
-        max_dec = 90
+    bkg = Background2D(
+        data,
+        (32, 32),
+        filter_size=(3, 3),
+        sigma_clip=sigma_clip,
+        bkg_estimator=bkg_estimator,  # type: ignore
+    )
 
-    # Determine the relevant shard(s) based on the query parameters.
-    arr = np.arange(np.floor(min_dec), np.ceil(max_dec) + 1, 1)
-    relevant_shard_ids = set()
-    for i in range(len(arr) - 1):
-        shard_id = f"{arr[i]:.0f}_{arr[i + 1]:.0f}"
-        relevant_shard_ids.add(shard_id)
+    bkg_clean = data - bkg.background
 
-    # Execute the federated query across the relevant shard(s).
-    df_total = pd.DataFrame()
-    for shard_id in relevant_shard_ids:
-        shard_table_name = f"{shard_id}"
-        q = f"SELECT * FROM `{shard_table_name}` WHERE dec BETWEEN {min_dec} AND {max_dec} AND ra BETWEEN {min_ra} AND {max_ra}"
-        df = pd.read_sql_query(q, conn)
-        df_total = pd.concat([df, df_total], axis=0)
+    med_clean = ndimage.median_filter(
+        bkg_clean, size=5, mode="mirror"
+    )  # slow but needed
 
-    # Close the conn and return the results.
-    conn.close()
-    return df_total
+    return med_clean
 
 
 ## SPECULOOS EDIT

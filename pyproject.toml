@@ -27,7 +27,8 @@ dependencies = [
   "matplotlib",
   "pandas",
   "fastapi[standard]",
-  "pyyaml"
+  "pyyaml",
+  "cabaret"
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"
 dynamic = ["version"]

@@ -18,17 +18,15 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import yaml
 from alpaca.telescope import GuideDirections
-from astropy.stats import SigmaClip
 from donuts import Donuts
 from donuts.image import Image
-from photutils.background import Background2D, MedianBackground
-from scipy import ndimage
 
 import astra
 from astra.config import Config
 from astra.image_handler import ImageHandler
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
+from astra.utils import clean_image
 
 
 class CustomImageClass(Image):
@@ -46,26 +44,7 @@ class CustomImageClass(Image):
         Performs background subtraction, noise reduction, and systematic
         correction to improve star detection reliability.
         """
-        sigma_clip = SigmaClip(sigma=3.0)
-        bkg_estimator = MedianBackground()
-
-        self.raw_image = self.raw_image.astype(np.float32).filled(fill_value=np.nan)
-
-        bkg = Background2D(
-            self.raw_image,
-            (32, 32),
-            filter_size=(3, 3),
-            sigma_clip=sigma_clip,
-            bkg_estimator=bkg_estimator,  # type: ignore
-        )
-
-        bkg_clean = self.raw_image - bkg.background
-
-        med_clean = ndimage.median_filter(
-            bkg_clean, size=5, mode="mirror"
-        )  # slow but needed
-
-        self.raw_image = np.clip(med_clean, 1, None)
+        self.raw_image = clean_image(self.raw_image)
 
 
 class GuidingCalibrator:

@@ -65,7 +65,7 @@ from astra.logger import (
     ObservatoryLogger,
 )
 from astra.paired_devices import PairedDevices
-from astra.pointer import PointingCorrectionHandler
+from astra.pointer import calculate_pointing_correction_from_fits
 from astra.queue_manager import QueueManager
 from astra.safety_monitor import SafetyMonitor
 from astra.scheduler import Action, ScheduleManager
@@ -2294,21 +2294,26 @@ class Observatory:
             f"Running pointing correction for {action_value['object']} with {action.device_name}"
         )
         try:
-            pointing_corrector_handler = PointingCorrectionHandler.from_fits_file(
+            (
+                pointing_correction,
+                image_star_mapping,
+                stars_in_image_used,
+            ) = calculate_pointing_correction_from_fits(
                 filepath,
                 dark_frame=dark_frame,
                 target_ra=action_value["ra"],
                 target_dec=action_value["dec"],
+                filter_band=action_value.get("filter", None),
             )
-            pointing_correction = pointing_corrector_handler.pointing_correction
 
-            number_of_stars_to_use = min(
-                len(pointing_corrector_handler.image_star_mapping.stars_in_image), 16
-            )
+            number_of_matched_stars = image_star_mapping.number_of_matched_stars()
 
             self.logger.info(
-                f"Plate solve succeeded using {number_of_stars_to_use} identified stars and "
-                f"{len(pointing_corrector_handler.image_star_mapping.gaia_stars_in_image)} catalog stars. "
+                f"Plate solve succeeded for {action_value['object']}: "
+                f"Used {stars_in_image_used} detected stars and "
+                f"{len(image_star_mapping.gaia_stars_in_image)} Gaia catalog stars, "
+                f"matched {number_of_matched_stars} stars "
+                f"({number_of_matched_stars / stars_in_image_used * 100:.1f}% match rate of 75% threshold)"
             )
 
         except Exception as e:
@@ -2340,7 +2345,7 @@ class Observatory:
 
             return (
                 pointing_complete,
-                pointing_corrector_handler.image_star_mapping.wcs,
+                image_star_mapping.wcs,
             )
 
         self.logger.info(
@@ -2388,7 +2393,7 @@ class Observatory:
                 # wait for slew to finish
                 self.wait_for_slew(paired_devices)
 
-        return (pointing_complete, pointing_corrector_handler.image_star_mapping.wcs)
+        return (pointing_complete, image_star_mapping.wcs)
 
     def guiding_calibration_sequence(
         self, action: Action, paired_devices: PairedDevices

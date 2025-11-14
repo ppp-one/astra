@@ -30,12 +30,9 @@ Classes:
     PointingCorrection: Stores target vs actual pointing coordinates
     ImageStarMapping: Handles star detection and catalog matching
     PointingCorrectionHandler: Main interface for complete pointing analysis
-    ConstantDistorter: Testing utility for verifying correction sign conventions
 
 Functions:
-    find_stars_dao: Basic star detection using DAOStarFinder
-    find_stars_multiscale: Robust multi-scale star detection
-    remove_duplicates: Clean up duplicate star detections
+    find_stars: Basic star detection using DAOStarFinder
     gaia_db_query: Query Gaia catalog for reference stars
 
 Example:
@@ -53,31 +50,170 @@ Example:
     print(f"Pointing error: RA={ra_offset:.3f}°, Dec={dec_offset:.3f}°")
 """
 
+import logging
+import sqlite3
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
 import astropy.units as u
+import cabaret
 import numpy as np
 import pandas as pd
 import twirl
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.stats import SigmaClip, sigma_clipped_stats
+from astropy.stats import sigma_clipped_stats
 from astropy.units import Quantity
 from astropy.wcs.utils import WCS, pixel_to_skycoord
 from matplotlib import pyplot as plt
-from photutils.background import Background2D, MedianBackground
 from photutils.detection import DAOStarFinder
-from scipy import ndimage
 
 from astra import Config
-from astra.utils import db_query
+from astra.utils import clean_image
+
+logger = logging.getLogger(__name__)
 
 
-def find_stars_dao(
-    data: np.ndarray, threshold: float = 5.0, fwhm: float = 3.0
+def calculate_pointing_correction_from_fits(
+    filepath: str | Path | None,
+    dark_frame: str | Path | None = None,
+    target_ra: float | None = None,
+    target_dec: float | None = None,
+    filter_band: Optional[str] = None,
+):
+    """
+    Create a PointingCorrectionHandler instance from a FITS file.
+
+    Performs the complete plate solving workflow from a FITS file, including
+    metadata extraction, image cleaning, star detection, and pointing correction.
+
+    Parameters:
+        filepath (str or Path): Path to the FITS file.
+        dark_frame (str or Path, optional): Path to a dark frame for subtraction.
+            Defaults to None.
+        target_ra (float, optional): Target right ascension in degrees. If not
+            provided, it's read from FITS header. Defaults to None.
+        target_dec (float, optional): Target declination in degrees. If not
+            provided, it's read from FITS header. Defaults to None.
+        filter_band (str, optional): Filter band used for observation. Defaults to None.
+
+    Returns:
+        PointingCorrectionHandler: Instance with computed pointing correction
+            and image-star mapping.
+    """
+    image, header = _read_fits_file(filepath)
+
+    if dark_frame is not None:
+        dark_image, _ = _read_fits_file(dark_frame)
+        image = image - dark_image
+
+    if target_ra is None:
+        target_ra = header["RA"]
+    if target_dec is None:
+        target_dec = header["DEC"]
+
+    plate_scale, dateobs = _extract_plate_scale_and_dateobs(header)
+
+    return calculate_pointing_correction_from_image(
+        image,
+        target_ra=target_ra,
+        target_dec=target_dec,
+        dateobs=dateobs,
+        plate_scale=plate_scale,
+        filter_band=filter_band,
+    )
+
+
+def calculate_pointing_correction_from_image(
+    image: np.ndarray,
+    target_ra: float,
+    target_dec: float,
+    dateobs: datetime,
+    plate_scale: float,
+    filter_band: Optional[str] = None,
+):
+    """
+    Create a PointingCorrectionHandler instance from an image array.
+
+    Performs the complete plate solving workflow: image cleaning, star detection,
+    Gaia catalog matching, WCS computation, and pointing correction calculation.
+
+    Parameters:
+        image (np.ndarray): The 2D astronomical image data.
+        target_ra (float): Target right ascension in degrees.
+        target_dec (float): Target declination in degrees.
+        dateobs (datetime): Observation date for proper motion corrections.
+        plate_scale (float): Image plate scale in degrees per pixel.
+        filter_band (str, optional): Filter band used for observation.
+
+    Returns:
+        PointingCorrectionHandler: Instance with computed pointing correction.
+        image_star_mapping (ImageStarMapping): Mapping of image stars to Gaia stars.
+        int: Number of stars used from the image for plate solving.
+
+    Raises:
+        Exception: If insufficient stars are detected for plate solving,
+            if the offset is larger than the field of view, or if too few
+            stars are matched.
+    """
+    image_clean = clean_image(image)
+
+    # assume 2" FWHM
+    stars_in_image = find_stars(
+        image_clean,
+        threshold=7,
+        fwhm=(2 / 3600) / plate_scale,
+    )
+
+    # Limit number of stars and gaia stars to use for plate solve
+    stars_in_image_used = min(len(stars_in_image), 24)
+
+    if stars_in_image_used < 4:
+        raise Exception("Not enough stars detected to plate solve")
+
+    stars_in_image = stars_in_image[0:stars_in_image_used]
+    gaia_star_coordinates = _get_gaia_star_coordinates(
+        target_ra,
+        target_dec,
+        image_clean,
+        dateobs,
+        plate_scale,
+        filter_band=filter_band,
+        fov_scale=1.1,
+        limit=int(2 * stars_in_image_used),
+    )
+
+    image_star_mapping = ImageStarMapping.from_gaia_coordinates(
+        stars_in_image, gaia_star_coordinates
+    )
+
+    plating_ra, plating_dec = image_star_mapping.get_plating_center(
+        image_shape=image_clean.shape
+    )
+
+    pointing_correction = PointingCorrection(
+        target_ra=target_ra,
+        target_dec=target_dec,
+        plating_ra=plating_ra,
+        plating_dec=plating_dec,
+    )
+
+    _verify_offset_within_fov(pointing_correction, plate_scale, image_clean.shape)
+
+    _verify_plate_solve(
+        image_star_mapping,
+        number_of_stars_to_match=np.floor(stars_in_image_used * 0.75),
+    )
+
+    return pointing_correction, image_star_mapping, stars_in_image_used
+
+
+def find_stars(
+    data: np.ndarray,
+    threshold: float = 5.0,
+    fwhm: float = 3.0,
 ) -> np.ndarray:
     """
     Find stars using DAOStarFinder algorithm.
@@ -93,147 +229,39 @@ def find_stars_dao(
             Defaults to 5.0.
         fwhm (float, optional): Expected Full Width at Half Maximum of stars
             in pixels. Should match the typical seeing conditions. Defaults to 3.0.
+        peakmax (float, optional): Maximum ADU value to consider for star detection. Defaults to 65535.
 
     Returns:
-        np.ndarray: Array of (x, y) coordinates sorted by brightness (brightest first).
-            Returns empty array with shape (0, 2) if no stars are detected.
+        np.ndarray: Array of detected star coordinates sorted by brightness.
+            Shape is (N, 2) where N is the number of stars, and each row is (x, y).
+            Returns an empty array if no stars are found.
     """
     # Calculate background statistics
     mean, median, std = sigma_clipped_stats(data, sigma=3.0)
 
     # Use DAOStarFinder for star detection
-    daofind = DAOStarFinder(fwhm=fwhm, threshold=threshold * std)
-    sources = daofind(data - median)
+    dao_find = DAOStarFinder(
+        fwhm=fwhm,
+        threshold=threshold * std,
+        exclude_border=True,
+        min_separation=2 * fwhm,
+    )
+    dao_sources = dao_find(data)
 
-    if sources is None or len(sources) == 0:
+    if dao_sources is None or len(dao_sources) == 0:
         return np.array([]).reshape(0, 2)
+
+    # Sort sources by flux (brightness) in descending order
+    sorted_indices = np.argsort(dao_sources["flux"])[::-1]
+    dao_sources = dao_sources[sorted_indices]
+
+    # Filter sources based on peak value
+    dao_sources = dao_sources[dao_sources["peak"] > mean + threshold * std]
 
     # Convert to (x, y) coordinates
-    coordinates = np.column_stack([sources["xcentroid"], sources["ycentroid"]])
+    coordinates = np.column_stack([dao_sources["xcentroid"], dao_sources["ycentroid"]])
 
-    # Sort by flux (brightness)
-    fluxes = sources["flux"]
-    return coordinates[np.argsort(fluxes)[::-1]]
-
-
-def remove_duplicates(detections: np.ndarray, width: int, height: int) -> np.ndarray:
-    """
-    Remove duplicate detections using priority-based selection.
-
-    Filters out duplicate star detections by keeping only the highest priority
-    detection within a 10-pixel radius. Priority is calculated based on central
-    position preference and smaller detection scales.
-
-    Parameters:
-        detections (np.ndarray): Array of detections with [x, y, scale] for each detection.
-        width (int): Image width in pixels.
-        height (int): Image height in pixels.
-
-    Returns:
-        np.ndarray: Filtered array of unique detections [x, y, scale] sorted by priority.
-    """
-    if len(detections) <= 1:
-        return detections
-
-    # Calculate priority scores (prefer central position and smaller scale)
-    center = np.array([width / 2, height / 2])
-    positions = detections[:, :2]
-    scales = detections[:, 2]
-
-    center_distances = np.linalg.norm(positions - center, axis=1)
-    center_scores = 1.0 / (1.0 + center_distances / max(width, height))
-    scale_scores = 1.0 / scales  # Prefer smaller scales
-
-    priority_scores = center_scores * scale_scores
-
-    # Sort by priority (highest first)
-    sorted_indices = np.argsort(priority_scores)[::-1]
-    sorted_detections = detections[sorted_indices]
-
-    # Remove duplicates (within 10 pixels)
-    unique_detections = []
-    for detection in sorted_detections:
-        is_duplicate = False
-        pos = detection[:2]
-
-        for existing in unique_detections:
-            if np.linalg.norm(pos - existing[:2]) < 10.0:
-                is_duplicate = True
-                break
-
-        if not is_duplicate:
-            unique_detections.append(detection)
-
-    return np.array(unique_detections)
-
-
-def find_stars_multiscale(
-    data: np.ndarray,
-    scales: list = [1, 2, 3],
-    threshold: float = 5.0,
-    edge_buffer: int = 15,
-) -> np.ndarray:
-    """
-    Multi-scale star detection for noisy astronomical images.
-
-    Performs star detection at multiple smoothing scales to improve robustness
-    in noisy images. Each scale uses Gaussian smoothing followed by DAOStarFinder.
-    Results are combined and duplicates removed based on priority scoring.
-
-    Parameters:
-        data (np.ndarray): The 2D image data array.
-        scales (list, optional): List of smoothing scales to try (in pixels).
-            Larger scales detect extended sources better. Defaults to [1, 2, 3].
-        threshold (float, optional): Detection threshold in units of background
-            standard deviation. Defaults to 5.0.
-        edge_buffer (int, optional): Minimum distance from image edges to accept
-            a detection (in pixels). Helps avoid edge artifacts. Defaults to 15.
-
-    Returns:
-        np.ndarray: Array of (x, y) coordinates of detected stars, sorted by
-            brightness (brightest first). Returns empty array with shape (0, 2)
-            if no stars are detected.
-    """
-    all_detections = []
-    height, width = data.shape
-
-    for scale in scales:
-        # Smooth the image with proper edge handling
-        smoothed = ndimage.gaussian_filter(data, sigma=scale, mode="reflect")
-
-        # Detect stars
-        stars = find_stars_dao(smoothed, threshold=threshold, fwhm=scale * 2)
-
-        if len(stars) > 0:
-            # Filter out stars too close to edges
-            valid_stars = []
-            for star in stars:
-                x, y = star
-                if (
-                    edge_buffer <= x < width - edge_buffer
-                    and edge_buffer <= y < height - edge_buffer
-                ):
-                    brightness = data[int(y), int(x)]
-                    valid_stars.append([x, y, scale, brightness])
-
-            if valid_stars:
-                all_detections.extend(valid_stars)
-
-    if not all_detections:
-        return np.array([]).reshape(0, 2)
-
-    # Convert to numpy array for easier manipulation
-    all_detections = np.array(all_detections)
-
-    # Remove duplicates
-    unique_stars = remove_duplicates(all_detections, width, height)
-
-    # Sort by brightness (descending order)
-    sorted_indices = np.argsort(unique_stars[:, 3])[::-1]
-    sorted_stars = unique_stars[sorted_indices]
-
-    # Return only x, y coordinates
-    return sorted_stars[:, :2]
+    return coordinates
 
 
 @dataclass
@@ -304,11 +332,9 @@ class PointingCorrection:
             float: Angular distance between target and actual position in degrees.
                 Always positive, represents the magnitude of the pointing error.
         """
-        desired_center = SkyCoord(self.target_ra, self.target_dec, unit=[u.deg, u.deg])
-        plating_center = SkyCoord(
-            self.plating_ra, self.plating_dec, unit=[u.deg, u.deg]
-        )
-        return desired_center.separation(plating_center).deg
+        target_coord = SkyCoord(ra=self.target_ra, dec=self.target_dec, unit="deg")
+        plating_coord = SkyCoord(ra=self.plating_ra, dec=self.plating_dec, unit="deg")
+        return target_coord.separation(plating_coord).deg
 
     @property
     def proxy_ra(self):
@@ -416,7 +442,7 @@ class ImageStarMapping:
         plating_center = pixel_to_skycoord(
             image_shape[1] / 2, image_shape[0] / 2, self.wcs
         )
-        return float(plating_center.ra.deg), float(plating_center.dec.deg)
+        return plating_center.ra.deg, plating_center.dec.deg
 
     def skycoord_to_pixels(self, ra: float, dec: float) -> Tuple[float, float]:
         """
@@ -483,14 +509,12 @@ class ImageStarMapping:
 
         return np.sum(distance_to_closest_star < pixel_threshold)
 
-    def plot(self, ax=None, matched=False, transpose=False, **kwargs):
+    def plot(self, ax=None, transpose=False, **kwargs):
         """
         Plot detected stars and their Gaia matches for visualization.
 
         Parameters:
             ax (matplotlib.axes.Axes, optional): Axes to plot on. If None, creates new figure.
-            matched (bool, optional): If True, only show matched stars. If False, show
-                all Gaia stars. Defaults to False.
             transpose (bool, optional): If True, transpose x and y coordinates for plotting.
                 Defaults to False.
             **kwargs: Additional keyword arguments passed to scatter plot.
@@ -499,411 +523,221 @@ class ImageStarMapping:
         if ax is None:
             fig, ax = plt.subplots()
 
-        default_dict = {"s": 40, "facecolors": "none", "edgecolors": "r"}
+        default_dict = {
+            "facecolors": "none",
+            "edgecolors": "r",
+            "linewidth": 2,
+            "marker": "o",
+        }
 
-        gaia_stars = self.find_gaia_match()[0]
+        gaia_stars = self.find_gaia_match()
+        gaia_stars_in_pixel_range = gaia_stars[0][gaia_stars[1] < 20]
+
         dim = (1, 0) if transpose else (0, 1)
 
         ax.scatter(
             self.stars_in_image[::, dim[0]],
             self.stars_in_image[:, dim[1]],
             label="Detected stars",
+            s=80,
             **(default_dict | kwargs),
         )
         ax.scatter(
-            gaia_stars[:, dim[0]],
-            gaia_stars[:, dim[1]],
-            label="Gaia stars",
-            **(default_dict | {"edgecolors": "dodgerblue", "ls": "--"} | kwargs),
+            gaia_stars_in_pixel_range[:, dim[0]],
+            gaia_stars_in_pixel_range[:, dim[1]],
+            label="Matched Gaia stars",
+            s=160,
+            **(default_dict | {"edgecolors": "dodgerblue"} | kwargs),
         )
-        if not matched:
-            non_matched_gaia_stars = np.array(
-                [star for star in self.gaia_stars_in_image if star not in gaia_stars]
-            )
-
-            ax.scatter(
-                non_matched_gaia_stars[:, dim[0]],
-                non_matched_gaia_stars[:, dim[1]],
-                label="Non matched Gaia stars",
-                **(default_dict | {"edgecolors": "dodgerblue", "ls": ":"} | kwargs),
-            )
+        ax.scatter(
+            self.gaia_stars_in_image[:, dim[0]],
+            self.gaia_stars_in_image[:, dim[1]],
+            label="All Gaia stars",
+            s=40,
+            **(default_dict | {"edgecolors": "yellow"} | kwargs),
+        )
+        ax.legend()
 
 
-class PointingCorrectionHandler:
-    """A handler for performing pointing corrections on astronomical images.
+def _read_fits_file(filepath: str | Path):
+    """
+    Read image data and header from a FITS file.
 
-    This class is responsible for managing the process of correcting the pointing of
-    astronomical images based on detected stars and their corresponding coordinates
-    from the Gaia database. It provides methods to create an instance from an image
-    or a FITS file, and it includes functionality for cleaning images, extracting
-    relevant metadata, and verifying the results of the plate solving process.
+    Parameters:
+        filepath (str or Path): Path to the FITS file.
 
-    Attributes
-    ----------
-    pointing_correction: PointingCorrection
-        The pointing correction between the desired target center and the plating center.
-    image_star_mapping: ImageStarMapping
-        The mapping of stars detected in the image to their corresponding Gaia star coordinates.
+    Returns:
+        Tuple[np.ndarray, Header]: Image data and header.
+    """
+    with fits.open(filepath) as hdul:
+        header = hdul[0].header
+        image = hdul[0].data
+    return image, header
 
-    Examples
-    --------
-    Here is an example of how to use the PointingCorrectionHandler on a simulated image:
 
-    ```python
-    import datetime
-    import cabaret
-    import matplotlib.pyplot as plt
-    from astra.pointer import PointingCorrectionHandler
+def _extract_plate_scale_and_dateobs(header):
+    """
+    Extract plate scale and observation date from FITS header.
 
-    # Create an observatory with a camera
-    observatory = cabaret.Observatory(
-        name="MyObservatory",
-        camera=cabaret.Camera(
-            height=1024,  # Height of the camera in pixels
-            width=1024,   # Width of the camera in pixels
-        ),
-    )
+    Parameters:
+        header (fits.Header): FITS header containing metadata.
 
-    # Define target coordinates
-    ra = 100  # Target right ascension in degrees
-    dec = 34  # Target declination in degrees
+    Returns:
+        Tuple[datetime, float]: Observation date and plate scale in degrees per pixel.
+    """
+    dateobs = pd.to_datetime(header["DATE-OBS"])
 
-    # Simulate real observed coordinates (with a small offset)
-    real_ra, real_dec = ra + 0.01, dec - 0.02
+    # get units of FOCALLEN through comments if available
+    focallen_comment = header.comments["FOCALLEN"].lower()
+    if "mm" in focallen_comment or "millimeter" in focallen_comment:
+        focallen_unit = 1e-3
+    else:
+        focallen_unit = 1.0  # default to m
 
-    # Define the observation time
-    dateobs = datetime.datetime(2025, 3, 1, 21, 1, 35, 86730, tzinfo=datetime.timezone.utc)
+    plate_scale = np.arctan(
+        (header["XPIXSZ"] * 1e-6) / (header["FOCALLEN"] * focallen_unit)
+    ) * (180 / np.pi)  # deg/pixel
+    return plate_scale, dateobs
 
-    # Generate an image based on the target coordinates and observation time
-    data = observatory.generate_image(
-        ra=real_ra,      # Right ascension in degrees
-        dec=real_dec,    # Declination in degrees
-        exp_time=30,     # Exposure time in seconds
-        dateobs=dateobs,  # Time of observation
-    )
 
-    # Create a PointingCorrectionHandler instance from the generated image
-    pointing_corrector = PointingCorrectionHandler.from_image(
-        data,
-        target_ra=ra,                     # Target right ascension
-        target_dec=dec,                   # Target declination
-        dateobs=dateobs,                  # Observation date
-        plate_scale=observatory.camera.plate_scale / 3600,  # Plate scale in degrees per pixel
-    )
+def _map_filter_band_to_gaia_tmass(filter_band: Optional[str]) -> Optional[str]:
+    """
+    Map a given filter band to the corresponding Gaia or 2MASS band.
 
-    # Optional: Display the generated image
-    plt.imshow(data, cmap='gray')
-    plt.title("Generated Image")
-    plt.colorbar(label='Pixel Intensity')
-    plt.show()
-
-    # Print the pointing correction details
-    print(pointing_corrector)
-    ```
+    Parameters:
+        filter_band (str, optional): The filter band used for observation.
+    Returns:
+        str: Corresponding Gaia or 2MASS band, or defaults to G if not found.
     """
 
-    def __init__(
-        self,
-        pointing_correction: PointingCorrection,
-        image_star_mapping: ImageStarMapping,
-    ):
-        self.pointing_correction = pointing_correction
-        self.image_star_mapping = image_star_mapping
+    gaia_tmass_filter_mappings = {
+        "G": ["r", "clear", "C"],
+        "BP": ["u", "g"],
+        "RP": ["i", "z", "I+z", "Exo"],
+        "J": ["J", "Y", "YJ", "zYJ"],
+        "H": ["H"],
+        "KS": ["K", "Ks"],
+    }
 
-    @classmethod
-    def from_image(
-        cls,
-        image: np.ndarray,
-        target_ra: float,
-        target_dec: float,
-        dateobs: datetime,
-        plate_scale: float,
-    ):
-        """
-        Create a PointingCorrectionHandler instance from an image array.
+    if filter_band is None:
+        return "G"
 
-        Performs the complete plate solving workflow: image cleaning, star detection,
-        Gaia catalog matching, WCS computation, and pointing correction calculation.
+    for gaia_band, bands in gaia_tmass_filter_mappings.items():
+        if filter_band.lower().strip("'") in [b.lower() for b in bands]:
+            return gaia_band
 
-        Parameters:
-            image (np.ndarray): The 2D astronomical image data.
-            target_ra (float): Target right ascension in degrees.
-            target_dec (float): Target declination in degrees.
-            dateobs (datetime): Observation date for proper motion corrections.
-            plate_scale (float): Image plate scale in degrees per pixel.
+    return "G"
 
-        Returns:
-            PointingCorrectionHandler: Instance with computed pointing correction
-                and image-star mapping.
 
-        Raises:
-            Exception: If insufficient stars are detected for plate solving,
-                if the offset is larger than the field of view, or if too few
-                stars are matched.
-        """
-        image_clean = cls._clean_image(image)
+def _get_gaia_star_coordinates(
+    ra,
+    dec,
+    image_clean,
+    dateobs,
+    plate_scale,
+    filter_band=None,
+    fov_scale=1.1,
+    limit=24,
+):
+    """
+    Get Gaia star coordinates for a given field of view.
 
-        # Detect stars in the image
-        stars_in_image = find_stars_multiscale(
-            image_clean, scales=[1, 2, 3], threshold=7, edge_buffer=10
+    Parameters:
+        ra (float): Right ascension of field center in degrees.
+        dec (float): Declination of field center in degrees.
+        image_clean (np.ndarray): The cleaned image data.
+        dateobs (datetime): Observation date.
+        plate_scale (float): Plate scale in degrees per pixel.
+        filter_band (str, optional): Filter band used for observation.
+        fov_scale (float, optional): Factor to scale field of view. Defaults to 1.1.
+        limit (int, optional): Maximum number of stars to query. Defaults to 24.
+
+    Returns:
+        np.ndarray: Array of Gaia star coordinates.
+    """
+    # Get fov from image shape and plate scale
+    fov = np.array(image_clean.shape) * plate_scale * fov_scale
+
+    gaia_tmass_filter = _map_filter_band_to_gaia_tmass(filter_band)
+
+    if Config().gaia_db.is_file():
+        use_tmass = gaia_tmass_filter in ["J", "H", "KS"]
+        logger.debug(
+            f"Using {'2MASS J' if use_tmass else 'Gaia G'} filter band for local query"
+        )
+        # Query gaia database for stars in the fov
+        gaia_star_coordinates = local_gaia_db_query(
+            center=(ra, dec), fov=fov, limit=limit, dateobs=dateobs, tmass=use_tmass
+        )
+        return gaia_star_coordinates
+    else:
+        logger.debug("Using online Gaia archive for star query")
+        logger.debug(f"Using Gaia/2MASS filter band: {gaia_tmass_filter}")
+        table = cabaret.GaiaQuery.query(
+            center=(ra, dec),
+            radius=np.max(fov) / 2,
+            filter_band=gaia_tmass_filter,
+            limit=limit,
+            timeout=60,
         )
 
-        # Limit number of stars and gaia stars to use for plate solve
-        number_of_stars_to_use = min(len(stars_in_image), 16)
+        table_filt = cabaret.GaiaQuery._apply_proper_motion(table, dateobs).copy()
 
-        if number_of_stars_to_use < 4:
-            raise Exception("Not enough stars detected for plate solve")
+        return np.array([table_filt["ra"].value.data, table_filt["dec"].value.data]).T
 
-        stars_in_image = stars_in_image[0:number_of_stars_to_use]
-        gaia_star_coordinates = cls._get_gaia_star_coordinates(
-            target_ra,
-            target_dec,
-            image_clean,
-            dateobs,
-            plate_scale,
-            fov_scale=1.2,
-            limit=2 * number_of_stars_to_use,
-        )
-        image_star_mapping = ImageStarMapping.from_gaia_coordinates(
-            stars_in_image, gaia_star_coordinates
-        )
 
-        plating_ra, plating_dec = image_star_mapping.get_plating_center(
-            image_shape=image_clean.shape
-        )
+def _verify_offset_within_fov(
+    pointing_correction: PointingCorrection,
+    plate_scale: float,
+    image_shape: Tuple[int, int],
+):
+    """
+    Verify that the pointing offset is within the field of view.
 
-        pointing_correction = PointingCorrection(
-            target_ra=target_ra,
-            target_dec=target_dec,
-            plating_ra=plating_ra,
-            plating_dec=plating_dec,
-        )
+    Parameters:
+        pointing_correction (PointingCorrection): The pointing correction object.
+        plate_scale (float): Plate scale in degrees per pixel.
+        image_shape (Tuple[int, int]): Shape of the image.
 
-        cls._verify_offset_within_fov(
-            pointing_correction, plate_scale, image_clean.shape
-        )
-        cls._verify_plate_solve(
-            image_star_mapping,
-            pixel_threshold=20,
-            number_of_stars_to_match=np.floor(number_of_stars_to_use * 0.8),
-        )
+    Raises:
+        Exception: If the offset is larger than the field of view.
+    """
+    # Check that the offset is not larger than the fov
+    # Get fov from image shape and plate scale
+    fov = np.array(image_shape) * plate_scale
+    if pointing_correction.angular_separation > max(fov):
+        raise Exception("Pointing error is larger than the field of view")
 
-        return cls(
-            pointing_correction=pointing_correction,
-            image_star_mapping=image_star_mapping,
-        )
 
-    @classmethod
-    def from_fits_file(
-        cls,
-        filepath: str | Path | None,
-        dark_frame: str | Path | None = None,
-        target_ra: float | None = None,
-        target_dec: float | None = None,
-    ):
-        """
-        Create a PointingCorrectionHandler instance from a FITS file.
+def _verify_plate_solve(
+    image_star_mapping: ImageStarMapping,
+    pixel_threshold: int = 20,
+    number_of_stars_to_match: int = 4,
+):
+    """
+    Verify the plate solve by checking the number of matched stars.
 
-        Reads a FITS file, extracts metadata, and performs plate solving.
-        Optionally applies dark frame subtraction and allows override of
-        target coordinates.
+    Parameters:
+        image_star_mapping (ImageStarMapping): The image-star mapping object.
+        pixel_threshold (int, optional): Pixel distance threshold for a match.
+            Defaults to 20.
+        number_of_stars_to_match (int, optional): Minimum number of stars to match.
+            Defaults to 4.
 
-        Parameters:
-            filepath (str | Path): Path to the FITS file to process.
-            dark_frame (str | Path | None, optional): Path to dark frame for
-                subtraction. If None, no dark subtraction is performed. Defaults to None.
-            target_ra (float | None, optional): Target right ascension in degrees.
-                If None, uses RA from FITS header. Defaults to None.
-            target_dec (float | None, optional): Target declination in degrees.
-                If None, uses DEC from FITS header. Defaults to None.
-
-        Returns:
-            PointingCorrectionHandler: Instance with computed pointing correction.
-
-        Raises:
-            FileNotFoundError: If the FITS file or dark frame file doesn't exist.
-            KeyError: If required metadata is missing from FITS header.
-        """
-        image, header = cls._read_fits_file(filepath)
-
-        if dark_frame:
-            dark_image, _ = cls._read_fits_file(dark_frame)
-            image = image - dark_image
-
-        if target_dec is None:
-            target_dec = float(header["DEC"])
-        if target_ra is None:
-            target_ra = float(header["RA"])
-
-        dateobs, plate_scale = cls._extract_plate_scale_and_dateobs(header)
-
-        return cls.from_image(image, target_ra, target_dec, dateobs, plate_scale)
-
-    @staticmethod
-    def _read_fits_file(filepath: str | Path):
-        """
-        Read a FITS file and return the image data and header.
-
-        Parameters:
-            filepath (str | Path): Path to the FITS file to read.
-
-        Returns:
-            Tuple[np.ndarray, fits.Header]: Image data as int16 array and FITS header.
-
-        Raises:
-            FileNotFoundError: If the specified file does not exist.
-        """
-        if not Path(filepath).exists():
-            raise FileNotFoundError(f"File not found: {filepath}")
-        with fits.open(filepath) as hdu:
-            header = hdu[0].header
-            image = hdu[0].data.astype(np.int16)
-
-        return image, header
-
-    @staticmethod
-    def _extract_plate_scale_and_dateobs(header):
-        """
-        Extract plate scale and observation date from FITS header.
-
-        Parameters:
-            header (fits.Header): FITS header containing metadata.
-
-        Returns:
-            Tuple[datetime, float]: Observation date and plate scale in degrees per pixel.
-        """
-        dateobs = pd.to_datetime(header["DATE-OBS"])
-        plate_scale = np.arctan(
-            (header["XPIXSZ"] * 1e-6) / (header["FOCALLEN"] * 1e-3)
-        ) * (180 / np.pi)  # deg/pixel
-        return dateobs, plate_scale
-
-    @staticmethod
-    def _get_gaia_star_coordinates(
-        ra, dec, image_clean, dateobs, plate_scale, fov_scale=1.1, limit=24
-    ):
-        """
-        Retrieve Gaia star coordinates for the image field of view.
-
-        Parameters:
-            ra (float): Central right ascension in degrees.
-            dec (float): Central declination in degrees.
-            image_clean (np.ndarray): Cleaned image data for shape calculation.
-            dateobs (datetime): Observation date for proper motion corrections.
-            plate_scale (float): Plate scale in degrees per pixel.
-            fov_scale (float, optional): Factor to expand FOV for star query. Defaults to 1.1.
-            limit (int, optional): Maximum number of stars to retrieve. Defaults to 24.
-
-        Returns:
-            np.ndarray: Array of Gaia star coordinates in degrees.
-        """
-        fov = plate_scale * np.array(image_clean.shape)
-        fov[0] *= 1 / np.abs(np.cos(dec * np.pi / 180))
-        # TODO: put tmass option in config
-        return gaia_db_query(
-            (ra, dec), fov_scale * fov, tmass=True, dateobs=dateobs, limit=limit
-        )
-
-    @staticmethod
-    def _clean_image(data: np.ndarray) -> np.ndarray:
-        """
-        Clean astronomical image by removing background and applying filters.
-
-        Performs background subtraction using 2D background estimation,
-        applies median filtering, and corrects for horizontal banding artifacts.
-
-        Parameters:
-            data (np.ndarray): Raw image data.
-
-        Returns:
-            np.ndarray: Cleaned image data with background removed and artifacts corrected.
-        """
-        sigma_clip = SigmaClip(sigma=3.0)
-        bkg_estimator = MedianBackground()
-
-        # Convert to float32, handling both regular and masked arrays
-        data = data.astype(np.float32)
-        if np.ma.isMaskedArray(data):
-            data = data.filled(fill_value=np.nan)
-
-        bkg = Background2D(
-            data,
-            (32, 32),
-            filter_size=(3, 3),
-            sigma_clip=sigma_clip,
-            bkg_estimator=bkg_estimator,  # type: ignore
-        )
-
-        bkg_clean = data - bkg.background
-
-        med_clean = ndimage.median_filter(
-            bkg_clean, size=5, mode="mirror"
-        )  # slow but needed
-
-        data = np.clip(med_clean, 1, None)
-
-        return data
-
-    @staticmethod
-    def _verify_offset_within_fov(
-        pointing_correction: PointingCorrection,
-        plate_scale: float,
-        image_shape: Tuple[int, int],
-    ):
-        """
-        Verify that the calculated pointing offset is within the image field of view.
-
-        Parameters:
-            pointing_correction (PointingCorrection): The calculated pointing correction.
-            plate_scale (float): Plate scale in degrees per pixel.
-            image_shape (Tuple[int, int]): Image dimensions as (height, width).
-
-        Raises:
-            Exception: If the pointing offset exceeds the field of view, indicating
-                a failed plate solve.
-        """
-        if max(plate_scale * np.array(image_shape)) < abs(
-            pointing_correction.angular_separation
-        ):
-            raise Exception("Plate solve failed, offset larger than field of view")
-
-    @staticmethod
-    def _verify_plate_solve(
-        image_star_mapping: ImageStarMapping,
-        pixel_threshold: int = 20,
-        number_of_stars_to_match: int = 4,
-    ):
-        """
-        Verify that sufficient stars were matched for a reliable plate solve.
-
-        Parameters:
-            image_star_mapping (ImageStarMapping): The star mapping results.
-            pixel_threshold (int, optional): Maximum distance in pixels to consider
-                a match valid. Defaults to 20.
-            number_of_stars_to_match (int, optional): Minimum number of stars that
-                must be matched. Defaults to 4.
-
-        Raises:
-            Exception: If insufficient stars are matched, indicating a failed plate solve.
-        """
-        number_of_matched_stars = image_star_mapping.number_of_matched_stars(
-            pixel_threshold
-        )
-
-        # tolerate 10% less stars matched
-        if number_of_matched_stars < number_of_stars_to_match:
-            raise Exception(
-                f"Plate solve failed: only {number_of_matched_stars:.0f} stars matched out of {number_of_stars_to_match:.0f} required."
-            )
-
-    def __repr__(self):
-        return (
-            f"PointingCorrectionHandler(pointing_correction={self.pointing_correction}, "
-            f"image_star_mapping={self.image_star_mapping})"
+    Raises:
+        Exception: If too few stars are matched.
+    """
+    # Check that we have at least a certain number of stars matched
+    number_of_matched_stars = image_star_mapping.number_of_matched_stars(
+        pixel_threshold=pixel_threshold
+    )
+    if number_of_matched_stars < number_of_stars_to_match:
+        raise Exception(
+            f"Plate solve failed: only {number_of_matched_stars / number_of_stars_to_match:.2%} stars matched"
         )
 
 
-def gaia_db_query(
+def local_gaia_db_query(
     center: Union[Tuple[float, float], SkyCoord],
     fov: Union[float, Quantity],
     limit: int = 1000,
@@ -937,14 +771,6 @@ def gaia_db_query(
 
     Raises:
         ImportError: If required database utilities are not available.
-
-    Example:
-        >>> from astropy.coordinates import SkyCoord
-        >>> from datetime import datetime
-        >>> center = SkyCoord(ra=10.68458, dec=41.26917, unit='deg')
-        >>> fov = 0.1  # degrees
-        >>> stars = gaia_db_query(center, fov, limit=50)
-        >>> print(f"Found {len(stars)} stars")
     """
 
     if isinstance(center, SkyCoord):
@@ -953,37 +779,68 @@ def gaia_db_query(
     else:
         ra, dec = center
 
+    logger.debug(f"Querying local Gaia DB around RA={ra}, DEC={dec} with FOV={fov}")
+
     if not isinstance(fov, u.Quantity):
         fov = fov * u.deg
+        logger.debug(f"Converted FOV to Quantity: {fov}")
 
-    if fov.ndim == 1:
+    if fov.ndim == 0:
+        ra_fov = dec_fov = fov.to(u.deg).value
+    elif fov.ndim == 1:
         ra_fov, dec_fov = fov.to(u.deg).value
     else:
         ra_fov = fov[0].to(u.deg).value
         dec_fov = fov[1].to(u.deg).value
 
-    min_dec = dec - dec_fov / 2
-    max_dec = dec + dec_fov / 2
-    min_ra = ra - ra_fov / 2
-    max_ra = ra + ra_fov / 2
+    # Dec bounds are straightforward
+    min_dec = max(dec - dec_fov / 2, -90.0)
+    max_dec = min(dec + dec_fov / 2, 90.0)
 
-    table = db_query(Config().gaia_db, min_dec, max_dec, min_ra, max_ra)
+    # For RA, account for spherical geometry
+    # At declination `dec`, the RA angular size scales as 1/cos(dec)
+    cos_dec = np.cos(np.radians(dec))
+
+    # Check if we're near a pole (within 5 degrees)
+    if abs(dec) > 85:
+        # Near poles, query all RA values
+        min_ra = 0.0
+        max_ra = 360.0
+        logger.debug("Near pole - querying all RA values")
+    else:
+        # Adjust RA FOV for spherical geometry
+        ra_fov_adjusted = ra_fov / cos_dec if cos_dec > 0.01 else 360.0
+
+        min_ra = ra - ra_fov_adjusted / 2
+        max_ra = ra + ra_fov_adjusted / 2
+
+        # Handle RA wraparound at 0/360
+        if min_ra < 0:
+            min_ra += 360
+        if max_ra > 360:
+            max_ra -= 360
+
+    # Handle RA wraparound case
+    crosses_zero = min_ra > max_ra
+
+    table = local_db_query(
+        Config().gaia_db, min_dec, max_dec, min_ra, max_ra, crosses_zero=crosses_zero
+    )
+
     if tmass:
         table = table.sort_values(by=["j_m"]).reset_index(drop=True)
     else:
         table = table.sort_values(by=["phot_g_mean_mag"]).reset_index(drop=True)
 
-    table.replace("", np.nan, inplace=True)
+    table = table.map(lambda x: np.nan if x == "" else x)
     table.dropna(inplace=True)
 
-    # limit number of stars
+    # Limit number of stars
     table = table[0:limit]
 
-    # add proper motion to ra and dec
+    # Add proper motion to ra and dec
     if dateobs is not None:
-        # calculate fractional year
         dateobs = dateobs.year + (dateobs.timetuple().tm_yday - 1) / 365.25  # type: ignore
-
         years = dateobs - 2015.5  # type: ignore
         table["ra"] += years * table["pmra"] / 1000 / 3600
         table["dec"] += years * table["pmdec"] / 1000 / 3600
@@ -991,83 +848,58 @@ def gaia_db_query(
     return np.array([table["ra"].values, table["dec"].values]).T
 
 
-class ConstantDistorter:
+def local_db_query(
+    db: Union[str, Path],
+    min_dec: float,
+    max_dec: float,
+    min_ra: float,
+    max_ra: float,
+    crosses_zero: bool = False,
+) -> pd.DataFrame:
+    """Query astronomical database for objects within coordinate bounds.
+
+    Performs federated query across sharded SQLite database tables to retrieve
+    astronomical catalog data within specified declination and right ascension ranges.
+
+    Args:
+        db (Union[str, Path]): Path to the SQLite database file.
+        min_dec (float): Minimum declination in degrees.
+        max_dec (float): Maximum declination in degrees.
+        min_ra (float): Minimum right ascension in degrees.
+        max_ra (float): Maximum right ascension in degrees.
+        crosses_zero (bool, optional): Whether the RA range crosses the 0-degree line.
+            Defaults to False.
+
+    Returns:
+        pd.DataFrame: Combined results from all relevant database shards.
     """
-    Testing utility for verifying pointing correction sign conventions.
 
-    A simple model that applies a constant offset to telescope coordinates,
-    used to verify that pointing corrections are applied with the correct
-    sign convention. Helps ensure that calculated corrections will move
-    the telescope in the right direction.
+    conn = sqlite3.connect(db)
 
-    Parameters:
-        error (float, optional): The constant pointing error to simulate in degrees.
-            Defaults to 1.
+    # Determine the relevant shard(s) based on declination
+    arr = np.arange(np.floor(min_dec), np.ceil(max_dec) + 1, 1)
+    relevant_shard_ids = set()
+    for i in range(len(arr) - 1):
+        shard_id = f"{arr[i]:.0f}_{arr[i + 1]:.0f}"
+        relevant_shard_ids.add(shard_id)
 
-    Methods:
-        plated_to_target_coords: Apply correction from measured to true coordinates
-        target_to_plated_coords: Apply error from target to measured coordinates
-        test: Demonstrate the correction process with example coordinates
+    # Execute the federated query across the relevant shard(s)
+    df_total = pd.DataFrame()
+    for shard_id in relevant_shard_ids:
+        shard_table_name = f"{shard_id}"
 
-    Example:
-        >>> distorter = ConstantDistorter(error=0.1)
-        >>> distorter.test(target_coords=100.0)
-        # This will demonstrate how the correction process works
-    """
+        if crosses_zero:
+            # Query in two parts: [min_ra, 360] OR [0, max_ra]
+            q = f"""SELECT * FROM `{shard_table_name}` 
+                    WHERE dec BETWEEN {min_dec} AND {max_dec} 
+                    AND (ra >= {min_ra} OR ra <= {max_ra})"""
+        else:
+            q = f"""SELECT * FROM `{shard_table_name}` 
+                    WHERE dec BETWEEN {min_dec} AND {max_dec} 
+                    AND ra BETWEEN {min_ra} AND {max_ra}"""
 
-    def __init__(self, error: float = 1):
-        """
-        Initialize the ConstantDistorter with a specified pointing error.
+        df = pd.read_sql_query(q, conn)
+        df_total = pd.concat([df, df_total], axis=0)
 
-        Parameters:
-            error (float, optional): The constant pointing error to simulate in degrees.
-                Defaults to 1.
-        """
-        self.error = error
-
-    def plated_to_target_coords(self, real):
-        """
-        Convert measured (plated) coordinates to true target coordinates.
-
-        Parameters:
-            real (float): The measured coordinate from plate solving.
-
-        Returns:
-            float: The true target coordinate that corresponds to the measured position.
-        """
-        return real + self.error
-
-    def target_to_plated_coords(self, target):
-        """
-        Convert target coordinates to expected measured (plated) coordinates.
-
-        Parameters:
-            target (float): The intended target coordinate.
-
-        Returns:
-            float: The coordinate that would be measured if pointing at the target.
-        """
-        return target - self.error
-
-    def test(self, target_coords=0):
-        """
-        Demonstrate the correction process with example coordinates.
-
-        Shows how pointing corrections work by simulating the complete cycle:
-        target -> measured -> corrected target -> final measured position.
-
-        Parameters:
-            target_coords (float, optional): Example target coordinate to test with.
-                Defaults to 0.
-        """
-        real = self.target_to_plated_coords(target=target_coords)
-        proxy_target_coords = target_coords - (real - target_coords)
-        final_real = self.target_to_plated_coords(proxy_target_coords)
-        print(
-            f"Pointing to the target coordinate {target_coords}"
-            f"results in the following coordinate {real} found by plating.\n"
-            f"If we now point to the proxy target coordinate {proxy_target_coords} "
-            f"we will actually arrive at {final_real} i.e. our original target coordinate."
-        )
-        if not final_real == target_coords:
-            print("Sign convention is wrong.")
+    conn.close()
+    return df_total
