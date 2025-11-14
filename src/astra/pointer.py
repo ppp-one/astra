@@ -29,23 +29,27 @@ Typical Workflow:
 Classes:
     PointingCorrection: Stores target vs actual pointing coordinates
     ImageStarMapping: Handles star detection and catalog matching
-    PointingCorrectionHandler: Main interface for complete pointing analysis
 
 Functions:
+    calculate_pointing_correction_from_fits: Complete pointing correction from FITS file
+    calculate_pointing_correction_from_image: Complete pointing correction from image array
     find_stars: Basic star detection using DAOStarFinder
-    gaia_db_query: Query Gaia catalog for reference stars
+    local_gaia_db_query: Query local Gaia database for reference stars
+    local_db_query: Low-level database query for astronomical catalogs
 
 Example:
     # Process a FITS file for pointing correction
-    corrector = PointingCorrectionHandler.from_fits_file(
-        "observation.fits",
-        target_ra=150.25,
-        target_dec=2.18
+    pointing_correction, image_star_mapping, num_stars = (
+        calculate_pointing_correction_from_fits(
+            "observation.fits",
+            target_ra=150.25,
+            target_dec=2.18
+        )
     )
 
     # Get the pointing offset
-    ra_offset = corrector.pointing_correction.offset_ra
-    dec_offset = corrector.pointing_correction.offset_dec
+    ra_offset = pointing_correction.offset_ra
+    dec_offset = pointing_correction.offset_dec
 
     print(f"Pointing error: RA={ra_offset:.3f}°, Dec={dec_offset:.3f}°")
 """
@@ -84,7 +88,7 @@ def calculate_pointing_correction_from_fits(
     filter_band: Optional[str] = None,
 ):
     """
-    Create a PointingCorrectionHandler instance from a FITS file.
+    Calculate pointing correction from a FITS file.
 
     Performs the complete plate solving workflow from a FITS file, including
     metadata extraction, image cleaning, star detection, and pointing correction.
@@ -100,8 +104,15 @@ def calculate_pointing_correction_from_fits(
         filter_band (str, optional): Filter band used for observation. Defaults to None.
 
     Returns:
-        PointingCorrectionHandler: Instance with computed pointing correction
-            and image-star mapping.
+        Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
+            - PointingCorrection: Object with computed pointing correction
+            - ImageStarMapping: Mapping of image stars to Gaia stars
+            - int: Number of stars used from the image for plate solving
+
+    Raises:
+        Exception: If insufficient stars are detected for plate solving,
+            if the offset is larger than the field of view, or if too few
+            stars are matched.
     """
     image, header = _read_fits_file(filepath)
 
@@ -135,7 +146,7 @@ def calculate_pointing_correction_from_image(
     filter_band: Optional[str] = None,
 ):
     """
-    Create a PointingCorrectionHandler instance from an image array.
+    Calculate pointing correction from an image array.
 
     Performs the complete plate solving workflow: image cleaning, star detection,
     Gaia catalog matching, WCS computation, and pointing correction calculation.
@@ -149,9 +160,10 @@ def calculate_pointing_correction_from_image(
         filter_band (str, optional): Filter band used for observation.
 
     Returns:
-        PointingCorrectionHandler: Instance with computed pointing correction.
-        image_star_mapping (ImageStarMapping): Mapping of image stars to Gaia stars.
-        int: Number of stars used from the image for plate solving.
+        Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
+            - PointingCorrection: Object with computed pointing correction
+            - ImageStarMapping: Mapping of image stars to Gaia stars
+            - int: Number of stars used from the image for plate solving
 
     Raises:
         Exception: If insufficient stars are detected for plate solving,
@@ -229,7 +241,6 @@ def find_stars(
             Defaults to 5.0.
         fwhm (float, optional): Expected Full Width at Half Maximum of stars
             in pixels. Should match the typical seeing conditions. Defaults to 3.0.
-        peakmax (float, optional): Maximum ADU value to consider for star detection. Defaults to 65535.
 
     Returns:
         np.ndarray: Array of detected star coordinates sorted by brightness.
@@ -583,7 +594,7 @@ def _extract_plate_scale_and_dateobs(header):
         header (fits.Header): FITS header containing metadata.
 
     Returns:
-        Tuple[datetime, float]: Observation date and plate scale in degrees per pixel.
+        Tuple[float, datetime]: Plate scale in degrees per pixel and observation date.
     """
     dateobs = pd.to_datetime(header["DATE-OBS"])
 
@@ -745,7 +756,7 @@ def local_gaia_db_query(
     dateobs: Optional[datetime] = None,
 ) -> np.ndarray:
     """
-    Query the Gaia archive to retrieve the RA-DEC coordinates of stars within a given field-of-view.
+    Query local Gaia database to retrieve RA-DEC coordinates of stars within a given field-of-view.
 
     Retrieves star positions from a local Gaia database within a rectangular region
     centered on the specified coordinates. Optionally applies proper motion corrections
@@ -758,7 +769,7 @@ def local_gaia_db_query(
             it is assumed to be in degrees. Can be a single value (square FOV) or
             tuple (RA_fov, Dec_fov).
         limit (int, optional): The maximum number of sources to retrieve from the
-            Gaia archive. Defaults to 1000.
+            database. Defaults to 1000.
         tmass (bool, optional): Whether to sort by 2MASS J magnitudes instead of
             Gaia G magnitudes. Defaults to False.
         dateobs (datetime, optional): The date of the observation. If given, the
@@ -768,9 +779,6 @@ def local_gaia_db_query(
     Returns:
         np.ndarray: An array of shape (n, 2) containing the RA-DEC coordinates
             of the retrieved sources in degrees, sorted by magnitude (brightest first).
-
-    Raises:
-        ImportError: If required database utilities are not available.
     """
 
     if isinstance(center, SkyCoord):

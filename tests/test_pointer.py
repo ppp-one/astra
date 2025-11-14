@@ -9,7 +9,7 @@ from astropy.coordinates import SkyCoord
 from astra.pointer import (
     ImageStarMapping,
     PointingCorrection,
-    PointingCorrectionHandler,
+    calculate_pointing_correction_from_image,
 )
 
 
@@ -134,7 +134,7 @@ class TestImageStarMapping:
         assert matched_count == 12
 
 
-class TestPointingCorrectionHandler:
+class TestPointingCorrectionFromImage:
     @pytest.fixture(autouse=True)
     def setup_pointing(self, temp_config):
         # if the file at Config().gaia_db is empty skip the test
@@ -160,7 +160,11 @@ class TestPointingCorrectionHandler:
             exp_time=30,
             dateobs=self.dateobs,
         )
-        self.pointing_corrector = PointingCorrectionHandler.from_image(
+        (
+            self.pointing_correction,
+            self.image_star_mapping,
+            self.num_stars_used,
+        ) = calculate_pointing_correction_from_image(
             self.image,
             target_ra=self.ra,
             target_dec=self.dec,
@@ -170,15 +174,14 @@ class TestPointingCorrectionHandler:
 
     def test_pointing_correction(self):
         """Test that the pointing correction is correctly initialized."""
-        assert isinstance(self.pointing_corrector, PointingCorrectionHandler)
-        assert isinstance(
-            self.pointing_corrector.pointing_correction, PointingCorrection
-        )
-        assert isinstance(self.pointing_corrector.image_star_mapping, ImageStarMapping)
+        assert isinstance(self.pointing_correction, PointingCorrection)
+        assert isinstance(self.image_star_mapping, ImageStarMapping)
+        assert isinstance(self.num_stars_used, int)
+        assert self.num_stars_used > 0
 
     def test_pointing_correction_values(self):
         """Test the values of the pointing correction."""
-        pc = self.pointing_corrector.pointing_correction
+        pc = self.pointing_correction
         assert pc.target_ra == self.ra
         assert pc.target_dec == self.dec
         assert pc.plating_ra != pc.target_ra  # Ensure some correction is applied
@@ -186,7 +189,7 @@ class TestPointingCorrectionHandler:
 
     def test_image_star_mapping(self):
         """Test the image star mapping."""
-        ism = self.pointing_corrector.image_star_mapping
+        ism = self.image_star_mapping
         assert isinstance(ism, ImageStarMapping)
         assert ism.stars_in_image.shape[0] > 0  # Ensure some stars were detected
         assert ism.gaia_stars_in_image.shape[0] > 0  # Ensure some Gaia stars were found
