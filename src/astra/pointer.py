@@ -216,7 +216,7 @@ def calculate_pointing_correction_from_image(
 
     _verify_plate_solve(
         image_star_mapping,
-        number_of_stars_to_match=np.floor(stars_in_image_used * 0.75),
+        fraction_of_stars_to_match=0.75,
     )
 
     return pointing_correction, image_star_mapping, stars_in_image_used
@@ -668,22 +668,12 @@ def _get_gaia_star_coordinates(
     """
     # Get fov from image shape and plate scale
     fov = np.array(image_clean.shape) * plate_scale * fov_scale
-
     gaia_tmass_filter = _map_filter_band_to_gaia_tmass(filter_band)
 
-    if Config().gaia_db.is_file():
-        use_tmass = gaia_tmass_filter in ["J", "H", "KS"]
-        logger.debug(
-            f"Using {'2MASS J' if use_tmass else 'Gaia G'} filter band for local query"
-        )
-        # Query gaia database for stars in the fov
-        gaia_star_coordinates = local_gaia_db_query(
-            center=(ra, dec), fov=fov, limit=limit, dateobs=dateobs, tmass=use_tmass
-        )
-        return gaia_star_coordinates
-    else:
-        logger.debug("Using online Gaia archive for star query")
-        logger.debug(f"Using Gaia/2MASS filter band: {gaia_tmass_filter}")
+    # Try online query first (if local DB doesn't exist, this is the only option)
+    has_local_db = Config().gaia_db.is_file()
+
+    try:
         table = cabaret.GaiaQuery.query(
             center=(ra, dec),
             radius=np.max(fov) / 2,
@@ -691,10 +681,27 @@ def _get_gaia_star_coordinates(
             limit=limit,
             timeout=60,
         )
-
         table_filt = cabaret.GaiaQuery._apply_proper_motion(table, dateobs).copy()
-
         return np.array([table_filt["ra"].value.data, table_filt["dec"].value.data]).T
+
+    except Exception as e:
+        if not has_local_db:
+            raise Exception(
+                "Failed to query online Gaia database and no local fallback available"
+            ) from e
+
+        logger.warning(
+            f"Online Gaia query failed with error: {e}. Falling back to local database."
+        )
+
+    # Fall back to local database
+    use_tmass = gaia_tmass_filter in ["J", "H", "KS"]
+    logger.debug(
+        f"Using {'2MASS J' if use_tmass else 'Gaia G'} filter band for local query"
+    )
+    return local_gaia_db_query(
+        center=(ra, dec), fov=fov, limit=limit, dateobs=dateobs, tmass=use_tmass
+    )
 
 
 def _verify_offset_within_fov(
@@ -723,7 +730,7 @@ def _verify_offset_within_fov(
 def _verify_plate_solve(
     image_star_mapping: ImageStarMapping,
     pixel_threshold: int = 20,
-    number_of_stars_to_match: int = 4,
+    fraction_of_stars_to_match: float = 0.75,
 ):
     """
     Verify the plate solve by checking the number of matched stars.
@@ -742,9 +749,18 @@ def _verify_plate_solve(
     number_of_matched_stars = image_star_mapping.number_of_matched_stars(
         pixel_threshold=pixel_threshold
     )
-    if number_of_matched_stars < number_of_stars_to_match:
+
+    num_gaia_stars = len(image_star_mapping.gaia_stars_in_image)
+    num_image_stars = len(image_star_mapping.stars_in_image)
+
+    if num_gaia_stars >= num_image_stars:
+        if number_of_matched_stars / num_image_stars < fraction_of_stars_to_match:
+            raise Exception(
+                f"Plate solve failed: only {number_of_matched_stars / num_image_stars:.2%} stars matched"
+            )
+    else:
         raise Exception(
-            f"Plate solve failed: only {number_of_matched_stars / number_of_stars_to_match:.2%} stars matched"
+            f"Plate solve failed: not enough Gaia stars in image. Only {num_gaia_stars} Gaia stars found, whereas {num_image_stars} stars detected in image."
         )
 
 
