@@ -620,13 +620,22 @@ class HeaderManager:
         with fits.open(row["filepath"], mode="update") as filehandle:
             header = ObservatoryHeader(filehandle[0].header)  # type: ignore
             for header_entry in df_inp.columns:
-                header[header_entry] = (
-                    df_inp.iloc[row_index][header_entry],
-                    df_poll_unique[df_poll_unique["header"] == header_entry][
-                        "comment"
-                    ].values[0],
-                )
-            header.convert_ra_from_hours_to_degrees()
+                # Only write if not already present in header (preserve target coordinates)
+                if header_entry not in header:
+                    header[header_entry] = (
+                        df_inp.iloc[row_index][header_entry],
+                        df_poll_unique[df_poll_unique["header"] == header_entry][
+                            "comment"
+                        ].values[0],
+                    )
+
+            # Only convert RA from hours to degrees if it came from polled data (not already in degrees)
+            if "RA-DEG" not in header:
+                header.convert_ra_from_hours_to_degrees()
+            else:
+                # Remove the marker flag - it's just for internal tracking
+                del header["RA-DEG"]
+
             location = header.get_observatory_location()
             target = header.get_target_sky_coordinates()
             header.add_times(fits_config, location, target)

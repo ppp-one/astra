@@ -1432,6 +1432,35 @@ class Observatory:
                 observatory_config=self.config,
                 fits_config=self.fits_config,
             )
+
+            # Add target RA/DEC to header if present in action_value and not already set
+            if action.action_type == "object":
+                action_value = action.action_value
+                if "ra" in action_value and "dec" in action_value:
+                    # Get comments from fits_config
+                    ra_comment = (
+                        self.fits_config.loc["RA", "comment"]
+                        if "RA" in self.fits_config.index
+                        else "Target Right Ascension (J2000) [deg]"
+                    )
+                    dec_comment = (
+                        self.fits_config.loc["DEC", "comment"]
+                        if "DEC" in self.fits_config.index
+                        else "Target Declination (J2000) [deg]"
+                    )
+
+                    # Only set if not already present in header
+                    # Note: action_value['ra'] and ['dec'] are already in degrees
+                    if "RA" not in image_handler.header:
+                        image_handler.header["RA"] = (action_value["ra"], ra_comment)
+                        # Mark that RA is already in degrees to prevent re-conversion
+                        image_handler.header["RA-DEG"] = (
+                            True,
+                            "RA already in degrees (not hours)",
+                        )
+                    if "DEC" not in image_handler.header:
+                        image_handler.header["DEC"] = (action_value["dec"], dec_comment)
+
             self._image_handlers[camera_name] = image_handler
             self.logger.debug(f"Created image handler for camera '{camera_name}'")
         except Exception as e:
