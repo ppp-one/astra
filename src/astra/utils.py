@@ -252,6 +252,9 @@ def clean_image(data: np.ndarray) -> np.ndarray:
         bkg_clean, size=5, mode="mirror"
     )  # slow but needed
 
+    # add minimum back to avoid negative values
+    med_clean += np.abs(np.nanmin(med_clean))
+
     return med_clean
 
 
