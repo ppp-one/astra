@@ -41,6 +41,7 @@ from astra import ASTRA_VER, Config
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
 from astra.observatory import Observatory
+from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ LAST_IMAGE = None
 LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_FACTOR = None
-CUSTOM_OBSERVATORY = None
+CUSTOM_OBSERVATORY = ""
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -91,12 +92,17 @@ def load_observatories() -> None:
     config_file = (
         Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
     )
-    assert CUSTOM_OBSERVATORY is not None, "CUSTOM_OBSERVATORY must be set"
-
-    obs = Observatory(
+    observatory_class = ObservatoryLoader(
+        observatory_name=Config().observatory_name
+    ).load()
+    if (
+        issubclass(observatory_class, Observatory)
+        and observatory_class is not Observatory
+    ):
+        logger.info(f"Selected custom observatory class: {observatory_class.__name__}")
+    obs = observatory_class(
         config_file,
         TRUNCATE_FACTOR,
-        custom_observatory=CUSTOM_OBSERVATORY,
         logging_level=logging.DEBUG if DEBUG else logging.INFO,
     )
     OBSERVATORY = obs
@@ -192,7 +198,6 @@ def convert_fits_to_jpg(fits_file: str) -> tuple[str, dict]:
     filepath = str(FRONTEND_PATH / filename)
     plt.imsave(filepath, image_data, format="jpg", cmap="gray", vmin=vmin, vmax=vmax)
 
-    # TODO: don't like this trick, but it works for now
     return str(Path("frontend") / filename), headers
 
 
@@ -482,21 +487,37 @@ async def schedule():
               or empty list if no schedule exists.
     """
     obs = OBSERVATORY
-    if obs.schedule_manager.schedule_mtime != 0:
-        try:
-            schedule = obs.schedule_manager.get_schedule().to_dataframe()
-        except Exception as e:
-            obs.logger.warning(f"Error reading schedule for frontend: {e}")
-            return []
+    if (
+        obs is None
+        or not hasattr(obs, "schedule_manager")
+        or obs.schedule_manager is None
+    ):
+        logger.warning(
+            "Schedule request but OBSERVATORY not initialized or has no schedule_manager"
+        )
+        return []
 
-        schedule["start_HHMMSS"] = schedule["start_time"].apply(format_time)
-        schedule["end_HHMMSS"] = schedule["end_time"].apply(format_time)
+    if getattr(obs.schedule_manager, "schedule_mtime", 0) == 0:
+        return []
 
-        # replace NaN with None
-        schedule = schedule.where(pd.notnull(schedule), None)
+    try:
+        schedule_obj = obs.schedule_manager.get_schedule()
+        schedule = schedule_obj.to_dataframe()
 
-        return schedule.to_dict(orient="records")
-    else:
+        # Add formatted time columns
+        schedule["start_HHMMSS"] = pd.to_datetime(
+            schedule["start_time"], errors="coerce"
+        ).apply(lambda x: x.strftime("%H:%M:%S") if pd.notna(x) else "")
+        schedule["end_HHMMSS"] = pd.to_datetime(
+            schedule["end_time"], errors="coerce"
+        ).apply(lambda x: x.strftime("%H:%M:%S") if pd.notna(x) else "")
+        obs.logger.debug("Schedule read for frontend")
+        result = schedule.to_dict(orient="records")
+
+        return result
+
+    except Exception as e:
+        obs.logger.warning(f"Error reading schedule for frontend: {e}", exc_info=True)
         return []
 
 
@@ -1152,7 +1173,6 @@ async def websocket_endpoint(websocket: WebSocket):
         #     # use placeholder image
         #     last_image_jpg = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
 
-        # TODO: need to make it less CPU intensive if multiple clients
         # Check all image handlers for the most recent image
         if obs._image_handlers:
             # Find the most recent image across all cameras

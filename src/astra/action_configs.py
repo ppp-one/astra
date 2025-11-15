@@ -1,6 +1,5 @@
 import typing
 from dataclasses import dataclass, field
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional, Union
@@ -10,7 +9,7 @@ import numpy as np
 from astropy.coordinates import Angle, SkyCoord
 from astropy.time import Time
 
-from astra.config import Config
+from astra.config import Config, ObservatoryConfig
 
 
 @dataclass
@@ -37,13 +36,49 @@ class BaseActionConfig:
         self.validate()
 
     @classmethod
-    def from_dict(cls, config_dict: dict, logger=None, default_dict: dict = {}):
+    def from_dict(cls, config_dict: dict, default_dict: dict = {}, logger=None):
         kwargs = cls.merge_config_dicts(config_dict, default_dict)
 
         if logger is not None:
             logger.debug(f"Extracting action values {kwargs} for {cls.__name__}")
 
         return cls(**kwargs)
+
+    @classmethod
+    def defaults_from_observatory_config(
+        cls,
+        device_name: str,
+        device_type: str = "Camera",
+        observatory_config: object | None = None,
+    ) -> dict:
+        """
+        Retrieve default values for this action from the observatory configuration.
+
+        Returns a dict suitable for passing as `default_dict` into from_dict.
+        """
+        # lazy-import to avoid cycle at module import time
+
+        oc = (
+            observatory_config
+            if observatory_config is not None
+            else Config().observatory_config
+        )
+        if not isinstance(oc, ObservatoryConfig):
+            return {}
+
+        action_key = cls.__name__.lower().replace("config", "")
+
+        try:
+            if hasattr(oc, "get_device_config"):
+                device_conf = oc.get_device_config(device_type, device_name)
+                if isinstance(device_conf, dict):
+                    return device_conf.get(action_key, {}) or {}
+                return {}
+        except Exception:
+            # Fall through to empty fallback if accessor fails
+            return {}
+
+        return {}
 
     def validate(self):
         missing = []
@@ -368,8 +403,8 @@ class AutofocusCalibrationFieldConfig(BaseActionConfig):
     airmass_threshold: float = 1.01
     g_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
     j_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
-    fov_height: float | int = 11.666666 / 60
-    fov_width: float | int = 11.666666 / 60
+    fov_height: float | int = 0
+    fov_width: float | int = 0
     selection_method: SelectionMethod = SelectionMethod.SINGLE
     use_gaia: bool = True
     observation_time: Optional[Time] = None
@@ -454,7 +489,7 @@ class AutofocusConfig(BaseActionConfig):
     calibration_field: AutofocusCalibrationFieldConfig = field(
         default_factory=AutofocusCalibrationFieldConfig, metadata={"required": True}
     )
-    _save_path: Optional[Path] = None
+    save_path: Optional[Path] = None
     _focus_measure_operator = None
     _secondary_focus_measure_operators = {}
 
@@ -487,15 +522,6 @@ class AutofocusConfig(BaseActionConfig):
         kwargs["calibration_field"] = autofocus_calibration_field
 
         return cls(**kwargs)
-
-    @property
-    def save_path(self) -> Path:
-        if self._save_path is None:
-            date = datetime.now().strftime("%Y%m%d")
-            self._save_path = Config().paths.images / "autofocus_ref" / date
-            self._save_path.mkdir(exist_ok=True, parents=True)
-
-        return self._save_path
 
     @property
     def focus_measure_operator_kwargs(self) -> dict:

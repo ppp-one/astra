@@ -112,6 +112,16 @@ class DeviceManager:
         self.devices = devices
         self.logger.info("Devices loaded")
 
+        try:
+            self.check_telescopes_in_domes()
+        except Exception as e:
+            self.logger.report_device_issue(
+                device_type="DeviceManager",
+                device_name="check_telescopes_in_domes",
+                message="Error checking telescopes in domes after loading devices",
+                exception=e,
+            )
+
     def connect_all(self, fits_config):
         """
         Connect to all loaded devices and start polling for FITS header data.
@@ -403,3 +413,79 @@ class DeviceManager:
             if device_type not in self.devices
             else list(self.devices[device_type].keys())
         )
+
+    def check_telescopes_in_domes(self):
+        """Check telescope assignments in domes.
+
+        Warn if:
+        - There are telescopes not assigned to any dome
+        - There are domes assigned to telescopes that are not connected
+
+        Raise error if:
+        - Dome configuration is invalid
+        """
+        if "Telescope" not in self.devices:
+            return
+
+        assigned_telescopes = set()
+        dome_issues: dict[str, dict] = {}
+
+        for dome_conf in self.observatory_config.get("Dome", []):
+            try:
+                telescopes = dome_conf.get("telescopes", [])
+                if not isinstance(telescopes, (list, tuple)):
+                    dome_issues[dome_conf.get("device_name", "<unknown>")] = {
+                        "telescopes_field_invalid": telescopes
+                    }
+                    self.logger.warning(
+                        f"Dome {dome_conf.get('device_name', '<unknown>')} has an invalid 'telescopes' field: {telescopes!r}"
+                    )
+                    continue
+                assigned_telescopes.update(telescopes)
+                # detect references to telescopes that don't exist
+                missing = [
+                    t for t in telescopes if t not in self.devices.get("Telescope", {})
+                ]
+                if missing:
+                    dome_issues.setdefault(
+                        dome_conf.get("device_name", "<unknown>"), {}
+                    )["missing_telescopes"] = missing
+                    self.logger.warning(
+                        f"Dome {dome_conf.get('device_name', '<unknown>')} references missing telescope(s): {', '.join(missing)}"
+                    )
+            except Exception as e:
+                name = dome_conf.get("device_name", "<unknown>")
+                dome_issues[name] = {"config_error": str(e)}
+                self.logger.report_device_issue(
+                    device_type="Dome",
+                    device_name=name,
+                    message=f"Error reading dome config for {name}",
+                    exception=e,
+                )
+
+        unassigned_telescopes = (
+            set(self.devices["Telescope"].keys()) - assigned_telescopes
+        )
+        if unassigned_telescopes:
+            self.logger.warning(
+                "The following telescope(s) are not assigned to any dome: "
+                + ", ".join(unassigned_telescopes)
+                + ". "
+                "Domes may close without checking whether these telescopes are parked."
+            )
+            self.logger.debug(
+                f"{list(self.devices['Telescope'].keys())} "
+                + "are the connected telescopes."
+                f" {assigned_telescopes} are the assigned telescopes."
+            )
+        else:
+            self.logger.debug("All telescopes are assigned to domes.")
+
+        # Find domes with telescopes not in devices and log a warning
+        missing_telescopes = assigned_telescopes - set(self.devices["Telescope"].keys())
+        if missing_telescopes:
+            self.logger.warning(
+                "The following telescope(s) assigned to domes are not connected: "
+                + ", ".join(missing_telescopes)
+                + "."
+            )

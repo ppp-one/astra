@@ -22,11 +22,12 @@ Classes:
 """
 
 import logging
-import os
 import time
 from datetime import datetime
 from typing import Any, Optional, Union
+from pathlib import Path
 
+import astropy.io.fits as fits
 import astropy.units as u
 import matplotlib
 import matplotlib.pyplot as plt
@@ -73,7 +74,6 @@ class AstraCamera(CameraInterface):
         observatory: Observatory instance for device control and logging.
         alpaca_device_camera (AlpacaDevice): ALPACA camera device instance.
         action (Action): Action configuration for the camera.
-        image_data_type: NumPy data type for images, auto-detected if None.
         maxadu: Maximum ADU value for camera, auto-detected if None.
     """
 
@@ -82,7 +82,6 @@ class AstraCamera(CameraInterface):
         observatory: Any,
         alpaca_device_camera: AlpacaDevice,
         action: Action,
-        image_data_type: Optional[np.dtype] = None,
         maxadu: Optional[int] = None,
     ) -> None:
         self.observatory = observatory
@@ -91,10 +90,7 @@ class AstraCamera(CameraInterface):
         self.action = action
         self.success = True
 
-        if image_data_type is None or maxadu is None:
-            maxadu, image_data_type = self.determine_image_data_type_and_maxadu()  # type: ignore
-        self.maxadu = maxadu
-        self.image_data_type = image_data_type
+        self.maxadu = maxadu if maxadu is not None else self.determine_maxadu()
 
         super().__init__()
 
@@ -111,12 +107,16 @@ class AstraCamera(CameraInterface):
         Returns:
             np.ndarray: Captured image data as numpy array.
         """
-        self._perform_exposure(texp=texp, log_option=log_option, use_light=use_light)
-        image = np.array(
-            self.alpaca_device_camera.get("ImageArray"), dtype=self.image_data_type
+        exposure_successful, filepath = self._perform_exposure(
+            texp=texp, log_option=log_option, use_light=use_light
         )
+        if exposure_successful:
+            with fits.open(filepath) as hdul:
+                image = hdul[0].data
 
-        # image = self.remove_hot_pixels(image, kernel_size=5)
+            # image = self.remove_hot_pixels(image, kernel_size=5)
+        else:
+            image = np.array([])
 
         return image
 
@@ -156,7 +156,7 @@ class AstraCamera(CameraInterface):
 
     def _perform_exposure(
         self, texp: float, log_option: Optional[str] = None, use_light: bool = True
-    ) -> None:
+    ) -> tuple[bool, Path | None]:
         """Internal method to perform camera exposure.
 
         Handles the actual camera exposure operation and updates success status.
@@ -182,7 +182,9 @@ class AstraCamera(CameraInterface):
             self.observatory.logger.warning("Exposure failed.")
             # raise ValueError("Exposure failed.")
 
-    def determine_image_data_type_and_maxadu(self):
+        return exposure_successful, filepath
+
+    def determine_maxadu(self):
         """Determine camera image data type and maximum ADU value.
 
         Takes a test exposure to determine the camera's image data type
@@ -193,24 +195,7 @@ class AstraCamera(CameraInterface):
             log_option=None,
             use_light=False,
         )
-        self.alpaca_device_camera.get("ImageArray")
-
-        imginfo = self.alpaca_device_camera.get("ImageArrayInfo")
-        maxadu = self.alpaca_device_camera.get("MaxADU")
-
-        if imginfo.ImageElementType == 0 or imginfo.ImageElementType == 1:
-            image_data_type = np.uint16
-        elif imginfo.ImageElementType == 2:
-            if maxadu <= 65535:
-                image_data_type = np.uint16
-            else:
-                image_data_type = np.int32
-        elif imginfo.ImageElementType == 3:
-            image_data_type = np.float64
-        else:
-            raise ValueError(f"Unknown ImageElementType: {imginfo.ImageElementType}")
-
-        return maxadu, image_data_type
+        return self.alpaca_device_camera.get("MaxADU")
 
 
 class AstraFocuser(FocuserInterface):
@@ -265,7 +250,7 @@ class AstraFocuser(FocuserInterface):
                 raise TimeoutError("Slew timeout")
             time.sleep(0.1)
 
-        time.sleep(3)  # settle time
+        time.sleep(3)  # settle time  # TODO add to config  settle_time from focuser
         return None
 
     def get_current_position(self) -> int:
@@ -591,25 +576,23 @@ class Autofocuser:
         self.action_value = action.action_value
         self.autofocuser = autofocuser
         self.success = success
+        self.config: AutofocusConfig = action.action_value  # type: ignore
 
         default_dict = paired_devices.get_device_config("Camera").get("autofocus", {})
         logging.info(f"default_dict {default_dict}")
+
         if (
-            "fov_height" not in self.action_value
-            or "fov_width" not in self.action_value
+            self.config.calibration_field.fov_width == 0
+            or self.config.calibration_field.fov_height == 0
         ):
             fov_width, fov_height = self.determine_default_field_of_view(
                 paired_devices, default_dict
             )
+            self.config.calibration_field.fov_width = fov_width
+            self.config.calibration_field.fov_height = fov_height
 
-        self.config = AutofocusConfig.from_dict(
-            self.action_value,
-            logger=self.observatory.logger,
-            default_dict=default_dict
-            | {"fov_width": fov_width, "fov_height": fov_height},
-        )
         self._initialise_logging()
-        self.observatory.logger.info(f"action vals {self.action_value}")
+        self.observatory.logger.info(f"Loaded action values {self.action_value}")
         self.observatory.logger.info(f"Autofocus configuration: {self.config}.")
 
     @property
@@ -723,7 +706,7 @@ class Autofocuser:
             n_exposures=self.config.n_exposures,
             decrease_search_range=self.config.decrease_search_range,
             exposure_time=self.config.exptime,
-            save_path=self.config.save_path,
+            # save_path=self.config.save_path,
             secondary_focus_measure_operators=self.config._secondary_focus_measure_operators,
             focus_measure_operator_kwargs=self.config.focus_measure_operator_kwargs,
             search_range_is_relative=self.config.search_range_is_relative,
@@ -1003,21 +986,58 @@ class Autofocuser:
         try:
             if self.success is False:
                 return
-            if self.config.save_path is None:
-                self.observatory.logger.error(
-                    "Skipping creation of summary plot, as save_path is unspecified."
+
+            # Determine directory to write the summary to. Prefer configured save_path;
+            # if not provided, fall back to the directory containing the last saved
+            # autofocus image for this camera (if available).
+            save_dir: Path | None = None
+            if self.config.save_path is not None:
+                save_dir = Path(self.config.save_path)
+
+            if save_dir is None:
+                # try to find last image saved by this camera
+                try:
+                    image_handler = self.observatory.get_image_handler(
+                        self.action.device_name
+                    )
+                    last_image_path = getattr(image_handler, "last_image_path", None)
+                except Exception:
+                    last_image_path = None
+
+                if last_image_path is None:
+                    self.observatory.logger.warning(
+                        "Skipping creation of summary plot: no save_path configured and no last image available."
+                    )
+                    return
+
+                save_dir = last_image_path.parent
+
+            # Obtain focus record dataframe. Prefer in-memory record from the
+            # astrafocus autofocuser instance; if not available, try reading CSVs
+            # from the chosen directory.
+            df: pd.DataFrame | None = None
+            if (
+                hasattr(self, "autofocuser")
+                and getattr(self.autofocuser, "focus_record", None) is not None
+            ):
+                try:
+                    df = self.autofocuser.focus_record
+                except Exception:
+                    df = None
+
+            if df is None:
+                assert save_dir is not None
+                csv_files = sorted(
+                    [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
+                    key=lambda p: p.stat().st_mtime,
                 )
-                return
+                if not csv_files:
+                    self.observatory.logger.error(
+                        f"No focus record CSV found in {save_dir}. Skipping summary plot."
+                    )
+                    return
+                df = pd.read_csv(csv_files[-1])
 
-            focus_record = sorted(
-                [
-                    item
-                    for item in os.listdir(self.config.save_path)
-                    if item.endswith(".csv")
-                ]
-            )[-1]
-
-            df = pd.read_csv(self.config.save_path / focus_record)
             df = df.sort_values("focus_pos")
 
             matplotlib.use("Agg")
@@ -1037,9 +1057,17 @@ class Autofocuser:
             )
             ax.legend()
 
-            plt.savefig(
-                self.config.save_path / f"{focus_record.removesuffix('.csv')}.png"
-            )
+            # Build output filename: if we read a CSV file use its stem, otherwise timestamp it.
+            if "csv_files" in locals() and csv_files:
+                out_name = f"{csv_files[-1].stem}.png"
+            else:
+                out_name = (
+                    f"autofocus_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+                )
+
+            assert save_dir is not None
+            out_path = Path(save_dir) / out_name
+            plt.savefig(out_path)
             plt.close()
         except Exception as e:
             self.observatory.logger.exception(f"Error creating summary plot: {str(e)}")
@@ -1052,23 +1080,41 @@ class Autofocuser:
         """
         if self.success is False:
             return
-        if self.config.save_path is None:
-            self.observatory.logger.error(
-                "Skipping creation of log file, as save_path is unspecified."
-            )
-            return
+        save_dir: Path | None = None
+        if self.config.save_path is not None:
+            save_dir = Path(self.config.save_path)
 
-        focus_record = sorted(
-            [
-                item
-                for item in os.listdir(self.config.save_path)
-                if item.endswith(".csv")
-            ]
-        )[-1]
-        timestr = focus_record.split("_")[0]
+        if save_dir is None:
+            try:
+                image_handler = self.observatory.get_image_handler(
+                    self.action.device_name
+                )
+                last_image_path = getattr(image_handler, "last_image_path", None)
+            except Exception:
+                last_image_path = None
+
+            if last_image_path is None:
+                self.observatory.logger.error(
+                    "Skipping creation of log file: no save_path configured and no last image available."
+                )
+                return
+
+            save_dir = last_image_path.parent
+
+        # derive a timestring for filename; prefer an adjacent CSV if present
+        timestr = None
+        assert save_dir is not None
+        csv_files = sorted(
+            [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
+            key=lambda p: p.stat().st_mtime,
+        )
+        if csv_files:
+            timestr = csv_files[-1].stem.split("_")[0]
+
         if not timestr:
             timestr = datetime.now().strftime("%Y%m%d_%H%M%S")
-        result_file_path = self.config.save_path / f"{timestr}_result.txt"
+
+        result_file_path = Path(save_dir) / f"{timestr}_result.txt"
         try:
             with open(result_file_path, "w") as result_file:
                 result_file.write(f"Best focus position: {self.best_focus_position}\n")
