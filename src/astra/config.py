@@ -173,7 +173,9 @@ class Config:
         unchanged_files = []
 
         # only csv and yml
-        for template_file in self.TEMPLATE_DIR.glob("*"):
+        for template_file in [f for f in self.TEMPLATE_DIR.iterdir() if f.is_file()]:
+            if not template_file.is_file():
+                continue
             target_file = (
                 self.paths.custom_observatories / template_file.name
                 if template_file.suffix in [".py"]
