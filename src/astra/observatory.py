@@ -131,7 +131,6 @@ class Observatory:
         self,
         config_filename: Path | str,
         truncate_factor: float | None = None,
-        custom_observatory: str = "",
         logging_level: int = logging.INFO,
     ):
         """
@@ -146,8 +145,6 @@ class Observatory:
                 The filename is used to derive the observatory name.
             truncate_factor (float | None, optional): If specified, the schedule is truncated by a
                 factor and moved to the current time. Defaults to None.
-            custom_observatory (str, optional): If specified, enables custom observatory
-                logic and error handling. Defaults to None.
 
         Attributes:
             name (str): Observatory name derived from config filename.
@@ -182,7 +179,7 @@ class Observatory:
 
         # log start up
         self.logger.debug("Database and DatabaseLoggingHandler initialized")
-        self.logger.info("Astra starting up")
+        self.logger.info(f"Starting observatory {self.name}")
 
         # warn if debug mode
         if self.logger.getEffectiveLevel() == logging.DEBUG:
@@ -204,9 +201,6 @@ class Observatory:
 
         # heartbeat dictionary
         self.heartbeat = {}
-
-        # custom logic flags
-        self.speculoos = custom_observatory == "speculoos"
 
         # error and weather handling flags
 
@@ -257,7 +251,6 @@ class Observatory:
 
         Note:
             If the configuration is reloaded, devices may need to be restarted
-            (TODO: implement automatic device restart).
         """
         if self._config.is_outdated():
             self.logger.info("Config file modified, reloading.")
@@ -363,7 +356,6 @@ class Observatory:
         """
         self.device_manager.connect_all(
             fits_config=self.fits_config,
-            speculoos=self.speculoos,
         )
         self.start_watchdog()
 
@@ -494,7 +486,6 @@ class Observatory:
                         f"Device {error_source['device_type']} {error_source['device_name']} "
                         f"has error: {error_source['error']}"
                     )
-                # TODO: Panic mode
 
             # Single device error
             elif len(device_names) == 1 and len(device_types) == 1:
@@ -519,25 +510,7 @@ class Observatory:
                 and "Telescope" in device_types
                 and "Dome" in self.config
             ):
-                for dome_config in self.config["Dome"]:
-                    if dome_config.get("close_dome_on_error", False):
-                        if self.speculoos:
-                            self.speculoos_check_and_ack_error(close=True)
-
-                        device_name = dome_config["device_name"]
-                        self.logger.warning(
-                            f"Closing Dome {device_name} due to errors."
-                        )
-                        self.execute_and_monitor_device_task(
-                            "Dome",
-                            "ShutterStatus",
-                            1,
-                            "CloseShutter",
-                            device_name=device_name,
-                            log_message=f"Closing Dome shutter of {device_name}",
-                            weather_sensitive=False,
-                            error_sensitive=False,
-                        )
+                self._close_domes_on_error()
 
             # Final heartbeat update
             self.update_heartbeat()
@@ -548,7 +521,24 @@ class Observatory:
                 exc_info=True,
                 stack_info=True,
             )
-            # TODO: Panic mode
+
+    def _close_domes_on_error(self):
+        for dome_config in self.config["Dome"]:
+            if not dome_config.get("close_dome_on_error", False):
+                continue
+
+            device_name = dome_config["device_name"]
+            self.logger.warning(f"Closing Dome {device_name} due to errors.")
+            self.execute_and_monitor_device_task(
+                "Dome",
+                "ShutterStatus",
+                1,
+                "CloseShutter",
+                device_name=device_name,
+                log_message=f"Closing Dome shutter of {device_name}",
+                weather_sensitive=False,
+                error_sensitive=False,
+            )
 
     def update_heartbeat(self) -> None:
         """
@@ -627,72 +617,6 @@ class Observatory:
             self.device_manager.device_task_monitor_queue
         )
 
-    def speculoos_check_and_ack_error(self, close=False) -> None:
-        """
-        Check for and acknowledge SPECULOOS AsTelOS telescope errors.
-
-        SPECULOOS-specific method that monitors telescope error states and
-        automatically acknowledges errors that can be safely cleared. This is
-        essential for the autonomous operation of SPECULOOS telescopes which use
-        the AsTelOS control system.
-
-        Parameters:
-            close (bool, optional): If True, checks for errors related to
-                observatory closure operations. If False, checks for general
-                operational errors. Defaults to False.
-
-        The method:
-        1. Iterates through all telescope devices
-        2. Checks for AsTelOS-specific error conditions
-        3. Attempts to acknowledge clearable errors automatically
-        4. Logs error status and acknowledgment results
-
-        Error Handling:
-        - Only acknowledges errors that are safe to clear
-        - Maintains error state for serious issues requiring manual intervention
-        - Logs all error checking and acknowledgment activities
-
-        Note:
-            - Only used with SPECULOOS observatories
-            - Critical for autonomous error recovery
-            - Should be called before and after critical telescope operations
-        """
-        if "Telescope" in self.config:
-            for telescope_name in self.devices["Telescope"]:
-                telescope = self.devices["Telescope"][telescope_name]
-
-                # check telescope status
-                valid, all_errors, messages = utils.check_astelos_error(
-                    telescope, close=close
-                )
-
-                if valid and len(all_errors) > 0:
-                    self.logger.info(
-                        f"Attempting to acknowledge AsTelOS errors for {telescope_name}: {messages}"
-                    )
-                    ack, messages = utils.ack_astelos_error(
-                        telescope, valid, all_errors, messages, close=close
-                    )
-
-                    if ack:
-                        self.logger.info(
-                            f"AsTelOS errors successfully acknowledged for {telescope_name}: {messages}"
-                        )
-                    else:
-                        self.logger.report_device_issue(
-                            device_type="Telescope",
-                            device_name=telescope_name,
-                            message="AsTelOS errors not successfully acknowledged for"
-                            + f" {telescope_name}: {messages}",
-                        )
-
-                if not valid:
-                    self.logger.report_device_issue(
-                        device_type="Telescope",
-                        device_name=telescope_name,
-                        message=f"AsTelOS errors invalid for {telescope_name}: {messages}",
-                    )
-
     def open_observatory(self, paired_devices: dict | None = None) -> None:
         """
         Open the observatory for observations in a safe, controlled sequence.
@@ -721,109 +645,80 @@ class Observatory:
             - Opening sequence is aborted if unsafe conditions develop
             - Telescope readiness is verified after unparking for SPECULOOS systems
         """
-
-        if self.speculoos:
-            # SPECULOOS EDIT
-            self.device_manager.pause_polls(["Dome", "Telescope", "Focuser"])
-
-            # SPECULOOS EDIT
-            self.speculoos_check_and_ack_error()
-
         if "Dome" in self.config:
-            if self.weather_safe and self.logger.error_free:
-                # open dome shutter
-                if paired_devices is not None:
-                    self.execute_and_monitor_device_task(
-                        "Dome",
-                        "ShutterStatus",
-                        0,
-                        "OpenShutter",
-                        device_name=paired_devices["Dome"],
-                        log_message=f"Opening Dome shutter of {paired_devices['Dome']}",
-                    )
-                else:
-                    for device_name in self.devices["Dome"]:
-                        self.execute_and_monitor_device_task(
-                            "Dome",
-                            "ShutterStatus",
-                            0,
-                            "OpenShutter",
-                            device_name=device_name,
-                            log_message=f"Opening Dome shutter of {device_name}",
-                        )
-
-        if self.speculoos:
-            # SPECULOOS EDIT
-            self.speculoos_check_and_ack_error()
+            self._open_dome_shutters(paired_devices)
 
         if "Telescope" in self.config:
-            if self.weather_safe and self.logger.error_free:
-                # unpark telescope
-                if paired_devices is not None:
-                    self.execute_and_monitor_device_task(
-                        "Telescope",
-                        "AtPark",
-                        False,
-                        "Unpark",
-                        device_name=paired_devices["Telescope"],
-                        log_message=f"Unparking Telescope {paired_devices['Telescope']}",
-                    )
-                else:
-                    for device_name in self.devices["Telescope"]:
-                        self.execute_and_monitor_device_task(
-                            "Telescope",
-                            "AtPark",
-                            False,
-                            "Unpark",
-                            device_name=device_name,
-                            log_message=f"Unparking Telescope {device_name}",
-                        )
+            self._unpark_telescopes(paired_devices)
 
-        if self.speculoos:
-            # SPECULOOS EDIT
-            self.speculoos_check_and_ack_error()
+    def _open_dome_shutters(self, paired_devices: dict | None = None) -> None:
+        if self.weather_safe and self.logger.error_free:
+            dome_names = self.device_manager.list_device_names("Dome", paired_devices)
+            for dome_name in dome_names:
+                self.execute_and_monitor_device_task(
+                    "Dome",
+                    "ShutterStatus",
+                    0,
+                    "OpenShutter",
+                    device_name=dome_name,
+                    log_message=f"Opening Dome shutter of {dome_name}",
+                )
 
-            # SPECULOOS EDIT
-            self.device_manager.resume_polls(["Dome", "Telescope", "Focuser"])
+    def _unpark_telescopes(self, paired_devices: dict | None = None) -> None:
+        telescope_names = self.device_manager.list_device_names(
+            "Telescope", paired_devices
+        )
+        if self.weather_safe and self.logger.error_free:
+            for telescope_name in telescope_names:
+                self.execute_and_monitor_device_task(
+                    "Telescope",
+                    "AtPark",
+                    False,
+                    "Unpark",
+                    device_name=telescope_name,
+                    log_message=f"Unparking Telescope {telescope_name}",
+                )
 
-            # check if telescope(s) are ready
-            start_time = time.time()
-            if self.weather_safe and self.logger.error_free:
-                for telescope_name in self.devices["Telescope"]:
-                    telescope = self.devices["Telescope"][telescope_name]
+    def _wait_for_telescopes_ready(self):
+        """Poll TELESCOPE.READY_STATE until ready or timeout per telescope."""
+        # check if telescope(s) are ready
+        start_time = time.time()
+        if self.weather_safe and self.logger.error_free:
+            for telescope_name in self.devices["Telescope"]:
+                telescope = self.devices["Telescope"][telescope_name]
+
+                r = telescope.get(
+                    "CommandString", Command="TELESCOPE.READY_STATE", Raw=True
+                )
+
+                while float(r) != 1:
+                    self.logger.info(f"Waiting for {telescope_name} to be ready")
+
+                    time.sleep(1)
 
                     r = telescope.get(
                         "CommandString", Command="TELESCOPE.READY_STATE", Raw=True
                     )
 
-                    while float(r) != 1:
-                        self.logger.info(f"Waiting for {telescope_name} to be ready")
-
-                        time.sleep(1)
-
-                        r = telescope.get(
-                            "CommandString", Command="TELESCOPE.READY_STATE", Raw=True
+                    # timeout
+                    if time.time() - start_time > 120:
+                        self.logger.report_device_issue(
+                            device_type="Telescope",
+                            device_name=telescope_name,
+                            message="Timeout waiting for telescope "
+                            + f"{telescope_name} to be ready",
                         )
+                        break
 
-                        # timeout
-                        if time.time() - start_time > 120:
-                            self.logger.report_device_issue(
-                                device_type="Telescope",
-                                device_name=telescope_name,
-                                message="Timeout waiting for telescope "
-                                + f"{telescope_name} to be ready",
-                            )
-                            break
-
-                        if float(r) == 1:
-                            self.logger.info(f"{telescope_name} is ready")
-                        elif float(r) < 0:
-                            self.logger.report_device_issue(
-                                device_type="Telescope",
-                                device_name=telescope_name,
-                                message="Issue with telescope getting ready, "
-                                + f"status: {r}",
-                            )
+                    if float(r) == 1:
+                        self.logger.info(f"{telescope_name} is ready")
+                    elif float(r) < 0:
+                        self.logger.report_device_issue(
+                            device_type="Telescope",
+                            device_name=telescope_name,
+                            message="Issue with telescope getting ready, "
+                            + f"status: {r}",
+                        )
 
     def close_observatory(
         self, paired_devices: PairedDevices | None = None, error_sensitive: bool = True
@@ -858,90 +753,103 @@ class Observatory:
             - Dome errors are acknowledged before attempting closure
             - Critical for protecting equipment during unsafe weather conditions
         """
-        if self.speculoos:
-            # SPECULOOS EDIT
-            self.device_manager.pause_polls(["Dome", "Telescope", "Focuser"])
-
-            # acknowledge errors if dome not closed, if any
-            device_names = (
-                [paired_devices["Dome"]] if paired_devices else self.devices["Dome"]
-            )
-            for device_name in device_names:
-                dome = self.devices["Dome"][device_name]
-                ShutterStatus = dome.get("ShutterStatus")
-                if ShutterStatus == 0:  # open
-                    self.speculoos_check_and_ack_error(close=True)
+        self.logger.info(
+            "Closing observatory"
+            + (f"for paired devices: {paired_devices}" if paired_devices else "")
+        )
 
         if "Telescope" in self.config:
-            # telescope guiding and slewing
-            device_names = (
-                [paired_devices["Telescope"]]
-                if paired_devices
-                else self.devices["Telescope"]
-            )
-            for device_name in device_names:
-                try:
-                    self.guider_manager.stop_guider(
-                        device_name, thread_manager=self.thread_manager
-                    )
-
-                except Exception as e:
-                    self.logger.report_device_issue(
-                        device_type="Guider",
-                        device_name=device_name,
-                        message=f"Error stopping telescope {device_name} guiding",
-                        exception=e,
-                    )
-
-                self.execute_and_monitor_device_task(
-                    "Telescope",
-                    "Slewing",
-                    False,
-                    "AbortSlew",
-                    device_name=device_name,
-                    log_message=f"Stopping telescope {device_name} slewing",
-                    weather_sensitive=False,
-                    error_sensitive=error_sensitive,
-                )
-
-                # stop telescope tracking
-                self.execute_and_monitor_device_task(
-                    "Telescope",
-                    "Tracking",
-                    False,
-                    "Tracking",
-                    device_name=device_name,
-                    log_message=f"Stopping telescope {device_name} tracking",
-                    weather_sensitive=False,
-                    error_sensitive=error_sensitive,
-                )
-
-                # park telescope
-                self.execute_and_monitor_device_task(
-                    "Telescope",
-                    "AtPark",
-                    True,
-                    "Park",
-                    device_name=device_name,
-                    log_message=f"Parking telescope {device_name}",
-                    weather_sensitive=False,
-                    error_sensitive=error_sensitive,
-                )
+            self._stop_guiding_and_slewing_then_park(paired_devices, error_sensitive)
 
         if "Dome" in self.config:
-            # only proceed if telescope parked
-            if (
-                "Telescope" in self.config
-                and self.config["Dome"][0].get("close_dome_on_error", False)
-                is False  # TODO: assume one dome, but should check all domes or paired dome
-            ):
-                telescope_names = (
-                    [paired_devices["Telescope"]]
-                    if paired_devices
-                    else self.devices["Telescope"]
+            all_telescopes_parked = self._close_dome_shutters(
+                paired_devices, error_sensitive
+            )
+
+        return all_telescopes_parked
+
+    def _stop_guiding_and_slewing_then_park(
+        self, paired_devices: PairedDevices | None, error_sensitive: bool
+    ) -> None:
+        telescope_names = self.device_manager.list_device_names(
+            "Telescope", paired_devices
+        )
+        for telescope_name in telescope_names:
+            try:
+                self.guider_manager.stop_guider(
+                    telescope_name, thread_manager=self.thread_manager
                 )
 
-                for telescope_name in telescope_names:
+            except Exception as e:
+                self.logger.report_device_issue(
+                    device_type="Guider",
+                    device_name=telescope_name,
+                    message=f"Error stopping telescope {telescope_name} guiding",
+                    exception=e,
+                )
+
+            # stop telescope slewing
+            self.execute_and_monitor_device_task(
+                "Telescope",
+                "Slewing",
+                False,
+                "AbortSlew",
+                device_name=telescope_name,
+                log_message=f"Stopping telescope {telescope_name} slewing",
+                weather_sensitive=False,
+                error_sensitive=error_sensitive,
+            )
+
+            # stop telescope tracking
+            self.execute_and_monitor_device_task(
+                "Telescope",
+                "Tracking",
+                False,
+                "Tracking",
+                device_name=telescope_name,
+                log_message=f"Stopping telescope {telescope_name} tracking",
+                weather_sensitive=False,
+                error_sensitive=error_sensitive,
+            )
+
+            # park telescope
+            self.execute_and_monitor_device_task(
+                "Telescope",
+                "AtPark",
+                True,
+                "Park",
+                device_name=telescope_name,
+                log_message=f"Parking telescope {telescope_name}",
+                weather_sensitive=False,
+                error_sensitive=error_sensitive,
+            )
+
+    def _close_dome_shutters(
+        self, paired_devices: PairedDevices | None, error_sensitive: bool
+    ) -> bool:
+        # park dome
+        all_telescopes_parked = True
+        dome_names = self.device_manager.list_device_names("Dome", paired_devices)
+        self.logger.info(f"Dome names to close: {dome_names}")
+        for dome_name in dome_names:
+            # Check if all telescopes assigned to this dome are parked before closing the dome
+            if "Telescope" in self.devices and not self.config.get_device_config(
+                device_type="Dome", device_name=dome_name
+            ).get("close_dome_on_error", False):
+                self.logger.debug(
+                    f"Checking telescopes assigned to dome {dome_name} before closing"
+                )
+                unparked_telescopes = []
+                for telescope_name in self.config.get_device_config(
+                    device_type="Dome", device_name=dome_name
+                ).get("telescopes", []):
+                    if telescope_name not in self.devices.get("Telescope", {}):
+                        self.logger.warning(
+                            f"Telescope {telescope_name} assigned to dome {dome_name} "
+                            "not found in connected devices, skipping check."
+                        )
+                        continue
+
                     telescope = self.devices["Telescope"][telescope_name]
                     at_park = telescope.get("AtPark")
                     if at_park is False:
@@ -951,40 +859,41 @@ class Observatory:
                             message=f"Telescope {telescope_name} not parked, "
                             "cannot close dome during close_observatory method",
                         )
-                        return False
-            # park dome
-            device_names = (
-                [paired_devices["Dome"]] if paired_devices else self.devices["Dome"]
+                        all_telescopes_parked = False
+                        unparked_telescopes.append(telescope_name)
+
+                if unparked_telescopes:
+                    self.logger.info(
+                        f"Skipping dome {dome_name} park due to unparked telescopes: "
+                        f"{', '.join(unparked_telescopes)}"
+                    )
+                    continue
+
+            self.execute_and_monitor_device_task(
+                "Dome",
+                "AtPark",
+                True,
+                "Park",
+                device_name=dome_name,
+                log_message=f"Parking Dome {dome_name}",
+                weather_sensitive=False,
+                error_sensitive=error_sensitive,
             )
-            for device_name in device_names:
-                self.execute_and_monitor_device_task(
-                    "Dome",
-                    "AtPark",
-                    True,
-                    "Park",
-                    device_name=device_name,
-                    log_message=f"Parking Dome {device_name}",
-                    weather_sensitive=False,
-                    error_sensitive=error_sensitive,
-                )
 
-                # close dome shutter
-                self.execute_and_monitor_device_task(
-                    "Dome",
-                    "ShutterStatus",
-                    1,
-                    "CloseShutter",
-                    device_name=device_name,
-                    log_message=f"Closing Dome shutter of {device_name}",
-                    weather_sensitive=False,
-                    error_sensitive=error_sensitive,
-                )
+            # close dome shutter
+            self.execute_and_monitor_device_task(
+                "Dome",
+                "ShutterStatus",
+                1,
+                "CloseShutter",
+                device_name=dome_name,
+                log_message=f"Closing Dome shutter of {dome_name}",
+                weather_sensitive=False,
+                error_sensitive=error_sensitive,
+            )
+        self.logger.info(f"All telescopes parked: {all_telescopes_parked}")
 
-        if self.speculoos:
-            # SPECULOOS EDIT
-            self.device_manager.resume_polls(["Dome", "Telescope", "Focuser"])
-
-        return True
+        return all_telescopes_parked
 
     def toggle_robotic_switch(self) -> None:
         """
@@ -2018,8 +1927,10 @@ class Observatory:
                         slew=True,
                     )
 
-                    if self.speculoos:
-                        time.sleep(exptime * 3)  # for spirit
+                    telescope_settle_factor = paired_devices.get_device_config(
+                        "Telescope"
+                    ).get("settle_factor", 0.0)
+                    time.sleep(exptime * telescope_settle_factor)
 
                     pointing_attempts += 1
 
@@ -2227,9 +2138,10 @@ class Observatory:
             action_value["dec"] = target_radec.dec.deg  # type: ignore
             self.setup_observatory(paired_devices, action_value)
 
-            if self.speculoos:
-                # wait for telescope to settle
-                time.sleep(exptime * 3)  # for spirit
+            telescope_settle_factor = paired_devices.get_device_config("Telescope").get(
+                "settle_factor", 0.0
+            )
+            time.sleep(exptime * telescope_settle_factor)  # for spirit
 
             # perform exposure
             success, filepath = self.perform_exposure(

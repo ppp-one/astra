@@ -172,9 +172,13 @@ class Config:
 
         unchanged_files = []
 
+        # only csv and yml
         for template_file in self.TEMPLATE_DIR.glob("*"):
-            target_file = self.paths.observatory_config / template_file.name.replace(
-                "observatory", self.observatory_name
+            target_file = (
+                self.paths.custom_observatories / template_file.name
+                if template_file.suffix in [".py"]
+                else self.paths.observatory_config
+                / template_file.name.replace("observatory", self.observatory_name)
             )
             if not target_file.exists():
                 target_file.write_bytes(template_file.read_bytes())
@@ -182,6 +186,7 @@ class Config:
             if (
                 filecmp.cmp(template_file, target_file, shallow=False)
                 and not propagate_observatory_name
+                and target_file.suffix in [".yml", ".csv"]
             ):
                 unchanged_files.append(target_file.name)
 
@@ -198,6 +203,7 @@ class Config:
                 "from default templates. Please update the following files "
                 "with your observatory's information in:\n\n"
                 f"{self.paths.observatory_config}\n"
+                f"Unchanged files: {', '.join(unchanged_files)}\n"
             )
             if allow_default:
                 print(message)
@@ -238,6 +244,7 @@ class AssetPaths:
             folder_assets = Path(folder_assets)
 
         self.assets = folder_assets
+        self.custom_observatories = folder_assets / "custom_observatories"
         self.observatory_config = folder_assets / "observatory_config"
         self.schedules = folder_assets / "schedules"
         self.images = folder_assets / "images"
@@ -265,6 +272,7 @@ class AssetPaths:
         """Create necessary folders and the log file if they do not exist."""
         for folder in (
             self.assets,
+            self.custom_observatories,
             self.observatory_config,
             self.schedules,
             self.logs,
@@ -284,6 +292,7 @@ class AssetPaths:
         return (
             f"AssetPaths(\n"
             f"  assets={self.assets},\n"
+            f"  custom_observatories={self.custom_observatories},\n"
             f"  observatory_config={self.observatory_config},\n"
             f"  schedules={self.schedules},\n"
             f"  logs={self.logs},\n"

@@ -3,6 +3,7 @@ Telescope:
     ip: localhost:11111
     device_number: 0
     pointing_threshold: 0.1 # arcmins
+    settle_factor: 0.0
     guider: # populated using calibrate_guiding sequence
       PIX2TIME: # ms/pixel for camera used for guiding
         "+x": 69.32860207831231
@@ -26,6 +27,7 @@ Focuser:
     ip: localhost:11111
     device_number: 0
     focus_position: 10000
+    settle_time: 3
 Camera:
   - device_name: camera_observatoryname
     ip: localhost:11111
@@ -57,6 +59,8 @@ Dome:
     ip: localhost:11111
     device_number: 0
     close_dome_on_error: false
+    telescopes:
+      - telescope_observatoryname
 FilterWheel:
   - device_name: fw_observatoryname
     ip: localhost:11111

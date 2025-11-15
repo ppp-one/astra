@@ -135,6 +135,18 @@ def device_manager(monkeypatch, observatory_config):
     return dmgr
 
 
+# Helper to build a DeviceManager with a fresh observatory_config
+def _make_dmgr(monkeypatch, observatory_config):
+    import astra.device_manager as dm
+
+    monkeypatch.setattr(dm, "AlpacaDevice", FakeAlpacaDevice)
+    observatory_config.clear()
+    logger = ObservatoryLogger("test")
+    qm = DummyQueueManager()
+    tm = DummyThreadManager()
+    return dm.DeviceManager(observatory_config, logger, qm, tm)
+
+
 class TestDeviceManager:
     def test_load_and_list_names(self, device_manager):
         device_manager.load_devices()
@@ -195,3 +207,128 @@ class TestDeviceManager:
         device_manager.force_poll_observing_conditions(fits)
         oc = device_manager.devices["ObservingConditions"]["oc0"]
         assert getattr(oc, "last_forced", None) == "Humidity"
+
+    # Helper to build a DeviceManager with a fresh observatory_config
+    def _make_dmgr(monkeypatch, observatory_config):
+        import astra.device_manager as dm
+
+        monkeypatch.setattr(dm, "AlpacaDevice", FakeAlpacaDevice)
+        observatory_config.clear()
+        logger = ObservatoryLogger("test")
+        qm = DummyQueueManager()
+        tm = DummyThreadManager()
+        return dm.DeviceManager(observatory_config, logger, qm, tm)
+
+    def test_check_telescopes_invalid_telescopes_field(
+        self, monkeypatch, observatory_config
+    ):
+        """
+        Dome 'telescopes' field is not a list/tuple -> should warn but not raise.
+        """
+        dmgr = _make_dmgr(monkeypatch, observatory_config)
+        observatory_config.update(
+            {
+                "Telescope": [
+                    {
+                        "ip": "127.0.0.10",
+                        "device_number": 0,
+                        "device_name": "t1",
+                    }
+                ],
+                "Dome": [
+                    {
+                        "ip": "127.0.0.11",
+                        "device_number": 0,
+                        "device_name": "d1",
+                        # invalid type (should be list/tuple)
+                        "telescopes": "not-a-list",
+                    }
+                ],
+            }
+        )
+
+        warnings = []
+        monkeypatch.setattr(
+            dmgr.logger, "warning", lambda msg: warnings.append(str(msg))
+        )
+
+        dmgr.load_devices()
+        dmgr.check_telescopes_in_domes()
+
+        assert any(
+            "invalid 'telescopes'" in m or "invalid 'telescopes' field" in m
+            for m in warnings
+        )
+
+    def test_check_telescopes_references_missing_telescopes(
+        self, monkeypatch, observatory_config
+    ):
+        """
+        Dome references telescope names that are not present -> should warn about missing refs.
+        """
+        dmgr = _make_dmgr(monkeypatch, observatory_config)
+        observatory_config.update(
+            {
+                "Telescope": [],
+                "Dome": [
+                    {
+                        "ip": "127.0.0.12",
+                        "device_number": 0,
+                        "device_name": "d1",
+                        "telescopes": ["missing1", "missing2"],
+                    }
+                ],
+            }
+        )
+
+        warnings = []
+        monkeypatch.setattr(
+            dmgr.logger, "warning", lambda msg: warnings.append(str(msg))
+        )
+
+        dmgr.load_devices()
+        dmgr.check_telescopes_in_domes()
+
+        assert any(
+            "missing telescope" in m or "references missing" in m or "missing" in m
+            for m in warnings
+        )
+
+    def test_check_telescopes_unassigned_telescopes_warning(
+        self, monkeypatch, observatory_config
+    ):
+        """
+        Telescope exists but is not assigned to any dome -> should warn about unassigned telescope.
+        """
+        dmgr = _make_dmgr(monkeypatch, observatory_config)
+        observatory_config.update(
+            {
+                "Telescope": [
+                    {
+                        "ip": "127.0.0.13",
+                        "device_number": 0,
+                        "device_name": "t_unassigned",
+                    }
+                ],
+                "Dome": [
+                    {
+                        "ip": "127.0.0.14",
+                        "device_number": 0,
+                        "device_name": "d1",
+                        "telescopes": [],
+                    }
+                ],
+            }
+        )
+
+        warnings = []
+        monkeypatch.setattr(
+            dmgr.logger, "warning", lambda msg: warnings.append(str(msg))
+        )
+
+        dmgr.load_devices()
+        dmgr.check_telescopes_in_domes()
+
+        assert any(
+            "not assigned to any dome" in m or "not assigned" in m for m in warnings
+        )

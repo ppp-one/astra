@@ -555,7 +555,10 @@ class AlpacaDevice(Process):
                         },
                     )
                 )
-                self.back_pipe.send(e)
+                # send a plain Exception with the string message to avoid
+                # pickling issues when the original exception class isn't
+                # importable in the parent process (e.g. DriverException)
+                self.back_pipe.send(Exception(str(e)))
             else:
                 return {
                     "status": "error",
@@ -662,7 +665,7 @@ class AlpacaDevice(Process):
                     },
                 )
             )
-            self.back_pipe.send(e)  # check if valid, need args?
+            self.back_pipe.send(Exception(str(e)))
 
     def loop__(self, method: str, delay: float) -> None:
         """Continuous polling loop for a specific device method.
@@ -871,7 +874,7 @@ class AlpacaDevice(Process):
                     },
                 )
             )
-            self.back_pipe.send(e)
+            self.back_pipe.send(Exception(str(e)))
 
     def poll_latest__(self) -> None:
         """Send latest polling results via pipe."""
@@ -890,7 +893,7 @@ class AlpacaDevice(Process):
                     },
                 )
             )
-            self.back_pipe.send(e)
+            self.back_pipe.send(Exception(str(e)))
 
     def stop__(self, *args) -> None:
         """Stop the device process and close communication pipes.

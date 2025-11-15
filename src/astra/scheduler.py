@@ -237,6 +237,7 @@ class Schedule(list[Action]):
     def from_dataframe(
         cls,
         df: pd.DataFrame,
+        observatory_config: object | None = None,
     ) -> "Schedule":
         """
         Construct a Schedule instance from a pandas DataFrame.
@@ -248,12 +249,15 @@ class Schedule(list[Action]):
             if config_cls is None:
                 raise ValueError(f"Unknown action_type: {action_type}")
             action_value = {} if not action["action_value"] else action["action_value"]
+            default_dict = config_cls.defaults_from_observatory_config(
+                observatory_config=observatory_config, device_name=action["device_name"]
+            )
 
             actions.append(
                 Action(
                     device_name=action["device_name"],
                     action_type=action_type,
-                    action_value=config_cls.from_dict(action_value),
+                    action_value=config_cls.from_dict(action_value, default_dict),
                     start_time=action["start_time"],
                     end_time=action["end_time"],
                 )

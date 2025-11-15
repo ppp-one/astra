@@ -95,7 +95,7 @@ class PairedDevices(dict[str, str]):
     def __init__(
         self,
         paired_device_names: dict[str, str],
-        devices: dict[str, dict[str, AlpacaDevice]] = {},
+        devices: dict[str, dict[str, AlpacaDevice]] | None = None,
         *,
         observatory_config: ObservatoryConfig | None = None,
         camera_name: str | None = None,
@@ -119,7 +119,7 @@ class PairedDevices(dict[str, str]):
             if observatory_config is None
             else observatory_config
         )
-        self.devices = devices
+        self.devices = devices if devices is not None else {}
         if camera_name is not None:
             self["Camera"] = camera_name
 
