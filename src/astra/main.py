@@ -62,7 +62,7 @@ LAST_IMAGE = None
 LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_FACTOR = None
-CUSTOM_OBSERVATORY = ""
+CUSTOM_OBSERVATORY = None
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -92,14 +92,14 @@ def load_observatories() -> None:
     config_file = (
         Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
     )
-    observatory_class = ObservatoryLoader(
-        observatory_name=Config().observatory_name
-    ).load()
-    if (
-        issubclass(observatory_class, Observatory)
-        and observatory_class is not Observatory
-    ):
+    if CUSTOM_OBSERVATORY:
+        observatory_class = ObservatoryLoader(
+            observatory_name=CUSTOM_OBSERVATORY
+        ).load()
         logger.info(f"Selected custom observatory class: {observatory_class.__name__}")
+    else:
+        observatory_class = Observatory
+
     obs = observatory_class(
         config_file,
         TRUNCATE_FACTOR,
@@ -1394,7 +1394,6 @@ def main():
     parser.add_argument(
         "--observatory",
         type=str,
-        choices=["speculoos"],
         help="specify observatory name (default: None)",
     )
     parser.add_argument(
