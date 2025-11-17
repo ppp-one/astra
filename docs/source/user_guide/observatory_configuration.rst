@@ -96,7 +96,7 @@ Dome Configuration
 
 Dome-specific parameters:
 
-- ``close_dome_on_error``: Flag to close the dome in case of a Astra or non-dome device error. (boolean, default: false)
+- ``close_dome_on_telescope_error``: Flag to close the dome in case of a telescope error. (boolean, default: false)
 
 ObservingConditions Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

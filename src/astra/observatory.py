@@ -524,7 +524,7 @@ class Observatory:
 
     def _close_domes_on_error(self):
         for dome_config in self.config["Dome"]:
-            if not dome_config.get("close_dome_on_error", False):
+            if not dome_config.get("close_dome_on_telescope_error", False):
                 continue
 
             device_name = dome_config["device_name"]
@@ -835,7 +835,7 @@ class Observatory:
             # Check if all telescopes assigned to this dome are parked before closing the dome
             if "Telescope" in self.devices and not self.config.get_device_config(
                 device_type="Dome", device_name=dome_name
-            ).get("close_dome_on_error", False):
+            ).get("close_dome_on_telescope_error", False):
                 self.logger.debug(
                     f"Checking telescopes assigned to dome {dome_name} before closing"
                 )

@@ -1,6 +1,6 @@
+import astra.utils as utils
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
-import astra.utils as utils
 
 
 class SPECULOOS(Observatory):
@@ -108,7 +108,7 @@ class SPECULOOS(Observatory):
 
     def _close_domes_on_error(self):
         for dome_config in self.config["Dome"]:
-            if not dome_config.get("close_dome_on_error", False):
+            if not dome_config.get("close_dome_on_telescope_error", False):
                 continue
 
             self.speculoos_check_and_ack_error(close=True)

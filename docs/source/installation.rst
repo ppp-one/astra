@@ -46,6 +46,6 @@ Installation Steps
 
         pip install -e .
 
-   To include optional dependencies (e.g., for development or documentation), append extras like `[dev]`, `[docs]`, or `[all]`.
+   To include optional dependencies (e.g., for development or documentation), append extras like `"[dev]"`, `"[docs]"`, or `"[test]"`.
 
 This will install Astra and all its python dependencies.

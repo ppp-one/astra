@@ -28,6 +28,7 @@ Focuser:
     device_number: 0
     focus_position: 10000
     settle_time: 3
+    connectable: true
 Camera:
   - device_name: camera_observatoryname
     ip: localhost:11111
@@ -58,7 +59,7 @@ Dome:
   - device_name: dome_observatoryname
     ip: localhost:11111
     device_number: 0
-    close_dome_on_error: false
+    close_dome_on_telescope_error: false
     telescopes:
       - telescope_observatoryname
 FilterWheel:
