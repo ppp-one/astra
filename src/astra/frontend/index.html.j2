@@ -12,6 +12,7 @@
     <script src="/js/plot-0.6.17.min.js"></script>
 
     <script type="text/javascript" src="/js/weather.js"></script>
+    <script type="text/javascript" src="/js/guiding.js"></script>
     <link rel="icon" href="/favicon.svg">
     <style>
         g[aria-label="tip"] {
@@ -225,6 +226,11 @@
                                 <tbody>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div id="guiding-chart-container" class="hidden flex-none">
+                            <div class="text-sm font-medium text-gray-400 mb-2">Guiding Performance</div>
+                            <div id="guiding-chart" class="w-full"></div>
                         </div>
 
                         <div id="log-0-parent"
@@ -831,6 +837,9 @@
 
                 }
 
+                // check for guiding status changes
+                updateGuidingStatus(message['table0']);
+
                 // update robotic switch toggle
                 if (message['table1'][4]['item'] == "robotic switch") {
 
@@ -1072,6 +1081,11 @@
         setInterval(function () {
             updateWeatherChart(update = true);
         }, 30000);
+
+        // update guiding chart (it checks internally if guiding is active)
+        setInterval(function () {
+            updateGuidingChart(update = true);
+        }, 5000);
 
     </script>
 

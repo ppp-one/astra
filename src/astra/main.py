@@ -688,6 +688,45 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
         }
 
 
+@app.get("/api/db/guiding")
+async def guiding_data(day: float = 1, since: str | None = None):
+    """Get autoguider log data for plotting guiding performance.
+
+    Retrieves guiding corrections (post_pid_x, post_pid_y) from the
+    autoguider_log table for visualization.
+
+    Args:
+        day (float): Number of days back to retrieve data. Defaults to 1.
+        since (str): Optional timestamp to get only newer records.
+
+    Returns:
+        dict: JSON response with guiding data including datetime,
+              post_pid_x, and post_pid_y values.
+    """
+    db = observatory_db()
+    if since is not None:
+        q = f"""SELECT datetime, post_pid_x, post_pid_y FROM autoguider_log 
+                WHERE datetime > '{since}' ORDER BY datetime ASC"""
+    else:
+        q = f"""SELECT datetime, post_pid_x, post_pid_y FROM autoguider_log 
+                WHERE datetime > datetime('now', '-{day} day') ORDER BY datetime ASC"""
+
+    df = pd.read_sql_query(q, db)
+    db.close()
+
+    if df.empty:
+        return {"status": "success", "data": [], "message": "No guiding data available"}
+
+    # Convert datetime to proper format
+    df["datetime"] = pd.to_datetime(df["datetime"])
+
+    return {
+        "status": "success",
+        "data": df.to_dict(orient="records"),
+        "message": "",
+    }
+
+
 @app.get("/api/log")
 async def log(datetime: str, limit: int = 100):
     """Get observatory log entries before specified datetime.
