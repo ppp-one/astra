@@ -45,7 +45,7 @@ All devices share these required parameters:
 - ``ip``: Network address of the Alpaca device (string, format: "hostname:port")
 - ``device_number``: ASCOM Alpaca device number (integer)
 - ``polling_interval``: How often to poll ASCOM properties (set by :ref:`FITS header configuration <fits-header-config>`), in seconds (integer, optional, default: 5)
-
+- ``connectable``: Whether to attempt connection at startup (boolean, optional, default: true)
 
 Telescope Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -97,6 +97,7 @@ Dome Configuration
 Dome-specific parameters:
 
 - ``close_dome_on_telescope_error``: Flag to close the dome in case of a telescope error. (boolean, default: false)
+- ``telescopes``: List of associated telescope(s) within the dome (list)
 
 ObservingConditions Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
