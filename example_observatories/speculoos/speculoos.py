@@ -1,3 +1,5 @@
+import logging
+
 import astra.utils as utils
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
@@ -6,8 +8,15 @@ from astra.paired_devices import PairedDevices
 class SPECULOOS(Observatory):
     """Custom Observatory class for SPECULOOS observatories."""
 
-    def __init__(self, config: dict):
-        super().__init__(config)
+    def __init__(
+        self,
+        config: dict,
+        truncate_factor: float | None = None,
+        logging_level: int = logging.INFO,
+    ):
+        super().__init__(
+            config, truncate_factor=truncate_factor, logging_level=logging_level
+        )
         self.speculoos = True  # Flag to indicate SPECULOOS observatory
 
     def close_observatory(
@@ -43,6 +52,7 @@ class SPECULOOS(Observatory):
             - Dome errors are acknowledged before attempting closure
             - Critical for protecting equipment during unsafe weather conditions
         """
+
         if self.speculoos:
             # SPECULOOS EDIT
             self.device_manager.pause_polls(["Dome", "Telescope", "Focuser"])
