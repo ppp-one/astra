@@ -753,7 +753,7 @@ class Observatory:
             - Dome errors are acknowledged before attempting closure
             - Critical for protecting equipment during unsafe weather conditions
         """
-        self.logger.info(
+        self.logger.debug(
             "Closing observatory"
             + (f"for paired devices: {paired_devices}" if paired_devices else "")
         )
@@ -830,7 +830,7 @@ class Observatory:
         # park dome
         all_telescopes_parked = True
         dome_names = self.device_manager.list_device_names("Dome", paired_devices)
-        self.logger.info(f"Dome names to close: {dome_names}")
+        self.logger.debug(f"Dome names to close: {dome_names}")
         for dome_name in dome_names:
             # Check if all telescopes assigned to this dome are parked before closing the dome
             if "Telescope" in self.devices and not self.config.get_device_config(
@@ -891,7 +891,7 @@ class Observatory:
                 weather_sensitive=False,
                 error_sensitive=error_sensitive,
             )
-        self.logger.info(f"All telescopes parked: {all_telescopes_parked}")
+        self.logger.debug(f"All telescopes parked: {all_telescopes_parked}")
 
         return all_telescopes_parked
 
