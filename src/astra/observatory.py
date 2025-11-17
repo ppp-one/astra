@@ -2773,7 +2773,11 @@ class Observatory:
 
                 target_radec = target_altaz.transform_to("icrs")
 
-                action_value = {}
+                # update action value
+                action_value = action.action_value
+                # remove filter from action_value to avoid issues
+                if "filter" in action_value:
+                    del action_value["filter"]
                 action_value["ra"] = target_radec.ra.deg  # type: ignore
                 action_value["dec"] = target_radec.dec.deg  # type: ignore
 

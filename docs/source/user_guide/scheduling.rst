@@ -121,6 +121,8 @@ Capture a sequence of light frames:
     - ``pointing``: Enable pointing correction with `twirl <https://twirl.readthedocs.io/en/latest/>`_ (boolean, default: false)
     - ``bin``: Binning factor (int, default: 1)
     - ``dir``: Absolute directory path for saving images (string, default: auto-generated as ~/Documents/Astra/images/YYYYMMDD where YYYYMMDD is the local night's date calculated from schedule's UTC start time plus site longitude offset in hours)
+    - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
+    - ``disable_telescope_movement``: Whether to disable telescope movement during the sequence (boolean, default: false)
 
 
 ``calibration``
@@ -134,8 +136,9 @@ Capture a sequence of calibration images.
 
 **Optional parameters:**
     - ``filter``: Filter specification (string, default: current filter)
-    - ``dir``: Same as for ``object`` action type
     - ``bin``: Binning factor (int, default: 1)
+    - ``dir``: Same as for ``object`` action type
+    - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
 
 
 
@@ -157,6 +160,8 @@ Capture a sequence of sky flat field frames:
 **Optional parameters:**
     - ``dir``: Same as for ``object`` action type
     - ``bin``: Binning factor (int, default: 1)
+    - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
+    - ``disable_telescope_movement``: Whether to disable telescope movement during the sequence (boolean, default: false)
 
 **Configuration-based parameters:**
     The sky flat field sequence automatically uses camera-specific settings from the observatory configuration to calculate optimal exposure times based on sky brightness and target ADU levels.
