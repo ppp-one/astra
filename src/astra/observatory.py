@@ -2832,7 +2832,7 @@ class Observatory:
 
         # initial exposure time guess
         if exptime is None:
-            exptime = upper_exptime_limit if sun_rising else lower_exptime_limit
+            exptime = lower_exptime_limit
         assert exptime is not None, "exptime should not be None here"  # for mypy
 
         if (
