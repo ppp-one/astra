@@ -28,6 +28,7 @@ dependencies = [
   "pandas",
   "fastapi[standard]",
   "pyyaml",
+  "ruamel.yaml",
   "cabaret"
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"

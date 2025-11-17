@@ -16,10 +16,10 @@ from pathlib import Path
 from typing import Any, Dict, Tuple
 
 import numpy as np
-import yaml
 from alpaca.telescope import GuideDirections
 from donuts import Donuts
 from donuts.image import Image
+from ruamel.yaml import YAML
 
 import astra
 from astra.config import Config
@@ -187,7 +187,9 @@ class GuidingCalibrator:
                     return success
 
                 shift = donuts_ref.measure_shift(image_path)
-                direction_literal, magnitude = self._determine_shift_direction(shift)
+                direction_literal, magnitude = self._determine_shift_direction(
+                    shift, self.astra_observatory.logger
+                )
 
                 direction_name = direction.name.removeprefix(
                     "guide"
@@ -196,7 +198,7 @@ class GuidingCalibrator:
                 self._scales[direction_name].append(magnitude)
                 self.astra_observatory.logger.info(
                     f"Shift {direction_name} results in direction {direction_literal} "
-                    f"of {magnitude} pixels."
+                    f"of {magnitude:.2f} pixels (raw: x={shift.x.value:.2f}, y={shift.y.value:.2f})"
                 )
 
                 donuts_ref = self._apply_donuts(image_path)
@@ -227,6 +229,9 @@ class GuidingCalibrator:
         }
 
         self.astra_observatory.logger.info("Checking directions...")
+
+        # Validate that we have all four cardinal directions
+        detected_directions = set()
         for direction_name in self._directions:
             # Check that the directions are the same every time for each orientation
             if len(set(self._directions[direction_name])) != 1:
@@ -236,6 +241,8 @@ class GuidingCalibrator:
                 )
 
             direction_literal = self._directions[direction_name][0]
+            detected_directions.add(direction_literal)
+
             if direction_name == "East":
                 calibration_config["RA_AXIS"] = "x" if "x" in direction_literal else "y"
 
@@ -244,15 +251,44 @@ class GuidingCalibrator:
             )
             calibration_config["DIRECTIONS"][direction_literal] = direction_name
 
+        # Validate that we detected movements on both axes
+        has_x_axis = any("x" in d for d in detected_directions)
+        has_y_axis = any("y" in d for d in detected_directions)
+
+        if not (has_x_axis and has_y_axis):
+            self.astra_observatory.logger.error(
+                f"Calibration failed: Only detected movements on one axis. "
+                f"Detected directions: {detected_directions}. "
+                f"North/South/East/West mappings: {dict(self._directions)}"
+            )
+            raise ValueError(
+                f"Calibration error: movements detected on only one camera axis. "
+                f"Expected movements on both x and y axes, but got: {detected_directions}. "
+                f"This suggests an issue with camera orientation, mount behavior, or shift detection. "
+                f"Check the raw shift values in the logs."
+            )
+
         self.astra_observatory.logger.info("Directions are consistent")
         self._calibration_config.update(calibration_config)
 
     def save_calibration_config(self) -> None:
-        """Save calibration configuration to YAML file."""
-        with open(
-            self.image_handler.image_directory / "calibration_config.yaml", "w"
-        ) as file:
-            yaml.dump(self._calibration_config, file)
+        """Save calibration configuration to YAML file with nice formatting.
+
+        Uses ruamel.yaml to create readable output with proper indentation,
+        preserved structure, and better formatting for nested dictionaries.
+        """
+        output_path = self.image_handler.image_directory / "calibration_config.yaml"
+
+        yaml_writer = YAML()
+        yaml_writer.default_flow_style = False
+        yaml_writer.preserve_quotes = True
+        yaml_writer.indent(mapping=2, sequence=2, offset=0)
+        yaml_writer.width = 4096  # Prevent line wrapping
+
+        with open(output_path, "w") as file:
+            yaml_writer.dump(self._calibration_config, file)
+
+        self.astra_observatory.logger.info(f"Calibration config saved to {output_path}")
 
     def update_observatory_config(self) -> None:
         """Update observatory configuration with calibration results.
@@ -270,7 +306,7 @@ class GuidingCalibrator:
         self.astra_observatory.logger.info("Observatory config updated.")
 
     @staticmethod
-    def _determine_shift_direction(shift: Any) -> Tuple[str, float]:
+    def _determine_shift_direction(shift: Any, logger: Any = None) -> Tuple[str, float]:
         """Analyze donuts shift measurement to determine direction and magnitude.
 
         Processes shift measurements to identify the primary axis of movement
@@ -278,6 +314,7 @@ class GuidingCalibrator:
 
         Args:
             shift (Any): Donuts shift measurement object with x and y value attributes.
+            logger (Any): Optional logger for debug output.
 
         Returns:
             Tuple[str, float]: Direction literal ('+x', '-x', '+y', '-y') and
@@ -285,6 +322,10 @@ class GuidingCalibrator:
         """
         sx = shift.x.value
         sy = shift.y.value
+
+        if logger:
+            logger.debug(f"Raw shift values: sx={sx:.4f}, sy={sy:.4f}")
+
         if abs(sx) > abs(sy):
             if sx > 0:
                 direction_literal = "-x"

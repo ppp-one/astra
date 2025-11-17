@@ -21,6 +21,7 @@ from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 import yaml
+from ruamel.yaml import YAML
 
 
 class Config:
@@ -453,6 +454,7 @@ class ObservatoryConfig(dict):
         )
         self.observatory_name: str = observatory_name
         self._config_last_modified: Optional[float] = None
+        self._yaml_data = None  # Store CommentedMap to preserve comments
         self.load()
 
     @property
@@ -461,10 +463,23 @@ class ObservatoryConfig(dict):
         return self.config_path / f"{self.observatory_name}_config.yml"
 
     def load(self) -> None:
-        """Load observatory configuration from YAML file."""
+        """Load observatory configuration from YAML file.
+
+        Uses ruamel.yaml to preserve comments and structure for later saving.
+        """
+        yaml_reader = YAML()
+        yaml_reader.preserve_quotes = True
+        yaml_reader.map_indent = 2
+        yaml_reader.sequence_indent = 2
+
         with open(self.file_path, "r") as file:
-            config = yaml.safe_load(file)
-        self.update(config)
+            self._yaml_data = yaml_reader.load(file)
+
+        # Update dict contents with the loaded data
+        self.clear()
+        if self._yaml_data is not None:
+            self.update(self._yaml_data)
+
         self._config_last_modified = self.file_path.stat().st_mtime
 
     def reload(self) -> "ObservatoryConfig":
@@ -480,19 +495,61 @@ class ObservatoryConfig(dict):
     def save(self, file_path: Optional[Union[str, Path]] = None) -> None:
         """Save configuration to YAML file with automatic backup.
 
+        Uses ruamel.yaml to preserve comments, structure, and formatting
+        from the original file.
+
         Args:
             file_path: Optional custom save path, defaults to original file path.
         """
-        config = dict(self)
         file_path = self.file_path if file_path is None else file_path
         self.save_backup()
+
+        yaml_writer = YAML()
+        yaml_writer.preserve_quotes = True
+        yaml_writer.default_flow_style = False
+        yaml_writer.map_indent = 2
+        yaml_writer.sequence_indent = 2
+        yaml_writer.sequence_dash_offset = 0
+        yaml_writer.width = 4096
+
+        # If we have the original CommentedMap, update it to preserve comments
+        if self._yaml_data is not None:
+            self._deep_update(self._yaml_data, dict(self))
+            data_to_save = self._yaml_data
+        else:
+            # Fallback if no CommentedMap (shouldn't happen in normal use)
+            data_to_save = dict(self)
+
         with open(file_path, "w") as file:
-            yaml.dump(config, file)
+            yaml_writer.dump(data_to_save, file)
 
     def save_backup(self) -> None:
         """Create timestamped backup of current configuration file."""
         backup_path = self.backup_file_path()
         os.rename(self.file_path, backup_path)
+
+    @staticmethod
+    def _deep_update(target: dict, source: dict) -> None:
+        """Deep update target dict with source dict values.
+
+        Preserves ruamel.yaml CommentedMap structure and comments while updating values.
+        Only updates existing keys or adds new ones; doesn't remove keys from target.
+
+        Args:
+            target: Dictionary to update (modified in place, preserves CommentedMap).
+            source: Dictionary with new values to merge in.
+        """
+        for key, value in source.items():
+            if (
+                isinstance(value, dict)
+                and key in target
+                and isinstance(target[key], dict)
+            ):
+                # Recursively update nested dictionaries
+                ObservatoryConfig._deep_update(target[key], value)
+            else:
+                # Update or add the value
+                target[key] = value
 
     def backup_file_path(self, datetime_str: str = "") -> Path:
         """Get backup file path with timestamp.
