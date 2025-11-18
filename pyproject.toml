@@ -16,7 +16,7 @@ dependencies = [
   "astrafocus @ git+https://github.com/dgegen/astrafocus.git",
   "astropy",
   "photutils",
-  "scipy==1.10.1",
+  "scipy==1.13",
   "twirl",
   "sqlite3worker",
   "alpyca @ git+https://github.com/ppp-one/alpyca.git",
