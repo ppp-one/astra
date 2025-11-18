@@ -680,7 +680,7 @@ class Observatory:
                 )
 
     def _wait_for_telescopes_ready(self):
-        """Poll TELESCOPE.READY_STATE until ready or timeout per telescope."""
+        """Poll Astelco TELESCOPE.READY_STATE until ready or timeout per telescope."""
         # check if telescope(s) are ready
         start_time = time.time()
         if self.weather_safe and self.logger.error_free:

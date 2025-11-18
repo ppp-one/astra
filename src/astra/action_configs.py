@@ -496,13 +496,13 @@ class AutofocusConfig(BaseActionConfig):
     def __post_init__(self) -> None:
         from astrafocus import FocusMeasureOperatorRegistry
 
+        # Store operator classes, not instances, to avoid premature initialization
         self._secondary_focus_measure_operators = {
-            operator.name: operator
-            for operator in [
-                FocusMeasureOperatorRegistry.get(key)()
-                for key in self.secondary_focus_measure_operators
-                if key in FocusMeasureOperatorRegistry.list()
-            ]
+            FocusMeasureOperatorRegistry.get(
+                key
+            ).name: FocusMeasureOperatorRegistry.get(key)
+            for key in self.secondary_focus_measure_operators
+            if key in FocusMeasureOperatorRegistry.list()
         }
         self._focus_measure_operator = FocusMeasureOperatorRegistry.from_name(
             self.focus_measure_operator

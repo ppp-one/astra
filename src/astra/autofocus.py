@@ -24,8 +24,8 @@ Classes:
 import logging
 import time
 from datetime import datetime
-from typing import Any, Optional, Union
 from pathlib import Path
+from typing import Any, Optional, Union
 
 import astropy.io.fits as fits
 import astropy.units as u
@@ -169,11 +169,10 @@ class AstraCamera(CameraInterface):
         exposure_successful, filepath = self.observatory.perform_exposure(
             camera=self.alpaca_device_camera,
             exptime=texp,
+            maxadu=self.maxadu,
             action=self.action,
             use_light=use_light,
             log_option=log_option,
-            maximal_sleep_time=0.1,
-            maxadu=self.alpaca_device_camera.get("MaxADU"),
         )
         self.success = exposure_successful
 
@@ -190,11 +189,6 @@ class AstraCamera(CameraInterface):
         Takes a test exposure to determine the camera's image data type
         and maximum ADU value for proper image processing.
         """
-        self._perform_exposure(
-            texp=0.0,
-            log_option=None,
-            use_light=False,
-        )
         return self.alpaca_device_camera.get("MaxADU")
 
 
