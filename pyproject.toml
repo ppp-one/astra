@@ -17,7 +17,7 @@ dependencies = [
   "astropy",
   "photutils",
   "scipy",
-  "twirl>=>0.4.1",
+  "twirl>=0.4.1",
   "sqlite3worker",
   "alpyca @ git+https://github.com/ppp-one/alpyca.git",
   "psutil",
