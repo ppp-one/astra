@@ -1589,6 +1589,153 @@ class Observatory:
                 camera.set("NumX", camera.get("CameraXSize") // camera.get("BinX"))
                 camera.set("NumY", camera.get("CameraYSize") // camera.get("BinY"))
 
+            # Handle subframing if specified in action_value
+            if action_value.has_subframe():
+                try:
+                    self._setup_camera_subframe(camera, action_value, paired_devices)
+                except Exception as e:
+                    self.logger.warning(
+                        f"Failed to set subframe on Camera {paired_devices['Camera']}: {e}. "
+                        "Falling back to full frame."
+                    )
+                    # Reset to full frame on failure
+                    camera.set("NumX", camera.get("CameraXSize") // camera.get("BinX"))
+                    camera.set("NumY", camera.get("CameraYSize") // camera.get("BinY"))
+                    camera.set("StartX", 0)
+                    camera.set("StartY", 0)
+            else:
+                # No subframe specified - ensure camera is set to full frame
+                # This is important when switching from a subframed action to a full-frame action
+                current_numx = camera.get("NumX")
+                expected_numx = camera.get("CameraXSize") // camera.get("BinX")
+                current_numy = camera.get("NumY")
+                expected_numy = camera.get("CameraYSize") // camera.get("BinY")
+
+                # Only reset if not already at full frame
+                if (
+                    current_numx != expected_numx
+                    or current_numy != expected_numy
+                    or camera.get("StartX") != 0
+                    or camera.get("StartY") != 0
+                ):
+                    self.logger.info(
+                        f"Resetting Camera {paired_devices['Camera']} to full frame"
+                    )
+                    # When resetting to full frame, set StartX/StartY to 0 first, then expand size
+                    camera.set("StartX", 0)
+                    camera.set("StartY", 0)
+                    camera.set("NumX", expected_numx)
+                    camera.set("NumY", expected_numy)
+
+    def _setup_camera_subframe(
+        self,
+        camera,
+        action_value: BaseActionConfig,
+        paired_devices: PairedDevices,
+    ) -> None:
+        """
+        Configure camera subframe (Region of Interest) settings.
+
+        This method calculates and sets the ASCOM camera subframe parameters
+        (StartX, StartY, NumX, NumY) based on the action_value configuration.
+
+        Parameters:
+            camera: Camera device object with ASCOM properties
+            action_value: Action configuration containing subframe parameters
+            paired_devices: PairedDevices object for logging
+
+        Subframe Parameters from action_value:
+            - subframe_width: Width in binned pixels
+            - subframe_height: Height in binned pixels
+            - subframe_center_x: Horizontal center position (0.0-1.0, 0.5=center)
+            - subframe_center_y: Vertical center position (0.0-1.0, 0.5=center)
+
+        ASCOM Camera Properties Set:
+            - StartX: Left edge in unbinned pixels (from sensor origin)
+            - StartY: Top edge in unbinned pixels (from sensor origin)
+            - NumX: Width in binned pixels
+            - NumY: Height in binned pixels
+
+        Raises:
+            ValueError: If subframe dimensions exceed sensor size
+            Exception: If camera doesn't support subframing or properties can't be set
+
+        Note:
+            - StartX/StartY are in unbinned pixels
+            - NumX/NumY are in binned pixels
+            - Coordinates use sensor origin (typically top-left corner)
+            - Bounds checking ensures subframe fits within sensor after binning
+        """
+        # Get current binning
+        binx = camera.get("BinX")
+        biny = camera.get("BinY")
+
+        # Get sensor dimensions in unbinned pixels
+        sensor_width = camera.get("CameraXSize")
+        sensor_height = camera.get("CameraYSize")
+
+        # Get subframe parameters from action_value
+        subframe_width = action_value.get("subframe_width")  # in binned pixels
+        subframe_height = action_value.get("subframe_height")  # in binned pixels
+        center_x = action_value.get("subframe_center_x", 0.5)  # fractional 0-1
+        center_y = action_value.get("subframe_center_y", 0.5)  # fractional 0-1
+
+        # Calculate subframe dimensions in unbinned pixels
+        subframe_width_unbinned = subframe_width * binx
+        subframe_height_unbinned = subframe_height * biny
+
+        # Validate subframe fits within sensor
+        if subframe_width_unbinned > sensor_width:
+            raise ValueError(
+                f"Subframe width {subframe_width} (binned) × {binx} (bin) = "
+                f"{subframe_width_unbinned} pixels exceeds sensor width {sensor_width}"
+            )
+        if subframe_height_unbinned > sensor_height:
+            raise ValueError(
+                f"Subframe height {subframe_height} (binned) × {biny} (bin) = "
+                f"{subframe_height_unbinned} pixels exceeds sensor height {sensor_height}"
+            )
+
+        # Calculate StartX, StartY in unbinned pixels
+        # center_x/center_y are fractional positions (0.5 = center of sensor)
+        # StartX = (sensor_width - subframe_width_unbinned) * center_x
+        startx = int((sensor_width - subframe_width_unbinned) * center_x)
+        starty = int((sensor_height - subframe_height_unbinned) * center_y)
+
+        # Ensure within bounds [0, sensor_size - subframe_size]
+        startx = max(0, min(startx, sensor_width - subframe_width_unbinned))
+        starty = max(0, min(starty, sensor_height - subframe_height_unbinned))
+
+        self.logger.info(
+            f"Setting Camera {paired_devices['Camera']} subframe: "
+            f"{subframe_width}×{subframe_height} (binned pixels) "
+            f"at center ({center_x:.2f}, {center_y:.2f})"
+        )
+        self.logger.debug(
+            f"  ASCOM properties: StartX={startx}, StartY={starty} (unbinned), "
+            f"NumX={subframe_width}, NumY={subframe_height} (binned)"
+        )
+
+        # Set ASCOM camera properties in correct order
+        # The order depends on whether we're making the frame smaller or larger
+        current_numx = camera.get("NumX")
+        current_numy = camera.get("NumY")
+
+        # If going to smaller frame, set NumX/NumY first (before StartX/StartY)
+        # If going to larger frame, set StartX/StartY first (to 0 or smaller values)
+        if subframe_width <= current_numx and subframe_height <= current_numy:
+            # Going smaller: set size first, then position
+            camera.set("NumX", subframe_width)
+            camera.set("NumY", subframe_height)
+            camera.set("StartX", startx)
+            camera.set("StartY", starty)
+        else:
+            # Going larger or mixed: set position first (likely to 0 or smaller), then size
+            camera.set("StartX", startx)
+            camera.set("StartY", starty)
+            camera.set("NumX", subframe_width)
+            camera.set("NumY", subframe_height)
+
     def wait_for_slew(self, paired_devices: PairedDevices) -> None:
         """
         Wait for telescope slewing operation to complete.

@@ -126,6 +126,10 @@ Capture a sequence of light frames:
     - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
     - ``disable_telescope_movement``: Whether to disable telescope movement during the sequence (boolean, default: false)
     - ``reset_guiding_reference``: Reset the guiding reference frame at the start of the sequence (boolean, default: false)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe, 0.0=left, 0.5=center, 1.0=right (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe, 0.0=top, 0.5=center, 1.0=bottom (float, default: 0.5)
 
 
 ``calibration``
@@ -142,6 +146,10 @@ Capture a sequence of calibration images.
     - ``bin``: Binning factor (int, default: 1)
     - ``dir``: Same as for ``object`` action type
     - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe (float, default: 0.5)
 
 
 
@@ -165,6 +173,10 @@ Capture a sequence of sky flat field frames:
     - ``bin``: Binning factor (int, default: 1)
     - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
     - ``disable_telescope_movement``: Whether to disable telescope movement during the sequence (boolean, default: false)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe (float, default: 0.5)
 
 **Configuration-based parameters:**
     The sky flat field sequence automatically uses camera-specific settings from the observatory configuration to calculate optimal exposure times based on sky brightness and target ADU levels.
@@ -211,6 +223,10 @@ Perform autofocus sequence to achieve optimal telescope focus:
     - ``extremum_estimator``: Curve fitting method for determining optimal focus ("LOWESS", "medianfilter", "spline", "rbf") (string, default: "LOWESS")
     - ``save``: Updates the observatory configuration with the optimal focus position found during autofocus operation for future use. (boolean, default: true)
     - ``bin``: Binning factor (int, default: 1)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe (float, default: 0.5)
 
 
 ``calibrate_guiding``
@@ -230,6 +246,10 @@ Calibrate guiding parameters by measuring pixel-to-time scales of pulse guiding 
     - ``focus_shift``: Focus shift value from best focus position (float, default: None)
     - ``focus_position``: Absolute focus position value (float, default: best focus position)
     - ``bin``: Binning factor (int, default: 1)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe (float, default: 0.5)
 
 ``pointing_model``
 ^^^^^^^^^^^^^^^^^^
@@ -250,6 +270,10 @@ positions less than 20 degrees to the Moon.
     - ``focus_shift``: Focus shift value from best focus position (float, default: None)
     - ``focus_position``: Absolute focus position value (float, default: best focus position)
     - ``bin``: Binning factor (int, default: 1)
+    - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
+    - ``subframe_center_x``: Horizontal center position of subframe (float, default: 0.5)
+    - ``subframe_center_y``: Vertical center position of subframe (float, default: 0.5)
 
 ``complete_headers``
 ^^^^^^^^^^^^^^^^^^^^

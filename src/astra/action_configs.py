@@ -260,6 +260,51 @@ class BaseActionConfig:
                 f"{sorted(all_available_filters)}"
             )
 
+    def validate_subframe(self) -> None:
+        """Validate subframe parameters.
+
+        Raises:
+            ValueError: If subframe parameters are invalid.
+        """
+        subframe_width = self.get("subframe_width")
+        subframe_height = self.get("subframe_height")
+        subframe_center_x = self.get("subframe_center_x", 0.5)
+        subframe_center_y = self.get("subframe_center_y", 0.5)
+
+        # Check dimensions are positive if specified
+        if subframe_width is not None and subframe_width <= 0:
+            raise ValueError(f"subframe_width must be positive, got {subframe_width}")
+        if subframe_height is not None and subframe_height <= 0:
+            raise ValueError(f"subframe_height must be positive, got {subframe_height}")
+
+        # Check center coordinates are in valid range [0, 1]
+        if not (0.0 <= subframe_center_x <= 1.0):
+            raise ValueError(
+                f"subframe_center_x must be between 0 and 1, got {subframe_center_x}"
+            )
+        if not (0.0 <= subframe_center_y <= 1.0):
+            raise ValueError(
+                f"subframe_center_y must be between 0 and 1, got {subframe_center_y}"
+            )
+
+        # If only one dimension is specified, require both
+        if (subframe_width is None) != (subframe_height is None):
+            raise ValueError(
+                "Both subframe_width and subframe_height must be specified together. "
+                f"Got: width={subframe_width}, height={subframe_height}"
+            )
+
+    def has_subframe(self) -> bool:
+        """Check if subframing is enabled.
+
+        Returns:
+            True if subframe_width and subframe_height are specified, False otherwise.
+        """
+        return (
+            self.get("subframe_width") is not None
+            and self.get("subframe_height") is not None
+        )
+
     @classmethod
     def merge_config_dicts(cls, config_dict: dict, default_dict: dict) -> dict:
         """Merge default_dict and config_dict, keeping only keys in dataclass."""
@@ -336,6 +381,10 @@ class ObjectActionConfig(BaseActionConfig):
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
     reset_guiding_reference: bool = False
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
 
     def validate(self):
         missing = []
@@ -370,6 +419,9 @@ class ObjectActionConfig(BaseActionConfig):
             raise ValueError(
                 f"Both 'alt' and 'az' must be provided together. Got: alt={self.alt}, az={self.az}"
             )
+
+        # Subframe validation
+        self.validate_subframe()
 
     def validate_visibility(
         self,
@@ -449,6 +501,10 @@ class CalibrationActionConfig(BaseActionConfig):
     dir: Optional[str] = None
     bin: int = 1
     execute_parallel: bool = False
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
 
     def validate(self):
         missing = []
@@ -466,6 +522,9 @@ class CalibrationActionConfig(BaseActionConfig):
                 f"'exptime' and 'n' must have the same length. Got: exptime={self.exptime}, n={self.n}"
             )
 
+        # Subframe validation
+        self.validate_subframe()
+
 
 @dataclass
 class FlatsActionConfig(BaseActionConfig):
@@ -475,6 +534,10 @@ class FlatsActionConfig(BaseActionConfig):
     bin: int = 1
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
 
     def validate(self):
         missing = []
@@ -492,6 +555,9 @@ class FlatsActionConfig(BaseActionConfig):
                 f"'filter' and 'n' must have the same length. Got: filter={self.filter}, n={self.n}"
             )
 
+        # Subframe validation
+        self.validate_subframe()
+
 
 @dataclass
 class CalibrateGuidingActionConfig(BaseActionConfig):
@@ -503,9 +569,13 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
     bin: int = 1
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
 
     def validate(self):
-        pass
+        self.validate_subframe()
 
 
 @dataclass
@@ -521,9 +591,13 @@ class PointingModelActionConfig(BaseActionConfig):
     focus_position: Optional[float] = None
     bin: int = 1
     dir: Optional[str] = None
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
 
     def validate(self):
-        pass
+        self.validate_subframe()
 
 
 class SelectionMethod(Enum):
@@ -638,6 +712,10 @@ class AutofocusConfig(BaseActionConfig):
         default_factory=AutofocusCalibrationFieldConfig, metadata={"required": True}
     )
     save_path: Optional[Path] = None
+    subframe_width: Optional[int] = None
+    subframe_height: Optional[int] = None
+    subframe_center_x: float = 0.5
+    subframe_center_y: float = 0.5
     _focus_measure_operator = None
     _secondary_focus_measure_operators = {}
 
@@ -656,6 +734,8 @@ class AutofocusConfig(BaseActionConfig):
             self.focus_measure_operator
         )
         self.validate()
+        # Validate subframe after base validation
+        self.validate_subframe()
 
     @classmethod
     def from_dict(
