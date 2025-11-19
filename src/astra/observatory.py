@@ -208,14 +208,7 @@ class Observatory:
         self.watchdog_running = False
         self.robotic_switch = False
 
-        # schedule
-        self.schedule_manager = ScheduleManager(
-            schedule_path=Config().paths.schedules / f"{self.name}.jsonl",
-            truncate_factor=truncate_factor,
-            logger=self.logger,
-        )
-
-        # load devices
+        # load devices first so they're available for schedule validation
         self.device_manager = DeviceManager(
             observatory_config=self.config,
             logger=self.logger,
@@ -223,6 +216,14 @@ class Observatory:
             thread_manager=self.thread_manager,
         )
         self.device_manager.load_devices()
+
+        # schedule (created after device_manager for filter validation)
+        self.schedule_manager = ScheduleManager(
+            schedule_path=Config().paths.schedules / f"{self.name}.jsonl",
+            truncate_factor=truncate_factor,
+            logger=self.logger,
+            device_manager=self.device_manager,
+        )
 
         self._image_handlers: dict[str, ImageHandler] = {}
 

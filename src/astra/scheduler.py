@@ -205,9 +205,14 @@ class Schedule(list[Action]):
     def from_file(
         cls,
         filename: Union[str, Path],
+        filterwheel_names: dict[str, list[str]] | None = None,
     ) -> "Schedule":
         """
         Read a schedule file and return a Schedule instance with parsed schedule data.
+
+        Args:
+            filename: Path to the schedule file
+            filterwheel_names: Optional dict of filterwheel names to filter lists for validation
         """
         schedule_path = Path(filename)
         if schedule_path.exists() is False:
@@ -231,16 +236,23 @@ class Schedule(list[Action]):
             schedule.end_time, utc=True, format="mixed"
         )
         schedule = schedule.sort_values(by=["start_time"])
-        return cls.from_dataframe(schedule)
+        return cls.from_dataframe(schedule, filterwheel_names=filterwheel_names)
 
     @classmethod
     def from_dataframe(
         cls,
         df: pd.DataFrame,
         observatory_config: object | None = None,
+        filterwheel_names: dict[str, list[str]] | None = None,
     ) -> "Schedule":
         """
         Construct a Schedule instance from a pandas DataFrame.
+
+        Args:
+            df: DataFrame with schedule data
+            observatory_config: Optional observatory configuration
+            filterwheel_names: Optional dict mapping filterwheel names to their filter lists
+                              for validation. e.g., {"fw1": ["Clear", "Red", "Green"]}
         """
         actions = []
         for _, action in df.iterrows():
@@ -253,11 +265,23 @@ class Schedule(list[Action]):
                 observatory_config=observatory_config, device_name=action["device_name"]
             )
 
+            action_config = config_cls.from_dict(action_value, default_dict)
+
+            # Validate filters if filterwheel_names provided
+            if filterwheel_names:
+                try:
+                    action_config.validate_filters(filterwheel_names)
+                except ValueError as e:
+                    raise ValueError(
+                        f"Filter validation failed for {action_type} action on device "
+                        f"{action['device_name']}: {e}"
+                    )
+
             actions.append(
                 Action(
                     device_name=action["device_name"],
                     action_type=action_type,
-                    action_value=config_cls.from_dict(action_value, default_dict),
+                    action_value=action_config,
                     start_time=action["start_time"],
                     end_time=action["end_time"],
                 )
@@ -379,16 +403,43 @@ class ScheduleManager:
         schedule_path: str | Path,
         truncate_factor: float | None,
         logger: ObservatoryLogger,
+        device_manager=None,
     ):
         self.schedule = None
         self.schedule_path = Path(schedule_path)
         self.truncate_factor = truncate_factor
         self.logger = logger
+        self.device_manager = device_manager
         self.running = False
         self.schedule_mtime = self.get_mtime()
 
         if self.schedule_mtime != 0:
             self.read()
+
+    def get_filterwheel_names(self) -> dict[str, list[str]]:
+        """Get available filter names from all filterwheels.
+
+        Returns:
+            Dict mapping filterwheel device names to their filter lists.
+            Empty dict if device_manager is not available or no filterwheels exist.
+        """
+        if self.device_manager is None:
+            return {}
+
+        filterwheel_names = {}
+        if "FilterWheel" in self.device_manager.devices:
+            for fw_name, fw_device in self.device_manager.devices[
+                "FilterWheel"
+            ].items():
+                try:
+                    names = fw_device.get("Names")
+                    if names:
+                        filterwheel_names[fw_name] = names
+                except Exception as e:
+                    self.logger.warning(
+                        f"Could not get filter names from FilterWheel {fw_name}: {e}"
+                    )
+        return filterwheel_names
 
     def get_schedule(self) -> Schedule:
         if self.schedule is None:
@@ -442,7 +493,13 @@ class ScheduleManager:
                 self.schedule_mtime = schedule_mtime
 
                 try:
-                    schedule = Schedule.from_file(self.schedule_path)
+                    # Get filterwheel names for validation
+                    filterwheel_names = self.get_filterwheel_names()
+
+                    schedule = Schedule.from_file(
+                        self.schedule_path,
+                        filterwheel_names=filterwheel_names,
+                    )
                     schedule.validate()
                     self.logger.info(f"Schedule read: {schedule.to_one_line_string()}")
                     if self.truncate_factor is not None:

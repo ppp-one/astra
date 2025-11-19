@@ -222,6 +222,44 @@ class BaseActionConfig:
     def __len__(self):
         return len(self.keys())
 
+    def validate_filters(self, filterwheel_names: dict[str, list[str]]) -> None:
+        """Validate that filter(s) exist in the available filterwheels.
+
+        Args:
+            filterwheel_names: Dict mapping filterwheel device names to lists of filter names.
+                              e.g., {"fw1": ["Clear", "Red", "Green", "Blue"]}
+
+        Raises:
+            ValueError: If a filter is specified but doesn't exist in any filterwheel.
+        """
+        # Get filter value from the config
+        filter_value = self.get("filter")
+
+        if filter_value is None or not filterwheel_names:
+            return  # No filter specified or no filterwheels available
+
+        # Handle both single filter and list of filters
+        filters_to_check = (
+            [filter_value] if isinstance(filter_value, str) else filter_value
+        )
+
+        # Collect all available filter names from all filterwheels
+        all_available_filters = set()
+        for fw_filters in filterwheel_names.values():
+            all_available_filters.update(fw_filters)
+
+        # Check each filter
+        invalid_filters = []
+        for f in filters_to_check:
+            if f not in all_available_filters:
+                invalid_filters.append(f)
+
+        if invalid_filters:
+            raise ValueError(
+                f"Filter(s) {invalid_filters} not found in available filters: "
+                f"{sorted(all_available_filters)}"
+            )
+
     @classmethod
     def merge_config_dicts(cls, config_dict: dict, default_dict: dict) -> dict:
         """Merge default_dict and config_dict, keeping only keys in dataclass."""
@@ -352,6 +390,12 @@ class CalibrationActionConfig(BaseActionConfig):
         if missing:
             raise ValueError(f"Missing required fields: {missing}")
 
+        # ensure exptime and n have the same length
+        if len(self.exptime) != len(self.n):
+            raise ValueError(
+                f"'exptime' and 'n' must have the same length. Got: exptime={self.exptime}, n={self.n}"
+            )
+
 
 @dataclass
 class FlatsActionConfig(BaseActionConfig):
@@ -371,6 +415,12 @@ class FlatsActionConfig(BaseActionConfig):
                 missing.append(f.name)
         if missing:
             raise ValueError(f"Missing required fields: {missing}")
+
+        # ensure filter and n have the same length
+        if len(self.filter) != len(self.n):
+            raise ValueError(
+                f"'filter' and 'n' must have the same length. Got: filter={self.filter}, n={self.n}"
+            )
 
 
 @dataclass
