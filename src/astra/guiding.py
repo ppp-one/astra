@@ -117,6 +117,7 @@ class GuiderManager:
         image_handler: ImageHandler,
         paired_devices: PairedDevices,
         thread_manager: ThreadManager,
+        reset_guiding_reference: bool = False,
     ) -> bool:
         """
         Start the autoguiding system for telescope tracking.
@@ -126,20 +127,20 @@ class GuiderManager:
         operations to run concurrently with image acquisition.
 
         Parameters:
-            row (dict): Schedule row containing action information and device details.
-            action_value (dict): Action parameters including:
-                - 'filter': Filter name for guiding (single quotes are removed)
-                - Other guiding configuration parameters
             image_handler (ImageHandler): Image handler for managing image files.
             paired_devices (PairedDevices): Object containing telescope and guide
                 camera devices for the guiding system.
+            thread_manager (ThreadManager): Thread manager for tracking guiding thread.
+            reset_guiding_reference (bool, optional): If True, clears existing reference
+                image from database before starting guiding, forcing creation of a new
+                reference. Defaults to False.
 
         Returns:
             bool: True if guider was started successfully, False otherwise.
 
         Process:
         1. Logs guiding start for the specified telescope
-        2. Extracts and cleans filter name from action parameters
+        2. Optionally clears existing reference image if reset flag is set
         3. Creates guider thread with appropriate parameters
         4. Starts the guiding thread in background
         5. Adds thread to observatory's thread tracking list
@@ -150,6 +151,36 @@ class GuiderManager:
             - Filter name formatting removes single quotes for compatibility
         """
         self.logger.info(f"Starting guiding for {paired_devices['Telescope']}")
+
+        # Clear reference image if requested
+        if reset_guiding_reference:
+            # Get current field info from image handler if available
+            try:
+                telescope_name = paired_devices["Telescope"]
+                camera_name = paired_devices["Camera"]
+                guider = self.guider[telescope_name]
+
+                # Try to get field info from the most recent header
+                field = image_handler.header.get("OBJECT")
+                filt = image_handler.header.get("FILTER")
+                exptime = str(image_handler.header.get("EXPTIME"))
+                pierside = paired_devices.telescope.get("SideOfPier")
+
+                if field and filt and exptime:
+                    guider.clearReferenceImage(
+                        field=field,
+                        filt=filt,
+                        exptime=exptime,
+                        camera=camera_name,
+                        pierside=pierside,
+                    )
+                else:
+                    self.logger.warning(
+                        "Could not determine field/filter/exptime for clearing reference. "
+                        "New reference will be created when guiding starts."
+                    )
+            except Exception as e:
+                self.logger.warning(f"Error clearing guiding reference: {e}")
 
         binning = paired_devices.camera.get("BinX")
 
@@ -682,12 +713,14 @@ class Guider:
             WHERE field = '%s'
             AND filter = '%s'
             AND exptime = '%s'
-            AND valid_from < '%s'
+            AND valid_from <= '%s'
             AND camera = '%s'
             AND pierside = %d
-            AND valid_until IS NULL
+            AND (valid_until IS NULL OR valid_until > '%s')
+            ORDER BY valid_from DESC
+            LIMIT 1
             """
-        qry_args = (field, filt, exptime, tnow, camera, pierside)
+        qry_args = (field, filt, exptime, tnow, camera, pierside, tnow)
 
         result = self.database_manager.execute(qry % qry_args)
 
@@ -696,6 +729,55 @@ class Guider:
         else:
             ref_image = os.path.join(self.reference_dir, result[0][0])
         return ref_image
+
+    def clearReferenceImage(
+        self,
+        field: str | None,
+        filt: str | None,
+        exptime: str | None,
+        camera: str,
+        pierside: int,
+    ) -> None:
+        """
+        Clear reference image from the database for given observation parameters.
+
+        Sets valid_until to current time for matching reference images, effectively
+        invalidating them so a new reference will be created on next guiding run.
+
+        Parameters:
+            field (str): Target field name.
+            filt (str): Filter name.
+            exptime (str): Exposure time.
+            camera (str): Camera name.
+            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).
+        """
+        if field is None or filt is None or exptime is None:
+            self.logger.warning(
+                "Cannot clear reference image: field, filter, or exptime is None"
+            )
+            return
+
+        tnow = datetime.now(UTC).isoformat().split(".")[0].replace("T", " ")
+        qry = """
+            UPDATE autoguider_ref
+            SET valid_until = '%s'
+            WHERE field = '%s'
+            AND filter = '%s'
+            AND exptime = '%s'
+            AND camera = '%s'
+            AND pierside = %d
+            AND valid_until IS NULL
+            """
+        qry_args = (tnow, field, filt, exptime, camera, pierside)
+        self.database_manager.execute(qry % qry_args)
+        self.logger.info(
+            f"Cleared guiding reference for field={field}, filter={filt}, "
+            f"exptime={exptime}, camera={camera}, pierside={pierside}"
+        )
+        self.logMessageToDb(
+            camera,
+            f"Reference cleared for field={field}, filter={filt}, pierside={pierside}",
+        )
 
     def setReferenceImage(
         self,
