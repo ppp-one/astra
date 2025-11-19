@@ -84,7 +84,7 @@ def create_schedule_data(
             "action_value": {
                 "object": "test_target",
                 "ra": 10.0,
-                "dec": -40.0,
+                "dec": 70.0,
                 "exptime": 1,  # Very short exposure
                 "filter": "Clear",
                 "guiding": True,
