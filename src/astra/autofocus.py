@@ -90,7 +90,9 @@ class AstraCamera(CameraInterface):
         self.action = action
         self.success = True
 
-        self.maxadu = maxadu if maxadu is not None else self.determine_maxadu()
+        self.maxadu = (
+            maxadu if maxadu is not None else alpaca_device_camera.get("MaxADU")
+        )
 
         super().__init__()
 
@@ -183,14 +185,6 @@ class AstraCamera(CameraInterface):
 
         return exposure_successful, filepath
 
-    def determine_maxadu(self):
-        """Determine camera image data type and maximum ADU value.
-
-        Takes a test exposure to determine the camera's image data type
-        and maximum ADU value for proper image processing.
-        """
-        return self.alpaca_device_camera.get("MaxADU")
-
 
 class AstraFocuser(FocuserInterface):
     """Focuser interface for Astra observatory automation system.
@@ -208,6 +202,7 @@ class AstraFocuser(FocuserInterface):
         observatory: "astra.observatory.Observatory",
         alpaca_device_focuser: AlpacaDevice,
         action: Optional[Action] = None,
+        settle_time: int = 3,
     ) -> None:
         if not alpaca_device_focuser.get("Absolute"):
             raise ValueError("Focuser must be absolute for autofocusing to work.")
@@ -215,6 +210,7 @@ class AstraFocuser(FocuserInterface):
         self.observatory = observatory
         self.action = action
         self.alpaca_device_focuser = alpaca_device_focuser
+        self.settle_time = settle_time
 
         current_position = self.get_current_position()
         allowed_range = (0, alpaca_device_focuser.get("MaxStep"))
@@ -244,7 +240,7 @@ class AstraFocuser(FocuserInterface):
                 raise TimeoutError("Slew timeout")
             time.sleep(0.1)
 
-        time.sleep(3)  # settle time  # TODO add to config  settle_time from focuser
+        time.sleep(self.settle_time)
         return None
 
     def get_current_position(self) -> int:
@@ -399,7 +395,12 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
             action=action,
         )
         astra_focuser = AstraFocuser(
-            observatory, alpaca_device_focuser=alpaca_device_focuser, action=action
+            observatory,
+            alpaca_device_focuser=alpaca_device_focuser,
+            action=action,
+            settle_time=paired_devices.get_device_config("Focuser").get(
+                "settle_time", 3
+            ),
         )
         astra_telescope = AstraTelescope(
             observatory, alpaca_device_telescope=alpaca_device_telescope, action=action
@@ -473,7 +474,7 @@ class Defocuser:
             ValueError: If focuser configuration is not found or missing focus_position.
         """
         focuser_config = self.paired_devices.get_device_config("Focuser")
-        if focuser_config is None or "focus_position" not in focuser_config:
+        if "focus_position" not in focuser_config:
             self.observatory.logger.warning(
                 "No best focus position found in focuser configuration. "
                 "Using current position as best focus position."
