@@ -1,7 +1,8 @@
 """Tests for subframe setup in observatory.py."""
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 
 from astra.action_configs import ObjectActionConfig
 from astra.observatory import Observatory
