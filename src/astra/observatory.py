@@ -1420,7 +1420,7 @@ class Observatory:
                 paired_device_names=paired_devices,
             )
 
-        # unpark and slew to target
+        # Slew to target coordinates, open observatory if needed
         if (
             (action_value.get("ra") is not None)
             and (action_value.get("dec") is not None)
@@ -1428,7 +1428,6 @@ class Observatory:
             and self.check_conditions()
         ):
             if "Telescope" in paired_devices:
-                # open dome and unpark telescope -- this will open all domes if not in paired_devices...?
                 self.open_observatory(paired_devices)
 
                 telescope = paired_devices.telescope
@@ -1460,7 +1459,7 @@ class Observatory:
                     # wait for slew to finish
                     self.wait_for_slew(paired_devices)
 
-        # set filter
+        # Set filter
         if (
             (action_value.get("filter") is not None)
             and "FilterWheel" in paired_devices
@@ -1495,6 +1494,7 @@ class Observatory:
         else:
             filter_focus_shift = 0
 
+        # Set focuser position
         if (
             (
                 (action_value.get("focus_shift") is not None)
@@ -1534,14 +1534,18 @@ class Observatory:
             camera = paired_devices.camera
             bin = action_value.get("bin", 1)
 
-            self.logger.info(
-                f"Setting Camera {paired_devices['Camera']} binning to {bin}x{bin}"
-            )
+            binx = camera.get("BinX")
+            biny = camera.get("BinY")
 
-            camera.set("BinX", bin)
-            camera.set("BinY", bin)
-            camera.set("NumX", camera.get("CameraXSize") // camera.get("BinX"))
-            camera.set("NumY", camera.get("CameraYSize") // camera.get("BinY"))
+            if bin != binx or bin != biny:
+                self.logger.info(
+                    f"Setting Camera {paired_devices['Camera']} binning to {bin}x{bin}"
+                )
+
+                camera.set("BinX", bin)
+                camera.set("BinY", bin)
+                camera.set("NumX", camera.get("CameraXSize") // camera.get("BinX"))
+                camera.set("NumY", camera.get("CameraYSize") // camera.get("BinY"))
 
     def wait_for_slew(self, paired_devices: PairedDevices) -> None:
         """
