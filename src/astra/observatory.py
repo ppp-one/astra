@@ -2009,6 +2009,9 @@ class Observatory:
                         image_handler=self.get_image_handler(camera.device_name),
                         paired_devices=paired_devices,
                         thread_manager=self.thread_manager,
+                        reset_guiding_reference=action_value.get(
+                            "reset_guiding_reference", False
+                        ),
                     )
 
         # stop guiding at end of sequence
