@@ -163,17 +163,17 @@ function plotGuidingData(telescopeName, data, container) {
             label: "Correction (pixels)",
             grid: true,
         },
-        color: {
-            legend: true,
-            domain: ["RA (post_pid_x)", "Dec (post_pid_y)"],
-            range: ["rgb(65, 105, 225)", "rgb(255, 99, 71)"]
-        },
+        // color: {
+        //     legend: true,
+        //     domain: ["RA (post_pid_x)", "Dec (post_pid_y)"],
+        //     range: ["rgb(65, 105, 225)", "rgb(255, 99, 71)"]
+        // },
         marks: [
             Plot.axisY({
                 anchor: "right",
             }),
             Plot.ruleY([0], { stroke: "gray", strokeDasharray: "4,4" }),
-            // RA line and dots
+            // x line and dots
             Plot.lineY(filteredData, {
                 x: (d) => new Date(d.datetime + 'Z'),
                 y: "post_pid_x",
@@ -245,7 +245,7 @@ function plotGuidingData(telescopeName, data, container) {
                     fontVariant: "tabular-nums",
                     text: (d) => {
                         const timestamp = d.datetime.replace('T', ' ').slice(0, 19);
-                        return `${timestamp}   RA: ${d.post_pid_x.toFixed(2)}px  Dec: ${d.post_pid_y.toFixed(2)}px`;
+                        return `${timestamp}   x (blue): ${d.post_pid_x.toFixed(2)}px  y (red): ${d.post_pid_y.toFixed(2)}px`;
                     },
                 })
             ),

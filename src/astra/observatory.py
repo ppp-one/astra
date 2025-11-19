@@ -1488,7 +1488,7 @@ class Observatory:
                     # Convert RA from degrees to hours (RA in deg / 360 * 24 = RA in hours)
                     ra_hours = ra / 15.0  # 360 degrees / 24 hours = 15 degrees per hour
                     self.logger.info(
-                        f"Slewing Telescope {telescope_name} to RA/Dec {ra:.2f}° / {dec:.2f}°"
+                        f"Slewing Telescope {telescope_name} to RA/Dec {ra:.2f}°/{dec:.2f}°"
                     )
                     telescope.get(
                         "SlewToCoordinatesAsync",
