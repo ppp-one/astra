@@ -45,18 +45,6 @@ from astra.paired_devices import PairedDevices
 from astra.thread_manager import ThreadManager
 from astra.utils import clean_image
 
-# header keyword for the current filter
-FILTER_KEYWORD = "FILTER"
-
-# header keyword for the current target/field
-FIELD_KEYWORD = "OBJECT"
-
-# header keyword for the current exposure time
-EXPTIME_KEYWORD = "EXPTIME"
-
-# header keyword for the current PIERSIDE
-PIERSIDE_KEYWORD = "PIERSIDE"
-
 # rejection buffer length
 GUIDE_BUFFER_LENGTH = 20
 
@@ -261,6 +249,14 @@ class CustomImageClass(Image):
         Performs background subtraction, noise reduction, and systematic
         correction to improve star detection reliability.
         """
+        # if greater than 1Kx1K, crop to 1Kx1K for speed
+        shapex, shapey = self.raw_image.shape
+        if shapex > 1000 and shapey > 1000:
+            self.raw_image = self.raw_image[
+                shapex // 2 - 500 : shapex // 2 + 500,
+                shapey // 2 - 500 : shapey // 2 + 500,
+            ]
+
         self.raw_image = clean_image(self.raw_image)
 
 
@@ -844,9 +840,11 @@ class Guider:
                 Returns (None, None, None, None) if self.running becomes False.
         """
         start_timestamp = datetime.now(UTC)
+        orig_last_image_timestamp = image_handler.last_image_timestamp
         while self.running:
             # Check if a new image has appeared
             last_image_timestamp = image_handler.last_image_timestamp
+            exptime = image_handler.header.get("EXPTIME")
             current_timestamp = datetime.now(UTC)
 
             # if no images yet, wait
@@ -855,20 +853,22 @@ class Guider:
                 continue
 
             # check if we have waited long enough
-            if (
-                current_timestamp - start_timestamp
-            ).total_seconds() < self.MIN_GUIDE_INTERVAL:
+            if (current_timestamp - start_timestamp).total_seconds() < max(
+                self.MIN_GUIDE_INTERVAL, exptime
+            ):
                 time.sleep(0.1)
                 continue
 
             # check if a new image has appeared to guide on
-            if (current_timestamp - last_image_timestamp).total_seconds() < 5:
+            if (current_timestamp - last_image_timestamp).total_seconds() < 1 and (
+                last_image_timestamp != orig_last_image_timestamp
+            ):
                 newest_image = image_handler.last_image_path
                 try:
                     header = fits.getheader(newest_image)
-                    newest_filter = str(header[FILTER_KEYWORD]).strip("'")
-                    newest_field = header[FIELD_KEYWORD]
-                    newest_exptime = header[EXPTIME_KEYWORD]
+                    newest_filter = str(header["FILTER"]).strip("'")
+                    newest_field = header["OBJECT"]
+                    newest_exptime = header["EXPTIME"]
                 except Exception as e:
                     self.logMessageToDb(
                         camera_name,
