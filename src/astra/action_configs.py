@@ -6,7 +6,7 @@ from typing import Any, List, Optional, Union
 
 import astropy.units as u
 import numpy as np
-from astropy.coordinates import Angle, SkyCoord
+from astropy.coordinates import AltAz, Angle, EarthLocation, SkyCoord
 from astropy.time import Time
 
 from astra.config import Config, ObservatoryConfig
@@ -368,6 +368,75 @@ class ObjectActionConfig(BaseActionConfig):
         ):
             raise ValueError(
                 f"Both 'alt' and 'az' must be provided together. Got: alt={self.alt}, az={self.az}"
+            )
+
+    def validate_visibility(
+        self,
+        start_time: Time,
+        end_time: Time,
+        observatory_location: EarthLocation,
+        min_altitude: float = 0.0,
+    ) -> None:
+        """Validate that the target is visible during the scheduled observation window.
+
+        Checks target visibility at the beginning, middle, and end of the planned
+        observation to ensure the target remains observable throughout.
+
+        Args:
+            start_time: Observation start time as astropy Time object
+            end_time: Observation end time as astropy Time object
+            observatory_location: Observatory location as EarthLocation object
+            min_altitude: Minimum altitude in degrees for target to be considered visible (default: 0°)
+
+        Raises:
+            ValueError: If RA/Dec are not provided or if target is below minimum altitude
+                at any of the three check points (start, middle, end)
+
+        Note:
+            Only checks visibility when RA and Dec coordinates are provided.
+            Alt/Az coordinates are not checked as they are position-specific.
+        """
+        # Only check visibility if RA/Dec are provided
+        if self.ra is None or self.dec is None:
+            return
+
+        # Create target coordinate
+        target = SkyCoord(
+            ra=self.ra * u.deg,
+            dec=self.dec * u.deg,
+            frame="icrs",
+        )
+
+        # Check times: start, middle, end
+        mid_time = Time(
+            (start_time.unix + end_time.unix) / 2,
+            format="unix",
+        )
+        check_times = [
+            ("start", start_time),
+            ("middle", mid_time),
+            ("end", end_time),
+        ]
+
+        visibility_issues = []
+
+        for label, check_time in check_times:
+            # Transform to horizontal coordinates
+            altaz_frame = AltAz(obstime=check_time, location=observatory_location)
+            target_altaz = target.transform_to(altaz_frame)
+
+            altitude = target_altaz.alt.deg
+
+            if altitude < min_altitude:
+                visibility_issues.append(
+                    f"{label}: altitude {altitude:.1f}° (below {min_altitude:.1f}° limit)"
+                )
+
+        if visibility_issues:
+            raise ValueError(
+                f"Target '{self.object}' at RA={self.ra:.2f}°, Dec={self.dec:.2f}° "
+                f"is not visible during observation window:\n  "
+                + "\n  ".join(visibility_issues)
             )
 
 

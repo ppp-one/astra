@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Type, Union
 
 import pandas as pd
+from astropy.coordinates import EarthLocation
 
 from astra.action_configs import (
     ACTION_CONFIGS,
@@ -206,6 +207,8 @@ class Schedule(list[Action]):
         cls,
         filename: Union[str, Path],
         filterwheel_names: dict[str, list[str]] | None = None,
+        observatory_location: EarthLocation | None = None,
+        min_altitude: float = 0.0,
     ) -> "Schedule":
         """
         Read a schedule file and return a Schedule instance with parsed schedule data.
@@ -213,6 +216,8 @@ class Schedule(list[Action]):
         Args:
             filename: Path to the schedule file
             filterwheel_names: Optional dict of filterwheel names to filter lists for validation
+            observatory_location: Optional EarthLocation for visibility checks
+            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
         """
         schedule_path = Path(filename)
         if schedule_path.exists() is False:
@@ -236,7 +241,12 @@ class Schedule(list[Action]):
             schedule.end_time, utc=True, format="mixed"
         )
         schedule = schedule.sort_values(by=["start_time"])
-        return cls.from_dataframe(schedule, filterwheel_names=filterwheel_names)
+        return cls.from_dataframe(
+            schedule,
+            filterwheel_names=filterwheel_names,
+            observatory_location=observatory_location,
+            min_altitude=min_altitude,
+        )
 
     @classmethod
     def from_dataframe(
@@ -244,6 +254,8 @@ class Schedule(list[Action]):
         df: pd.DataFrame,
         observatory_config: object | None = None,
         filterwheel_names: dict[str, list[str]] | None = None,
+        observatory_location: EarthLocation | None = None,
+        min_altitude: float = 0.0,
     ) -> "Schedule":
         """
         Construct a Schedule instance from a pandas DataFrame.
@@ -253,6 +265,8 @@ class Schedule(list[Action]):
             observatory_config: Optional observatory configuration
             filterwheel_names: Optional dict mapping filterwheel names to their filter lists
                               for validation. e.g., {"fw1": ["Clear", "Red", "Green"]}
+            observatory_location: Optional EarthLocation for visibility checks
+            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
         """
         actions = []
         for _, action in df.iterrows():
@@ -274,6 +288,27 @@ class Schedule(list[Action]):
                 except ValueError as e:
                     raise ValueError(
                         f"Filter validation failed for {action_type} action on device "
+                        f"{action['device_name']}: {e}"
+                    )
+
+            # Validate visibility for object actions if observatory location provided
+            if (
+                observatory_location is not None
+                and action_type == "object"
+                and hasattr(action_config, "validate_visibility")
+            ):
+                try:
+                    from astropy.time import Time
+
+                    action_config.validate_visibility(
+                        start_time=Time(action["start_time"]),
+                        end_time=Time(action["end_time"]),
+                        observatory_location=observatory_location,
+                        min_altitude=min_altitude,
+                    )
+                except ValueError as e:
+                    raise ValueError(
+                        f"Visibility validation failed for object action on device "
                         f"{action['device_name']}: {e}"
                     )
 
@@ -441,6 +476,39 @@ class ScheduleManager:
                     )
         return filterwheel_names
 
+    def get_observatory_location(self) -> "EarthLocation | None":
+        """Get observatory location from telescope device.
+
+        Returns:
+            EarthLocation object if telescope device is available, None otherwise.
+        """
+        if self.device_manager is None:
+            return None
+
+        try:
+            if "Telescope" in self.device_manager.devices:
+                # Get first available telescope
+                telescope_devices = self.device_manager.devices["Telescope"]
+                if telescope_devices:
+                    telescope = next(iter(telescope_devices.values()))
+
+                    import astropy.units as u
+                    from astropy.coordinates import EarthLocation
+
+                    obs_lat = telescope.get("SiteLatitude")
+                    obs_lon = telescope.get("SiteLongitude")
+                    obs_alt = telescope.get("SiteElevation")
+
+                    return EarthLocation(
+                        lat=u.Quantity(obs_lat, u.deg),
+                        lon=u.Quantity(obs_lon, u.deg),
+                        height=u.Quantity(obs_alt, u.m),
+                    )
+        except Exception as e:
+            self.logger.debug(f"Could not get observatory location from telescope: {e}")
+
+        return None
+
     def get_schedule(self) -> Schedule:
         if self.schedule is None:
             self.schedule = self.read()
@@ -496,9 +564,13 @@ class ScheduleManager:
                     # Get filterwheel names for validation
                     filterwheel_names = self.get_filterwheel_names()
 
+                    # Get observatory location for visibility checks
+                    observatory_location = self.get_observatory_location()
+
                     schedule = Schedule.from_file(
                         self.schedule_path,
                         filterwheel_names=filterwheel_names,
+                        observatory_location=observatory_location,
                     )
                     schedule.validate()
                     self.logger.info(f"Schedule read: {schedule.to_one_line_string()}")
