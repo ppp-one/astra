@@ -1,16 +1,19 @@
 // Guiding chart functionality for telescope autoguiding performance visualization
 
 // Global variables for guiding data management
-let guidingDataCache = [];
-let guidingLatestTimestamp = null;
-let guidingActive = false;
+let guidingDataCache = {}; // Changed to object keyed by telescope_name
+let guidingLatestTimestamp = {};
+let guidingActive = {}; // Track active status per telescope
 
 /**
  * Update the guiding chart by fetching new data from the API
  * @param {boolean} update - Whether this is an update (true) or initial load (false)
  */
 function updateGuidingChart(update = false) {
-    if (!guidingActive) {
+    // Get list of active telescopes
+    const activeTelescopeNames = Object.keys(guidingActive).filter(name => guidingActive[name]);
+
+    if (activeTelescopeNames.length === 0) {
         // Hide guiding chart if not active
         document.getElementById('guiding-chart-container').classList.add('hidden');
         return;
@@ -19,14 +22,28 @@ function updateGuidingChart(update = false) {
     // Show guiding chart container
     document.getElementById('guiding-chart-container').classList.remove('hidden');
 
+    // Fetch data (no telescope filter - get all telescopes)
     let fetchUrl;
-    if (update && guidingLatestTimestamp) {
-        // Format timestamp for API: replace 'T' with space if present
-        let since = guidingLatestTimestamp;
-        if (since.includes('T')) {
-            since = since.replace('T', ' ');
+    if (update) {
+        // Get the oldest timestamp across all active telescopes
+        let oldestTimestamp = null;
+        for (const telescopeName of activeTelescopeNames) {
+            const ts = guidingLatestTimestamp[telescopeName];
+            if (ts && (!oldestTimestamp || ts < oldestTimestamp)) {
+                oldestTimestamp = ts;
+            }
         }
-        fetchUrl = '/api/db/guiding?since=' + encodeURIComponent(since);
+
+        if (oldestTimestamp) {
+            // Format timestamp for API: replace 'T' with space if present
+            let since = oldestTimestamp;
+            if (since.includes('T')) {
+                since = since.replace('T', ' ');
+            }
+            fetchUrl = '/api/db/guiding?since=' + encodeURIComponent(since);
+        } else {
+            fetchUrl = '/api/db/guiding?day=1';
+        }
     } else {
         fetchUrl = '/api/db/guiding?day=1';
     }
@@ -36,27 +53,40 @@ function updateGuidingChart(update = false) {
         .then(result => {
             if (result.status === 'success') {
                 if (result.data.length > 0) {
-                    if (update && guidingLatestTimestamp) {
-                        // Append new data
-                        guidingDataCache = guidingDataCache.concat(result.data);
-                        // Keep only last 2000 points to avoid memory issues
-                        if (guidingDataCache.length > 2000) {
-                            guidingDataCache = guidingDataCache.slice(-2000);
+                    // Group data by telescope_name
+                    result.data.forEach(row => {
+                        const telescopeName = row.telescope_name;
+
+                        if (!guidingDataCache[telescopeName]) {
+                            guidingDataCache[telescopeName] = [];
                         }
-                    } else {
-                        // Initial load
-                        guidingDataCache = result.data;
-                    }
 
-                    if (guidingDataCache.length > 0) {
-                        guidingLatestTimestamp = guidingDataCache[guidingDataCache.length - 1].datetime;
+                        if (update && guidingLatestTimestamp[telescopeName]) {
+                            // Append new data
+                            guidingDataCache[telescopeName].push(row);
+                            // Keep only last 2000 points to avoid memory issues
+                            if (guidingDataCache[telescopeName].length > 2000) {
+                                guidingDataCache[telescopeName] = guidingDataCache[telescopeName].slice(-2000);
+                            }
+                        } else {
+                            // Initial load - only add if not duplicate
+                            if (!guidingDataCache[telescopeName].find(d => d.datetime === row.datetime)) {
+                                guidingDataCache[telescopeName].push(row);
+                            }
+                        }
+                    });
+
+                    // Update latest timestamps per telescope
+                    for (const telescopeName in guidingDataCache) {
+                        const data = guidingDataCache[telescopeName];
+                        if (data.length > 0) {
+                            guidingLatestTimestamp[telescopeName] = data[data.length - 1].datetime;
+                        }
                     }
                 }
 
-                // Always re-plot if we have cached data (even if no new data arrived)
-                if (guidingDataCache.length > 0) {
-                    plotGuidingData(guidingDataCache);
-                }
+                // Plot all active telescopes
+                plotAllGuidingData(activeTelescopeNames);
             }
         })
         .catch(error => {
@@ -65,10 +95,36 @@ function updateGuidingChart(update = false) {
 }
 
 /**
- * Plot guiding data showing RA and Dec corrections over time
- * @param {Array} data - Array of guiding data points with datetime, post_pid_x, post_pid_y
+ * Plot all active telescopes' guiding data
+ * @param {Array} activeTelescopeNames - Array of telescope names currently guiding
  */
-function plotGuidingData(data) {
+function plotAllGuidingData(activeTelescopeNames) {
+    const plotContainer = document.getElementById('guiding-chart');
+
+    if (!plotContainer) {
+        console.error('guiding-chart element not found!');
+        return;
+    }
+
+    // Remove all existing charts
+    plotContainer.innerHTML = '';
+
+    // Plot each active telescope
+    for (const telescopeName of activeTelescopeNames) {
+        const data = guidingDataCache[telescopeName];
+        if (data && data.length > 0) {
+            plotGuidingData(telescopeName, data, plotContainer);
+        }
+    }
+}
+
+/**
+ * Plot guiding data for a single telescope showing RA and Dec corrections over time
+ * @param {string} telescopeName - Name of the telescope
+ * @param {Array} data - Array of guiding data points with datetime, post_pid_x, post_pid_y
+ * @param {HTMLElement} container - Container element to append the plot to
+ */
+function plotGuidingData(telescopeName, data, container) {
     if (!data || data.length === 0) {
         return;
     }
@@ -85,14 +141,15 @@ function plotGuidingData(data) {
     const fixed_width = 320;
     const height = Math.max(width, fixed_width) * 0.3;
 
-    const plotContainer = document.getElementById('guiding-chart');
+    // Create a wrapper div for this telescope's chart
+    const chartWrapper = document.createElement('div');
+    chartWrapper.className = 'telescope-chart-wrapper mb-4';
 
-    if (!plotContainer) {
-        console.error('guiding-chart element not found!');
-        return;
-    }
-
-    plotContainer.innerHTML = '';
+    // Add telescope name label
+    const label = document.createElement('div');
+    label.className = 'text-xs font-medium text-gray-400 mb-1';
+    label.textContent = telescopeName;
+    chartWrapper.appendChild(label);
 
     // Create plot for both axes
     const plot = Plot.plot({
@@ -195,35 +252,58 @@ function plotGuidingData(data) {
         ],
     });
 
-    plotContainer.appendChild(plot);
+    chartWrapper.appendChild(plot);
+    container.appendChild(chartWrapper);
 }
 
 /**
  * Check and update guiding status from websocket message
  * @param {Array} deviceData - Array of device data from websocket
- * @returns {boolean} - Whether guiding is currently active
+ * @returns {Object} - Object with telescope names as keys and status as values
  */
 function updateGuidingStatus(deviceData) {
-    let newGuidingActive = false;
+    const newGuidingActive = {};
+
+    // Find all guider entries in device data
     for (let i = 0; i < deviceData.length; i++) {
-        if (deviceData[i]['item'] === 'guider' && deviceData[i]['status'] === true) {
-            newGuidingActive = true;
-            break;
+        if (deviceData[i]['item'] === 'guider') {
+            // Extract telescope name from the guider name (format: "telescope_name's guider")
+            const guiderName = deviceData[i]['name'];
+            const telescopeName = guiderName.replace("'s guider", "");
+            newGuidingActive[telescopeName] = deviceData[i]['status'] === true;
         }
     }
 
-    // If guiding status changed, reset cache and update chart
-    if (newGuidingActive !== guidingActive) {
-        guidingActive = newGuidingActive;
-        if (guidingActive) {
-            // Guiding just started - fetch initial data
-            guidingDataCache = [];
-            guidingLatestTimestamp = null;
-            updateGuidingChart(false);
-        } else {
-            // Guiding stopped - hide chart
-            updateGuidingChart(false);
+    // Check if any guiding status changed
+    let statusChanged = false;
+
+    // Check for new or changed telescopes
+    for (const telescopeName in newGuidingActive) {
+        if (guidingActive[telescopeName] !== newGuidingActive[telescopeName]) {
+            statusChanged = true;
+            guidingActive[telescopeName] = newGuidingActive[telescopeName];
+
+            if (newGuidingActive[telescopeName]) {
+                // Guiding just started for this telescope - initialize cache
+                if (!guidingDataCache[telescopeName]) {
+                    guidingDataCache[telescopeName] = [];
+                }
+                guidingLatestTimestamp[telescopeName] = null;
+            }
         }
+    }
+
+    // Check for telescopes that are no longer present (stopped)
+    for (const telescopeName in guidingActive) {
+        if (!(telescopeName in newGuidingActive)) {
+            guidingActive[telescopeName] = false;
+            statusChanged = true;
+        }
+    }
+
+    // If any status changed, update chart
+    if (statusChanged) {
+        updateGuidingChart(false);
     }
 
     return guidingActive;

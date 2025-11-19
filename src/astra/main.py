@@ -689,7 +689,9 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
 
 
 @app.get("/api/db/guiding")
-async def guiding_data(day: float = 1, since: str | None = None):
+async def guiding_data(
+    day: float = 1, since: str | None = None, telescope: str | None = None
+):
     """Get autoguider log data for plotting guiding performance.
 
     Retrieves guiding corrections (post_pid_x, post_pid_y) from the
@@ -698,18 +700,21 @@ async def guiding_data(day: float = 1, since: str | None = None):
     Args:
         day (float): Number of days back to retrieve data. Defaults to 1.
         since (str): Optional timestamp to get only newer records.
+        telescope (str): Optional telescope name to filter data.
 
     Returns:
         dict: JSON response with guiding data including datetime,
-              post_pid_x, and post_pid_y values.
+              telescope_name, post_pid_x, and post_pid_y values.
     """
     db = observatory_db()
+    telescope_filter = f"AND telescope_name = '{telescope}'" if telescope else ""
+
     if since is not None:
-        q = f"""SELECT datetime, post_pid_x, post_pid_y FROM autoguider_log 
-                WHERE datetime > '{since}' ORDER BY datetime ASC"""
+        q = f"""SELECT datetime, telescope_name, post_pid_x, post_pid_y FROM autoguider_log 
+                WHERE datetime > '{since}' {telescope_filter} ORDER BY datetime ASC"""
     else:
-        q = f"""SELECT datetime, post_pid_x, post_pid_y FROM autoguider_log 
-                WHERE datetime > datetime('now', '-{day} day') ORDER BY datetime ASC"""
+        q = f"""SELECT datetime, telescope_name, post_pid_x, post_pid_y FROM autoguider_log 
+                WHERE datetime > datetime('now', '-{day} day') {telescope_filter} ORDER BY datetime ASC"""
 
     df = pd.read_sql_query(q, db)
     db.close()

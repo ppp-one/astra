@@ -367,6 +367,7 @@ class Guider:
 
         db_command_1 = """CREATE TABLE IF NOT EXISTS autoguider_log (
                 datetime timestamp default current_timestamp,
+                telescope_name varchar(50) not null,
                 night date not null,
                 reference varchar(150) not null,
                 comparison varchar(150) not null,
@@ -408,11 +409,11 @@ class Guider:
         """
         qry = """
             INSERT INTO autoguider_log
-            (night, reference, comparison, stabilised, shift_x, shift_y,
+            (telescope_name, night, reference, comparison, stabilised, shift_x, shift_y,
             pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,
             std_buff_y, culled_max_shift_x, culled_max_shift_y)
             VALUES
-            ('%s', '%s', '%s', '%s', '%s', '%s', '%s',
+            ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s')
             """
 
@@ -1020,8 +1021,15 @@ class Guider:
                             else:
                                 break
 
+                        # Extract night date from directory path
+                        night_path = image_handler.last_image_path.parent
+                        night_date = os.path.basename(
+                            night_path
+                        )  # Get just the date folder name
+
                         log_list = [
-                            str(image_handler.last_image_path.parent),
+                            self.telescope.device_name,
+                            night_date,
                             os.path.basename(ref_file),
                             str(check_file),
                             stabilised,
