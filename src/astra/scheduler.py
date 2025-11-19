@@ -455,6 +455,7 @@ class ScheduleManager:
 
                     return schedule
                 except Exception as e:
+                    self.schedule = None
                     self.logger.warning(
                         f"Warning: Issue processing schedule: {e}, please try again"
                     )

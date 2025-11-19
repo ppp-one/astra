@@ -285,6 +285,8 @@ class ObjectActionConfig(BaseActionConfig):
     exptime: float = field(metadata={"required": True})
     ra: Optional[float] = None
     dec: Optional[float] = None
+    alt: Optional[float] = None
+    az: Optional[float] = None
     filter: Optional[str] = None
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
@@ -303,6 +305,32 @@ class ObjectActionConfig(BaseActionConfig):
                 missing.append(f.name)
         if missing:
             raise ValueError(f"Missing required fields: {missing}")
+
+        # Coordinate system validation
+        has_radec = self.ra is not None or self.dec is not None
+        has_altaz = self.alt is not None or self.az is not None
+
+        # Can't mix coordinate systems
+        if has_radec and has_altaz:
+            raise ValueError(
+                "Cannot specify both RA/Dec and Alt/Az coordinates. "
+                "Use either 'ra' and 'dec' OR 'alt' and 'az', not both."
+            )
+
+        # Must provide complete coordinate pairs
+        if (self.ra is not None and self.dec is None) or (
+            self.ra is None and self.dec is not None
+        ):
+            raise ValueError(
+                f"Both 'ra' and 'dec' must be provided together. Got: ra={self.ra}, dec={self.dec}"
+            )
+
+        if (self.alt is not None and self.az is None) or (
+            self.alt is None and self.az is not None
+        ):
+            raise ValueError(
+                f"Both 'alt' and 'az' must be provided together. Got: alt={self.alt}, az={self.az}"
+            )
 
 
 @dataclass

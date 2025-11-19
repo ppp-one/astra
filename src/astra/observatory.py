@@ -1420,10 +1420,49 @@ class Observatory:
                 paired_device_names=paired_devices,
             )
 
+        # Convert alt/az to ra/dec if needed (validation already done in action config)
+        ra = action_value.get("ra")
+        dec = action_value.get("dec")
+        alt = action_value.get("alt")
+        az = action_value.get("az")
+
+        # If alt/az provided, convert to ra/dec
+        if alt is not None and az is not None:
+            if "Telescope" in paired_devices:
+                telescope = paired_devices.telescope
+
+                # Get observatory location from telescope
+                obs_lat = telescope.get("SiteLatitude")
+                obs_lon = telescope.get("SiteLongitude")
+                obs_alt = telescope.get("SiteElevation")
+
+                obs_location = EarthLocation(
+                    lat=u.Quantity(obs_lat, u.deg),
+                    lon=u.Quantity(obs_lon, u.deg),
+                    height=u.Quantity(obs_alt, u.m),
+                )
+
+                # Create AltAz coordinate
+                target_altaz = SkyCoord(
+                    alt=u.Quantity(alt, u.deg),
+                    az=u.Quantity(az, u.deg),
+                    frame=AltAz(obstime=Time.now(), location=obs_location),
+                )
+
+                # Transform to ICRS (RA/Dec) - results in degrees
+                target_radec = target_altaz.transform_to("icrs")
+
+                ra = target_radec.ra.deg  # RA in degrees
+                dec = target_radec.dec.deg  # Dec in degrees
+
+                self.logger.info(
+                    f"Converted Alt/Az ({alt:.2f}°, {az:.2f}°) to RA/Dec ({ra:.2f}°, {dec:.2f}°)"
+                )
+
         # Slew to target coordinates, open observatory if needed
         if (
-            (action_value.get("ra") is not None)
-            and (action_value.get("dec") is not None)
+            (ra is not None)
+            and (dec is not None)
             and (action_value.get("disable_telescope_movement", False) is False)
             and self.check_conditions()
         ):
@@ -1445,13 +1484,15 @@ class Observatory:
                     )
 
                     # slew to target
+                    # Convert RA from degrees to hours (RA in deg / 360 * 24 = RA in hours)
+                    ra_hours = ra / 15.0  # 360 degrees / 24 hours = 15 degrees per hour
                     self.logger.info(
-                        f"Slewing Telescope {telescope_name} to {action_value['ra']} {action_value['dec']}"
+                        f"Slewing Telescope {telescope_name} to RA/Dec {ra:.2f}° / {dec:.2f}°"
                     )
                     telescope.get(
                         "SlewToCoordinatesAsync",
-                        RightAscension=24 * action_value["ra"] / 360,
-                        Declination=action_value["dec"],
+                        RightAscension=ra_hours,  # RA in hours
+                        Declination=dec,  # Dec in degrees
                     )
 
                     time.sleep(1)

@@ -113,6 +113,8 @@ Capture a sequence of light frames:
 **Optional parameters:**
     - ``ra``: Right Ascension in degrees (float, default: current RA)
     - ``dec``: Declination in degrees (float, default: current Dec)
+    - ``alt``: Altitude in degrees (float, default: current altitude)
+    - ``az``: Azimuth in degrees (float, default: current azimuth)
     - ``filter``: Filter name (string, default: current filter)
     - ``focus_shift``: Focus shift value from best focus position (float, default: None)
     - ``focus_position``: Absolute focus position value (float, default: best focus position)
