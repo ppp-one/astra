@@ -157,7 +157,7 @@ function generateWeatherTable(weather_parameters, latest_values, weather_safety_
                         ? "color: orange;"
                         : "";
 
-                return `<tr class="${index != weather_parameters.length - 1 ? 'border-b border-b-slate-500' : ""} cursor-pointer"
+                return `<tr class="${index != weather_parameters.length - 1 ? 'border-b border-b-slate-500' : ""} hover:bg-gray-600/40 cursor-pointer"
                             onclick="window.location.href='#plot-${parameter}';">
                             <td class="py-1.5 px-3" style="text-align: left; ${colorStyleLink}">${parameter}</td>
                             <td class="py-1.5 px-3" style="${colorStyleLink} text-align: left;">${weather_safety_limits[parameter].unit
