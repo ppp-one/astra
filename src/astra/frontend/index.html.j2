@@ -670,6 +670,7 @@
                                 weatherDataCache.data = cached.concat(newData.data);
                             }
                             weatherDataCache.latest = newData.latest;
+                            weatherDataCache.twilight_periods = newData.twilight_periods || [];
                             weatherLatestTimestamp = newData.data[newData.data.length - 1].datetime;
                         }
                         // Use merged data for plotting

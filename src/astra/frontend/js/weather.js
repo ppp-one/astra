@@ -219,6 +219,7 @@ function plotWeather(data, update) {
 
     const weather_data = data['data'];
     const weather_safety_limits = data['safety_limits'];
+    const twilight_periods = data['twilight_periods'] || [];
 
     const width = document.getElementById(`content`).clientWidth;
     const fixed_width = 320;
@@ -345,14 +346,44 @@ function plotWeather(data, update) {
         color_palette,
         width,
         fixed_width,
-        height
+        height,
+        twilight_periods
     ) => {
         const plotContainer = document.getElementById(`weather-chart`);
+        const first_datetime = weather_data[0].datetime;
 
         weather_parameters.forEach((parameter) => {
             if (parameter === "WindDirection" || parameter === "datetime") return;
 
             const safety_limits = weather_safety_limits[parameter];
+
+            // Create twilight rectangle marks
+            const twilightMarks = twilight_periods ? twilight_periods.map((period, i) => {
+                const colors = {
+                    day: 'rgba(150,187,201,0.2)',
+                    civil: 'rgba(150,187,201,0.2)',
+                    nautical: 'rgba(111,143,154,0.2)',
+                    astronomical: 'rgba(88,106,112,0.2)',
+                    night: 'rgba(47,69,77,0.2)'
+                };
+
+                let startDate = new Date(period.start);
+
+                // if first mapping take startDate as first_datetime
+                if (i === 0) {
+                    startDate = new Date(first_datetime + 'Z');
+                }
+
+                return Plot.rect([period], {
+                    x1: d => new Date(startDate),
+                    x2: d => new Date(d.end),
+                    y1: safety_limits.domain[0],
+                    y2: safety_limits.domain[1],
+                    fill: d => colors[d.phase],
+                    opacity: 1
+                });
+            }) : [];
+
             const baseConfig = {
                 width: Math.max(width, fixed_width),
                 height,
@@ -361,6 +392,7 @@ function plotWeather(data, update) {
                     label: `${parameter} (${safety_limits.unit})`,
                 },
                 marks: [
+                    ...twilightMarks,
                     Plot.dot(weather_data, {
                         x: (d) => new Date(d.datetime + 'Z'),
                         y: parameter,
@@ -432,7 +464,8 @@ function plotWeather(data, update) {
         color_palette,
         width,
         fixed_width,
-        height
+        height,
+        twilight_periods
     );
 
     // plot wind direction

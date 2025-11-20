@@ -31,7 +31,9 @@ import httpx
 import matplotlib.pyplot as plt
 import pandas as pd
 import uvicorn
+from astropy.coordinates import AltAz, EarthLocation, get_sun
 from astropy.io import fits
+from astropy.time import Time
 from astropy.visualization import ZScaleInterval
 from fastapi import Body, FastAPI, File, Request, UploadFile, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
@@ -63,6 +65,10 @@ LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
+
+# Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
+TWILIGHT_CACHE = None
+TWILIGHT_CACHE_TIME = None
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -604,6 +610,86 @@ async def upload_schedule(file: UploadFile = File(...)):
         }
 
 
+def calculate_twilight_periods(
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    obs_location: EarthLocation,
+) -> list[dict]:
+    """Calculate twilight periods for the given time range.
+
+    Args:
+        start_time: Start of time range (UTC)
+        end_time: End of time range (UTC)
+        obs_location: Observatory location
+
+    Returns:
+        List of period dictionaries with start, end, and phase
+    """
+    global TWILIGHT_CACHE, TWILIGHT_CACHE_TIME
+
+    # Check cache (valid for 1 minute)
+    if TWILIGHT_CACHE is not None and TWILIGHT_CACHE_TIME is not None:
+        cache_age = (datetime.datetime.now(UTC) - TWILIGHT_CACHE_TIME).total_seconds()
+        if cache_age < 60:
+            return TWILIGHT_CACHE
+
+    # Calculate sun altitudes at regular intervals
+    time_points = pd.date_range(start=start_time, end=end_time, freq="5min")
+    times = Time(time_points)
+
+    sun = get_sun(times)
+    altaz_frame = AltAz(obstime=times, location=obs_location)
+    sun_altaz = sun.transform_to(altaz_frame)
+    altitudes = sun_altaz.alt.degree
+
+    periods = []
+    current_phase = None
+    period_start = None
+
+    for i, (time_point, altitude) in enumerate(zip(time_points, altitudes)):
+        # Determine phase based on sun altitude
+        if altitude >= 0:
+            phase = "day"
+        elif altitude >= -6:
+            phase = "civil"
+        elif altitude >= -12:
+            phase = "nautical"
+        elif altitude >= -18:
+            phase = "astronomical"
+        else:
+            phase = "night"
+
+        # Detect phase changes
+        if phase != current_phase:
+            if current_phase is not None and period_start is not None:
+                # Save previous period
+                periods.append(
+                    {
+                        "start": period_start.isoformat(),
+                        "end": time_point.isoformat(),
+                        "phase": current_phase,
+                    }
+                )
+            period_start = time_point
+            current_phase = phase
+
+    # Add final period
+    if current_phase is not None and period_start is not None:
+        periods.append(
+            {
+                "start": period_start.isoformat(),
+                "end": time_points[-1].isoformat(),
+                "phase": current_phase,
+            }
+        )
+
+    # Cache result with current timestamp
+    TWILIGHT_CACHE = periods
+    TWILIGHT_CACHE_TIME = datetime.datetime.now(UTC)
+
+    return periods
+
+
 @app.get("/api/db/polling/{device_type}")
 async def polling(device_type: str, day: float = 1, since: str | None = None):
     """Get device polling data from observatory database.
@@ -676,15 +762,33 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
                 "lower": lower_val if lower_val != float("-inf") else None,
             }
 
+        # Calculate twilight periods if we have telescope location
+        twilight_periods = []
+        if "Telescope" in obs.devices:
+            try:
+                obs_location = obs.get_observatory_location()
+
+                # Always calculate twilight for 3 days, regardless of data range
+                end_time = datetime.datetime.now(UTC)
+                start_time = end_time - datetime.timedelta(days=3)
+
+                twilight_periods = calculate_twilight_periods(
+                    start_time, end_time, obs_location
+                )
+            except Exception as e:
+                logger.warning(f"Error calculating twilight periods: {e}")
+
         return {
             "data": df_groupby.reset_index().to_dict(orient="records"),
             "safety_limits": safety_limits,
             "latest": latest,
+            "twilight_periods": twilight_periods,
         }
     else:
         return {
             "data": df_groupby.reset_index().to_dict(orient="records"),
             "latest": latest,
+            "twilight_periods": [],
         }
 
 

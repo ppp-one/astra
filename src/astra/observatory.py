@@ -226,6 +226,9 @@ class Observatory:
         )
 
         self._image_handlers: dict[str, ImageHandler] = {}
+        self._observatory_locations: dict[
+            str, EarthLocation
+        ] = {}  # Cache for observatory locations
 
         # for each telescope, create a donuts guider
         self.guider_manager = GuiderManager.from_observatory(self)
@@ -260,6 +263,58 @@ class Observatory:
             # TODO restart devices
 
         return self._config
+
+    def get_observatory_location(
+        self, telescope_name: str | None = None
+    ) -> EarthLocation | None:
+        """
+        Get observatory location for a telescope, using cache when available.
+
+        This method caches the EarthLocation object to avoid repeated ASCOM calls.
+        If telescope_name is not provided, uses the first available telescope.
+
+        Parameters:
+            telescope_name: Name of the telescope to get location for. If None, uses first telescope.
+
+        Returns:
+            EarthLocation object or None if no telescope available or location cannot be retrieved.
+        """
+        try:
+            import astropy.units as u
+            from astropy.coordinates import EarthLocation
+
+            if "Telescope" not in self.devices:
+                return None
+
+            # Get telescope name if not provided
+            if telescope_name is None:
+                telescope_name = next(iter(self.devices["Telescope"].keys()))
+
+            # Return cached location if available
+            if telescope_name in self._observatory_locations:
+                return self._observatory_locations[telescope_name]
+
+            # Fetch from telescope via ASCOM
+            telescope = self.devices["Telescope"][telescope_name]
+            obs_lat = telescope.get("SiteLatitude")
+            obs_lon = telescope.get("SiteLongitude")
+            obs_alt = telescope.get("SiteElevation")
+
+            location = EarthLocation(
+                lat=u.Quantity(obs_lat, u.deg),
+                lon=u.Quantity(obs_lon, u.deg),
+                height=u.Quantity(obs_alt, u.m),
+            )
+
+            # Cache the location
+            self._observatory_locations[telescope_name] = location
+            return location
+
+        except Exception as e:
+            self.logger.debug(
+                f"Could not get observatory location for {telescope_name}: {e}"
+            )
+            return None
 
     @property
     def devices(self) -> dict[str, dict[str, AlpacaDevice]]:
@@ -1432,16 +1487,9 @@ class Observatory:
             if "Telescope" in paired_devices:
                 telescope = paired_devices.telescope
 
-                # Get observatory location from telescope
-                obs_lat = telescope.get("SiteLatitude")
-                obs_lon = telescope.get("SiteLongitude")
-                obs_alt = telescope.get("SiteElevation")
-
-                obs_location = EarthLocation(
-                    lat=u.Quantity(obs_lat, u.deg),
-                    lon=u.Quantity(obs_lon, u.deg),
-                    height=u.Quantity(obs_alt, u.m),
-                )
+                # Get observatory location from telescope (cached)
+                telescope_name = paired_devices["Telescope"]
+                obs_location = self.get_observatory_location(telescope_name)
 
                 # Create AltAz coordinate
                 target_altaz = SkyCoord(
