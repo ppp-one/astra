@@ -592,8 +592,14 @@ class HeaderManager:
         logger: ObservatoryLogger,
         fits_config: pd.DataFrame,
     ):
+        length = df_images_filt.shape[0]
         for row_index, row in df_images_filt.iterrows():
             try:
+                # update logger every 10%
+                if row_index % max(1, length // 10) == 0:
+                    logger.info(
+                        f"Completing headers... {int((row_index / length) * 100)}%"
+                    )
                 HeaderManager._update_single_fits_file(
                     row_index,
                     row,
