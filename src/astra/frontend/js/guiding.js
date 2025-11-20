@@ -130,6 +130,12 @@ function plotGuidingData(telescopeName, data, container) {
         return;
     }
 
+    // Require at least 2 data points to create a meaningful graph
+    if (data.length < 2) {
+        console.warn(`Not enough guiding data to plot for telescope: ${telescopeName} (need at least 2 points, have ${data.length})`);
+        return;
+    }
+
     // Filter data to only show the last hour
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const filteredData = data.filter(d => new Date(d.datetime + 'Z') >= oneHourAgo);
