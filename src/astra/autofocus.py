@@ -114,7 +114,7 @@ class AstraCamera(CameraInterface):
         )
         if exposure_successful:
             with fits.open(filepath) as hdul:
-                image = hdul[0].data
+                image = hdul[0].data  # type: ignore
 
             # image = self.remove_hot_pixels(image, kernel_size=5)
         else:

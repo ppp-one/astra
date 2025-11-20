@@ -278,11 +278,11 @@ class BaseActionConfig:
             raise ValueError(f"subframe_height must be positive, got {subframe_height}")
 
         # Check center coordinates are in valid range [0, 1]
-        if not (0.0 <= subframe_center_x <= 1.0):
+        if not (0.0 <= subframe_center_x <= 1.0):  # type: ignore
             raise ValueError(
                 f"subframe_center_x must be between 0 and 1, got {subframe_center_x}"
             )
-        if not (0.0 <= subframe_center_y <= 1.0):
+        if not (0.0 <= subframe_center_y <= 1.0):  # type: ignore
             raise ValueError(
                 f"subframe_center_y must be between 0 and 1, got {subframe_center_y}"
             )
@@ -293,6 +293,22 @@ class BaseActionConfig:
                 "Both subframe_width and subframe_height must be specified together. "
                 f"Got: width={subframe_width}, height={subframe_height}"
             )
+
+    def validate_visibility(
+        self,
+        start_time: Time,
+        end_time: Time,
+        observatory_location: EarthLocation,
+        min_altitude: float = 0.0,
+    ):
+        """Validate that the target is visible during the scheduled observation window.
+
+        Checks target visibility at the beginning, middle, and end of the planned
+        observation to ensure the target remains observable throughout.
+
+        Only implemented for object actions; override in subclasses as needed.
+        """
+        return None
 
     def has_subframe(self) -> bool:
         """Check if subframing is enabled.
@@ -455,8 +471,8 @@ class ObjectActionConfig(BaseActionConfig):
 
         # Create target coordinate
         target = SkyCoord(
-            ra=self.ra * u.deg,
-            dec=self.dec * u.deg,
+            ra=u.Quantity(self.ra, "deg"),
+            dec=u.Quantity(self.dec, "deg"),
             frame="icrs",
         )
 
@@ -478,9 +494,9 @@ class ObjectActionConfig(BaseActionConfig):
             altaz_frame = AltAz(obstime=check_time, location=observatory_location)
             target_altaz = target.transform_to(altaz_frame)
 
-            altitude = target_altaz.alt.deg
+            altitude = target_altaz.alt.deg  # type: ignore
 
-            if altitude < min_altitude:
+            if altitude < min_altitude:  # type: ignore
                 visibility_issues.append(
                     f"{label}: altitude {altitude:.1f}° (below {min_altitude:.1f}° limit)"
                 )

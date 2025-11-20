@@ -1384,7 +1384,7 @@ class Observatory:
     def setup_observatory(
         self,
         paired_devices: PairedDevices | dict,
-        action_value: BaseActionConfig | dict,
+        action_value: BaseActionConfig,
         filter_list_index: int = 0,
     ) -> None:
         """
@@ -1453,8 +1453,8 @@ class Observatory:
                 # Transform to ICRS (RA/Dec) - results in degrees
                 target_radec = target_altaz.transform_to("icrs")
 
-                ra = target_radec.ra.deg  # RA in degrees
-                dec = target_radec.dec.deg  # Dec in degrees
+                ra = target_radec.ra.deg  # type: ignore
+                dec = target_radec.dec.deg  # type: ignore
 
                 self.logger.info(
                     f"Converted Alt/Az ({alt:.2f}°, {az:.2f}°) to RA/Dec ({ra:.2f}°, {dec:.2f}°)"

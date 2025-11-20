@@ -8,6 +8,7 @@ from typing import Dict, List, Type, Union
 
 import pandas as pd
 from astropy.coordinates import EarthLocation
+from astropy.time import Time
 
 from astra.action_configs import (
     ACTION_CONFIGS,
@@ -203,21 +204,12 @@ class Schedule(list[Action]):
         self.sort_by_start_time()
 
     @classmethod
-    def from_file(
-        cls,
-        filename: Union[str, Path],
-        filterwheel_names: dict[str, list[str]] | None = None,
-        observatory_location: EarthLocation | None = None,
-        min_altitude: float = 0.0,
-    ) -> "Schedule":
+    def from_file(cls, filename: Union[str, Path]) -> "Schedule":
         """
         Read a schedule file and return a Schedule instance with parsed schedule data.
 
         Args:
             filename: Path to the schedule file
-            filterwheel_names: Optional dict of filterwheel names to filter lists for validation
-            observatory_location: Optional EarthLocation for visibility checks
-            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
         """
         schedule_path = Path(filename)
         if schedule_path.exists() is False:
@@ -241,21 +233,11 @@ class Schedule(list[Action]):
             schedule.end_time, utc=True, format="mixed"
         )
         schedule = schedule.sort_values(by=["start_time"])
-        return cls.from_dataframe(
-            schedule,
-            filterwheel_names=filterwheel_names,
-            observatory_location=observatory_location,
-            min_altitude=min_altitude,
-        )
+        return cls.from_dataframe(schedule)
 
     @classmethod
     def from_dataframe(
-        cls,
-        df: pd.DataFrame,
-        observatory_config: object | None = None,
-        filterwheel_names: dict[str, list[str]] | None = None,
-        observatory_location: EarthLocation | None = None,
-        min_altitude: float = 0.0,
+        cls, df: pd.DataFrame, observatory_config: object | None = None
     ) -> "Schedule":
         """
         Construct a Schedule instance from a pandas DataFrame.
@@ -263,10 +245,6 @@ class Schedule(list[Action]):
         Args:
             df: DataFrame with schedule data
             observatory_config: Optional observatory configuration
-            filterwheel_names: Optional dict mapping filterwheel names to their filter lists
-                              for validation. e.g., {"fw1": ["Clear", "Red", "Green"]}
-            observatory_location: Optional EarthLocation for visibility checks
-            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
         """
         actions = []
         for _, action in df.iterrows():
@@ -280,38 +258,6 @@ class Schedule(list[Action]):
             )
 
             action_config = config_cls.from_dict(action_value, default_dict)
-
-            # Validate filters if filterwheel_names provided
-            if filterwheel_names:
-                try:
-                    action_config.validate_filters(filterwheel_names)
-                except ValueError as e:
-                    raise ValueError(
-                        f"Filter validation failed for {action_type} action on device "
-                        f"{action['device_name']}: {e}"
-                    )
-
-            # Validate visibility for object actions if observatory location provided
-            if (
-                observatory_location is not None
-                and action_type == "object"
-                and hasattr(action_config, "validate_visibility")
-            ):
-                try:
-                    from astropy.time import Time
-
-                    action_config.validate_visibility(
-                        start_time=Time(action["start_time"]),
-                        end_time=Time(action["end_time"]),
-                        observatory_location=observatory_location,
-                        min_altitude=min_altitude,
-                    )
-                except ValueError as e:
-                    raise ValueError(
-                        f"Visibility validation failed for object action on device "
-                        f"{action['device_name']}: {e}"
-                    )
-
             actions.append(
                 Action(
                     device_name=action["device_name"],
@@ -347,9 +293,48 @@ class Schedule(list[Action]):
         for i, updated_action in enumerate(new_actions):
             self[i] = updated_action
 
-    def validate(self):
-        for row in self:
-            row.validate()
+    def validate(
+        self,
+        filterwheel_names: dict[str, list[str]] | None = None,
+        observatory_location: EarthLocation | None = None,
+        min_altitude: float = 0.0,
+    ):
+        """Validate the schedule actions.
+
+        Args:
+            filterwheel_names: Optional dict mapping filterwheel names to their filter lists
+                              for validation. e.g., {"fw1": ["Clear", "Red", "Green"]}
+            observatory_location: Optional EarthLocation for visibility checks
+            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
+
+        Raises:
+            ValueError: If any action fails validation.
+        """
+        for action in self:
+            action.validate()
+
+            if filterwheel_names is not None:
+                try:
+                    action.action_value.validate_filters(filterwheel_names)
+                except ValueError as e:
+                    raise ValueError(
+                        f"Filter validation failed for {action.action_type} "
+                        f"action on device {action['device_name']}: {e}"
+                    )
+
+            if observatory_location is not None:
+                try:
+                    action.action_value.validate_visibility(
+                        start_time=Time(action["start_time"]),
+                        end_time=Time(action["end_time"]),
+                        observatory_location=observatory_location,
+                        min_altitude=min_altitude,
+                    )
+                except ValueError as e:
+                    raise ValueError(
+                        f"Visibility validation failed for object action on device "
+                        f"{action['device_name']}: {e}"
+                    )
 
     def get_by_device(self, device_name: str) -> List[Action]:
         return [action for action in self if action.device_name == device_name]
@@ -561,18 +546,11 @@ class ScheduleManager:
                 self.schedule_mtime = schedule_mtime
 
                 try:
-                    # Get filterwheel names for validation
-                    filterwheel_names = self.get_filterwheel_names()
-
-                    # Get observatory location for visibility checks
-                    observatory_location = self.get_observatory_location()
-
-                    schedule = Schedule.from_file(
-                        self.schedule_path,
-                        filterwheel_names=filterwheel_names,
-                        observatory_location=observatory_location,
+                    schedule = Schedule.from_file(self.schedule_path)
+                    schedule.validate(
+                        filterwheel_names=self.get_filterwheel_names(),
+                        observatory_location=self.get_observatory_location(),
                     )
-                    schedule.validate()
                     self.logger.info(f"Schedule read: {schedule.to_one_line_string()}")
                     if self.truncate_factor is not None:
                         schedule.update_times(self.truncate_factor)
