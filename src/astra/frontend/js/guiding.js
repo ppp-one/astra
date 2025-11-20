@@ -126,6 +126,7 @@ function plotAllGuidingData(activeTelescopeNames) {
  */
 function plotGuidingData(telescopeName, data, container) {
     if (!data || data.length === 0) {
+        console.warn(`No guiding data to plot for telescope: ${telescopeName}`);
         return;
     }
 
@@ -134,6 +135,7 @@ function plotGuidingData(telescopeName, data, container) {
     const filteredData = data.filter(d => new Date(d.datetime + 'Z') >= oneHourAgo);
 
     if (filteredData.length === 0) {
+        console.warn(`No recent guiding data to plot for telescope: ${telescopeName}`);
         return;
     }
 

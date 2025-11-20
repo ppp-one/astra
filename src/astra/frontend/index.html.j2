@@ -962,10 +962,16 @@
                     // get height of the div that is visible
                     let visibleHeight = div.clientHeight;
 
-                    // console.log("b", scrollPos, visibleHeight, scrollPos + visibleHeight, divHeight, scrollPos + visibleHeight - divHeight);
-                    // console.log(log.length, scrollPos + visibleHeight + 300, 100 * log.length, divHeight)
+                    let misc = scrollPos + visibleHeight - divHeight;
+
+                    // console.log(scrollPos + visibleHeight + 300 + 100 * log.length >= divHeight && misc <= -10);
+                    // console.log("misc:", misc);
+                    // console.log("log length:", log.length);
+                    // console.log("scrollPos", scrollPos);
+                    // console.log("visibleHeight", visibleHeight);
+                    // console.log("divHeight", divHeight);
                     // if the div is scrolled to the bottom
-                    if (scrollPos + visibleHeight + 300 + 100 * log.length >= divHeight && log.length > 0) {
+                    if (scrollPos + visibleHeight + 300 + 100 * log.length >= divHeight && misc <= -10) {
                         div.scrollTop = div.scrollHeight;
                     }
 
@@ -973,7 +979,7 @@
                         // get datetime of first log by getting title of first child
                         let firstLog = divChild.firstElementChild.firstElementChild.title;
 
-                        fetch('/api/log/?datetime=' + firstLog)
+                        fetch('/api/log?datetime=' + firstLog)
                             .then(response => response.json())
                             .then(data => {
 
