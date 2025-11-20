@@ -150,7 +150,7 @@ function plotGuidingData(telescopeName, data, container) {
     // Add telescope name label
     const label = document.createElement('div');
     label.className = 'text-xs font-medium text-gray-400 mb-1';
-    label.textContent = telescopeName;
+    label.textContent = telescopeName + "'s Guiding Performance";
     chartWrapper.appendChild(label);
 
     // Create plot for both axes
