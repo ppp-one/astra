@@ -319,7 +319,7 @@ class Schedule(list[Action]):
                 except ValueError as e:
                     raise ValueError(
                         f"Filter validation failed for {action.action_type} "
-                        f"action on device {action['device_name']}: {e}"
+                        f"action on device {action.device_name}: {e}"
                     )
 
             if observatory_location is not None:
@@ -333,7 +333,7 @@ class Schedule(list[Action]):
                 except ValueError as e:
                     raise ValueError(
                         f"Visibility validation failed for object action on device "
-                        f"{action['device_name']}: {e}"
+                        f"{action.device_name}: {e}"
                     )
 
     def get_by_device(self, device_name: str) -> List[Action]:
