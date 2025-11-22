@@ -29,9 +29,10 @@ from pathlib import Path
 
 import httpx
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import uvicorn
-from astropy.coordinates import AltAz, EarthLocation, get_sun
+from astropy.coordinates import AltAz, EarthLocation, get_body, get_sun
 from astropy.io import fits
 from astropy.time import Time
 from astropy.visualization import ZScaleInterval
@@ -69,6 +70,10 @@ CUSTOM_OBSERVATORY = None
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
 TWILIGHT_CACHE_TIME = None
+
+# Celestial data cache: stores celestial body positions for sky projection
+CELESTIAL_CACHE = None
+CELESTIAL_CACHE_TIME = None
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -688,6 +693,131 @@ def calculate_twilight_periods(
     TWILIGHT_CACHE_TIME = datetime.datetime.now(UTC)
 
     return periods
+
+
+def calculate_celestial_data(obs_location: EarthLocation) -> dict:
+    """Calculate positions of celestial objects for all-sky projection.
+
+    Args:
+        obs_location: Observatory location as EarthLocation
+
+    Returns:
+        Dictionary with observatory info, UTC time, and celestial body data
+    """
+    global CELESTIAL_CACHE, CELESTIAL_CACHE_TIME
+
+    # Check cache (valid for 1 minute)
+    if CELESTIAL_CACHE is not None and CELESTIAL_CACHE_TIME is not None:
+        cache_age = (datetime.datetime.now(UTC) - CELESTIAL_CACHE_TIME).total_seconds()
+        if cache_age < 60:
+            return CELESTIAL_CACHE
+
+    current_time = Time.now()
+    altaz_frame = AltAz(obstime=current_time, location=obs_location)
+
+    celestial_bodies = []
+
+    # Sun
+    try:
+        sun = get_sun(current_time)
+        sun_altaz = sun.transform_to(altaz_frame)
+        celestial_bodies.append(
+            {
+                "name": "Sun",
+                "alt": float(sun_altaz.alt.degree),
+                "az": float(sun_altaz.az.degree),
+                "type": "sun",
+                "magnitude": -26.74,
+            }
+        )
+    except Exception as e:
+        logger.warning(f"Error calculating sun position: {e}")
+
+    # Moon
+    try:
+        moon = get_body("moon", current_time)
+        moon_altaz = moon.transform_to(altaz_frame)
+
+        # Calculate moon phase (illumination fraction)
+        sun = get_sun(current_time)
+        elongation = sun.separation(moon).degree
+        phase = (1 - np.cos(np.radians(elongation))) / 2  # 0=new, 1=full
+
+        celestial_bodies.append(
+            {
+                "name": "Moon",
+                "alt": float(moon_altaz.alt.degree),
+                "az": float(moon_altaz.az.degree),
+                "type": "moon",
+                "magnitude": -12.0,  # Approximate full moon magnitude
+                "phase": float(phase),  # Illumination fraction 0-1
+            }
+        )
+    except Exception as e:
+        logger.warning(f"Error calculating moon position: {e}")
+
+    # Planets
+    planets = {
+        "mercury": ("Mercury", -1.9),
+        "venus": ("Venus", -4.4),
+        "mars": ("Mars", -2.9),
+        "jupiter": ("Jupiter", -2.9),
+        "saturn": ("Saturn", 0.0),
+    }
+
+    for planet_key, (planet_name, magnitude) in planets.items():
+        try:
+            planet = get_body(planet_key, current_time)
+            planet_altaz = planet.transform_to(altaz_frame)
+            celestial_bodies.append(
+                {
+                    "name": planet_name,
+                    "alt": float(planet_altaz.alt.degree),
+                    "az": float(planet_altaz.az.degree),
+                    "type": "planet",
+                    "magnitude": magnitude,
+                }
+            )
+        except Exception as e:
+            logger.warning(f"Error calculating {planet_name} position: {e}")
+
+    result = {
+        "observatory": {
+            "lat": float(obs_location.lat.degree),
+            "lon": float(obs_location.lon.degree),
+            "elevation": float(obs_location.height.value),
+        },
+        "utc_time": current_time.iso,
+        "celestial_bodies": celestial_bodies,
+    }
+
+    # Cache result
+    CELESTIAL_CACHE = result
+    CELESTIAL_CACHE_TIME = datetime.datetime.now(UTC)
+
+    return result
+
+
+@app.get("/api/sky_data")
+async def sky_data():
+    """Get celestial body positions for all-sky projection.
+
+    Returns:
+        dict: JSON response with observatory location, time, and celestial body positions
+    """
+    obs = OBSERVATORY
+
+    try:
+        obs_location = obs.get_observatory_location()
+        data = calculate_celestial_data(obs_location)
+        return {"status": "success", "data": data, "message": ""}
+    except Exception as e:
+        logger.warning(f"Error calculating sky data: {e}", exc_info=True)
+        return {
+            "status": "error",
+            "data": None,
+            "message": f"Error calculating sky data: {str(e)}",
+        }
 
 
 @app.get("/api/db/polling/{device_type}")

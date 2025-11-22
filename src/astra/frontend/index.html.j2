@@ -13,6 +13,7 @@
 
     <script type="text/javascript" src="/js/weather.js"></script>
     <script type="text/javascript" src="/js/guiding.js"></script>
+    <script type="text/javascript" src="/js/sky_projection.js"></script>
     <link rel="icon" href="/favicon.svg">
     <style>
         g[aria-label="tip"] {
@@ -267,7 +268,13 @@
 
                     {% elif nav == 'Controls' %}
 
-                    <div class="flex flex-col flex-grow place-content-center items-center my-auto">
+                    <div class="flex flex-col flex-grow place-content-start items-center my-auto overflow-y-auto">
+                        <!-- Sky Chart -->
+                        <div id="sky-chart-container" class="w-full mb-6 flex justify-center">
+                            <div id="sky-chart" class="flex justify-center items-center"></div>
+                        </div>
+
+                        <!-- Control Buttons -->
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl px-4 my-4">
 
                             <button
@@ -902,6 +909,22 @@
                 // check for guiding status changes
                 updateGuidingStatus(message['table0']);
 
+                // update telescope positions in sky chart
+                if (typeof updateTelescopePositions === 'function') {
+                    const telescopeData = message['table0']
+                        .filter(item => item.item === 'Telescope')
+                        .map(item => ({
+                            name: item.name,
+                            alt: item.polled?.Altitude?.value || 0,
+                            az: item.polled?.Azimuth?.value || 0,
+                            ra: item.polled?.RightAscension?.value || 0, // Convert hours to degrees
+                            dec: item.polled?.Declination?.value || 0
+                        }))
+                        .filter(tel => tel.alt !== 0 || tel.az !== 0); // Filter out invalid positions
+                    
+                    updateTelescopePositions(telescopeData);
+                }
+
                 // update robotic switch toggle
                 if (message['table1'][4]['item'] == "robotic switch") {
 
@@ -1150,6 +1173,11 @@
         setInterval(function () {
             updateGuidingChart(update = true);
         }, 5000);
+
+        // Initialize sky chart
+        if (typeof initializeSkyChart === 'function') {
+            initializeSkyChart();
+        }
 
     </script>
 
