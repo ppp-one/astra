@@ -66,6 +66,7 @@ LAST_IMAGE_JPG = None
 USEFUL_HEADERS = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
+SERVER_URL = None
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -227,6 +228,7 @@ async def lifespan(app: FastAPI):
     """
     # Load observatories
     load_observatories()
+    logger.info(f"Astra version {ASTRA_VER} started at {SERVER_URL}")
     yield
     # Clean up
     clean_up()
@@ -1611,7 +1613,7 @@ def main():
     )
     logging.Formatter.converter = time.gmtime
 
-    global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
+    global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY, SERVER_URL
 
     logger.info(f"Astra version: {ASTRA_VER}")
 
@@ -1665,6 +1667,9 @@ def main():
     log_level = "info" if not DEBUG else "debug"
     if log_level == "info":
         logging.getLogger().setLevel(logging.INFO)
+
+    SERVER_URL = f"http://localhost:{args.port}"
+
     uvicorn.run(
         app,
         host="0.0.0.0",
