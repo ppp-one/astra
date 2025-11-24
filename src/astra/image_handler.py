@@ -25,7 +25,9 @@ from typing import List, Optional, Union
 import numpy as np
 import pandas as pd
 from alpaca.camera import ImageMetadata
+from astropy.coordinates import AltAz, EarthLocation, get_sun
 from astropy.io import fits
+from astropy.time import Time
 from astropy.wcs.utils import WCS
 
 from astra import Config
@@ -131,8 +133,9 @@ class ImageHandler:
         filename_templates = FilenameTemplates.from_dict(
             observatory_config.get("Misc", {}).get("filename_templates", {})
         )
-        last_action_start_time = cls.get_default_action_start_time(
-            header.get("LONG-OBS")  # type: ignore
+        location = header.get_observatory_location()
+        last_action_start_time = cls.get_observing_night_date(
+            datetime.datetime.now(datetime.UTC), location
         )
 
         return cls(
@@ -350,6 +353,52 @@ class ImageHandler:
 
     def get_observatory_location(self):
         return self.header.get_observatory_location()
+
+    @staticmethod
+    def get_observing_night_date(
+        observation_time: datetime.datetime, location: EarthLocation
+    ) -> datetime.datetime:
+        """
+        Calculate the observing night date based on the sun's position.
+
+        If the sun is up, the date is the current local date.
+        If the sun is down:
+            - If it's morning (before noon), the date is yesterday.
+            - If it's evening (after noon), the date is today.
+
+        Parameters:
+            observation_time (datetime.datetime): The time of observation (UTC).
+            location (EarthLocation): The location of the observatory.
+
+        Returns:
+            datetime.datetime: The observing night date (at midnight).
+        """
+        print("Calculating observing night date...")
+        # Calculate sun altitude
+        time = Time(observation_time, location=location)
+        sun = get_sun(time)
+        altaz = sun.transform_to(AltAz(obstime=time, location=location))
+
+        # Get local time
+        longitude = location.lon.deg
+        local_time = observation_time + datetime.timedelta(hours=longitude / 15)
+
+        if altaz.alt.deg > 0:
+            # Sun is Up -> Today
+            obs_date = local_time.date()
+        else:
+            # Sun is Down
+            if local_time.hour < 12:
+                # Morning -> Yesterday
+                obs_date = local_time.date() - datetime.timedelta(days=1)
+            else:
+                # Evening -> Today
+                obs_date = local_time.date()
+        print(
+            f"Observing night date determined as {datetime.datetime.combine(obs_date, datetime.time.min)}"
+        )
+
+        return datetime.datetime.combine(obs_date, datetime.time.min)
 
     @staticmethod
     def get_default_action_start_time(longitude: float = 0):

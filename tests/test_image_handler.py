@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pytest
 from alpaca.camera import ImageMetadata
+from astropy.coordinates import EarthLocation
 from astropy.io import fits
 
 from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
@@ -555,8 +556,8 @@ class TestImageHandler:
 
     @patch("astra.image_handler.HeaderManager.get_base_header")
     @patch("astra.image_handler.FilenameTemplates.from_dict")
-    @patch("astra.image_handler.ImageHandler.get_default_action_start_time")
-    def test_from_action(self, mock_get_time, mock_from_dict, mock_get_header):
+    @patch("astra.image_handler.ImageHandler.get_observing_night_date")
+    def test_from_action(self, mock_get_date, mock_from_dict, mock_get_header):
         mock_action = Mock()
         mock_action.action_value = {"dir": "/tmp/test"}
         mock_paired_devices = Mock()
@@ -566,7 +567,7 @@ class TestImageHandler:
         mock_logger = Mock()
         mock_get_header.return_value = ObservatoryHeader.get_test_header()
         mock_from_dict.return_value = FilenameTemplates()
-        mock_get_time.return_value = datetime.datetime.now(datetime.UTC)
+        mock_get_date.return_value = datetime.datetime(2025, 1, 1)
 
         handler = ImageHandler.from_action(
             mock_action,
@@ -577,6 +578,37 @@ class TestImageHandler:
         )
         assert isinstance(handler, ImageHandler)
         assert handler.image_directory == Path("/tmp/test")
+        assert handler.last_action_start_time == datetime.datetime(2025, 1, 1)
+
+    @patch("astra.image_handler.get_sun")
+    @patch("astra.image_handler.AltAz")
+    def test_get_observing_night_date(self, mock_altaz_cls, mock_get_sun):
+        # Setup real location (Longitude 0 for simplicity)
+        location = EarthLocation(lat=0, lon=0, height=0)
+
+        # Mock sun object and its transformation
+        mock_sun = Mock()
+        mock_get_sun.return_value = mock_sun
+        mock_coord = Mock()
+        mock_sun.transform_to.return_value = mock_coord
+
+        # Test Case 1: Sun Up -> Today
+        mock_coord.alt.deg = 10.0  # Sun is up
+        obs_time = datetime.datetime(2025, 1, 1, 12, 0, 0)
+        result = ImageHandler.get_observing_night_date(obs_time, location)
+        assert result == datetime.datetime(2025, 1, 1, 0, 0, 0)
+
+        # Test Case 2: Sun Down, Morning -> Yesterday
+        mock_coord.alt.deg = -10.0  # Sun is down
+        obs_time = datetime.datetime(2025, 1, 1, 2, 0, 0)  # 2 AM
+        result = ImageHandler.get_observing_night_date(obs_time, location)
+        assert result == datetime.datetime(2024, 12, 31, 0, 0, 0)
+
+        # Test Case 3: Sun Down, Evening -> Today
+        mock_coord.alt.deg = -10.0  # Sun is down
+        obs_time = datetime.datetime(2025, 1, 1, 22, 0, 0)  # 10 PM
+        result = ImageHandler.get_observing_night_date(obs_time, location)
+        assert result == datetime.datetime(2025, 1, 1, 0, 0, 0)
 
     def test_get_file_path(self, temp_config):
         header = ObservatoryHeader.get_test_header()
