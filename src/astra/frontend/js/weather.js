@@ -350,7 +350,7 @@ function plotWeather(data, update) {
         twilight_periods
     ) => {
         const plotContainer = document.getElementById(`weather-chart`);
-        const first_datetime = weather_data[0].datetime;
+        const first_datetime = new Date(weather_data[0].datetime + 'Z');
 
         weather_parameters.forEach((parameter) => {
             if (parameter === "WindDirection" || parameter === "datetime") return;
@@ -370,8 +370,8 @@ function plotWeather(data, update) {
                 let startDate = new Date(period.start);
 
                 // if first mapping take startDate as first_datetime
-                if (i === 0) {
-                    startDate = new Date(first_datetime + 'Z');
+                if (i === 0 && startDate > first_datetime) {
+                    startDate = first_datetime;
                 }
 
                 return Plot.rect([period], {
