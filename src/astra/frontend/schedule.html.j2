@@ -853,10 +853,10 @@
                             <input type="datetime-local" 
                                    value="${formatDateTimeLocal(item.start_time)}" 
                                    step="1"
-                                   class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                                   class="flex-1 min-w-0 bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                    onchange="updateItem(${index}, 'start_time', this.value)">
                             <button onclick="setNow(${index}, 'start_time')" 
-                                    class="p-1.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded-lg text-gray-400 hover:text-white transition-colors"
+                                    class="flex-shrink-0 p-1.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded-lg text-gray-400 hover:text-white transition-colors"
                                     title="Set to current UTC time">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -869,10 +869,10 @@
                             <input type="datetime-local" 
                                    value="${formatDateTimeLocal(item.end_time)}" 
                                    step="1"
-                                   class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
+                                   class="flex-1 min-w-0 bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                    onchange="updateItem(${index}, 'end_time', this.value)">
                             <button onclick="setNow(${index}, 'end_time')" 
-                                    class="p-1.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded-lg text-gray-400 hover:text-white transition-colors"
+                                    class="flex-shrink-0 p-1.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded-lg text-gray-400 hover:text-white transition-colors"
                                     title="Set to current UTC time">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
