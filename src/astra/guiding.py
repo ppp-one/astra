@@ -263,8 +263,8 @@ class CustomImageClass(Image):
         mean, median, std = sigma_clipped_stats(self.raw_image, sigma=3.0)
 
         # remove noise floor
-        self.raw_image -= median + 5 * std
-        self.raw_image[self.raw_image < 0] = 1
+        self.raw_image -= median + 7 * std
+        self.raw_image[self.raw_image < 0] = 0
 
 
 class Guider:
