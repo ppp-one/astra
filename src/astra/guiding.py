@@ -773,10 +773,6 @@ class Guider:
             """
         qry_args = (tnow, field, filt, exptime, camera, pierside)
         self.database_manager.execute(qry % qry_args)
-        self.logger.info(
-            f"Cleared guiding reference for field={field}, filter={filt}, "
-            f"exptime={exptime}, camera={camera}, pierside={pierside}"
-        )
         self.logMessageToDb(
             camera,
             f"Reference cleared for field={field}, filter={filt}, pierside={pierside}",
