@@ -125,7 +125,7 @@ Capture a sequence of light frames:
     - ``dir``: Absolute directory path for saving images (string, default: auto-generated as ~/Documents/Astra/images/YYYYMMDD where YYYYMMDD is the local night's date calculated from schedule's UTC start time plus site longitude offset in hours)
     - ``execute_parallel``: Whether to execute the sequence in parallel mode (boolean, default: false)
     - ``disable_telescope_movement``: Whether to disable telescope movement during the sequence (boolean, default: false)
-    - ``reset_guiding_reference``: Reset the guiding reference frame at the start of the sequence (boolean, default: false)
+    - ``reset_guiding_reference``: Reset the guiding reference frame at the start of the sequence (boolean, default: true)
     - ``subframe_width``: Width of subframe region in binned pixels (int, default: None for full frame)
     - ``subframe_height``: Height of subframe region in binned pixels (int, default: None for full frame)
     - ``subframe_center_x``: Horizontal center position of subframe, 0.0=left, 0.5=center, 1.0=right (float, default: 0.5)

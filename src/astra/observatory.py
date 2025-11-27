@@ -2205,7 +2205,7 @@ class Observatory:
                         paired_devices=paired_devices,
                         thread_manager=self.thread_manager,
                         reset_guiding_reference=action_value.get(
-                            "reset_guiding_reference", False
+                            "reset_guiding_reference", True
                         ),
                     )
 

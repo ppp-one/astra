@@ -33,7 +33,7 @@ Installation Steps
        conda create -n astra_env python=3.11
        conda activate astra_env
 
-   * Using venv:
+   * Or, using venv:
    
      .. code-block:: bash
 

@@ -396,7 +396,7 @@ class ObjectActionConfig(BaseActionConfig):
     dir: Optional[str] = None
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
-    reset_guiding_reference: bool = False
+    reset_guiding_reference: bool = True
     subframe_width: Optional[int] = None
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5

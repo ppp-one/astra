@@ -106,7 +106,7 @@ class GuiderManager:
         image_handler: ImageHandler,
         paired_devices: PairedDevices,
         thread_manager: ThreadManager,
-        reset_guiding_reference: bool = False,
+        reset_guiding_reference: bool = True,
     ) -> bool:
         """
         Start the autoguiding system for telescope tracking.
@@ -122,7 +122,7 @@ class GuiderManager:
             thread_manager (ThreadManager): Thread manager for tracking guiding thread.
             reset_guiding_reference (bool, optional): If True, clears existing reference
                 image from database before starting guiding, forcing creation of a new
-                reference. Defaults to False.
+                reference. Defaults to True.
 
         Returns:
             bool: True if guider was started successfully, False otherwise.
