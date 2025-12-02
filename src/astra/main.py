@@ -356,11 +356,16 @@ def cool_camera(device_name: str):
 
     camera = obs.devices["Camera"][device_name]
 
-    current_temperature = camera.poll_latest()["CCDTemperature"]["value"]
-
-    obs.logger.info(
-        f"Current camera temperature: {current_temperature}C, Set temperature: {set_temperature}C"
-    )
+    poll_data = camera.poll_latest()
+    if poll_data is not None and "CCDTemperature" in poll_data:
+        current_temperature = poll_data["CCDTemperature"]["value"]
+        obs.logger.info(
+            f"Current camera temperature: {current_temperature}C, Set temperature: {set_temperature}C"
+        )
+    else:
+        obs.logger.info(
+            f"Camera temperature unavailable, cooling to set temperature: {set_temperature}C"
+        )
 
     obs.cool_camera(
         device_name=device_name,

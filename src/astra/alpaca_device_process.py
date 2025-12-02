@@ -17,6 +17,7 @@ import signal
 import time
 from datetime import UTC, datetime
 from multiprocessing import Lock, Pipe, Process
+from threading import Lock as ThreadingLock
 from threading import Thread
 from typing import Any, Dict, List, Optional, Union
 
@@ -190,9 +191,17 @@ class AlpacaDevice(Process):
         }
         self.connectable = connectable
 
-        self._poll_list = []
-        self._poll_latest = {}
+        self._poll_list: List[str] = []
+        self._poll_latest: Dict[str, Dict[str, Any]] = {}
         self._poll_pause = False
+
+        # _poll_lock is created in run() because threading.Lock cannot be pickled
+        # for subprocess spawning on macOS
+        self._poll_lock: Optional[ThreadingLock] = None
+
+        # Cache for poll_latest in main process - allows non-blocking reads
+        # when get/set operations hold the lock
+        self._cached_poll_latest: Dict[str, Dict[str, Any]] = {}
 
         self.queue.put(
             (
@@ -305,22 +314,41 @@ class AlpacaDevice(Process):
     def poll_latest(self) -> Dict[str, Dict[str, Any]]:
         """Get latest polling results for all active methods.
 
+        Uses non-blocking lock acquisition to avoid blocking the WebSocket
+        when get/set operations are in progress. If the lock is unavailable,
+        returns cached data from the last successful read.
+
         Returns:
             Dict[str, Dict[str, Any]]: Dictionary mapping method names to
                                      their latest values and timestamps.
-
-        Raises:
-            Exception: If latest polling data retrieval fails.
+                                     Returns None if cache is empty and lock
+                                     is unavailable.
         """
-        with self.lock:
+        # Try non-blocking lock acquisition
+        acquired = self.lock.acquire(block=False)
+        if not acquired:
+            # Lock held by get/set - return cached data immediately
+            # This prevents WebSocket blocking during slow device operations
+            # Return None if cache is empty to match caller expectations
+            if not self._cached_poll_latest:
+                return None  # type: ignore[return-value]
+            return dict(self._cached_poll_latest)
+
+        try:
             self.front_pipe.send("poll_latest")
             msg = self.front_pipe.recv()
             if isinstance(msg, Exception):
-                raise AlpacaDeviceError.from_device(
-                    device=self, exc=msg, method_name="poll_latest"
-                )
+                # On error, still return cached data rather than raising
+                # to keep WebSocket responsive
+                if not self._cached_poll_latest:
+                    return None  # type: ignore[return-value]
+                return dict(self._cached_poll_latest)
             else:
+                # Update cache with fresh data
+                self._cached_poll_latest = msg
                 return msg
+        finally:
+            self.lock.release()
 
     def stop(self) -> None:
         """Stop the device process and clean up resources."""
@@ -349,6 +377,9 @@ class AlpacaDevice(Process):
         and inter-process communication. Sets up signal handlers for
         graceful shutdown.
         """
+        # Create threading lock here because it cannot be pickled for subprocess spawning
+        self._poll_lock = ThreadingLock()
+
         self.queue.put(
             (
                 self.metadata,
@@ -677,12 +708,15 @@ class AlpacaDevice(Process):
             method (str): Name of the device method to poll.
             delay (float): Polling interval in seconds.
         """
-        self._poll_list.append(method)
-        self._poll_latest[method] = {}
-        self._poll_latest[method]["value"] = None
-        self._poll_latest[method]["datetime"] = None
+        with self._poll_lock:
+            self._poll_list.append(method)
+            self._poll_latest[method] = {"value": None, "datetime": None}
         try:
-            while method in self._poll_list:
+            while True:
+                # Check if we should continue polling (under lock)
+                with self._poll_lock:
+                    if method not in self._poll_list:
+                        break
                 if not self._poll_pause:
                     get = self.get__(method, pipe=False)
                     if get["status"] == "success":
@@ -722,8 +756,12 @@ class AlpacaDevice(Process):
                         # or parent process has exited. Record a minimal local
                         # failure state and stop polling this method.
                         dt = datetime.now(UTC)
-                        self._poll_latest[method]["datetime"] = dt
-                        self._poll_latest[method]["value"] = "null"
+                        with self._poll_lock:
+                            if method in self._poll_latest:
+                                self._poll_latest[method]["datetime"] = dt
+                                self._poll_latest[method]["value"] = "null"
+                            if method in self._poll_list:
+                                self._poll_list.remove(method)
                         try:
                             print(
                                 f"loop__: queue.put failed for {self.device_type} {self.device_name} {method}: {q_exc}"
@@ -731,23 +769,23 @@ class AlpacaDevice(Process):
                         except Exception:
                             # best effort to not raise from the exception handler
                             pass
-                        # remove this method from the poll list to stop the loop
-                        try:
-                            if method in self._poll_list:
-                                self._poll_list.remove(method)
-                        except Exception:
-                            pass
                         break
 
-                    self._poll_latest[method]["value"] = val
-                    self._poll_latest[method]["datetime"] = dt
+                    with self._poll_lock:
+                        if method in self._poll_latest:
+                            self._poll_latest[method]["value"] = val
+                            self._poll_latest[method]["datetime"] = dt
 
                     time.sleep(delay)
                 time.sleep(0)
         except Exception as e:
             dt = datetime.now(UTC)
-            self._poll_latest[method]["datetime"] = dt
-            self._poll_latest[method]["value"] = "null"
+            with self._poll_lock:
+                if method in self._poll_latest:
+                    self._poll_latest[method]["datetime"] = dt
+                    self._poll_latest[method]["value"] = "null"
+                if method in self._poll_list:
+                    self._poll_list.remove(method)
 
             # try to enqueue an error log; if the queue is gone, fallback to
             # printing and stop polling this method.
@@ -772,12 +810,6 @@ class AlpacaDevice(Process):
                     )
                 except Exception:
                     pass
-            # ensure the poll is stopped
-            try:
-                if method in self._poll_list:
-                    self._poll_list.remove(method)
-            except Exception:
-                pass
 
     def start_poll__(self, method: str, delay: float) -> None:
         """Start a new polling thread for the specified method.
@@ -809,57 +841,61 @@ class AlpacaDevice(Process):
             method (Optional[str]): Method name to stop polling, or None for all.
             *args: Additional arguments (used for signal handlers).
         """
-        if method is None:
-            self._poll_list = []
-            self._poll_latest = {}
-            self.queue.put(
-                (
-                    self.metadata,
-                    {
-                        "type": "log",
-                        "data": (
-                            "info",
-                            f"{self.device_type}, {self.device_name}, all polls stopped",
-                        ),
-                    },
+        with self._poll_lock:
+            if method is None:
+                self._poll_list = []
+                self._poll_latest = {}
+                self.queue.put(
+                    (
+                        self.metadata,
+                        {
+                            "type": "log",
+                            "data": (
+                                "info",
+                                f"{self.device_type}, {self.device_name}, all polls stopped",
+                            ),
+                        },
+                    )
                 )
-            )
-        elif method in self._poll_list:
-            self._poll_list = list(filter((method).__ne__, self._poll_list))
-            del self._poll_latest[method]
-            self.queue.put(
-                (
-                    self.metadata,
-                    {
-                        "type": "log",
-                        "data": (
-                            "info",
-                            f"{self.device_type}, {self.device_name}, {method} poll stopped."
-                            f"{self._poll_list} left in poll list, and {self._poll_latest} "
-                            "left in poll dict",
-                        ),
-                    },
+            elif method in self._poll_list:
+                self._poll_list = list(filter((method).__ne__, self._poll_list))
+                del self._poll_latest[method]
+                self.queue.put(
+                    (
+                        self.metadata,
+                        {
+                            "type": "log",
+                            "data": (
+                                "info",
+                                f"{self.device_type}, {self.device_name}, {method} poll stopped."
+                                f"{self._poll_list} left in poll list, and {self._poll_latest} "
+                                "left in poll dict",
+                            ),
+                        },
+                    )
                 )
-            )
-        else:
-            self.queue.put(
-                (
-                    self.metadata,
-                    {
-                        "type": "log",
-                        "data": (
-                            "warning",
-                            f"Stop poll error: {self.device_type}, {self.device_name}, "
-                            f"{method} not in poll list.",
-                        ),
-                    },
+            else:
+                self.queue.put(
+                    (
+                        self.metadata,
+                        {
+                            "type": "log",
+                            "data": (
+                                "warning",
+                                f"Stop poll error: {self.device_type}, {self.device_name}, "
+                                f"{method} not in poll list.",
+                            ),
+                        },
+                    )
                 )
-            )
 
     def poll_list__(self) -> None:
         """Send current polling list via pipe."""
         try:
-            self.back_pipe.send(self._poll_list)
+            with self._poll_lock:
+                # Send a copy to avoid iteration issues during pickling
+                snapshot = list(self._poll_list)
+            self.back_pipe.send(snapshot)
         except Exception as e:
             self.queue.put(
                 (
@@ -879,7 +915,10 @@ class AlpacaDevice(Process):
     def poll_latest__(self) -> None:
         """Send latest polling results via pipe."""
         try:
-            self.back_pipe.send(self._poll_latest)
+            with self._poll_lock:
+                # Send a deep copy to avoid iteration issues during pickling
+                snapshot = {k: dict(v) for k, v in self._poll_latest.items()}
+            self.back_pipe.send(snapshot)
         except Exception as e:
             self.queue.put(
                 (
