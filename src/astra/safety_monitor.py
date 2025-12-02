@@ -70,6 +70,11 @@ class SafetyMonitor:
         """
         sm_poll = self.device.poll_latest()
 
+        # Handle case where poll data is unavailable (e.g., during blocking operations)
+        if sm_poll is None or "IsSafe" not in sm_poll:
+            self.logger.warning("Safety monitor poll data unavailable")
+            return False, 0  # treat as unsafe when data unavailable
+
         # staleness check
         last_update = (
             datetime.now(UTC) - sm_poll["IsSafe"]["datetime"]
