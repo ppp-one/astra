@@ -1,3 +1,11 @@
+"""Database management for observatory data within the Astra framework.
+
+Key capabilities:
+    - Create and manage SQLite databases for observatories
+    - Execute SQL queries and return results as lists or pandas DataFrames
+    - Perform periodic backups of the database
+"""
+
 import os
 import sqlite3
 from datetime import UTC, datetime

@@ -19,13 +19,6 @@ button.theme-switch-button {
     display: none !important;
 }
 
-/* Headings */
-
-h2 {
-    text-decoration: underline;
-    font-size: 22px;
-}
-
 
 /* Code cells */
 
@@ -44,6 +37,12 @@ div.cell_output pre {
     padding: 12px !important;
 }
 
+/* Listings */
+
+ul li, ol li {
+    margin-top: -0.5em; /* Adjust this value to increase/decrease the space */
+    margin-bottom: 0.5em; /* Adjust space between items */
+}
 
 /* no cell number */
 

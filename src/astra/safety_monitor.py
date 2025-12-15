@@ -1,3 +1,12 @@
+""" "Safety monitoring for observatory weather conditions.
+
+Key capabilities:
+    - Monitor external safety monitor device status
+    - Evaluate internal weather conditions against safety limits
+    - Determine overall weather safety status for observatory operations
+    - Provide time estimates until conditions become safe again
+"""
+
 from datetime import UTC, datetime
 
 import pandas as pd
@@ -117,9 +126,9 @@ class SafetyMonitor:
                 - float: Maximum safe duration in seconds for current conditions
 
         The method examines each parameter in the closing_limits configuration:
-        - Compares current values against upper and lower thresholds
-        - Calculates time until conditions improve if currently unsafe
-        - Determines maximum safe operating duration under current conditions
+            - Compares current values against upper and lower thresholds
+            - Calculates time until conditions improve if currently unsafe
+            - Determines maximum safe operating duration under current conditions
 
         Note:
             - Returns (True, 0, 0) if no ObservingConditions devices are configured

@@ -7,16 +7,16 @@ The primary workflow involves star detection, world coordinate system (WCS)
 computation, and pointing offset calculation.
 
 Key Features:
-- Multi-scale star detection algorithms for robust identification in noisy images
-- Gaia star catalog integration for precise astrometric reference
-- World Coordinate System (WCS) computation using the twirl library
-- Automatic pointing correction calculation and validation
-- Support for FITS file processing with metadata extraction
-- Background subtraction and image cleaning utilities
+    - Multi-scale star detection algorithms for robust identification in noisy images
+    - Gaia star catalog integration for precise astrometric reference
+    - World Coordinate System (WCS) computation using the twirl library
+    - Automatic pointing correction calculation and validation
+    - Support for FITS file processing with metadata extraction
+    - Background subtraction and image cleaning utilities
 
 The module supports two main use cases:
-1. Real-time pointing correction during observations
-2. Post-processing analysis of astronomical images
+    1. Real-time pointing correction during observations
+    2. Post-processing analysis of astronomical images
 
 Typical Workflow:
     1. Load or generate an astronomical image
@@ -74,7 +74,7 @@ from astropy.wcs.utils import WCS, pixel_to_skycoord
 from matplotlib import pyplot as plt
 from photutils.detection import DAOStarFinder
 
-from astra import Config
+from astra.config import Config
 from astra.utils import clean_image
 
 logger = logging.getLogger(__name__)

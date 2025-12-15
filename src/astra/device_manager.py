@@ -1,3 +1,14 @@
+"""
+Device management for Alpaca devices within the Astra framework.
+
+Key capabilities:
+    - Load and initialize Alpaca devices based on observatory configuration
+    - Connect to devices and start polling for FITS header data
+    - Pause and resume polling during critical operations
+    - Monitor device responsiveness for watchdog functionality
+    - Force immediate polling for specific device types
+"""
+
 import logging
 import time
 
@@ -18,12 +29,14 @@ class DeviceManager:
     and monitoring all Alpaca devices for an observatory.
 
     This class handles the lifecycle of devices including:
+
     - Loading device configurations
     - Establishing connections
     - Starting/stopping polling for FITS header data
     - Pausing/resuming polls during critical operations
     - Checking device responsiveness for watchdog monitoring
     - Forcing immediate polls for specific device types
+
     It interacts with the ObservatoryConfig for device settings,
     uses the ObservatoryLogger for logging, and relies on
     QueueManager and ThreadManager for asynchronous operations.
@@ -129,14 +142,15 @@ class DeviceManager:
         Establishes connections to all initialized devices and begins regular polling
         of device properties needed for FITS headers. Different polling intervals
         are used based on device criticality:
-        - Most devices: 5-second intervals
-        - SafetyMonitor: 1-second intervals for safety-critical data
+
+        - **Most devices**: 5-second intervals
+        - **SafetyMonitor**: 1-second intervals for safety-critical data
 
         The method:
-        1. Connects to all devices in the devices dictionary
-        2. Starts polling threads for non-fixed FITS header properties
-        3. Sets up special high-frequency polling for safety monitors
-        4. Starts the watchdog process after all connections are established
+            1. Connects to all devices in the devices dictionary
+            2. Starts polling threads for non-fixed FITS header properties
+            3. Sets up special high-frequency polling for safety monitors
+            4. Starts the watchdog process after all connections are established
 
         Raises:
             Exception: Device connection errors are logged and added to error_source,
@@ -347,7 +361,7 @@ class DeviceManager:
                     )
         self.logger.info("All devices stopped")
 
-    def check_devices_alive(self):
+    def check_devices_alive(self) -> bool:
         """
         Check if all connected devices are responsive and alive.
 
@@ -418,11 +432,11 @@ class DeviceManager:
         """Check telescope assignments in domes.
 
         Warn if:
-        - There are telescopes not assigned to any dome
-        - There are domes assigned to telescopes that are not connected
+            - There are telescopes not assigned to any dome
+            - There are domes assigned to telescopes that are not connected
 
         Raise error if:
-        - Dome configuration is invalid
+            - Dome configuration is invalid
         """
         if "Telescope" not in self.devices:
             return

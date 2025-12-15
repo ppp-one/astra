@@ -1,0 +1,35 @@
+name: documentation
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install uv and set up Python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: 3.11
+
+      - name: Sync dependencies
+        run: uv sync --locked --group docs 
+
+      - name: Sphinx build
+        run: |
+          uv run make -C docs html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs/build/html
+          force_orphan: true

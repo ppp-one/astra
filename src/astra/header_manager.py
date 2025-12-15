@@ -6,10 +6,10 @@ observatory cameras. It manages image directory creation, data type conversion,
 and FITS file saving with proper headers and metadata.
 
 Key features:
-- Automatic directory creation with date-based naming
-- Image data type conversion and array reshaping for FITS compatibility
-- FITS file saving with comprehensive metadata and WCS support
-- Intelligent filename generation based on observation parameters
+    - Automatic directory creation with date-based naming
+    - Image data type conversion and array reshaping for FITS compatibility
+    - FITS file saving with comprehensive metadata and WCS support
+    - Intelligent filename generation based on observation parameters
 
 The module handles various image types including light frames, bias frames,
 dark frames, and calibration images, ensuring proper metadata preservation
@@ -316,7 +316,7 @@ class HeaderManager:
                 elif row_header in ["EXPTIME", "IMAGETYP"]:
                     hdr[row_header] = (None, fits_row["comment"])
                 elif row_header == "ASTRA":
-                    hdr[row_header] = (astra.ASTRA_VER, fits_row["comment"])
+                    hdr[row_header] = (astra.__version__, fits_row["comment"])
                 else:
                     logger.warning(f"Unknown header: {fits_row['header']}")
 
@@ -395,28 +395,28 @@ class HeaderManager:
         FITS headers for scientific analysis.
 
         The process:
-        1. Retrieves incomplete images from the database
-        2. Groups images by camera for efficient processing
-        3. Queries polled device data around image timestamps
-        4. Interpolates device values to exact exposure times
-        5. Updates FITS files with complete headers
-        6. Marks images as header-complete in database
+            1. Retrieves incomplete images from the database
+            2. Groups images by camera for efficient processing
+            3. Queries polled device data around image timestamps
+            4. Interpolates device values to exact exposure times
+            5. Updates FITS files with complete headers
+            6. Marks images as header-complete in database
 
         Key Features:
-        - Time-interpolated device values for precise timestamps
-        - Handles multiple cameras and device types simultaneously
-        - Preserves original headers while adding missing information
-        - Robust error handling with detailed logging
+            - Time-interpolated device values for precise timestamps
+            - Handles multiple cameras and device types simultaneously
+            - Preserves original headers while adding missing information
+            - Robust error handling with detailed logging
 
         Data Sources:
-        - Device polling data from database
-        - FITS configuration file for header mapping
-        - Original image FITS headers for timing information
+            - Device polling data from database
+            - FITS configuration file for header mapping
+            - Original image FITS headers for timing information
 
         Error Handling:
-        - Individual image failures don't stop batch processing
-        - All errors are logged and added to error_source
-        - Database consistency maintained even with partial failures
+            - Individual image failures don't stop batch processing
+            - All errors are logged and added to error_source
+            - Database consistency maintained even with partial failures
 
         Note:
             - Typically run after observation sequences complete

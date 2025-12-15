@@ -6,12 +6,12 @@ management, image display, logging, and WebSocket communications for the observa
 control system.
 
 Key features:
-- Multi-observatory support with device monitoring
-- Real-time WebSocket updates for device status
-- Schedule upload and editing capabilities
-- Image conversion and display (FITS to JPEG)
-- Database logging and telemetry storage
-- Safety monitoring and robotic operation control
+    - Multi-observatory support with device monitoring
+    - Real-time WebSocket updates for device status
+    - Schedule upload and editing capabilities
+    - Image conversion and display (FITS to JPEG)
+    - Database logging and telemetry storage
+    - Safety monitoring and robotic operation control
 """
 
 import asyncio
@@ -42,7 +42,7 @@ from fastapi.responses import (
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 
-from astra import ASTRA_VER, Config
+from astra import __version__, Config
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
 from astra.observatory import Observatory
@@ -242,7 +242,7 @@ async def lifespan(app: FastAPI):
     """
     # Load observatories
     load_observatories()
-    logger.info(f"Astra version {ASTRA_VER} started at {SERVER_URL}")
+    logger.info(f"Astra version {__version__} started at {SERVER_URL}")
     yield
     # Clean up
     clean_up()
@@ -1697,7 +1697,7 @@ def main():
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY, SERVER_URL
 
-    logger.info(f"Astra version: {ASTRA_VER}")
+    logger.info(f"Astra version: {__version__}")
 
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument(

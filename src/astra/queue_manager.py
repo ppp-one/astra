@@ -1,3 +1,15 @@
+"""Manages the multiprocessing queue and its running state.
+
+Also starts and manages the thread that processes the queue.
+
+Key capabilities:
+    - Create and manage a multiprocessing queue for inter-process communication
+    - Maintain the running state of the queue processing
+    - Start a dedicated thread to monitor and process queue messages
+    - Handle database operations and logging from device processes
+    - Ensure proper error handling and logging for queue operations
+"""
+
 import multiprocessing
 
 from astra.database_manager import DatabaseManager
@@ -51,20 +63,20 @@ class QueueManager:
         thread cleanup.
 
         Message Types Handled:
-        - 'query': Executes SQL database queries from device processes
-        - 'log': Processes log messages with different severity levels
-          - 'info', 'warning', 'error', 'debug' log levels supported
-          - Error messages are added to error_source for monitoring
+            - 'query': Executes SQL database queries from device processes
+            - 'log': Processes log messages with different severity levels
+                - 'info', 'warning', 'error', 'debug' log levels supported
+                - Error messages are added to error_source for monitoring
 
         Background Operations:
-        - Cleans up completed threads from the threads list
-        - Maintains database consistency across multiprocessing boundaries
-        - Ensures proper error propagation from device processes
+            - Cleans up completed threads from the threads list
+            - Maintains database consistency across multiprocessing boundaries
+            - Ensures proper error propagation from device processes
 
         Error Handling:
-        - Catches and logs queue processing errors
-        - Adds queue errors to error_source for monitoring
-        - Stops queue processing on fatal errors
+            - Catches and logs queue processing errors
+            - Adds queue errors to error_source for monitoring
+            - Stops queue processing on fatal errors
 
         Note:
             - Runs continuously until queue_running flag is False

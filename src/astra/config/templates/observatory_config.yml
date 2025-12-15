@@ -104,3 +104,11 @@ SafetyMonitor:
 Misc:
   # Webcam: http://localhost:8888/inside # hls stream, see https://github.com/bluenviron/mediamtx
   backup_time: "12:00" # UTC back up time of polled data (e.g. CCDTemperature) and logs
+  filename_templates:
+    object: "{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits"
+    calibration: "{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits"
+    flats: "{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"
+    autofocus: "autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"
+    calibrate_guiding: "calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"
+    pointing_model: "pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"
+    default: "{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"

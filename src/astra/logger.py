@@ -6,26 +6,26 @@ It's designed specifically for observatory automation systems where logging even
 need to be both immediately visible and persistently stored for analysis.
 
 Key features:
-- Dual logging output (console and database)
-- Error state tracking for the parent instance
-- Automatic timestamp formatting with microsecond precision
-- Exception and stack trace capture
-- SQL injection protection through quote escaping
-- UTC timezone standardization
+    - Dual logging output (console and database)
+    - Error state tracking for the parent instance
+    - Automatic timestamp formatting with microsecond precision
+    - Exception and stack trace capture
+    - SQL injection protection through quote escaping
+    - UTC timezone standardization
 
 The handler is particularly useful for long-running observatory operations where:
-- Real-time monitoring of system status is required
-- Historical log analysis is needed for debugging
-- Error states need to be tracked at the instance level
-- Database queries on log data are necessary
+    - Real-time monitoring of system status is required
+    - Historical log analysis is needed for debugging
+    - Error states need to be tracked at the instance level
+    - Database queries on log data are necessary
 
 Typical usage:
->>> from astra.logger import ObservatoryLogger, DatabaseLoggingHandler
->>> from astra.database_manager import DatabaseManager
->>> observatory_name = 'MyObservatory'
->>> db_manager = DatabaseManager(observatory_name)
->>> logger = ObservatoryLogger(observatory_name)
->>> logger.addHandler(DatabaseLoggingHandler(db_manager))
+    >>> from astra.logger import ObservatoryLogger, DatabaseLoggingHandler
+    >>> from astra.database_manager import DatabaseManager
+    >>> observatory_name = 'MyObservatory'
+    >>> db_manager = DatabaseManager(observatory_name)
+    >>> logger = ObservatoryLogger(observatory_name)
+    >>> logger.addHandler(DatabaseLoggingHandler(db_manager))
 
 
 Note:

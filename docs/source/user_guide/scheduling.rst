@@ -1,5 +1,5 @@
 Scheduling Syntax
-================
+=================
 
 Astra uses a flexible scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each line represents a scheduled action with these fields:
 
@@ -30,7 +30,7 @@ Example Schedule
 
 
 Schedule File Location
--------------------
+----------------------
 
 Place your schedule file in the observatory schedules directory with a ``.jsonl`` extension. For example:
 
@@ -39,7 +39,7 @@ Place your schedule file in the observatory schedules directory with a ``.jsonl`
 Astra will automatically detect and load the JSONL schedule file, with the specified name pattern, if modified.
 
 Supported Action Types
---------------------
+----------------------
 
 Astra supports the following action types for observatory automation, organized by function:
 
@@ -79,7 +79,7 @@ Open the observatory for observations:
 
 
 ``close``
-^^^^^^^^
+^^^^^^^^^
 
 Close the observatory:
 
@@ -230,7 +230,7 @@ Perform autofocus sequence to achieve optimal telescope focus:
 
 
 ``calibrate_guiding``
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
 
 Calibrate guiding parameters by measuring pixel-to-time scales of pulse guiding commands and determining camera orientation relative to telescope mount axes.
 

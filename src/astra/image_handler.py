@@ -6,10 +6,10 @@ observatory cameras. It manages image directory creation, data type conversion,
 and FITS file saving with proper headers and metadata.
 
 Key features:
-- Automatic directory creation with date-based naming
-- Image data type conversion and array reshaping for FITS compatibility
-- FITS file saving with comprehensive metadata and WCS support
-- Intelligent filename generation based on observation parameters
+    - Automatic directory creation with date-based naming
+    - Image data type conversion and array reshaping for FITS compatibility
+    - FITS file saving with comprehensive metadata and WCS support
+    - Intelligent filename generation based on observation parameters
 
 The module handles various image types including light frames, bias frames,
 dark frames, and calibration images, ensuring proper metadata preservation
@@ -30,7 +30,7 @@ from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
 
-from astra import Config
+from astra.config import Config
 from astra.config import ObservatoryConfig
 from astra.filename_templates import FilenameTemplates
 from astra.header_manager import HeaderManager, ObservatoryHeader
@@ -180,9 +180,9 @@ class ImageHandler:
 
         Note:
             Filename formats:
-            - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
-            - Bias/Dark: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
-            - Other: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
+                - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
+                - Bias/Dark: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
+                - Other: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
 
             Headers automatically updated with DATE-OBS, DATE, and WCS (if provided).
         """

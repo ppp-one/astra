@@ -6,19 +6,13 @@ focus measurement operators, automatic target selection using Gaia catalog data,
 and sophisticated focusing algorithms for optimal image quality.
 
 Key components:
+
 - Camera, focuser, and telescope interfaces for ALPACA devices
 - Automated target selection using Gaia star catalog
 - Multiple focus measurement algorithms (HFR, FFT, variance-based)
 - Defocusing and refocusing capabilities
 - Comprehensive logging and result visualization
 
-Classes:
-    AstraCamera: Camera interface for autofocus operations
-    AstraFocuser: Focuser interface with position control
-    AstraTelescope: Telescope interface for positioning
-    AstraAutofocusDeviceManager: Device coordination for autofocus
-    Defocuser: Controlled defocusing and refocusing operations
-    Autofocuser: Main autofocus orchestrator with target selection
 """
 
 import logging

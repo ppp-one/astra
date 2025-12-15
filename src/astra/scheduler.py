@@ -1,3 +1,12 @@
+"""Scheduler for observatory actions and device management.
+
+Key capabilities:
+    - Schedule management for observatory devices
+    - Action validation and time updates
+    - File reading and writing for schedules
+    - Integration with observatory configuration and device management
+"""
+
 import json
 import os
 from dataclasses import dataclass
@@ -517,12 +526,14 @@ class ScheduleManager:
                 an error occurs during reading.
 
         Features:
+
         - Automatic file modification detection and reload
         - Datetime parsing for start_time and end_time columns
         - Optional schedule truncation for development (via truncate_factor)
         - Error handling with logging and error source tracking
 
         File Format:
+
         - CSV file with columns including start_time, end_time, device_name,
           action_type, and action_value
         - Datetime columns should be in ISO format compatible with pandas
@@ -584,10 +595,10 @@ class ScheduleManager:
         the internal state accordingly.
 
         Process:
-        1. Checks if the schedule file modification time is greater than
-           the last recorded modification time.
-        2. If updated, calls the read() method to reload the schedule.
-        3. Updates the internal schedule state.
+            1. Checks if the schedule file modification time is greater than
+            the last recorded modification time.
+            2. If updated, calls the read() method to reload the schedule.
+            3. Updates the internal schedule state.
 
         Note:
             - Does not interrupt a currently running schedule.
@@ -635,15 +646,15 @@ class ScheduleManager:
         that any ongoing actions can finish cleanly before the schedule stops.
 
         Process:
-        1. Sets schedule_running flag to False (signals thread to stop)
-        2. Finds the schedule thread in the threads list
-        3. Waits for the thread to complete using join()
-        4. Logs the stopping action
+            1. Sets schedule_running flag to False (signals thread to stop)
+            2. Finds the schedule thread in the threads list
+            3. Waits for the thread to complete using join()
+            4. Logs the stopping action
 
         Thread Safety:
-        - Uses thread.join() to ensure clean shutdown
-        - Schedule thread checks schedule_running flag regularly
-        - Ongoing actions are allowed to complete before stopping
+            - Uses thread.join() to ensure clean shutdown
+            - Schedule thread checks schedule_running flag regularly
+            - Ongoing actions are allowed to complete before stopping
 
         Note:
             - If no schedule is running, logs a warning and returns

@@ -1,4 +1,4 @@
-import logging
+from typing import List
 
 import astra.utils as utils
 from astra.observatory import Observatory
@@ -6,17 +6,17 @@ from astra.paired_devices import PairedDevices
 
 
 class SPECULOOS(Observatory):
-    """Custom Observatory class for SPECULOOS observatories."""
+    """Custom Observatory class for SPECULOOS observatories.
 
-    def __init__(
-        self,
-        config: dict,
-        truncate_factor: float | None = None,
-        logging_level: int = logging.INFO,
-    ):
-        super().__init__(
-            config, truncate_factor=truncate_factor, logging_level=logging_level
-        )
+    Being ASTELCO made observatories, SPECULOOS telescopes are subject to certain
+    quirks that require special handling. Specifically, they need custom error
+    handling and some of its ASCOM methods not conforming asynchronous standards.
+
+    By implementing this subclass, we can ensure that these observatories operate
+    safely and effectively within the Astra framework.
+    """
+
+    OBSERVATORY_ALIASES: List[str] = ["ganymede", "europa", "io", "callisto"]
 
     def close_observatory(
         self, paired_devices: PairedDevices | None = None, error_sensitive: bool = True

@@ -1,3 +1,12 @@
+"""Action configuration dataclasses for observatory operations.
+
+Key capabilities:
+    - Define structured configurations for various observatory actions
+    - Validate required fields and types for action parameters
+    - Provide defaults from observatory configuration
+    - Support dictionary-like access to action configuration fields
+"""
+
 import typing
 from dataclasses import dataclass, field
 from enum import Enum
@@ -37,6 +46,7 @@ class BaseActionConfig:
 
     @classmethod
     def from_dict(cls, config_dict: dict, default_dict: dict = {}, logger=None):
+        """Create an instance from a dictionary, merging with defaults."""
         kwargs = cls.merge_config_dicts(config_dict, default_dict)
 
         if logger is not None:
@@ -81,6 +91,12 @@ class BaseActionConfig:
         return {}
 
     def validate(self):
+        """Validate required fields and types of all fields.
+
+        Raises:
+            ValueError: If required fields are missing.
+            TypeError: If any field has an incorrect type.
+        """
         missing = []
         type_errors = []
         for f in self.__dataclass_fields__.values():
@@ -89,7 +105,7 @@ class BaseActionConfig:
             if f.metadata.get("required") and val is None:
                 missing.append(f.name)
             # Type validation for all fields
-            err = self.validate_type(f)
+            err = self._validate_type(f)
             if err:
                 type_errors.append(err)
         if missing:
@@ -97,7 +113,7 @@ class BaseActionConfig:
         if type_errors:
             raise TypeError(f"Type errors in fields: {type_errors}")
 
-    def validate_type(self, f):
+    def _validate_type(self, f):
         val = getattr(self, f.name)
         expected_type = self.__annotations__.get(f.name)
         if val is None or expected_type is None:
@@ -198,6 +214,15 @@ class BaseActionConfig:
         )
 
     def get(self, key: str, default=None):
+        """
+        Get attribute value by key with optional default.
+
+        Args:
+            key: Attribute name to retrieve.
+            default: Value to return if attribute is not found.
+        Returns:
+            Attribute value or default if not found.
+        """
         return getattr(self, key, default)
 
     def __getitem__(self, key: str):
@@ -209,7 +234,8 @@ class BaseActionConfig:
     def __contains__(self, key: str):
         return hasattr(self, key)
 
-    def keys(self):
+    def keys(self) -> List[str]:
+        """Return list of field names in the dataclass."""
         return [
             item
             for item in self.__dataclass_fields__.keys()

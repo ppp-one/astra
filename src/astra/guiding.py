@@ -6,13 +6,13 @@ using image-based tracking with PID control loops. It implements the complete
 guiding workflow from image acquisition to telescope correction commands.
 
 Key Features:
-- Real-time star tracking using the Donuts image registration library
-- PID control loops for precise telescope corrections
-- Database logging of guiding performance and corrections
-- Support for German Equatorial Mount (GEM) pier side changes
-- Outlier rejection and statistical analysis of guiding errors
-- Automatic reference image management per field/filter combination
-- Background subtraction and image cleaning for robust star detection
+    - Real-time star tracking using the Donuts image registration library
+    - PID control loops for precise telescope corrections
+    - Database logging of guiding performance and corrections
+    - Support for German Equatorial Mount (GEM) pier side changes
+    - Outlier rejection and statistical analysis of guiding errors
+    - Automatic reference image management per field/filter combination
+    - Background subtraction and image cleaning for robust star detection
 
 The system continuously monitors incoming images, compares them to reference
 images, calculates pointing errors, and applies corrective pulse guide commands
@@ -36,7 +36,7 @@ from alpaca.telescope import AlignmentModes, GuideDirections, PierSide
 from astropy.io import fits
 from donuts import Donuts
 
-from astra import Config
+from astra.config import Config
 from astra.database_manager import DatabaseManager
 from astra.image_handler import ImageHandler
 from astra.logger import ObservatoryLogger
@@ -126,11 +126,11 @@ class GuiderManager:
             bool: True if guider was started successfully, False otherwise.
 
         Process:
-        1. Logs guiding start for the specified telescope
-        2. Optionally clears existing reference image if reset flag is set
-        3. Creates guider thread with appropriate parameters
-        4. Starts the guiding thread in background
-        5. Adds thread to observatory's thread tracking list
+            1. Logs guiding start for the specified telescope
+            2. Optionally clears existing reference image if reset flag is set
+            3. Creates guider thread with appropriate parameters
+            4. Starts the guiding thread in background
+            5. Adds thread to observatory's thread tracking list
 
         Note:
             - Guiding runs in a separate thread to avoid blocking main operations
@@ -339,9 +339,9 @@ class Guider:
         Create database tables for autoguider reference images and logging.
 
         Creates three tables:
-        - autoguider_ref: Reference image metadata and validity periods
-        - autoguider_log: Detailed guiding corrections and statistics
-        - autoguider_info_log: General status and info messages
+            - autoguider_ref: Reference image metadata and validity periods
+            - autoguider_log: Detailed guiding corrections and statistics
+            - autoguider_info_log: General status and info messages
         """
 
         db_command_0 = """CREATE TABLE IF NOT EXISTS autoguider_ref (

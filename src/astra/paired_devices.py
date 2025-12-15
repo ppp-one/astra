@@ -7,19 +7,23 @@ devices like cameras, telescopes, domes, focusers, and filter wheels are often
 paired to ensure coordinated operation during observations.
 
 The module handles:
-- Device pairing configuration from observatory settings
-- Device discovery and mapping from camera names
-- Property-based access to paired devices
-- Configuration retrieval for paired devices
-- Validation of device relationships
+    - Device pairing configuration from observatory settings
+    - Device discovery and mapping from camera names
+    - Property-based access to paired devices
+    - Configuration retrieval for paired devices
+    - Validation of device relationships
 
 Device pairing is essential for:
-- Ensuring telescope and camera work together
-- Coordinating dome movement with telescope pointing
-- Managing filter wheel operations with camera exposures
-- Synchronizing focuser adjustments with observations
+    - Ensuring telescope and camera work together
+    - Coordinating dome movement with telescope pointing
+    - Managing filter wheel operations with camera exposures
+    - Synchronizing focuser adjustments with observations
 
-Typical Usage:
+Typical Usage
+-------------
+
+.. code-block:: python
+
     # Create paired devices from camera name
     paired = PairedDevices.from_camera_name("main_camera")
 

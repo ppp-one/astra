@@ -6,11 +6,11 @@ telescope error handling. Functions support FITS header processing, flat field
 observations, and SPECULOOS telescope operations.
 
 Key capabilities:
-- Julian Day and astronomical time system conversions
-- FITS header time calculations with light travel corrections
-- Solar position analysis for flat field timing
-- Database queries for astronomical catalogs
-- SPECULOOS telescope error checking and acknowledgement
+    - Julian Day and astronomical time system conversions
+    - FITS header time calculations with light travel corrections
+    - Solar position analysis for flat field timing
+    - Database queries for astronomical catalogs
+    - SPECULOOS telescope error checking and acknowledgement
 """
 
 import math

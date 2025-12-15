@@ -1,15 +1,9 @@
-"""Configuration management for Astra observatory automation system.
+"""Configuration management for the Astra observatory automation system.
 
-This module provides configuration classes for managing Astra's settings,
+This module provides configuration classes for managing Astra settings,
 observatory configurations, and asset paths. It handles YAML configuration
-files, directory initialization, and provides a singleton pattern for
+files, directory initialization, and exposes a singleton `Config` for
 global configuration access.
-
-Classes:
-    Config: Main configuration singleton for Astra settings
-    AssetPaths: Container for asset directory paths
-    ObservatoryConfig: Observatory-specific configuration management
-    _ConfigInitialiser: Helper class for initial configuration setup
 """
 
 import filecmp
@@ -243,6 +237,11 @@ class AssetPaths:
     """
 
     def __init__(self, folder_assets: Union[Path, str]) -> None:
+        """Create AssetPaths and ensure on-disk folders and log file exist.
+
+        Args:
+            folder_assets (Path | str): Base path for Astra assets.
+        """
         if isinstance(folder_assets, str):
             folder_assets = Path(folder_assets)
 
@@ -599,14 +598,11 @@ class ObservatoryConfig(dict):
         return cls(config.paths.observatory_config, config.observatory_name)
 
     def load_fits_config(self) -> pd.DataFrame:
-        """
-        Load the FITS header configuration as a pandas DataFrame.
-
-        Args:
-            observatory_name (str): Name of the observatory.
+        """Load the FITS header configuration for this observatory.
 
         Returns:
-            pd.DataFrame: DataFrame containing FITS header configuration.
+            pandas.DataFrame: DataFrame containing FITS header configuration
+            indexed by the ``header`` column.
         """
         fits_config_path = (
             self.config_path / f"{self.observatory_name}_fits_header_config.csv"

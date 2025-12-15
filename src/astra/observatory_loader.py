@@ -1,9 +1,18 @@
+"""Load an Observatory subclass based on the observatory name.
+
+Key capabilities:
+    - Dynamically load custom Observatory subclasses from specified plugin paths
+    - Match observatory names against class names and aliases
+    - Fallback to default Observatory class if no custom class is found
+
+"""
+
 import importlib.util
 import logging
 from pathlib import Path
 from typing import List, Optional, Type
 
-from astra import Config
+from astra.config import Config
 from astra.observatory import Observatory
 
 

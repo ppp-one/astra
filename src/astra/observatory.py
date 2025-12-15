@@ -49,11 +49,11 @@ from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
 
-from astra import Config, utils
+import astra.utils
 from astra.alpaca_device_process import AlpacaDevice
 from astra.autofocus import Autofocuser, Defocuser
 from astra.calibrate_guiding import GuidingCalibrator
-from astra.config import ObservatoryConfig
+from astra.config import Config, ObservatoryConfig
 from astra.database_manager import DatabaseManager
 from astra.device_manager import DeviceManager
 from astra.guiding import GuiderManager
@@ -392,14 +392,15 @@ class Observatory:
         Establishes connections to all initialized devices and begins regular polling
         of device properties needed for FITS headers. Different polling intervals
         are used based on device criticality:
+
         - Most devices: 5-second intervals
         - SafetyMonitor: 1-second intervals for safety-critical data
 
         The method:
-        1. Connects to all devices in the devices dictionary
-        2. Starts polling threads for non-fixed FITS header properties
-        3. Sets up special high-frequency polling for safety monitors
-        4. Starts the watchdog process after all connections are established
+            1. Connects to all devices in the devices dictionary
+            2. Starts polling threads for non-fixed FITS header properties
+            3. Sets up special high-frequency polling for safety monitors
+            4. Starts the watchdog process after all connections are established
 
         Raises:
             Exception: Device connection errors are logged and added to error_source,
@@ -425,9 +426,9 @@ class Observatory:
         operation and safety.
 
         The method:
-        1. Checks if watchdog is already running to prevent duplicates
-        2. Creates a new daemon thread running the watchdog() method
-        3. Adds the thread to the threads list for tracking
+            1. Checks if watchdog is already running to prevent duplicates
+            2. Creates a new daemon thread running the watchdog() method
+            3. Adds the thread to the threads list for tracking
 
         Note:
             - If watchdog is already running, logs a warning and returns
@@ -605,20 +606,20 @@ class Observatory:
         information is used for monitoring and debugging observatory operations.
 
         The heartbeat includes:
-        - Current timestamp with millisecond precision
-        - Error status and error source details
-        - Weather safety status
-        - Schedule execution status
-        - System resource usage (CPU, memory, disk)
-        - Active thread information
-        - Device polling status for all connected devices
-        - Monitor action queue status
+            - Current timestamp with millisecond precision
+            - Error status and error source details
+            - Weather safety status
+            - Schedule execution status
+            - System resource usage (CPU, memory, disk)
+            - Active thread information
+            - Device polling status for all connected devices
+            - Monitor action queue status
 
         This information is typically used by:
-        - External monitoring systems
-        - Web interfaces for observatory status
-        - Debugging and troubleshooting
-        - Health check systems
+            - External monitoring systems
+            - Web interfaces for observatory status
+            - Debugging and troubleshooting
+            - Health check systems
 
         Note:
             - Called regularly by the watchdog to maintain current status
@@ -678,9 +679,9 @@ class Observatory:
         Open the observatory for observations in a safe, controlled sequence.
 
         Performs the complete observatory opening sequence, ensuring safety at each step:
-        1. Opens dome shutter (if present and weather is safe)
-        2. Unparks telescope (if present and weather is safe)
-        3. Handles SPECULOOS-specific error acknowledgment and polling management
+            1. Opens dome shutter (if present and weather is safe)
+            2. Unparks telescope (if present and weather is safe)
+            3. Handles SPECULOOS-specific error acknowledgment and polling management
 
         The sequence only proceeds if weather conditions are safe and no errors
         are present. For SPECULOOS observatories, special error handling and
@@ -784,10 +785,10 @@ class Observatory:
 
         Performs the complete observatory shutdown sequence to ensure equipment
         safety and protection from weather. The sequence follows this order:
-        1. Stop any active guiding operations
-        2. Stop telescope slewing and tracking
-        3. Park the telescope to safe position
-        4. Park the dome and close shutter (if dome present)
+            1. Stop any active guiding operations
+            2. Stop telescope slewing and tracking
+            3. Park the telescope to safe position
+            4. Park the dome and close shutter (if dome present)
 
         For SPECULOOS observatories, includes special error handling and polling
         management during the closure sequence.
@@ -960,14 +961,15 @@ class Observatory:
         When disabled, manual control is required for all operations.
 
         Behavior:
-        - If robotic switch is currently ON: Turns it OFF and stops any running schedule
-        - If robotic switch is currently OFF: Turns it ON and starts the schedule
-          (if watchdog is running)
+            - If robotic switch is currently ON: Turns it OFF and stops any running
+            schedule
+            - If robotic switch is currently OFF: Turns it ON and starts the schedule
+            (if watchdog is running)
 
         Safety Features:
-        - Requires watchdog to be running before enabling robotic mode
-        - Automatically stops schedule execution when disabling robotic mode
-        - Logs all state changes for monitoring and debugging
+            - Requires watchdog to be running before enabling robotic mode
+            - Automatically stops schedule execution when disabling robotic mode
+            - Logs all state changes for monitoring and debugging
 
         Note:
             - Essential safety feature for autonomous operations
@@ -1005,22 +1007,22 @@ class Observatory:
         schedule execution to ensure safe autonomous operation.
 
         Pre-execution Checks:
-        - Schedule must be loaded
-        - Schedule must not already be running
-        - Watchdog must be running for safety monitoring
-        - Schedule end time must be in the future
-        - No duplicate schedule threads allowed
+            - Schedule must be loaded
+            - Schedule must not already be running
+            - Watchdog must be running for safety monitoring
+            - Schedule end time must be in the future
+            - No duplicate schedule threads allowed
 
         Thread Management:
-        - Creates a daemon thread running run_schedule()
-        - Resets the 'completed' flag on all schedule items
-        - Adds thread to the observatory's thread tracking list
-        - Thread ID 'schedule' for easy identification
+            - Creates a daemon thread running run_schedule()
+            - Resets the 'completed' flag on all schedule items
+            - Adds thread to the observatory's thread tracking list
+            - Thread ID 'schedule' for easy identification
 
         Safety Features:
-        - Multiple validation checks prevent unsafe execution
-        - Automatic thread cleanup if conditions not met
-        - Logging of all start attempts and failures
+            - Multiple validation checks prevent unsafe execution
+            - Automatic thread cleanup if conditions not met
+            - Logging of all start attempts and failures
 
         Note:
             - Schedule execution continues until completion or safety conditions fail
@@ -1068,22 +1070,22 @@ class Observatory:
         coordinates multiple concurrent operations while maintaining system safety.
 
         Key features:
-        - Waits for weather safety confirmation before starting
-        - Iterates through schedule rows checking timing and conditions
-        - Starts actions in separate threads for concurrent execution
-        - Handles both weather-dependent and weather-independent operations
-        - Manages thread lifecycle and cleanup
-        - Performs final header completion after schedule ends
+            - Waits for weather safety confirmation before starting
+            - Iterates through schedule rows checking timing and conditions
+            - Starts actions in separate threads for concurrent execution
+            - Handles both weather-dependent and weather-independent operations
+            - Manages thread lifecycle and cleanup
+            - Performs final header completion after schedule ends
 
         Safety Management:
-        - Monitors weather_safe, error_free, and watchdog_running status
-        - Aborts operations if unsafe conditions develop
-        - Times out if weather safety check takes longer than 2 minutes
+            - Monitors weather_safe, error_free, and watchdog_running status
+            - Aborts operations if unsafe conditions develop
+            - Times out if weather safety check takes longer than 2 minutes
 
         Thread Management:
-        - Removes completed threads from tracking list
-        - Prevents duplicate actions from starting
-        - Ensures proper cleanup on schedule completion
+            - Removes completed threads from tracking list
+            - Prevents duplicate actions from starting
+            - Ensures proper cleanup on schedule completion
 
         Note:
             - Schedule must be loaded before calling this method
@@ -1317,14 +1319,14 @@ class Observatory:
                 before raising error. Defaults to 30.
 
         Process:
-        1. Turns on the camera cooler
-        2. Sets the target CCD temperature with specified tolerance
-        3. Waits up to cooling_timeout for temperature stabilization
+            1. Turns on the camera cooler
+            2. Sets the target CCD temperature with specified tolerance
+            3. Waits up to cooling_timeout for temperature stabilization
 
         Safety Features:
-        - Not weather sensitive (can operate in unsafe weather)
-        - Continuous monitoring until target temperature reached
-        - Configurable timeout for temperature stabilization
+            - Not weather sensitive (can operate in unsafe weather)
+            - Continuous monitoring until target temperature reached
+            - Configurable timeout for temperature stabilization
 
         Note:
             - Essential for scientific imaging to reduce thermal noise
@@ -1798,16 +1800,16 @@ class Observatory:
                 device to monitor for slewing completion.
 
         Safety Features:
-        - Continuous condition checking during wait (weather, errors, schedule)
-        - Automatic timeout protection (prevents infinite loops)
-        - 1-second settle time after slew completion
+            - Continuous condition checking during wait (weather, errors, schedule)
+            - Automatic timeout protection (prevents infinite loops)
+            - 1-second settle time after slew completion
 
         Process:
-        1. Checks initial slewing status
-        2. Logs slewing start if telescope is moving
-        3. Polls slewing status with safety condition checks
-        4. Waits for slewing to complete
-        5. Adds settle time for mechanical stabilization
+            1. Checks initial slewing status
+            2. Logs slewing start if telescope is moving
+            3. Polls slewing status with safety condition checks
+            4. Waits for slewing to complete
+            5. Adds settle time for mechanical stabilization
 
         Note:
             - Critical for ensuring telescope positioning accuracy
@@ -1854,16 +1856,16 @@ class Observatory:
                 False if any condition fails.
 
         Base Conditions (always checked):
-        - error_free: No system errors present
-        - schedule_running: Schedule execution is active
-        - watchdog_running: Safety monitoring is active
+            - error_free: No system errors present
+            - schedule_running: Schedule execution is active
+            - watchdog_running: Safety monitoring is active
 
         Action-Specific Conditions:
-        - Weather-sensitive actions (open, object, flats, autofocus, calibrate_guiding,
-          pointing_model): Also require weather_safe
-        - Weather-independent actions (calibration, close, cool_camera,
-          complete_headers): Only require base conditions
-        - Time-sensitive actions: Must be within scheduled start/end time window
+            - Weather-sensitive actions (open, object, flats, autofocus, calibrate_guiding,
+            pointing_model): Also require weather_safe
+            - Weather-independent actions (calibration, close, cool_camera,
+            complete_headers): Only require base conditions
+            - Time-sensitive actions: Must be within scheduled start/end time window
 
         Note:
             - Used throughout the system for safety checks
@@ -2076,19 +2078,19 @@ class Observatory:
                 for the sequence (camera, telescope, filter wheel, etc.)
 
         Sequence Features:
-        - Pre-sequence setup (telescope pointing, filter selection)
-        - Multiple exposure time support
-        - Automatic pointing correction for object sequences
-        - Optional autoguiding activation and management
-        - Continuous condition monitoring throughout sequence
+            - Pre-sequence setup (telescope pointing, filter selection)
+            - Multiple exposure time support
+            - Automatic pointing correction for object sequences
+            - Optional autoguiding activation and management
+            - Continuous condition monitoring throughout sequence
 
         Process Flow:
-        1. Pre-sequence setup (telescope pointing, filters, headers)
-        2. Iterate through exposure time list
-        3. Perform pointing correction (object sequences only)
-        4. Start guiding if configured
-        5. Execute exposures with safety monitoring
-        6. Stop guiding and telescope tracking at completion
+            1. Pre-sequence setup (telescope pointing, filters, headers)
+            2. Iterate through exposure time list
+            3. Perform pointing correction (object sequences only)
+            4. Start guiding if configured
+            5. Execute exposures with safety monitoring
+            6. Stop guiding and telescope tracking at completion
 
         Note:
             - Supports both single and multiple exposure times
@@ -2244,25 +2246,25 @@ class Observatory:
             paired_devices (dict): Dictionary of paired devices for the sequence,
                 including telescope and camera.
 
-        Action Value Parameters (from row['action_value']):
-            - 'n' (int, optional): Number of pointing positions. Defaults to 20.
-            - 'exptime' (float, optional): Exposure time in seconds. Defaults to 1.
-            - Additional standard action parameters (ra, dec, etc.)
+        Action Value Parameters (from ``row['action_value']``):
+            - ``n`` (`int`, optional): Number of pointing positions. Defaults to 20.
+            - ``exptime`` (`float`, optional): Exposure time in seconds. Defaults to 1.
+            - Additional standard action parameters (``ra``, ``dec``, etc.)
 
         Process:
-        1. Creates pointing_model directory for image storage
-        2. Generates spiral pattern of sky coordinates from zenith
-        3. For each position (if not too close to Moon):
-           - Slews telescope to target coordinates
-           - Takes exposure with specified parameters
-           - Performs pointing correction to measure error
-           - Updates FITS header with correction information
-        4. Continues until all positions are captured or conditions change
+            1. Creates pointing_model directory for image storage
+            2. Generates spiral pattern of sky coordinates from zenith
+            3. For each position (if not too close to Moon):
+                - Slews telescope to target coordinates
+                - Takes exposure with specified parameters
+                - Performs pointing correction to measure error
+                - Updates FITS header with correction information
+            4. Continues until all positions are captured or conditions change
 
         Safety Features:
-        - Continuous condition checking during sequence
-        - Moon avoidance for accurate measurements
-        - Error handling for individual pointing failures
+            - Continuous condition checking during sequence
+            - Moon avoidance for accurate measurements
+            - Error handling for individual pointing failures
 
         Note:
             - Critical for maintaining high telescope pointing accuracy
@@ -2452,11 +2454,11 @@ class Observatory:
                   None if failed
 
         Process:
-        1. Performs plate solving on the provided image
-        2. Calculates pointing error relative to target coordinates
-        3. Compares error to configured pointing threshold
-        4. Executes sync or slew correction based on error magnitude
-        5. Logs correction details and results
+            1. Performs plate solving on the provided image
+            2. Calculates pointing error relative to target coordinates
+            3. Compares error to configured pointing threshold
+            4. Executes sync or slew correction based on error magnitude
+            5. Logs correction details and results
 
         Note:
             - Uses PointingCorrectionHandler for plate solving and correction calculations
@@ -2589,17 +2591,17 @@ class Observatory:
                 or conditions became unsafe.
 
         Process:
-        1. Prepares observatory and creates calibration metadata
-        2. Checks safety conditions before starting
-        3. Executes guiding calibration using GuidingCalibrator
-        4. Measures guide star response to directional commands
-        5. Calculates calibration parameters for future guiding
-        6. Returns success status
+            1. Prepares observatory and creates calibration metadata
+            2. Checks safety conditions before starting
+            3. Executes guiding calibration using GuidingCalibrator
+            4. Measures guide star response to directional commands
+            5. Calculates calibration parameters for future guiding
+            6. Returns success status
 
         Safety Features:
-        - Continuous condition checking during calibration
-        - Graceful handling of calibration failures
-        - Proper error logging and reporting
+            - Continuous condition checking during calibration
+            - Graceful handling of calibration failures
+            - Proper error logging and reporting
 
         Note:
             - Required before autoguiding can be used effectively
@@ -2656,23 +2658,23 @@ class Observatory:
                 False if failed or conditions became unsafe.
 
         Process:
-        1. Prepares observatory and creates autofocus metadata
-        2. Checks safety conditions before starting
-        3. Executes autofocus routine using appropriate algorithm
-        4. Takes test exposures at different focus positions
-        5. Analyzes star quality metrics (FWHM, HFD, etc.)
-        6. Determines and sets optimal focus position
-        7. Returns success status
+            1. Prepares observatory and creates autofocus metadata
+            2. Checks safety conditions before starting
+            3. Executes autofocus routine using appropriate algorithm
+            4. Takes test exposures at different focus positions
+            5. Analyzes star quality metrics (FWHM, HFD, etc.)
+            6. Determines and sets optimal focus position
+            7. Returns success status
 
         Focus Methods:
-        - Uses Autofocuser or Defocuser classes for focus optimization
-        - Supports different focus algorithms (curve fitting, star analysis)
-        - Handles both coarse and fine focus adjustments
+            - Uses Autofocuser or Defocuser classes for focus optimization
+            - Supports different focus algorithms (curve fitting, star analysis)
+            - Handles both coarse and fine focus adjustments
 
         Safety Features:
-        - Continuous condition checking during focus sequence
-        - Graceful handling of focus failures
-        - Proper error logging and reporting
+            - Continuous condition checking during focus sequence
+            - Graceful handling of focus failures
+            - Proper error logging and reporting
 
         Note:
             - Critical for achieving optimal image quality
@@ -2724,26 +2726,25 @@ class Observatory:
             paired_devices (PairedDevices): Object containing all devices needed
                 for the sequence (camera, telescope, filter wheel, etc.)
 
-
         Process:
-        1. Monitors sun altitude for optimal flat field conditions
-        2. Positions telescope for uniform sky illumination
-        3. Calculates optimal exposure times for target ADU levels
-        4. Captures flat frames with consistent brightness
-        5. Iterates through multiple filters if specified
-        6. Handles exposure time adjustments as sky brightness changes
+            1. Monitors sun altitude for optimal flat field conditions
+            2. Positions telescope for uniform sky illumination
+            3. Calculates optimal exposure times for target ADU levels
+            4. Captures flat frames with consistent brightness
+            5. Iterates through multiple filters if specified
+            6. Handles exposure time adjustments as sky brightness changes
 
         Timing Considerations:
-        - Only operates during narrow twilight windows
-        - Monitors sun elevation for optimal conditions
-        - Automatically adjusts for changing sky brightness
-        - Stops when conditions become unsuitable
+            - Only operates during narrow twilight windows
+            - Monitors sun elevation for optimal conditions
+            - Automatically adjusts for changing sky brightness
+            - Stops when conditions become unsuitable
 
         Safety Features:
-        - Continuous sky brightness monitoring
-        - Automatic exposure time calculation
-        - Weather and condition checking
-        - Graceful handling of changing conditions
+            - Continuous sky brightness monitoring
+            - Automatic exposure time calculation
+            - Weather and condition checking
+            - Graceful handling of changing conditions
 
         Note:
             - Critical for high-quality photometric calibration
@@ -2777,7 +2778,7 @@ class Observatory:
         ).get_observatory_location()
 
         # wait for sun to be in right position
-        sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+        sun_rising, take_flats, sun_altaz = astra.utils.is_sun_rising(obs_location)
         self.logger.info(
             f"Sun at {sun_altaz.alt.degree:.2f} degrees and {'rising' if sun_rising else 'setting'}"
         )
@@ -2807,7 +2808,7 @@ class Observatory:
             )
 
         while self.check_conditions(action) and (take_flats is False):
-            sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+            sun_rising, take_flats, sun_altaz = astra.utils.is_sun_rising(obs_location)
 
             if take_flats is False:
                 time.sleep(1)
@@ -2824,7 +2825,7 @@ class Observatory:
         # start taking flats
         for i, filter_name in enumerate(action.action_value["filter"]):
             count = 0
-            sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+            sun_rising, take_flats, sun_altaz = astra.utils.is_sun_rising(obs_location)
 
             if self.check_conditions(action) and take_flats:
                 ## initial setup + exposure setting
@@ -2957,17 +2958,17 @@ class Observatory:
                 start_time, end_time, and action_value with target coordinates.
 
         Process:
-        1. Calculates optimal sky position based on current conditions
-        2. Considers sun position and twilight geometry
-        3. Ensures position provides uniform illumination
-        4. Commands telescope to slew to calculated position
-        5. Updates action_value with target coordinates
+            1. Calculates optimal sky position based on current conditions
+            2. Considers sun position and twilight geometry
+            3. Ensures position provides uniform illumination
+            4. Commands telescope to slew to calculated position
+            5. Updates action_value with target coordinates
 
         Positioning Strategy:
-        - Avoids regions near sun or moon for uniform illumination
-        - Selects high altitude positions when possible
-        - Considers dome constraints and telescope limits
-        - Optimizes for sky brightness uniformity
+            - Avoids regions near sun or moon for uniform illumination
+            - Selects high altitude positions when possible
+            - Considers dome constraints and telescope limits
+            - Optimizes for sky brightness uniformity
 
         Note:
             - Critical for obtaining high-quality flat field calibrations
@@ -2982,7 +2983,7 @@ class Observatory:
             # check if ready to take flats
             take_flats = False
             while self.check_conditions(action) and (take_flats is False):
-                _, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+                _, take_flats, sun_altaz = astra.utils.is_sun_rising(obs_location)
 
                 if take_flats is False:
                     time.sleep(1)
@@ -3053,7 +3054,7 @@ class Observatory:
 
         """
 
-        sun_rising, take_flats, sun_altaz = utils.is_sun_rising(obs_location)
+        sun_rising, take_flats, sun_altaz = astra.utils.is_sun_rising(obs_location)
 
         # initial exposure time guess
         if exptime is None:
@@ -3110,7 +3111,7 @@ class Observatory:
                         if fraction <= 0:
                             fraction = 0.01
 
-                    sun_rising, take_flats, sun_altaz = utils.is_sun_rising(
+                    sun_rising, take_flats, sun_altaz = astra.utils.is_sun_rising(
                         obs_location
                     )
 
@@ -3248,10 +3249,10 @@ class Observatory:
                 Defaults to True.
 
         Safety Features:
-        - Continuous monitoring of weather and error conditions
-        - Timeout protection prevents infinite loops
-        - Queue management prevents conflicting operations
-        - Detailed error logging and reporting
+            - Continuous monitoring of weather and error conditions
+            - Timeout protection prevents infinite loops
+            - Queue management prevents conflicting operations
+            - Detailed error logging and reporting
 
         Note:
             - Uses queue system to prevent overlapping operations on same device

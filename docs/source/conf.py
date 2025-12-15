@@ -31,6 +31,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "astropy": ("https://docs.astropy.org/en/stable/", None),
+    "jinja2": ("https://jinja.palletsprojects.com/en/stable/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,7 +56,7 @@ html_theme_options = {
     "use_repository_button": True,
     "use_fullscreen_button": False,
     "use_download_button": False,
-    "home_page_in_toc": True,
+    "home_page_in_toc": False,
     "show_navbar_depth": 1,
     "collapse_navigation": True,
     "navbar_end": ["navbar-icon-links"],
@@ -77,7 +78,7 @@ autoclass_content = "both"
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 napoleon_include_init_with_doc = False
-napoleon_include_private_with_doc = True
+napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
