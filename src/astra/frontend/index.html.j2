@@ -15,6 +15,7 @@
     <script type="text/javascript" src="/js/guiding.js"></script>
     <script type="text/javascript" src="/js/sky_projection.js"></script>
     <link rel="icon" href="/favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         g[aria-label="tip"] {
             fill: rgb(23 23 23);
@@ -57,7 +58,7 @@
 
     <div class="flex flex-wrap h-screen items-center justify-center md:p-10">
         <div id="particles-js" class="absolute w-full h-full -z-0 max-lg:hidden"></div>
-        <div id="{{ observatory }}" class="flex flex-col 
+        <div id="{{ observatory }}" class="flex flex-col
         inset-0 h-full w-screen sm:lg:max-w-screen-sm md:max-w-screen-md max-h-full
         gap-4 space-y-4 p-4 bg-neutral-900/80 shadow-black/50 shadow-xl rounded-xl z-10">
 
@@ -169,24 +170,21 @@
 
                     <div class="flex flex-row justify-center items-center">
                         {# lastest image #}
-                        <a id="summary-last-image-parent"
-                            class="flex justify-center basis-1/2 mr-2 relative">
-                            <img id="summary-last-image" alt="lastest image"
-                                class="object-contain h-full w-full hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                id="summary-last-image-placeholder" viewBox="0 0 24 24"
-                                fill="currentColor" class="w-full p-12 opacity-20">
-                                <path fill-rule="evenodd"
-                                    d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
-                                    clip-rule="evenodd" />
+                        <div id="summary-last-image-parent" class="flex justify-center basis-1/2 mr-2 relative">
+                            <img id="summary-last-image" alt="latest image" class="object-contain h-full w-full hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" id="summary-last-image-placeholder" viewBox="0 0 24 24" fill="currentColor" class="w-full p-12 opacity-20">
+                                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
                             </svg>
-                            <div
-                                class="flex opacity-0 hover:opacity-80 bg-black duration-100 absolute h-full w-full text-white justify-center items-center">
-                                <div id="summary-last-image-text"
-                                    class="whitespace-break-spaces md:text-base text-xs text-wrap truncate">
+
+                            <div class="flex opacity-0 hover:opacity-80 bg-black duration-100 absolute h-full w-full text-white justify-center items-center">
+                                <div id="summary-last-image-text" class="whitespace-break-spaces md:text-base text-xs text-wrap truncate">
+                                    <!-- Add text here, if needed -->
                                 </div>
+                                <a href="/fits_explorer" class="absolute top-2 right-2 text-white/80 hover:text-white" title="Open FITS Explorer">
+                                    <i class="bi bi-images text-xl md:text-2xl"></i>
+                                </a>
                             </div>
-                        </a>
+                        </div>
 
                         {# webcam feed #}
                         <div id="webcam-container"
@@ -945,7 +943,7 @@
                             tracking: item.polled?.Tracking?.value || false
                         }))
                         .filter(tel => tel.alt !== 0 || tel.az !== 0); // Filter out invalid positions
-                    
+
                     updateTelescopePositions(telescopeData);
                 }
 
@@ -1038,7 +1036,7 @@
             } else if (type == 'log') {
                 let logDiv = document.getElementById("log-0");
                 let divParent = document.getElementById("log-0-parent");
-                
+
                 // Check if we are at the bottom before adding new content
                 let scrollBottom = divParent.scrollHeight - divParent.scrollTop - divParent.clientHeight;
                 let isAtBottom = scrollBottom < 100;

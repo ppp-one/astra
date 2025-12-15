@@ -38,6 +38,7 @@ from fastapi.responses import (
     FileResponse,
     HTMLResponse,
     StreamingResponse,
+    RedirectResponse,
 )
 from fastapi.templating import Jinja2Templates
 from PIL import Image
@@ -48,12 +49,22 @@ from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
 from astra.observatory import Observatory
 from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
+from astra.frontend.file_explorer.file_explorer import include_file_explorer
+
 
 pd.set_option("future.no_silent_downcasting", True)
 
 logger = logging.getLogger(__name__)
-logger.addHandler(ConsoleStreamHandler())
 logger.setLevel(logging.INFO)
+
+root_logger = logging.getLogger()
+root_logger.addHandler(ConsoleStreamHandler())
+root_logger.setLevel(logging.INFO)
+
+for uvicorn_logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+    ul = logging.getLogger(uvicorn_logger_name)
+    ul.handlers = []
+    ul.propagate = True
 
 # silence httpx logging
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -249,6 +260,18 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+try:
+    include_file_explorer(
+        app,
+        fits_dir=Config().paths.images,
+        prefix="/fits_explorer",
+        static_url="/fits_explorer/static",
+        fits_url="/fits",
+    )
+    logger.info("Registered file explorer at /fits_explorer")
+except Exception as e:
+    logger.error(f"Failed to register file explorer: {e}", exc_info=True)
 
 
 @app.get("/video/{filename:path}", include_in_schema=False)
@@ -1593,6 +1616,12 @@ async def get_schedule(request: Request):
     )
 
 
+@app.get("/fits_explorer", include_in_schema=False)
+async def fits_explorer_root_redirect():
+    """Redirect /fits_explorer -> /fits_explorer/ so the mounted sub-app handles it."""
+    return RedirectResponse(url="/fits_explorer/", status_code=307)
+
+
 @app.get("/{path:path}", include_in_schema=False)
 async def serve_files(request: Request, path: str = ""):
     """Serve static files and main application interface.
@@ -1621,6 +1650,11 @@ async def serve_files(request: Request, path: str = ""):
         )
     elif path == "favicon.svg":
         return FileResponse(str(FRONTEND_PATH / "favicon.svg"))
+    elif path == "favicon.ico":
+        favicon = FRONTEND_PATH / "favicon.svg"
+        if favicon.exists():
+            return FileResponse(str(favicon), media_type="image/svg+xml")
+        return HTMLResponse(status_code=404, content="Not Found")
     elif path.startswith("js/"):
         return FileResponse(str(FRONTEND_PATH / path))
     elif path.startswith("frontend/"):
@@ -1676,6 +1710,11 @@ def main():
         "--debug", action="store_true", help="run in debug mode (default: false)"
     )
     parser.add_argument(
+        "--auto_reload_frontend",
+        action="store_true",
+        help="Enable Jinja template auto-reload for frontend development",
+    )
+    parser.add_argument(
         "--port",
         type=int,
         default=8000,
@@ -1717,6 +1756,11 @@ def main():
     if args.debug:
         DEBUG = True
         logging.getLogger().setLevel(logging.DEBUG)
+
+    if getattr(args, "auto_reload_frontend", False):
+        FRONTEND.env.auto_reload = True
+        FRONTEND.env.cache = {}
+        logger.info("Frontend dev mode: Jinja template auto-reload enabled")
 
     logger.info(f"Astra version: {__version__}")
 

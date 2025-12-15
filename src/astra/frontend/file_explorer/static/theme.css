@@ -1,0 +1,131 @@
+:root {
+  /* Sync explorer theme with dashboard palette: dark slate background,
+    slate-muted text, sky-blue accent and amber highlight for emphasis. */
+  --astra-bg: #0f1724; /* near-black with cool slate undertone (matches main bg) */
+  --astra-panel: rgba(30,41,59,0.92); /* slate-800 like panel */
+  --astra-fits-panel: #080c13; 
+  --astra-text: #e6eef8; /* slate-100 / off-white for readability */
+  --astra-muted: #94a3b8; /* slate-400 muted */
+  --astra-accent: #60a5fa; /* sky-400 / soft blue accent */
+  --astra-accent-2: #f59e0b; /* amber-500 for warnings/highlights */
+  --astra-border: rgba(230,238,248,0.06);
+  --astra-input-bg: rgba(255,255,255,0.03);
+  --astra-input-bg-darker: rgba(255,255,255,0.02);
+  --astra-backdrop: rgba(4,6,12,0.78);
+  --astra-spinner-border: rgba(230,238,248,0.14);
+  --astra-shadow: rgba(2,6,23,0.7);
+  --astra-radius: 12px;
+
+  /* Star colors for host page / explorer to use when embedding or
+    when the explorer needs to mimic the host starfield. */
+  --astra-star-1: #f8fafc; /* faint white */
+  --astra-star-2: #bfdbfe; /* pale blue */
+  --astra-star-3: #fde68a; /* pale amber */
+  --astra-star-4: #c7d2fe; /* muted indigo-blue */
+
+  /* Explorer specific accents (buttons/search) */
+  --explorer-button-bg:#273244;
+  --explorer-button-text: #dff1ff; /* slightly tinted text for buttons */
+  --explorer-button-hover: rgba(96,165,250,0.08);
+  --explorer-selected-bg: rgba(96,165,250,0.10);
+  --explorer-search-bg: rgba(255,255,255,0.03);
+  --explorer-search-text: var(--astra-text);
+}
+
+/* Map variables to the main explorer components (override defaults in viewer_style.css) */
+.fe-modal-panel {
+  background: var(--astra-fits-panel) !important;
+  color: var(--astra-text) !important;
+  border-radius: var(--astra-radius) !important;
+  border: 1px solid var(--astra-border) !important;
+  box-shadow: 0 25px 90px var(--astra-shadow) !important;
+}
+
+.fe-modal-backdrop {
+  background: var(--astra-backdrop) !important;
+}
+
+.viewer-toolbar {
+  background: linear-gradient(180deg, var(--astra-input-bg), var(--astra-input-bg-darker)) !important;
+  border: 1px solid var(--astra-border) !important;
+}
+
+input#searchInput {
+  background: var(--astra-input-bg) !important;
+  color: var(--astra-text) !important;
+  border: 1px solid var(--astra-border) !important;
+}
+
+.fe-close {
+  color: var(--astra-text) !important;
+  background: rgba(0,0,0,0.25) !important;
+}
+
+#spinner::after {
+  border: 3px solid var(--astra-spinner-border) !important;
+  border-top-color: var(--astra-accent) !important;
+}
+
+
+/* Header table colors */
+#headerTable th, #headerTable td {
+  color: var(--astra-text) !important;
+}
+
+/* Ensure monospace header table text is visible on dark themes */
+#headerTable, #headerTable th, #headerTable td {
+  color: var(--astra-text) !important;
+}
+
+/* Viewer toolbar accent */
+.toolbar-icon-button, .toolbar-group span {
+  color: var(--astra-text) !important;
+}
+
+/* small helpers for accent usage */
+.astra-accent { color: var(--astra-accent) !important; }
+.astra-accent-2 { color: var(--astra-accent-2) !important; }
+
+/* When the explorer is embedded inside the main page (iframe), it can
+   receive postMessage to toggle 'body.astra-explorer' and adopt host
+   dark background. Ensure the body class also applies sensible padding. */
+body.astra-explorer { background: var(--astra-bg) !important; padding: 0.5rem; }
+
+
+/* -------------------------------------------------------------------------
+   Semantic, inheriting classes for themeable UI
+   Prefer these in templates instead of Tailwind color utilities so the
+   host can change appearance by setting the CSS variables (or via postMessage)
+   ------------------------------------------------------------------------- */
+
+.astra-explorer {
+  /* explorer root: use page background variable so outer area is themed */
+  background: var(--astra-bg);
+  background-color: var(--astra-bg);
+  color: var(--astra-text) !important; /* inherited by children */
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  box-sizing: border-box;
+}
+
+/* also ensure when body has the class the background applies (higher specificity) */
+body.astra-explorer {
+  background: var(--astra-bg) !important;
+  color: var(--astra-text) !important;
+}
+
+.astra-panel {
+  background: var(--astra-panel);
+  background-color: var(--astra-panel);
+  color: var(--astra-text);
+  border-radius: calc(var(--astra-radius) / 1.3);
+  padding: 0.5rem;
+}
+
+.astra-text { color: var(--astra-text); }
+.astra-muted { color: var(--astra-muted); font-size: 0.92em; }
+.astra-nowrap { overflow-x: auto; white-space: nowrap; }
+
+/* Convenience helpers (spacing/layout still use Tailwind utilities if desired) */
+.astra-gap-sm { gap: 0.375rem; }

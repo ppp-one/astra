@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FITS File Browser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="static/js/shared/array_utils.js"></script>
+        <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
+        <link rel="stylesheet" href="static/theme.css"> <!-- Theme variables -->
+        <!-- Inline fallback: ensure the explorer root uses theme variables even if external CSS ordering is different -->
+</head>
+<body class="astra-explorer p-6">
+    <div class="max-w-3xl mx-auto astra-panel p-6 rounded-lg shadow-lg">
+        <div class="flex items-center mb-4 flex-wrap gap-2">
+            <button id="home-btn" class="p-2 rounded-full astra-panel hover:opacity-90 mr-2">
+                <i class="fas fa-home"></i> <!-- Home icon -->
+            </button>
+            <button id="back-btn" class="p-2 rounded-full astra-panel hover:opacity-90">
+                <i class="fas fa-arrow-left"></i> <!-- Back arrow icon -->
+            </button>
+            <button id="sort-btn" class="ml-2 p-2 rounded astra-panel hover:opacity-90 text-sm flex items-center justify-center w-10 h-10" aria-label="Toggle sort order"></button>
+            <div class="flex-grow min-w-[140px]">
+                <input type="text" id="search" placeholder="Search..." 
+                       class="w-full p-2 rounded astra-panel placeholder-gray-400">
+            </div>
+        </div>
+
+        <div id="breadcrumbs" class="text-sm astra-muted mb-3 astra-nowrap"></div>
+        <ul id="file-list" class="space-y-2 max-h-[60vh] overflow-auto pr-1"></ul>
+    </div>
+
+    <div id="fits-modal" class="fe-modal" aria-hidden="true">
+        <div class="fe-modal-backdrop"></div>
+        <div class="fe-modal-panel" role="dialog" aria-modal="true">
+            <button id="close-fits-modal" class="fe-close" aria-label="Close FITS viewer">&times;</button>
+            <div id="spinner" role="status" aria-live="polite" aria-hidden="true" aria-label="Loading FITS data"></div>
+                <div class="mainContainer" style="display: none;">
+                    <div id="filePathBanner" class="file-path-banner is-empty" role="status" aria-live="polite" title="No file loaded" tabindex="0">No file loaded</div>
+                    <div id="viewerToolbar" class="viewer-toolbar" style="display: none;">
+                        <div class="toolbar-row">
+                            <div class="toolbar-group file-group" role="group" aria-label="File navigation and actions">
+                                <button id="prev-file-btn" class="toolbar-icon-button" title="Previous file" aria-label="Previous file" type="button">
+                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                </button>
+                                <button id="next-file-btn" class="toolbar-icon-button" title="Next file" aria-label="Next file" type="button">
+                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                </button>
+                                <button id="loadFullFitsButton" class="toolbar-icon-button" title="Load full FITS" aria-label="Load full FITS" type="button">
+                                    <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                                </button>
+                                <div class="hdu-block">
+                                    <div id="hduLabel" class="hdu-label">HDU</div>
+                                    <select id="hduSelect" class="control-select hdu-compact" title="Select HDU"></select>
+                                </div>
+                                <div class="file-group-actions">
+                                    <button id="logToggleButton" class="toolbar-icon-button log-toggle" type="button" aria-pressed="false" title="Enable log stretch">
+                                        <span>Log</span>
+                                    </button>
+                                    <button id="stretchPanelToggle" class="toolbar-icon-button collapse-button" type="button" aria-expanded="false" title="Show stretch controls">
+                                        <i class="bi bi-sliders" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="toolbar-divider" aria-hidden="true"></div>
+
+                            <div class="toolbar-group stretch-group" role="group" aria-label="Stretch controls">
+                                <div class="stretch-sliders">
+                                    <div class="control-group slider-group range-control control-compact">
+                                        <label for="stretchMin">Range</label>
+                                        <div class="ds-container" id="dualRange"></div>
+                                        <!-- hidden native inputs retained for compatibility -->
+                                        <input type="range" id="stretchMin" min="0" max="1000" value="0" style="display:none;" />
+                                        <input type="range" id="stretchMax" min="0" max="1000" value="1000" style="display:none;" />
+                                        <div class="range-values">
+                                            <span id="stretchMinValue" class="control-value">0</span>
+                                            <span class="range-divider">-</span>
+                                            <span id="stretchMaxValue" class="control-value">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="control-group slider-group gamma-control control-compact">
+                                        <label for="stretchGamma">Gamma</label>
+                                        <input type="range" id="stretchGamma" min="10" max="300" value="100"/>
+                                        <span id="stretchGammaValue" class="control-value">1.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="imageGridContainer" class="grid-container">
+                        <canvas id="loadedImage"></canvas>
+                        <canvas id="yProfile" width="100"></canvas>
+                        <canvas id="xProfile" height="100"></canvas>
+                        <div class="info-corner">
+                            <p class="text-xs uppercase tracking-wide astra-muted">Pixel</p>
+                            <p id="pixelValue"></p>
+                            <p id="pixelPosition"></p>
+                        </div>
+                    </div>
+                    <div id="headerGridContainer" class="header-grid-container" style="display: grid">
+                        <div class="header-container">
+                            <div class="search-controls">
+                                <input type="text" id="searchInput" placeholder="Filter headers..." />
+                            </div>
+                            <table id="headerTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function setAstraFitsBasePath() {
+            if (window.__ASTRA_FITS_BASE_PATH) {
+                return;
+            }
+            const { pathname } = window.location;
+            if (!pathname) {
+                window.__ASTRA_FITS_BASE_PATH = "/";
+                return;
+            }
+            if (pathname.endsWith("/")) {
+                window.__ASTRA_FITS_BASE_PATH = pathname;
+                return;
+            }
+            const lastSlash = pathname.lastIndexOf("/");
+            window.__ASTRA_FITS_BASE_PATH =
+                lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : "/";
+        })();
+    </script>
+    <script>
+        // Listen for theme updates from embedding host and apply as CSS variables
+        window.addEventListener('message', (ev) => {
+            try {
+                const msg = ev.data || {};
+                if (msg && msg.type === 'astra-theme' && msg.vars) {
+                    const root = document.documentElement;
+                    Object.entries(msg.vars).forEach(([k, v]) => {
+                        // Expect keys like 'astra-bg' -> set --astra-bg
+                        root.style.setProperty(`--${k}`, v);
+                    });
+                }
+            } catch (e) {
+                // ignore errors
+            }
+        }, false);
+    </script>
+    <script>
+        // Notify parent window of our content height so any embedding iframe
+        // can be auto-resized. We send messages on load and when the document
+        // size changes.
+        function postHeight() {
+            try {
+                const h = document.documentElement.scrollHeight || document.body.scrollHeight;
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'astra-explorer-height', height: h }, '*');
+                }
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        window.addEventListener('load', () => {
+            postHeight();
+            // observe size changes
+            if ('ResizeObserver' in window) {
+                const ro = new ResizeObserver(() => postHeight());
+                ro.observe(document.documentElement);
+            } else {
+                // fallback: periodic polling
+                setInterval(postHeight, 1000);
+            }
+        });
+    </script>
+    <script type="module" src="static/js/viewer/index.js"></script>
+    <script>
+        const BASE_PATH = window.__ASTRA_FITS_BASE_PATH || "/";
+
+        function explorerUrl(relative = "") {
+            const base = BASE_PATH.endsWith("/") ? BASE_PATH : `${BASE_PATH}/`;
+            const trimmed = relative.startsWith("/")
+                ? relative.slice(1)
+                : relative;
+            return base === "/" ? `/${trimmed}` : `${base}${trimmed}`;
+        }
+
+        function encodePathForQuery(path) {
+            return path
+                .split("/")
+                .map((segment) => encodeURIComponent(segment))
+                .join("/");
+        }
+
+        let currentPath = "";
+        const phoneMediaQuery = typeof window.matchMedia === 'function'
+            ? window.matchMedia('(max-width: 640px)')
+            : null;
+        function applyMobileLayoutOverride() {
+            const grid = document.getElementById('imageGridContainer');
+            if (!grid) return;
+            if (!phoneMediaQuery) {
+                grid.classList.remove('mobile-only-image');
+                return;
+            }
+            grid.classList.toggle('mobile-only-image', phoneMediaQuery.matches);
+        }
+        if (phoneMediaQuery?.addEventListener) {
+            phoneMediaQuery.addEventListener('change', () => {
+                if (document.getElementById('fits-modal')?.classList.contains('is-visible')) {
+                    applyMobileLayoutOverride();
+                }
+            });
+        } else if (phoneMediaQuery?.addListener) {
+            phoneMediaQuery.addListener(() => {
+                if (document.getElementById('fits-modal')?.classList.contains('is-visible')) {
+                    applyMobileLayoutOverride();
+                }
+            });
+        }
+
+        async function fetchFiles(path = "") {
+            const query = path ? `?path=${encodePathForQuery(path)}` : "";
+            const response = await fetch(explorerUrl(`list/${query}`));
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            currentPath = data.current_path;
+            // Persist the last browsed path so the explorer restores it on reload
+            try {
+                localStorage.setItem('astra_fe_last_path', currentPath || '');
+            } catch (e) {
+                // ignore storage errors (e.g., private mode)
+            }
+            // store raw files and compute ordered list according to current sort
+            window.__fe_last_files = data.files || [];
+            window.__fe_last_files_ordered = (window.__fe_last_files || []).slice();
+            if (window.__fe_sort_mode === 'reverse') window.__fe_last_files_ordered.reverse();
+
+            updateBreadcrumbs(data.breadcrumbs);
+            renderFileList();
+
+            // if modal open, refresh prev/next state
+            const modal = document.getElementById('fits-modal');
+            if (modal && modal.classList.contains('is-visible') && window.__fe_current_file) {
+                updatePrevNextState(window.__fe_current_file);
+            }
+        }
+
+        // sortMode: 'default' or 'reverse'
+        window.__fe_sort_mode = window.__fe_sort_mode || 'default';
+        function renderFileList() {
+            const files = (window.__fe_last_files_ordered || window.__fe_last_files || []).slice();
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+
+            files.forEach(file => {
+                const item = document.createElement('li');
+                item.textContent = file.name;
+                item.title = file.name;
+                item.classList.add(
+                    'p-2', 'rounded', 'cursor-pointer', 'truncate', 'flex', 'items-center', 'w-full',
+                    file.is_dir ? 'astra-text' : 'astra-text'
+                );
+                // use astra-panel as hover background via a helper class
+                item.classList.add('hover:opacity-90');
+
+                if (file.is_dir) {
+                    item.onclick = () => fetchFiles(file.path);
+                } else if (file.name.toLowerCase().endsWith('.fits')) {
+                    item.onclick = () => openFitsModal(file.path);
+                } else {
+                    item.onclick = () => alert(`Selected: ${file.path}`);
+                }
+                fileList.appendChild(item);
+            });
+
+            // refresh prev/next state if modal open
+            const modal = document.getElementById('fits-modal');
+            if (modal && modal.classList.contains('is-visible') && window.__fe_current_file) {
+                updatePrevNextState(window.__fe_current_file);
+            }
+        }
+
+        // Sort button: show only the Bootstrap Icons sort glyph; toggle icon orientation
+    const sortBtn = document.getElementById('sort-btn');
+    sortBtn.innerHTML = '<i class="bi bi-sort-up"></i>';
+        sortBtn.title = 'Sort: default';
+        sortBtn.setAttribute('aria-label', 'Sort: default');
+        sortBtn.addEventListener('click', function () {
+            window.__fe_sort_mode = window.__fe_sort_mode === 'default' ? 'reverse' : 'default';
+            // swap icon between up/down to indicate order
+            const icon = this.querySelector('i');
+            if (icon) {
+                if (window.__fe_sort_mode === 'reverse') {
+                    icon.classList.remove('bi-sort-up');
+                    icon.classList.add('bi-sort-down');
+                    this.title = 'Sort: reverse';
+                    this.setAttribute('aria-label', 'Sort: reverse');
+                } else {
+                    icon.classList.remove('bi-sort-down');
+                    icon.classList.add('bi-sort-up');
+                    this.title = 'Sort: default';
+                    this.setAttribute('aria-label', 'Sort: default');
+                }
+            }
+            // recompute ordered list and re-render
+            window.__fe_last_files_ordered = (window.__fe_last_files || []).slice();
+            if (window.__fe_sort_mode === 'reverse') window.__fe_last_files_ordered.reverse();
+            renderFileList();
+        });
+
+        function updatePrevNextState(filePath) {
+            const idx = findIndexForPath(filePath);
+            const prevBtn = document.getElementById('prev-file-btn');
+            const nextBtn = document.getElementById('next-file-btn');
+            prevBtn.disabled = idx <= 0;
+            nextBtn.disabled = idx === -1 || idx >= (window.__fe_last_files_ordered || []).length - 1;
+        }
+
+        // Previous/Next navigation for FITS modal
+        function findIndexForPath(path) {
+            const list = window.__fe_last_files_ordered || window.__fe_last_files || [];
+            return list.findIndex(f => f.path === path);
+        }
+
+        function navigateToOffset(offset) {
+            const current = window.__fe_current_file || '';
+            const idx = findIndexForPath(current);
+            if (idx === -1) return;
+            const list = window.__fe_last_files_ordered || window.__fe_last_files || [];
+            const nextIdx = idx + offset;
+            if (nextIdx < 0 || nextIdx >= list.length) return;
+            const target = list[nextIdx];
+            if (target && !target.is_dir) {
+                openFitsModal(target.path);
+            }
+        }
+
+        document.getElementById('prev-file-btn').addEventListener('click', () => navigateToOffset(-1));
+        document.getElementById('next-file-btn').addEventListener('click', () => navigateToOffset(1));
+
+        function updateBreadcrumbs(breadcrumbs) {
+            const breadcrumbContainer = document.getElementById("breadcrumbs");
+
+            // Home icon always shown as the first clickable element
+            const homeHtml = `<span class="cursor-pointer hover:underline" title="Root" onclick="fetchFiles('')"><i class=\"bi bi-images\" aria-hidden=\"true\"></i></span>`;
+
+            if (!breadcrumbs || breadcrumbs.length === 0) {
+                breadcrumbContainer.innerHTML = homeHtml;
+                return;
+            }
+
+            const parts = breadcrumbs || [];
+            const mapped = parts.map((part, index) => {
+                const path = parts.slice(0, index + 1).join('/');
+                return `<span class="cursor-pointer hover:underline" onclick="fetchFiles('${path}')">${part}</span>`;
+            });
+
+            breadcrumbContainer.innerHTML = [homeHtml].concat(mapped).join(" <span aria-hidden=\"true\" class='text-gray-500'>/</span> ");
+        }
+
+        document.getElementById("search").addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll("#file-list li").forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(query) ? "" : "none";
+            });
+        });
+
+        document.getElementById("back-btn").addEventListener("click", function () {
+            if (currentPath) {
+                const parentPath = currentPath.split("/").slice(0, -1).join("/");
+                fetchFiles(parentPath);
+            }
+        });
+
+        // Exit button: navigate back to the hosting Astra application root.
+        document.getElementById('home-btn').addEventListener('click', function () {
+            // window.__ASTRA_FITS_BASE_PATH is injected server-side to indicate the
+            // explorer base (e.g. '/fits_explorer/'). Compute the parent path by
+            // removing the last path segment and navigate there. If embedded in
+            // an iframe, prefer navigating the parent window.
+            const base = window.__ASTRA_FITS_BASE_PATH || "/";
+            const trimmed = base.replace(/\/$/, '');
+            const parts = trimmed.split('/').filter(Boolean);
+            let parentHref = '/';
+            if (parts.length > 0) {
+                parts.pop();
+                parentHref = '/' + parts.join('/');
+                if (!parentHref.endsWith('/')) parentHref += '/';
+            }
+
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.location.href = parentHref;
+                } else {
+                    window.location.href = parentHref;
+                }
+            } catch (e) {
+                window.location.href = parentHref;
+            }
+        });
+
+        // Modal logic
+        function openFitsModal(filePath) {
+            const modal = document.getElementById('fits-modal');
+            const mainContainer = document.querySelector('.mainContainer');
+            if (!modal || !mainContainer) return;
+            console.log(`Opening FITS preview for: ${filePath}`);
+            window.__fe_current_file = filePath;
+            document.body.classList.add('fe-modal-open');
+            mainContainer.style.display = 'grid';
+            modal.classList.add('is-visible');
+            modal.setAttribute('aria-hidden', 'false');
+            applyMobileLayoutOverride();
+            updatePrevNextState(filePath);
+            requestAnimationFrame(() => {
+                if (window.__astraRenderer && typeof window.__astraRenderer.forceResize === 'function') {
+                    window.__astraRenderer.forceResize();
+                }
+            });
+            const previewPromise = loadPreview(filePath);
+            if (previewPromise && typeof previewPromise.then === 'function') {
+                previewPromise.then(() => {
+                    if (window.__astraRenderer && typeof window.__astraRenderer.forceResize === 'function') {
+                        window.__astraRenderer.forceResize();
+                    }
+                }).catch(() => {
+                    /* swallow; loadPreview already reports errors */
+                });
+            }
+            const focusable = modal.querySelector('button, select, input');
+            if (focusable) {
+                focusable.focus({ preventScroll: true });
+            }
+        }
+
+        function closeFitsModal() {
+            const modal = document.getElementById('fits-modal');
+            if (!modal) return;
+            modal.classList.remove('is-visible');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('fe-modal-open');
+            const container = document.querySelector('.mainContainer');
+            if (container) {
+                container.style.display = 'none';
+            }
+        }
+        document.getElementById('close-fits-modal').onclick = closeFitsModal;
+        const modalBackdrop = document.querySelector('#fits-modal .fe-modal-backdrop');
+        if (modalBackdrop) {
+            modalBackdrop.addEventListener('click', closeFitsModal);
+        }
+
+
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('fits-modal');
+            const modalOpen = modal && modal.classList.contains('is-visible');
+
+            if (event.key === 'Escape') {
+                // Close the modal if it's open
+                if (modalOpen) {
+                    closeFitsModal();
+                }
+                // Move back one directory if the modal is not open
+                else if (currentPath) {
+                    const parentPath = currentPath.split("/").slice(0, -1).join("/");
+                    fetchFiles(parentPath);
+                }
+            }
+
+            // Keyboard navigation when modal is open: Left/Right arrows for prev/next
+            if (modalOpen) {
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    navigateToOffset(-1);
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    navigateToOffset(1);
+                }
+            }
+        });
+
+
+        // Restore last browsed path (persisted across reloads) when available.
+        (function restoreLastPath() {
+            try {
+                const saved = localStorage.getItem('astra_fe_last_path');
+                fetchFiles(saved || '');
+            } catch (e) {
+                fetchFiles('');
+            }
+        })();
+    </script>
+</body>
+</html>

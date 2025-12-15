@@ -171,7 +171,12 @@ class Observatory:
 
         self.logger = ObservatoryLogger(self.name, level=logging_level)
         self.logger.addHandler(DatabaseLoggingHandler(self.database_manager))
-        self.logger.addHandler(ConsoleStreamHandler())
+
+        # Only add ConsoleStreamHandler if the root logger doesn't already provide one
+        root_logger = logging.getLogger()
+        if not any(isinstance(h, ConsoleStreamHandler) for h in root_logger.handlers):
+            self.logger.addHandler(ConsoleStreamHandler())
+
         self.logger.addHandler(FileHandler(Config().paths.log_file))
         self.database_manager.logger = self.logger
 
