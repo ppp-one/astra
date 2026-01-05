@@ -53,9 +53,9 @@ Once the initial setup is complete, you can run *Astra*.
    After initial setup, running this command will park your telescope and close
    your dome if the weather conditions are unfavorable or your safety monitor
    indicates an unsafe status.
-      ~~~bash
-      astra
-      ~~~
+   ~~~bash
+   astra
+   ~~~
    ```
 
 3. After a few moments, open your web browser and navigate to the URL `http://host:port`,
@@ -70,5 +70,5 @@ Once the initial setup is complete, you can run *Astra*.
 
 
 <div style="text-align: center;">
-   <img alt="Astra schedule editor" src="_images/ui-schedule-editor.png" style="width: 80%; align=center margin: 5px 0;" />
+   <img alt="Astra schedule editor" src="_images/ui-schedule-editor.png" style="width: 80%; align=center; margin: 5px 0;" />
 </div>

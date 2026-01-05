@@ -32,7 +32,7 @@ Being ASTELCO made observatories, SPECULOOS telescopes are subject to certain
 quirks that require special handling. Specifically, they need custom error
 handling and some of its ASCOM methods not conforming asynchronous standards.
 
-In the following you can have a look at the subclass used by the SPECULOOS observatoris.
+In the following you can have a look at the subclass used by the SPECULOOS observatories.
 
 ```{literalinclude} ../../../example_observatories/speculoos/speculoos.py
 :language: python

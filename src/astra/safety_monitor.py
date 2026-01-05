@@ -1,4 +1,4 @@
-""" "Safety monitoring for observatory weather conditions.
+"""Safety monitoring for observatory weather conditions.
 
 Key capabilities:
     - Monitor external safety monitor device status
