@@ -4,6 +4,9 @@ import sys
 
 # Add the project source directory to the path so that autodoc can find the modules
 sys.path.insert(0, os.path.abspath("../../src"))
+# Also make the docs/source directory importable so internal Sphinx extensions
+# under docs/source/_ext can be imported by name (package `_ext`).
+sys.path.insert(0, os.path.abspath("."))
 
 # Project information
 project = "Astra"
@@ -21,7 +24,9 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
     "sphinx_copybutton",
+    "sphinx_design",
     "myst_nb",
+    "_ext.action_configs_autodoc",
 ]
 
 # Add mappings for intersphinx

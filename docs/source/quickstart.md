@@ -62,13 +62,13 @@ Once the initial setup is complete, you can run *Astra*.
   [http://localhost:8000](http://localhost:8000) by default, and you should see 
   Astra's web interface.
 
-<img alt="Astra summary tab" src="_images/ui-summary-tab.png" style="width: 49%; margin: 5px 0;" />
-<img alt="Astra log tab" src="_images/ui-log-tab.png" style="width: 49%; margin: 5px 0;" />
+<img alt="Astra summary tab" src="_static/ui-summary-tab.png" style="width: 49%; margin: 5px 0;" />
+<img alt="Astra log tab" src="_static/ui-log-tab.png" style="width: 49%; margin: 5px 0;" />
 
-<img alt="Astra weather tab" src="_images/ui-weather-tab.png" style="width: 49%; margin: 5px 0;" />
-<img alt="Astra controls tab" src="_images/ui-controls-tab.png" style="width: 49%; margin: 5px 0;" />
+<img alt="Astra weather tab" src="_static/ui-weather-tab.png" style="width: 49%; margin: 5px 0;" />
+<img alt="Astra controls tab" src="_static/ui-controls-tab.png" style="width: 49%; margin: 5px 0;" />
 
 
 <div style="text-align: center;">
-   <img alt="Astra schedule editor" src="_images/ui-schedule-editor.png" style="width: 80%; align=center; margin: 5px 0;" />
+   <img alt="Astra schedule editor" src="_static/ui-schedule-editor.png" style="width: 80%; align=center; margin: 5px 0;" />
 </div>

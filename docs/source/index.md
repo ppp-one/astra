@@ -51,8 +51,21 @@ motivation
 
 installation
 quickstart
-user_guide/index
 ```
+
+```{toctree}
+:maxdepth: 2
+:caption: User Guide
+:hidden:
+
+user_guide/overview
+user_guide/observatory_configuration
+user_guide/fits_header_configuration
+user_guide/scheduling
+user_guide/operation
+user_guide/custom_observatories
+```
+
 
 ```{toctree}
 :maxdepth: 2

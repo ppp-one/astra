@@ -35,8 +35,23 @@ uv sync
 source .venv/bin/activate
 ```
 
-```{note}
+````{dropdown} Environment Activation
+:icon: info
+:color: info
+:open:
+
 Always remember to activate your virtual environment before running astra.
+
+Alternatively, you can run
+~~~bash
+uv run astra
+~~~
+in the directory where astra is installed, which will automatically use `.venv`.
+
+
+```{dropdown} Automatic Environment Detection
+:icon: info
+:color: info
 
 If installed, you can also consider using `direnv` to auto-activate the python
 environment in the directory where *Astra* is installed using
@@ -44,14 +59,9 @@ environment in the directory where *Astra* is installed using
 echo 'source .venv/bin/activate' > .envrc
 direnv allow
 ~~~
-
-Alternatively, you can also run
-~~~bash
-uv run astra
-~~~
-in the directory where astra is installed, which will automatically use `.venv`.
-
 ```
+
+````
 
 #### Using *conda*
 

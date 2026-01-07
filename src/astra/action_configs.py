@@ -11,7 +11,7 @@ import typing
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, ClassVar, List, Optional, Union
 
 import astropy.units as u
 import numpy as np
@@ -40,6 +40,13 @@ class BaseActionConfig:
         3.0
         >>> autofocus_config.get('not_available')
     """
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def __post_init__(self):
         self.validate()
@@ -382,30 +389,100 @@ class BaseActionConfig:
 
 @dataclass
 class OpenActionConfig(BaseActionConfig):
+    """Open the observatory for observations.
+
+    Steps:
+        1. Opens dome shutter
+        2. Unparks telescope
+    """
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "open",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
+
     def validate(self):
         pass
 
 
 @dataclass
 class CloseActionConfig(BaseActionConfig):
+    """Close the observatory safely.
+
+    Steps:
+        1. Stop any active guiding operations
+        2. Stop telescope slewing and tracking
+        3. Park the telescope
+        4. Park the dome and close shutter
+    """
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "close",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
+
     def validate(self):
         pass
 
 
 @dataclass
 class CompleteHeadersActionConfig(BaseActionConfig):
+    """Complete FITS headers after exposures finish.
+
+    Uses paired device telemetry to fill in metadata that was unavailable at
+    exposure time. Automatically executed at the end of every schedule.
+    """
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "complete_headers",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
+
     def validate(self):
         pass
 
 
 @dataclass
 class CoolCameraActionConfig(BaseActionConfig):
+    """Configuration for the ``cool_camera`` schedule action.
+
+    Activates the camera cooler and sets the target temperature with specified tolerance
+    from observatory configuration with a 30 minute timeout.
+    """
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "cool_camera",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
+
     def validate(self):
         pass
 
 
 @dataclass
 class ObjectActionConfig(BaseActionConfig):
+    """Capture a sequence of light frames.
+
+    Workflow:
+        1. Pre-sequence setup (pointing, filters, focus, binning, headers)
+        2. Capture exposures
+        3. Perform pointing correction when ``pointing=true``
+        4. Start guiding when ``guiding=true``
+        5. Stop exposures, guiding, and tracking at completion
+    """
+
     object: str = field(metadata={"required": True})
     exptime: float = field(metadata={"required": True})
     ra: Optional[float] = None
@@ -427,6 +504,47 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "object": "Target name.",
+        "exptime": "Exposure time per frame in seconds.",
+        "ra": "Right Ascension to slew to when overriding current pointing.",
+        "dec": "Declination to slew to when overriding current pointing.",
+        "alt": "Altitude coordinate when issuing Alt/Az pointings.",
+        "az": "Azimuth coordinate when issuing Alt/Az pointings.",
+        "filter": "Filter name to load before imaging.",
+        "focus_shift": "Focus offset relative to the stored best focus.",
+        "focus_position": "Absolute focus position override.",
+        "n": "Number of exposures in the sequence.",
+        "guiding": "Start autoguiding with Donuts before imaging.",
+        "pointing": "Perform pointing correction with twirl before imaging.",
+        "bin": "Camera binning factor.",
+        "dir": "Directory path for saving images.",
+        "execute_parallel": "Execute exposure steps concurrently when supported.",
+        "disable_telescope_movement": "Prevent any telescope motion during the sequence.",
+        "reset_guiding_reference": "Acquire a fresh guiding reference frame at the start.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal location of the subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical location of the subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "object",
+        "action_value": {
+            "object": "M42",
+            "exptime": 60.0,
+            "ra": 83.82208,
+            "dec": -5.39111,
+            "filter": "V",
+            "n": 3,
+            "guiding": True,
+            "pointing": True,
+        },
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def validate(self):
         missing = []
@@ -537,6 +655,8 @@ class ObjectActionConfig(BaseActionConfig):
 
 @dataclass
 class CalibrationActionConfig(BaseActionConfig):
+    """Capture a sequence of calibration images (bias/dark)."""
+
     exptime: List[float] = field(default_factory=list, metadata={"required": True})
     n: List[int] = field(default_factory=list, metadata={"required": True})
     filter: Optional[str] = None
@@ -547,6 +667,27 @@ class CalibrationActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "exptime": "Exposure times (seconds) to iterate.",
+        "n": "Exposure counts aligned with each exposure time.",
+        "filter": "Filter specification to use while capturing calibration frames.",
+        "dir": "Directory path for saving images.",
+        "bin": "Camera binning factor.",
+        "execute_parallel": "Execute the sequence in parallel mode when supported.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "calibration",
+        "action_value": {"exptime": [0.0, 5.0, 30.0], "n": [10, 5, 3]},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def validate(self):
         missing = []
@@ -570,6 +711,15 @@ class CalibrationActionConfig(BaseActionConfig):
 
 @dataclass
 class FlatsActionConfig(BaseActionConfig):
+    """Capture a sequence of sky flats as the sky brightness evolves.
+
+    Steps:
+        1. Wait for Sun altitude between -1° and -12°
+        2. Point to a near-uniform patch of sky opposite the Sun
+        3. Capture exposures and re-position between frames
+        4. Iterate through requested filters while adjusting exposure times
+    """
+
     filter: List[str] = field(default_factory=list, metadata={"required": True})
     n: List[int] = field(default_factory=list, metadata={"required": True})
     dir: Optional[str] = None
@@ -580,6 +730,27 @@ class FlatsActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "filter": "Filters to iterate while capturing flats.",
+        "n": "Number of flats to capture per filter.",
+        "dir": "Directory path for saving images.",
+        "bin": "Camera binning factor.",
+        "execute_parallel": "Execute exposures in parallel when supported.",
+        "disable_telescope_movement": "Prevent telescope motion during the sequence.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "flats",
+        "action_value": {"filter": ["V", "R"], "n": [10, 10]},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def validate(self):
         missing = []
@@ -603,6 +774,8 @@ class FlatsActionConfig(BaseActionConfig):
 
 @dataclass
 class CalibrateGuidingActionConfig(BaseActionConfig):
+    """Calibrate guiding parameters using timed guide pulses."""
+
     filter: Optional[str] = None
     pulse_time: float = 5000.0
     exptime: float = 5.0
@@ -616,12 +789,41 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
 
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "filter": "Filter to use during calibration.",
+        "pulse_time": "Duration of guide pulses in milliseconds.",
+        "exptime": "Exposure time for calibration images.",
+        "settle_time": "Wait time after pulses before exposing.",
+        "number_of_cycles": "How many calibration cycles to run.",
+        "focus_shift": "Focus offset relative to best focus.",
+        "focus_position": "Absolute focus position override.",
+        "bin": "Camera binning factor.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "calibrate_guiding",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
+
     def validate(self):
         self.validate_subframe()
 
 
 @dataclass
 class PointingModelActionConfig(BaseActionConfig):
+    """Generate sync points to build a telescope pointing model.
+
+    Captures a spiral of points from zenith down to 30° altitude while
+    avoiding positions within 20° of the Moon.
+    """
+
     n: int = 100
     exptime: float = 1.0
     dark_subtraction: bool = False
@@ -637,6 +839,32 @@ class PointingModelActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "n": "Number of points to include in the model.",
+        "exptime": "Exposure time for each pointing image.",
+        "dark_subtraction": "Enable dark subtraction using matching calibration frames.",
+        "object": "Descriptive label for the pointing run.",
+        "ra": "Right Ascension for starting point when overriding automatic selection.",
+        "dec": "Declination for starting point when overriding automatic selection.",
+        "filter": "Filter to use for exposures.",
+        "focus_shift": "Focus offset relative to best focus.",
+        "focus_position": "Absolute focus position override.",
+        "bin": "Camera binning factor.",
+        "dir": "Directory path for saving images.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "pointing_model",
+        "action_value": {},
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def validate(self):
         self.validate_subframe()
@@ -669,13 +897,28 @@ class AutofocusCalibrationFieldConfig(BaseActionConfig):
     j_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
     fov_height: float | int = 0
     fov_width: float | int = 0
-    selection_method: SelectionMethod = SelectionMethod.SINGLE
+    selection_method: SelectionMethod | str = "single"
     use_gaia: bool = True
     observation_time: Optional[Time] = None
     maximal_number_of_stars: int = 100_000
     ra: Optional[float | int] = None
     dec: Optional[float | int] = None
     _coordinates: Optional[SkyCoord] = None
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "maximal_zenith_angle": "Maximum zenith angle allowed when selecting autofocus fields.",
+        "airmass_threshold": "Highest acceptable airmass for autofocus candidates.",
+        "g_mag_range": "Inclusive Gaia G magnitude range to consider.",
+        "j_mag_range": "Inclusive 2MASS J magnitude range to consider.",
+        "fov_height": "Height of the field of view in degrees.",
+        "fov_width": "Width of the field of view in degrees.",
+        "selection_method": "Strategy for selecting stars (single, maximal, any).",
+        "use_gaia": "Whether to rely on Gaia catalog sources.",
+        "observation_time": "Observation time used when evaluating constraints.",
+        "maximal_number_of_stars": "Maximum number of stars to query or consider.",
+        "ra": "Fixed Right Ascension used to bypass automatic selection.",
+        "dec": "Fixed Declination used to bypass automatic selection.",
+    }
 
     def __post_init__(self):
         from astrafocus.targeting import find_airmass_threshold_crossover
@@ -729,6 +972,17 @@ class AutofocusCalibrationFieldConfig(BaseActionConfig):
 
 @dataclass
 class AutofocusConfig(BaseActionConfig):
+    """Perform an autofocus sweep to determine the optimal focus position.
+
+    Steps:
+        1. Select a suitable autofocus field (or use provided coordinates)
+        2. Move the telescope if needed
+        3. Capture images at different focus positions
+        4. Measure star sharpness in each image
+        5. Fit a curve to determine optimal focus
+        6. Save plots/results and optionally persist the best focus position
+    """
+
     exptime: float | int = field(default=3.0, metadata={"required": True})
     reduce_exposure_time: bool = False
     search_range: Optional[List[int] | int] = None
@@ -751,7 +1005,8 @@ class AutofocusConfig(BaseActionConfig):
         ]
     )
     calibration_field: AutofocusCalibrationFieldConfig = field(
-        default_factory=AutofocusCalibrationFieldConfig, metadata={"required": True}
+        default_factory=AutofocusCalibrationFieldConfig,
+        metadata={"required": True, "flatten": True},
     )
     save_path: Optional[Path] = None
     subframe_width: Optional[int] = None
@@ -760,6 +1015,43 @@ class AutofocusConfig(BaseActionConfig):
     subframe_center_y: float = 0.5
     _focus_measure_operator = None
     _secondary_focus_measure_operators = {}
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "exptime": "Exposure time for focus frames in seconds.",
+        "reduce_exposure_time": "Automatically shorten exposures to prevent saturation.",
+        "search_range": "Range of focus positions to search. Accepts a single width or explicit bounds.",
+        "search_range_is_relative": "Interpret search_range relative to the current focus position.",
+        "n_steps": "Number of steps for each sweep.",
+        "n_exposures": "Number of exposures at each focus position for each sweep.",
+        "decrease_search_range": "Reduce the search range after each sweep.",
+        "star_find_threshold": "DAOStarFinder threshold for star detection.",
+        "fwhm": "DAOStarFinder FWHM of the Gaussian kernel in pixels.",
+        "percent_to_cut": "Percentage of worst-performing focus samples to drop when shrinking the range.",
+        "focus_measure_operator": "Focus metric to optimize (e.g., HFR, 2dgauss, normavar).",
+        "save": "Persist the optimal focus position back into observatory configuration.",
+        "extremum_estimator": "Curve-fitting method used to determine the minimum (LOWESS, medianfilter, spline, rbf).",
+        "extremum_estimator_kwargs": "Additional keyword overrides for the extremum estimator.",
+        "secondary_focus_measure_operators": "Additional focus metrics to compute for diagnostics.",
+        "calibration_field": "Autofocus calibration field selection parameters.",
+        "save_path": "Directory override for saving autofocus results.",
+        "subframe_width": "Width of the requested subframe in binned pixels.",
+        "subframe_height": "Height of the requested subframe in binned pixels.",
+        "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
+        "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+    }
+
+    EXAMPLE_SCHEDULE: ClassVar[dict] = {
+        "device_name": "camera_name",
+        "action_type": "autofocus",
+        "action_value": {
+            "exptime": 3.0,
+            "n_steps": [30, 20],
+            "n_exposures": [1, 1],
+            "save": True,
+        },
+        "start_time": "2025-01-01 00:00:00.000",
+        "end_time": "2025-02-01 00:00:00.000",
+    }
 
     def __post_init__(self) -> None:
         from astrafocus import FocusMeasureOperatorRegistry
@@ -778,6 +1070,9 @@ class AutofocusConfig(BaseActionConfig):
         self.validate()
         # Validate subframe after base validation
         self.validate_subframe()
+
+        if len(self.n_exposures) != len(self.n_steps):
+            self.n_exposures = [1] * len(self.n_steps)
 
     @classmethod
     def from_dict(

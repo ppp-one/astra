@@ -1,6 +1,6 @@
-# User Guide
+# Overview
 
-The following guide should help users configure and operate observatories with *Astra*.
+The following User Guide should help users configure and operate observatories with *Astra*.
 It covers the following main topics needed to get started:
 
 - **[Observatory Configuration](observatory_configuration)**:
@@ -13,16 +13,9 @@ It covers the following main topics needed to get started:
   including defining observing blocks and simulating runs based on conditions.
 - **[Operation](operation)**: Discover the daily operations of *Astra*, from starting
   the program, running schedules and monitoring to error recovery techniques.
+- **[Customising Observatories by Subclassing](custom_observatories)**:
+  Learn how to create and load `Observatory` subclasses to adapt site-specific
+  behaviour — for example custom startup/shutdown sequences, device-specific
+  error handling, and non-standard device integration — without modifying the
+  core source.
 
----
-
-```{toctree}
-:maxdepth: 1
-:caption: Topics:
-
-observatory_configuration
-fits_header_configuration
-scheduling
-operation
-custom_observatories
-```
