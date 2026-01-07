@@ -124,7 +124,7 @@ class TestObservatoryHeader:
     def test_convert_ra_from_hours_to_degrees(self):
         header = ObservatoryHeader.get_test_header()
         original_ra = header.ra
-        header.convert_ra_from_hours_to_degrees()
+        header._convert_ra_from_hours_to_degrees()
         assert header["RA"] == original_ra * (360 / 24)
 
     def test_get_target_sky_coordinates(self):

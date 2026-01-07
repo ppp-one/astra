@@ -26,9 +26,6 @@ class Config:
     instance of the configuration is created throughout the application.
 
     Attributes:
-        CONFIG_PATH (Path): The path to the configuration YAML file.
-        TEMPLATE_DIR (Path): The path to the directory containing template files.
-        TIME_FORMAT (str): The format used for datetime strings.
         observatory_name (str): The name of the observatory.
         folder_assets (Path): The path to the folder containing assets.
         gaia_db (Path): The path to the Gaia database
@@ -42,8 +39,13 @@ class Config:
         are created.
     """
 
+    """The path to the configuration YAML file."""
     CONFIG_PATH = Path(__file__).parent / "config" / "astra_config.yml"
+
+    """The path to the directory containing template files."""
     TEMPLATE_DIR = Path(__file__).parent / "config" / "templates"
+
+    """The format used for datetime strings."""
     TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
     _instance: Optional["Config"] = None

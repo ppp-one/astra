@@ -51,10 +51,6 @@ class ObservatoryLogger(logging.Logger):
         error_source (list): List to track sources of errors.
         error_free (bool): Flag indicating if the logger has encountered errors.
 
-    Methods:
-        error: Overrides logging.Logger.error to set error_free to False.
-        critical: Overrides logging.Logger.critical to set error_free to False.
-        report_device_issue: Logs device-specific issues and tracks error sources.
     """
 
     def __init__(
@@ -69,10 +65,12 @@ class ObservatoryLogger(logging.Logger):
         self.error_free = error_free
 
     def error(self, msg, *args, **kwargs):
+        """Overrides logging.Logger.error to set error_free to False."""
         self.error_free = False
         super().error(msg, *args, **kwargs)
 
     def critical(self, msg, *args, **kwargs):
+        """Overrides logging.Logger.critical to set error_free to False."""
         self.error_free = False
         super().critical(msg, *args, **kwargs)
 
@@ -85,6 +83,7 @@ class ObservatoryLogger(logging.Logger):
         exc_info: bool = True,
         level: Literal["error", "warning"] = "error",
     ) -> None:
+        """Logs device-specific issues and tracks error sources."""
         error = f"{device_type} {device_name}: {message}" + (
             f". Exception: {str(exception)}" if exception is not None else ""
         )

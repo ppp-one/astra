@@ -6,12 +6,11 @@ focus measurement operators, automatic target selection using Gaia catalog data,
 and sophisticated focusing algorithms for optimal image quality.
 
 Key components:
-
-- Camera, focuser, and telescope interfaces for ALPACA devices
-- Automated target selection using Gaia star catalog
-- Multiple focus measurement algorithms (HFR, FFT, variance-based)
-- Defocusing and refocusing capabilities
-- Comprehensive logging and result visualization
+    - Camera, focuser, and telescope interfaces for ALPACA devices
+    - Automated target selection using Gaia star catalog
+    - Multiple focus measurement algorithms (HFR, FFT, variance-based)
+    - Defocusing and refocusing capabilities
+    - Comprehensive logging and result visualization
 
 """
 

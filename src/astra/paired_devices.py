@@ -63,7 +63,6 @@ class PairedDevices(dict[str, str]):
     It also handles device validation and configuration retrieval.
 
     Attributes:
-        DEVICE_TYPES (list): Supported device types for pairing.
         observatory_config (ObservatoryConfig): Configuration for the observatory.
         devices (dict): Dictionary of all available devices by type and name.
 
@@ -87,7 +86,8 @@ class PairedDevices(dict[str, str]):
         ...     print(f"Paired telescope: {telescope}")
     """
 
-    DEVICE_TYPES = [
+    """Supported device types for pairing."""
+    DEVICE_TYPES: list[str] = [
         "Camera",
         "Dome",
         "FilterWheel",

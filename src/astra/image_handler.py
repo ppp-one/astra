@@ -30,8 +30,7 @@ from astropy.io import fits
 from astropy.time import Time
 from astropy.wcs.utils import WCS
 
-from astra.config import Config
-from astra.config import ObservatoryConfig
+from astra.config import Config, ObservatoryConfig
 from astra.filename_templates import FilenameTemplates
 from astra.header_manager import HeaderManager, ObservatoryHeader
 from astra.logger import ObservatoryLogger
@@ -47,20 +46,12 @@ class ImageHandler:
 
     Attributes:
         header (fits.Header): FITS header template for images.
-        image_directory (Path | None): Directory path to save images.
-            If None, must be set before saving images.
         last_image_path (Path | None): Path of the last saved image.
         last_image_timestamp (datetime | None): Timestamp of the last saved image.
         filename_templates (FilenameTemplates): Templates for generating filenames.
             Uses Python str.format() syntax by default. For more advanced logic,
             use JinjaFilenameTemplates class.
         logger (logging.Logger): Logger for logging messages.
-
-    Methods:
-        save_image(...): Save an image as a FITS file with proper headers and filename.
-        from_action(...): Create an ImageHandler instance from an action and observatory.
-        get_observatory_location(): Get the observatory location as an EarthLocation object.
-        has_image_directory(): Check if the image_directory is set.
 
     Examples:
         >>> from astra.image_handler import ImageHandler
@@ -102,6 +93,7 @@ class ImageHandler:
 
     @property
     def image_directory(self) -> Path:
+        """Directory path to save images. If None, must be set before saving images."""
         if self._image_directory is None:
             raise ValueError("Image directory is not set.")
         return self._image_directory
@@ -363,8 +355,9 @@ class ImageHandler:
 
         If the sun is up, the date is the current local date.
         If the sun is down:
-            - If it's morning (before noon), the date is yesterday.
-            - If it's evening (after noon), the date is today.
+
+        - If it's morning (before noon), the date is yesterday.
+        - If it's evening (after noon), the date is today.
 
         Parameters:
             observation_time (datetime.datetime): The time of observation (UTC).

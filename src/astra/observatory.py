@@ -156,10 +156,8 @@ class Observatory:
             queue (Queue): Multiprocessing queue for communication.
             heartbeat (dict): System status information.
             error_free (bool): Flag indicating error-free operation.
-            weather_safe (bool): Flag indicating weather safety status.
             schedule_running (bool): Flag indicating if schedule is running.
             robotic_switch (bool): Flag for robotic operation mode.
-            devices (dict): Dictionary of connected devices.
             guider (dict): Dictionary of guiding objects per telescope.
         """
 
@@ -785,10 +783,11 @@ class Observatory:
 
         Performs the complete observatory shutdown sequence to ensure equipment
         safety and protection from weather. The sequence follows this order:
-            1. Stop any active guiding operations
-            2. Stop telescope slewing and tracking
-            3. Park the telescope to safe position
-            4. Park the dome and close shutter (if dome present)
+
+        1. Stop any active guiding operations
+        2. Stop telescope slewing and tracking
+        3. Park the telescope to safe position
+        4. Park the dome and close shutter (if dome present)
 
         For SPECULOOS observatories, includes special error handling and polling
         management during the closure sequence.
@@ -962,9 +961,9 @@ class Observatory:
 
         Behavior:
             - If robotic switch is currently ON: Turns it OFF and stops any running
-            schedule
+                schedule
             - If robotic switch is currently OFF: Turns it ON and starts the schedule
-            (if watchdog is running)
+                (if watchdog is running)
 
         Safety Features:
             - Requires watchdog to be running before enabling robotic mode
@@ -1862,9 +1861,9 @@ class Observatory:
 
         Action-Specific Conditions:
             - Weather-sensitive actions (open, object, flats, autofocus, calibrate_guiding,
-            pointing_model): Also require weather_safe
+                pointing_model): Also require weather_safe
             - Weather-independent actions (calibration, close, cool_camera,
-            complete_headers): Only require base conditions
+                complete_headers): Only require base conditions
             - Time-sensitive actions: Must be within scheduled start/end time window
 
         Note:

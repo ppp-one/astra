@@ -26,32 +26,23 @@ Typical Workflow:
     5. Calculate pointing correction based on target vs actual position
     6. Apply corrections to telescope pointing
 
-Classes:
-    PointingCorrection: Stores target vs actual pointing coordinates
-    ImageStarMapping: Handles star detection and catalog matching
-
-Functions:
-    calculate_pointing_correction_from_fits: Complete pointing correction from FITS file
-    calculate_pointing_correction_from_image: Complete pointing correction from image array
-    find_stars: Basic star detection using DAOStarFinder
-    local_gaia_db_query: Query local Gaia database for reference stars
-    local_db_query: Low-level database query for astronomical catalogs
-
 Example:
-    # Process a FITS file for pointing correction
-    pointing_correction, image_star_mapping, num_stars = (
-        calculate_pointing_correction_from_fits(
-            "observation.fits",
-            target_ra=150.25,
-            target_dec=2.18
+    .. code-block:: yaml
+
+        # Process a FITS file for pointing correction
+        pointing_correction, image_star_mapping, num_stars = (
+            calculate_pointing_correction_from_fits(
+                "observation.fits",
+                target_ra=150.25,
+                target_dec=2.18
+            )
         )
-    )
 
-    # Get the pointing offset
-    ra_offset = pointing_correction.offset_ra
-    dec_offset = pointing_correction.offset_dec
+        # Get the pointing offset
+        ra_offset = pointing_correction.offset_ra
+        dec_offset = pointing_correction.offset_dec
 
-    print(f"Pointing error: RA={ra_offset:.3f}°, Dec={dec_offset:.3f}°")
+        print(f"Pointing error: RA={ra_offset:.3f}°, Dec={dec_offset:.3f}°")
 """
 
 import logging
@@ -300,18 +291,12 @@ class PointingCorrection:
     The proxy coordinates represent where the telescope should point to achieve
     the desired target position.
 
-    Attributes:
-        target_ra (float): The right ascension of the target center in degrees.
-        target_dec (float): The declination of the target center in degrees.
-        plating_ra (float): The right ascension of the plating center in degrees.
-        plating_dec (float): The declination of the plating center in degrees.
-
     Properties:
-        offset_ra: RA offset (plating - target) in degrees
-        offset_dec: Dec offset (plating - target) in degrees
-        angular_separation: Angular distance between target and actual position
-        proxy_ra: RA coordinate to point telescope to reach target
-        proxy_dec: Dec coordinate to point telescope to reach target
+        offset_ra: RA offset (plating - target) in degrees :no-index:
+        offset_dec: Dec offset (plating - target) in degrees :no-index:
+        angular_separation: Angular distance between target and actual position :no-index:
+        proxy_ra: RA coordinate to point telescope to reach target :no-index:
+        proxy_dec: Dec coordinate to point telescope to reach target :no-index:
 
     Example:
         >>> from astra.pointer import PointingCorrection
@@ -322,9 +307,16 @@ class PointingCorrection:
         >>> print(f"RA offset: {pointing_correction.offset_ra:.4f} degrees")
     """
 
+    """The right ascension of the target center in degrees."""
     target_ra: float
+
+    """The declination of the target center in degrees."""
     target_dec: float
+
+    """The right ascension of the plating center in degrees."""
     plating_ra: float
+
+    """The declination of the plating center in degrees."""
     plating_dec: float
 
     @property
@@ -413,27 +405,15 @@ class ImageStarMapping:
     Manages the relationship between pixel coordinates of detected stars and their
     celestial coordinates from the Gaia catalog. Provides methods for coordinate
     transformations, star matching, and validation of the plate solving process.
-
-    Attributes:
-        wcs (WCS): The World Coordinate System object used for mapping celestial
-            coordinates to pixel coordinates.
-        stars_in_image (np.ndarray): An array of detected star coordinates in the
-            image, represented in pixel format (x, y).
-        gaia_stars_in_image (np.ndarray): An array of Gaia star coordinates
-            projected into the image's pixel space using the WCS transformation.
-
-    Methods:
-        from_gaia_coordinates: Class method to create instance from star coordinates
-        get_plating_center: Calculate the sky coordinates of image center
-        skycoord_to_pixels: Convert sky coordinates to pixel coordinates
-        pixels_to_skycoord: Convert pixel coordinates to sky coordinates
-        find_gaia_match: Match detected stars to Gaia catalog stars
-        number_of_matched_stars: Count stars matched within threshold
-        plot: Visualize detected and catalog stars
     """
 
+    """The World Coordinate System object used for mapping celestial coordinates to pixel coordinates."""
     wcs: WCS
+
+    """An array of detected star coordinates in the image, represented in pixel format (x, y)."""
     stars_in_image: np.ndarray
+
+    """An array of Gaia star coordinates projected into the image's pixel space using the WCS transformation."""
     gaia_stars_in_image: np.ndarray
 
     @classmethod

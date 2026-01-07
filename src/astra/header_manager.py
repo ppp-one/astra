@@ -40,19 +40,10 @@ __all__ = ["HeaderManager", "ObservatoryHeader"]
 class ObservatoryHeader(fits.Header):
     """A FITS header subclass with observatory-specific properties and methods.
 
-    Attributes:
-        REQUIRED_KEYS (list): List of required header keys for validation.
     Properties:
         ra (float): Right Ascension in hours.
         dec (float): Declination in degrees.
         airmass (float): Airmass value.
-
-    Methods:
-        validate(): Validate that all required keys are present in the header.
-        convert_ra_from_hours_to_degrees(): Convert RA from hours to degrees.
-        get_target_sky_coordinates(): Get target coordinates as a SkyCoord object.
-        get_observatory_location(): Get observatory location as an EarthLocation object.
-        get_test_header(): Class method to generate a test header with sample values.
 
     Examples:
         >>> from astra.image_handler import ObservatoryHeader
@@ -61,7 +52,8 @@ class ObservatoryHeader(fits.Header):
 
     """
 
-    REQUIRED_KEYS = [
+    """REQUIRED_KEYS (List[str]): List of required header keys for validation."""
+    REQUIRED_KEYS: list[str] = [
         "LONG-OBS",
         "LAT-OBS",
         "RA",
@@ -72,11 +64,6 @@ class ObservatoryHeader(fits.Header):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def validate(self):
-        missing = [k for k in self.REQUIRED_KEYS if k not in self]
-        if missing:
-            raise ValueError(f"Missing required header keys: {missing}")
 
     @property
     def ra(self) -> float:
@@ -91,8 +78,11 @@ class ObservatoryHeader(fits.Header):
     def airmass(self):
         return float(self["AIRMASS"])  # type: ignore
 
-    def convert_ra_from_hours_to_degrees(self):
-        self["RA"] = self.ra * (360 / 24)
+    def validate(self):
+        """Validate that all required keys are present in the header."""
+        missing = [k for k in self.REQUIRED_KEYS if k not in self]
+        if missing:
+            raise ValueError(f"Missing required header keys: {missing}")
 
     def get_target_sky_coordinates(self) -> SkyCoord:
         return SkyCoord(self["RA"], self["DEC"], unit=(u.deg, u.deg), frame="icrs")
@@ -231,6 +221,9 @@ class ObservatoryHeader(fits.Header):
             ),
             fits_config.loc["AIRMASS", "comment"],
         )  # https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)
+
+    def _convert_ra_from_hours_to_degrees(self):
+        self["RA"] = self.ra * (360 / 24)
 
 
 class HeaderManager:
@@ -646,7 +639,7 @@ class HeaderManager:
 
             # Only convert RA from hours to degrees if it came from polled data (not already in degrees)
             if "RA-DEG" not in header:
-                header.convert_ra_from_hours_to_degrees()
+                header._convert_ra_from_hours_to_degrees()
             else:
                 # Remove the marker flag - it's just for internal tracking
                 del header["RA-DEG"]

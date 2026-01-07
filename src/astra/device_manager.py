@@ -42,7 +42,6 @@ class DeviceManager:
     QueueManager and ThreadManager for asynchronous operations.
 
     Attributes:
-        observatory_config (ObservatoryConfig): Configuration for the observatory.
         logger (ObservatoryLogger): Logger for logging messages and errors.
         queue_manager (QueueManager): Manages the queue for inter-thread communication.
         thread_manager (ThreadManager): Manages threads for concurrent operations.

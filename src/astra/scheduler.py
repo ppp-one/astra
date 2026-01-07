@@ -5,6 +5,7 @@ Key capabilities:
     - Action validation and time updates
     - File reading and writing for schedules
     - Integration with observatory configuration and device management
+
 """
 
 import json
