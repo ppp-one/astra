@@ -15,13 +15,18 @@ All scheduled actions specify a camera as the `device_name`. The camera acts as 
 ## Example Schedule
 
 ```json
+// open observatory
 {"device_name":"camera_main","action_type":"open","action_value":{},"start_time":"2025-08-23 22:38:25.210","end_time":"2025-08-24 10:49:15.363"}
-{"device_name":"camera_main","action_type":"flats","action_value":{"filter":["J", "H"],"n":[50, 50]},"start_time":"2025-08-23 22:39:25.210","end_time":"2025-08-23 23:16:00.018"}
-{"device_name":"camera_main","action_type":"object","action_value":{"object":"Sp2151-4017","filter":"J","ra":327.88132,"dec":-40.28976,"exptime":8,"guiding":true,"pointing":false},"start_time":"2025-08-23 23:17:00.018","end_time":"2025-08-24 04:43:40.018"}
-{"device_name":"camera_main","action_type":"object","action_value":{"object":"Sp2343-2906","filter":"H","ra":355.88360,"dec":-29.10759,"exptime":38,"guiding":true,"pointing":false},"start_time":"2025-08-24 04:46:40.018","end_time":"2025-08-24 10:23:40.018"}
-{"device_name":"camera_main","action_type":"flats","action_value":{"filter":["H", "J"],"n":[50, 50]},"start_time":"2025-08-24 10:24:40.018","end_time":"2025-08-24 10:49:15.363"}
+// dusk sky flats
+{"device_name":"camera_main","action_type":"flats","action_value":{"filter":["r'", "g'"],"n":[20, 20]},"start_time":"2025-08-23 22:39:25.210","end_time":"2025-08-23 23:16:00.018"}
+// science observations
+{"device_name":"camera_main","action_type":"object","action_value":{"object":"Kepler-1","filter":"r'","ra":286.808542,"dec":49.316422,"exptime":8,"guiding":true,"pointing":true},"start_time":"2025-08-23 23:17:00.018","end_time":"2025-08-24 04:43:40.018"}
+// dawn sky flats
+{"device_name":"camera_main","action_type":"flats","action_value":{"filter":["r'", "g'"],"n":[20, 20]},"start_time":"2025-08-24 10:24:40.018","end_time":"2025-08-24 10:49:15.363"}
+// close observatory
 {"device_name":"camera_main","action_type":"close","action_value":{},"start_time":"2025-08-24 10:49:15.363","end_time":"2025-08-24 11:49:15.363"}
-{"device_name":"camera_main","action_type":"calibration","action_value":{"exptime":[0,10,15,30,38,60,120],"n":[10,10,10,10,10,10,10],"filter":"Dark"},"start_time":"2025-08-24 10:55:15.363","end_time":"2025-08-24 11:49:15.363"}
+// calibration frames, biases and darks
+{"device_name":"camera_main","action_type":"calibration","action_value":{"exptime":[0,10,15,30,38,60,120],"n":[10,10,10,10,10,10,10]},"start_time":"2025-08-24 10:55:15.363","end_time":"2025-08-24 11:49:15.363"}
 ```
 
 ```{admonition} JSONL Comments
