@@ -398,7 +398,6 @@ class AutoScheduleActions(SphinxDirective):
             return AutoScheduleActions._stringify_default(f.default)
         factory = getattr(f, "default_factory", MISSING)
         if factory is not MISSING:
-            factory = factory  # type: ignore[attr-defined]
             try:
                 produced = factory()
             except Exception:
