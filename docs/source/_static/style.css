@@ -58,6 +58,21 @@ ul li, ol li {
     color: #575757
 }
 
+/* Terminal transcripts: make emphasized prompt lines stand out without changing the code-block look */
+.highlight.terminal-transcript .hll,
+.terminal-transcript .hll {
+    background-color: transparent !important;
+    color: var(--pst-color-primary) !important;
+    font-weight: 500;
+}
+
+@supports (color: color-mix(in srgb, black, white)) {
+    .highlight.terminal-transcript .hll,
+    .terminal-transcript .hll {
+        color: color-mix(in srgb, var(--pst-color-primary) 70%, var(--pst-color-text-base)) !important;
+    }
+}
+
 .xr-attrs dt {
     background: inherit !important;
     color: inherit !important;

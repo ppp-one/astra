@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-Before installing *Astra*, ensure you have the following prerequisites:
+Before installing *Astra*, please ensure you have the following prerequisites:
 
-- Python 3.11
+- [*uv*](https://docs.astral.sh/uv/), [*conda*](https://docs.conda.io/projects/conda/), or some Python 3.11 environment
 - ASCOM Alpaca-compatible devices or [simulators](https://github.com/ppp-one/alpaca-simulators)
 - [Git](https://git-scm.com/install) (for installation from source)
 - *Optional*: [Gaia-2MASS sqlite catalogue](https://drive.google.com/file/d/1xg23KtKkl_0b0zLuDpouUjTh3klyae2c/view) (18 GB)
   - Catalogue of 300M Gaia stars cross matched with 2MASS, proper motion included (see [here](https://github.com/ppp-one/gaia-tmass-sqlite) for details)
-  - This is required for plate solving and autofocus field selection features.
+  - This is required for offline plate solving and autofocus field selection features.
   - Please place it somewhere accessible, you'll require its path during *Astra*'s first start up.
 
 ## Installation Steps
@@ -28,14 +28,14 @@ cd astra
 We recommend using [*uv*](https://docs.astral.sh/uv/) because it provides consistent, reproducible dependency management. See the [*uv* documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
 
 ```bash
-# Sync runtime dependencies from pyproject.toml
+# Install dependencies and set up virtual environment
 uv sync
 
-# Activate the virtual environment created or updated by `uv sync`
+# Activate the virtual environment
 source .venv/bin/activate
 ```
 
-````{dropdown} Environment Activation
+<!-- ````{dropdown} Environment Activation
 :icon: info
 :color: info
 :open:
@@ -61,14 +61,17 @@ direnv allow
 ~~~
 ```
 
-````
+```` -->
 
-#### Using *conda*
+#### Or, using *conda*
 
 Alternatively, you can use [*conda*](https://docs.conda.io/projects/conda/) to create a virtual environment:
 
 ```bash
+# Create new conda environment
 conda create -n astra_env python=3.11
+
+# Activate the environment
 conda activate astra_env
 
 # Install Astra in local mode

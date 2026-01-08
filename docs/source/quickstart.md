@@ -12,15 +12,20 @@ During the initial run, you will be prompted to configure your observatory.
 
 2. Follow the terminal instructions, e.g.:
 
-   ```text
+   ```{code-block} text
+   :class: terminal-transcript
+   :emphasize-lines: 3,5,7,9
+
    Welcome to Astra! Please provide the following information:
 
-   Use default assets path (/Users/peter/Documents/Astra)? [y/n]: y
-
-   Use local Gaia DB? [y/n]: y
-   Please enter the path to Gaia DB: /Users/peter/gaia_tmass_16_jm_cut.db
-
-   Please enter the name of the observatory: ELT
+    Use default assets path (/Users/peter/Documents/Astra)? [y/n]:
+       y
+    Use local Gaia DB? [y/n]:
+       y
+    Please enter the path to Gaia DB:
+       /Users/peter/gaia_tmass_16_jm_cut.db
+    Please enter the name of the observatory:
+       ELT
 
    Created config file.
    Created folder /Users/peter/Documents/Astra
@@ -29,7 +34,8 @@ During the initial run, you will be prompted to configure your observatory.
    Created folder /Users/peter/Documents/Astra/logs
    Created folder /Users/peter/Documents/Astra/images
 
-   Warning: Observatory config files have not been modified from default templates. Please update the following files with your  observatory's information in:
+   Warning: Observatory config files have not been modified from default templates. 
+   Please update the following files with your observatory's information in:
 
    /Users/peter/Documents/Astra/observatory_config
    ```

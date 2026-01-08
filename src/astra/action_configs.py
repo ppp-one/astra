@@ -394,6 +394,7 @@ class OpenActionConfig(BaseActionConfig):
     Steps:
         1. Opens dome shutter
         2. Unparks telescope
+        3. Cools camera
     """
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
@@ -417,6 +418,7 @@ class CloseActionConfig(BaseActionConfig):
         2. Stop telescope slewing and tracking
         3. Park the telescope
         4. Park the dome and close shutter
+        5. Cools camera
     """
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {

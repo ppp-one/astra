@@ -27,6 +27,9 @@ Thank you for your interest in contributing to *Astra*! This section describes h
 
    # Install pre-commit hooks using the uv environment
    uv run pre-commit install
+
+   # Run pre-commit hooks on all files to ensure code style compliance
+   uv run pre-commit run --all-files
    ```
 
 ## Code Style

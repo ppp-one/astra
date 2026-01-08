@@ -50,7 +50,7 @@ Additional parameters for telescope mounts:
 
 - `pointing_threshold`: Maximum acceptable pointing error in arcminutes if pointing correction enabled (float)
 - `settle_factor`: Exposure multiplier for calculated settle time after pointing (float)
-- `guider`: Autoguider calibration settings (dict, populated automatically by {py:meth}`astra.observatory.Observatory.guiding_calibration_sequence`
+- `guider`: Autoguider calibration settings (dict, populated automatically by the calibrate_guiding sequence)
 
 ## Focuser Configuration
 
