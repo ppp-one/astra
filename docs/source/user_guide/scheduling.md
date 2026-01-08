@@ -2,7 +2,6 @@
 
 Astra uses a flexible scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each line represents a scheduled action with these fields:
 
-- `device_type`: Type of the device (e.g., camera, telescope)
 - `device_name`: Name of the camera device (the primary instrument that coordinates all operations)
 - `action_type`: Type of action to perform
 - `action_value`: Parameters for the action
@@ -64,5 +63,5 @@ dataclasses to ensure the documentation always matches the implementation.
 
 ```{eval-rst}
 .. autoscheduleactions::
-   :format: bullet
+   :format: literal
 ```

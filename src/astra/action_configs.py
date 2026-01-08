@@ -988,7 +988,7 @@ class AutofocusConfig(BaseActionConfig):
     search_range: Optional[List[int] | int] = None
     search_range_is_relative: bool = False
     n_steps: List[int] = field(default_factory=lambda: [30, 20])
-    n_exposures: List[int] = field(default_factory=lambda: [1, 1])
+    n_exposures: List[int] | int = 1
     decrease_search_range: bool = True
     star_find_threshold: float | int = 5.0
     fwhm: int = 8
@@ -1018,21 +1018,24 @@ class AutofocusConfig(BaseActionConfig):
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "exptime": "Exposure time for focus frames in seconds.",
-        "reduce_exposure_time": "Automatically shorten exposures to prevent saturation.",
         "search_range": "Range of focus positions to search. Accepts a single width or explicit bounds.",
         "search_range_is_relative": "Interpret search_range relative to the current focus position.",
         "n_steps": "Number of steps for each sweep.",
-        "n_exposures": "Number of exposures at each focus position for each sweep.",
+        "n_exposures": (
+            "Number of exposures at each focus position or an array specifying exposures for each sweep. "
+            "If an integer is given, the same number of exposures is used for each sweep. "
+            "If an array is given, the length of the array must match the number of sweeps. "
+        ),
         "decrease_search_range": "Reduce the search range after each sweep.",
         "star_find_threshold": "DAOStarFinder threshold for star detection.",
         "fwhm": "DAOStarFinder FWHM of the Gaussian kernel in pixels.",
         "percent_to_cut": "Percentage of worst-performing focus samples to drop when shrinking the range.",
-        "focus_measure_operator": "Focus metric to optimize (e.g., HFR, 2dgauss, normavar).",
+        "focus_measure_operator": "Focus metric to optimize (e.g., hfr, gauss, tenengrad, fft, normalized_variance).",
+        "reduce_exposure_time": "Automatically shorten exposures to prevent saturation.",
         "save": "Persist the optimal focus position back into observatory configuration.",
         "extremum_estimator": "Curve-fitting method used to determine the minimum (LOWESS, medianfilter, spline, rbf).",
         "extremum_estimator_kwargs": "Additional keyword overrides for the extremum estimator.",
         "secondary_focus_measure_operators": "Additional focus metrics to compute for diagnostics.",
-        "calibration_field": "Autofocus calibration field selection parameters.",
         "save_path": "Directory override for saving autofocus results.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
@@ -1046,8 +1049,6 @@ class AutofocusConfig(BaseActionConfig):
         "action_value": {
             "exptime": 3.0,
             "n_steps": [30, 20],
-            "n_exposures": [1, 1],
-            "save": True,
         },
         "start_time": "2025-01-01 00:00:00.000",
         "end_time": "2025-02-01 00:00:00.000",
@@ -1071,9 +1072,6 @@ class AutofocusConfig(BaseActionConfig):
         # Validate subframe after base validation
         self.validate_subframe()
 
-        if len(self.n_exposures) != len(self.n_steps):
-            self.n_exposures = [1] * len(self.n_steps)
-
     @classmethod
     def from_dict(
         cls, config_dict: dict, logger=None, default_dict: dict = {}
@@ -1085,6 +1083,14 @@ class AutofocusConfig(BaseActionConfig):
         )
         kwargs = cls.merge_config_dicts(config_dict, default_dict)
         kwargs["calibration_field"] = autofocus_calibration_field
+
+        if len(kwargs["n_exposures"]) != len(kwargs["n_steps"]):
+            if logger is not None:
+                logger.warning(
+                    "'n_exposures' length does not match 'n_steps' length. "
+                    "Defaulting to 1 exposure per step."
+                )
+            kwargs["n_exposures"] = [1] * len(kwargs["n_steps"])
 
         return cls(**kwargs)
 

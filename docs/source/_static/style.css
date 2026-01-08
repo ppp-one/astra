@@ -231,3 +231,33 @@ img.align-center {
     background: #888;
     border-radius: 4px;
 }
+
+/* Autoschedule action parameter literal box styling */
+.autoschedule-params {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap; /* allow wrapping for long descriptions */
+}
+
+.autoschedule-params .param-name {
+    color: #0b63d0; /* blue for names */
+    font-weight: 600;
+}
+
+.autoschedule-params .param-type {
+    color: #6f42c1; /* purple for types */
+}
+
+.autoschedule-params .param-default {
+    color: #22863a; /* green for defaults */
+}
+
+.autoschedule-params .param-required {
+    color: #b31d28; /* red for Required */
+    font-weight: 700;
+}

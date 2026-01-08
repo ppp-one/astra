@@ -7,6 +7,7 @@ import typing
 from docutils import nodes
 from docutils.parsers.rst import directives
 import json
+import html
 from docutils.statemachine import StringList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.nodes import nested_parse_with_titles
@@ -120,7 +121,7 @@ class AutoScheduleActions(SphinxDirective):
         parameters = self._build_parameters_node(cls, render_format)
         if parameters is not None:
             heading = nodes.paragraph()
-            heading += nodes.strong(text="Parameters")
+            heading += nodes.strong(text="Action values")
             section += heading
             section += parameters
         else:
@@ -144,11 +145,15 @@ class AutoScheduleActions(SphinxDirective):
         documented_fields = list(self._iter_documented_fields(cls))
         if not documented_fields:
             return None
+        # support a literal/boxed format that emits a single pre/code block
+        # where parts of each line are wrapped in spans with CSS classes
+        if render_format in ("literal", "boxed"):
+            return self._build_parameters_literal_box(documented_fields)
 
         if render_format == "bullet":
             return self._build_parameters_bullet_list(documented_fields)
 
-        if render_format not in ("table", "bullet"):
+        if render_format not in ("table", "bullet", "literal", "boxed"):
             self.state.document.reporter.warning(
                 f"autoscheduleactions: unknown format '{render_format}', falling back to table",
                 line=self.lineno,
@@ -180,21 +185,22 @@ class AutoScheduleActions(SphinxDirective):
             item = nodes.list_item()
 
             header = nodes.paragraph()
-            header += nodes.literal(text=name)
-            header += nodes.Text(" : ")
-            header += self._make_literal(self._format_type(annotation) or "–")
+
+            # header += nodes.literal(name)
+
+            literal_text = f"{name}: {self._format_type(annotation) or '–'}"
 
             # Append required/default info inline. When required, avoid using '='
-            if field_obj.metadata.get("required"):
+            if not field_obj.metadata.get("required"):
+                default_text = self._format_default(field_obj)
+                literal_text += (
+                    f" = {default_text}" if default_text is not None else " (optional)"
+                )
+                header += self._make_literal(literal_text)
+            else:
+                header += self._make_literal(literal_text)
                 header += nodes.Text(" ")
                 header += nodes.strong(text="Required")
-            else:
-                default_text = self._format_default(field_obj)
-                if default_text is not None:
-                    header += nodes.Text(" = ")
-                    header += self._make_literal(default_text)
-                else:
-                    header += nodes.Text(" (optional)")
 
             # Put the description on the same line, separated by an em dash
             desc = description or "No description provided."
@@ -206,6 +212,40 @@ class AutoScheduleActions(SphinxDirective):
             bullet_list += item
 
         return bullet_list
+
+    def _build_parameters_literal_box(
+        self, documented_fields: list[tuple[str, Field[Any], Any, str | None]]
+    ) -> nodes.raw:
+        """Emit a single HTML <pre> block with spans for name/type/default/required.
+
+        This provides a single literal-looking box where individual parts can be
+        colored via CSS targeting the emitted classes.
+        """
+        lines: list[str] = []
+        for name, field_obj, annotation, description in documented_fields:
+            name_html = f'<span class="param-name">{html.escape(name)}</span>'
+            type_text = self._format_type(annotation) or "–"
+            type_html = f'<span class="param-type">{html.escape(type_text)}</span>'
+
+            if field_obj.metadata.get("required"):
+                default_html = ""
+                req_html = ' <span class="param-required">Required</span>'
+            else:
+                default_text = self._format_default(field_obj)
+                if default_text is not None:
+                    default_html = f' <span class="param-default">= {html.escape(default_text)}</span>'
+                else:
+                    default_html = ' <span class="param-default">(optional)</span>'
+                req_html = ""
+
+            desc = description or "No description provided."
+            desc_html = html.escape(desc)
+
+            line = f"{name_html}: {type_html}{default_html}{req_html} — {desc_html}"
+            lines.append(line)
+
+        html_block = '<pre class="autoschedule-params">' + "\n".join(lines) + "</pre>"
+        return nodes.raw(html_block, html_block, format="html")
 
     def _iter_documented_fields(
         self, cls: type

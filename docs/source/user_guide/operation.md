@@ -24,6 +24,33 @@ Following [Quickstart](../quickstart), `astra` has a few optional startup option
 
 In most cases you will run `astra` without any options.
 
+````{dropdown} Environment Activation
+:icon: info
+:color: info
+
+Always remember to activate your virtual environment before running astra.
+
+Alternatively, you can run
+~~~bash
+uv run astra
+~~~
+in the directory where astra is installed, which will automatically use `.venv`.
+
+
+```{dropdown} Automatic Environment Detection
+:icon: info
+:color: info
+
+If installed, you can also consider using `direnv` to auto-activate the python
+environment in the directory where *Astra* is installed using
+~~~bash
+echo 'source .venv/bin/activate' > .envrc
+direnv allow
+~~~
+```
+
+````
+
 <!-- Logic, best practices, safety no. 1 -->
 
 When Astra starts, it goes through three main phases: initialization, device connection, and web interface.
