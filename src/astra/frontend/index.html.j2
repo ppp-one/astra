@@ -792,7 +792,7 @@
 
         function closeObservatory() {
             showConfirmModal("Are you sure you want to close the observatory?", () => {
-                fetch('/api/close')
+                fetch('/api/close', { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -802,7 +802,7 @@
 
         function coolCamera(device_name, temperature) {
             showConfirmModal("Are you sure you want to cool down camera '" + device_name + "' to " + temperature + "C?", () => {
-                fetch('/api/cool_camera/' + device_name)
+                fetch('/api/cool_camera/' + device_name, { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -812,7 +812,7 @@
 
         function completeHeaders() {
             showConfirmModal("Are you sure you want to complete the headers?", () => {
-                fetch('/api/complete_headers')
+                fetch('/api/complete_headers', { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -822,7 +822,7 @@
 
         function startWatchdog() {
             showConfirmModal("Are you sure you want to start the watchdog?", () => {
-                fetch('/api/startwatchdog')
+                fetch('/api/startwatchdog', { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -1154,7 +1154,7 @@
                 showConfirmModal("Are you sure you want to turn ON the robotic switch?", () => {
                     // Code to run when the toggle is ON
                     console.log('Toggle is ON');
-                    fetch('/api/roboticswitch')
+                    fetch('/api/roboticswitch', { method: 'POST' })
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
@@ -1165,7 +1165,7 @@
                 showConfirmModal("Are you sure you want to turn OFF the robotic switch?", () => {
                     // Code to run when the toggle is OFF
                     console.log('Toggle is OFF');
-                    fetch('/api/roboticswitch')
+                    fetch('/api/roboticswitch', { method: 'POST' })
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);

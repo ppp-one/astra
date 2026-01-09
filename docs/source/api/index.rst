@@ -1,4 +1,4 @@
-API Reference
+Module Reference
 =============
 
 .. autosummary::

@@ -326,7 +326,7 @@ async def latest_image_preview():
     )
 
 
-@app.get("/api/close")
+@app.post("/api/close")
 def close_observatory():
     """Close observatory and stop all operations safely.
 
@@ -355,7 +355,7 @@ def close_observatory():
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/cool_camera/{device_name}")
+@app.post("/api/cool_camera/{device_name}")
 def cool_camera(device_name: str):
     """Initiate camera cooling to configured target temperature.
 
@@ -406,7 +406,7 @@ def cool_camera(device_name: str):
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/complete_headers")
+@app.post("/api/complete_headers")
 def complete_headers():
     """Complete FITS header processing for observatory images.
 
@@ -431,7 +431,7 @@ def complete_headers():
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/startwatchdog")
+@app.post("/api/startwatchdog")
 async def start_watchdog():
     """Start observatory watchdog monitoring system.
 
@@ -455,7 +455,7 @@ async def start_watchdog():
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/stopwatchdog")
+@app.post("/api/stopwatchdog")
 async def stop_watchdog():
     """Stop observatory watchdog monitoring system.
 
@@ -474,7 +474,7 @@ async def stop_watchdog():
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/roboticswitch")
+@app.post("/api/roboticswitch")
 async def roboticswitch():
     """Toggle observatory robotic operation mode.
 
@@ -493,7 +493,7 @@ async def roboticswitch():
     return {"status": "success", "data": obs.robotic_switch, "message": ""}
 
 
-@app.get("/api/startschedule")
+@app.post("/api/startschedule")
 async def start_schedule():
     """Start executing the observatory's observation schedule.
 
@@ -512,7 +512,7 @@ async def start_schedule():
     return {"status": "success", "data": "null", "message": ""}
 
 
-@app.get("/api/stopschedule")
+@app.post("/api/stopschedule")
 async def stop_schedule():
     """Stop executing the observatory's observation schedule.
 

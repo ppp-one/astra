@@ -276,3 +276,51 @@ img.align-center {
     color: #b31d28; /* red for Required */
     font-weight: 700;
 }
+/* FastAPI endpoint documentation styles */
+
+.http-method {
+    font-weight: 700;
+    font-size: 0.85em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-right: 8px;
+    color: white;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+}
+
+.http-get {
+    background-color: #61affe;
+}
+
+.http-post {
+    background-color: #49cc90;
+}
+
+.http-put {
+    background-color: #fca130;
+}
+
+.http-delete {
+    background-color: #f93e3e;
+}
+
+.http-patch {
+    background-color: #50e3c2;
+}
+
+.http-websocket {
+    background-color: #9561ff;
+}
+
+.http-page {
+    background-color: #888;
+}
+
+.endpoint-path {
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    font-size: 0.95em;
+    color: #24292e;
+    background-color: #f6f8fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+}

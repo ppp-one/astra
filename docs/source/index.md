@@ -69,5 +69,6 @@ user_guide/custom_observatories
 :hidden:
 
 api/index
+api/endpoints
 contributing
 ```

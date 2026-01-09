@@ -27,6 +27,7 @@ extensions = [
     "sphinx_design",
     "myst_nb",
     "_ext.action_configs_autodoc",
+    "_ext.fastapi_autodoc",
 ]
 
 # Add mappings for intersphinx
