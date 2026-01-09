@@ -42,7 +42,7 @@ from fastapi.responses import (
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 
-from astra import __version__, Config
+from astra import Config, __version__
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
 from astra.observatory import Observatory
