@@ -40,7 +40,9 @@ When an imaging sequence begins, *Astra* immediately creates an initial FITS hea
 - **Software information:** *Astra* version number
 - **Fixed device values:** Properties marked as `fixed=True` in the configuration
 
-TODO: note about `IMAGETYP` `EXPTIME`
+`IMAGETYP` changes dynamically based on the imaging sequence (e.g., 'Light Frame', 'Dark Frame', 'Bias Frame', 'Flat Frame').
+
+`EXPTIME` reflects the exposure duration for each image.
 
 ### 2. Final Headers (after exposure)
 
