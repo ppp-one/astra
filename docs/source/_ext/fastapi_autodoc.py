@@ -40,24 +40,30 @@ class AutoFastAPIEndpoints(SphinxDirective):
         page_routes = []
 
         for route in app.routes:
-            if not hasattr(route, "methods") or not hasattr(route, "path"):
+            # All routes should have a path
+            if not hasattr(route, "path"):
                 continue
 
-            # Categorize routes
+            # Skip routes with include_in_schema=False
+            if hasattr(route, "include_in_schema") and not route.include_in_schema:
+                continue
+
+            # Detect WebSocket routes (APIWebSocketRoute doesn't have methods attribute)
+            route_type = type(route).__name__
+            if "WebSocket" in route_type or "websocket" in route_type.lower():
+                websocket_routes.append(route)
+                continue
+
+            # For non-websocket routes, check if they have methods
+            if not hasattr(route, "methods"):
+                continue
+
+            # Categorize remaining routes
             if hasattr(route, "endpoint"):
                 endpoint_name = getattr(route.endpoint, "__name__", "")
 
-                # Skip routes with include_in_schema=False
-                if hasattr(route, "include_in_schema") and not route.include_in_schema:
-                    continue
-
-                # Detect WebSocket routes
-                if "websocket" in endpoint_name.lower() or any(
-                    "websocket" in str(m).lower() for m in getattr(route, "methods", [])
-                ):
-                    websocket_routes.append(route)
                 # Detect HTML page routes (typically GET routes without /api/ prefix)
-                elif (
+                if (
                     "GET" in getattr(route, "methods", [])
                     and not route.path.startswith("/api/")
                     and endpoint_name.endswith("_page")
@@ -65,6 +71,8 @@ class AutoFastAPIEndpoints(SphinxDirective):
                     page_routes.append(route)
                 else:
                     rest_routes.append(route)
+            else:
+                rest_routes.append(route)
 
         sections = []
 
@@ -167,36 +175,14 @@ class AutoFastAPIEndpoints(SphinxDirective):
         title += path_node
         section += title
 
+        # Extract path parameters first
+        path_params = re.findall(r"\{(\w+)\}", route.path)
+
         # Description from docstring
         if hasattr(route, "endpoint") and route.endpoint:
             docstring = inspect.getdoc(route.endpoint)
             if docstring:
-                # Parse the docstring as RST to support formatting
-                doc_lines = StringList(docstring.splitlines(), source="")
-                desc_container = nodes.container()
-                nested_parse_with_titles(self.state, doc_lines, desc_container)
-                section += desc_container
-
-        # Path parameters
-        path_params = re.findall(r"\{(\w+)\}", route.path)
-        if path_params:
-            params_heading = nodes.paragraph()
-            params_heading += nodes.strong(text="Path Parameters:")
-            section += params_heading
-
-            param_list = nodes.bullet_list()
-            for param in path_params:
-                list_item = nodes.list_item()
-                param_para = nodes.paragraph()
-                param_para += nodes.literal(text=param)
-                param_para += nodes.Text(" – Path parameter")
-                list_item += param_para
-                param_list += list_item
-            section += param_list
-
-        # Try to extract parameter information from function signature
-        if hasattr(route, "endpoint") and route.endpoint:
-            self._add_function_parameters(section, route.endpoint)
+                self._add_docstring_content(section, docstring, path_params)
 
         return section
 
@@ -220,10 +206,7 @@ class AutoFastAPIEndpoints(SphinxDirective):
         if hasattr(route, "endpoint") and route.endpoint:
             docstring = inspect.getdoc(route.endpoint)
             if docstring:
-                doc_lines = StringList(docstring.splitlines(), source="")
-                desc_container = nodes.container()
-                nested_parse_with_titles(self.state, doc_lines, desc_container)
-                section += desc_container
+                self._add_docstring_content(section, docstring)
 
         return section
 
@@ -249,6 +232,172 @@ class AutoFastAPIEndpoints(SphinxDirective):
                 section += para
 
         return section
+
+    def _add_docstring_content(
+        self, section: nodes.section, docstring: str, path_params: list = None
+    ) -> None:
+        """Parse and add docstring content, handling Google-style Args sections.
+
+        Args:
+            section: The section node to add content to
+            docstring: The docstring text to parse
+            path_params: List of path parameter names to separate out
+        """
+        # Split docstring into parts (description and Args/Returns sections)
+        parts = re.split(
+            r"\n\s*(Args|Returns|Raises|Yields|Note|Examples?):\s*\n", docstring
+        )
+
+        # First part is the description
+        description = parts[0].strip()
+        if description:
+            # Parse description as RST
+            doc_lines = StringList(description.splitlines(), source="")
+            desc_container = nodes.container()
+            nested_parse_with_titles(self.state, doc_lines, desc_container)
+            section += desc_container
+
+        # Process Args, Returns, etc. sections
+        i = 1
+        while i < len(parts):
+            section_name = parts[i]
+            section_content = parts[i + 1] if i + 1 < len(parts) else ""
+
+            if section_name == "Args":
+                self._add_args_section(section, section_content, path_params or [])
+            elif section_name in ("Returns", "Yields"):
+                self._add_returns_section(section, section_name, section_content)
+            else:
+                # For other sections, just parse as RST
+                heading = nodes.paragraph()
+                heading += nodes.strong(text=f"{section_name}:")
+                section += heading
+
+                content_lines = StringList(
+                    section_content.strip().splitlines(), source=""
+                )
+                content_container = nodes.container()
+                nested_parse_with_titles(self.state, content_lines, content_container)
+                section += content_container
+
+            i += 2
+
+    def _add_args_section(
+        self, section: nodes.section, args_content: str, path_params: list
+    ) -> None:
+        """Parse and add Args section from Google-style docstring.
+
+        Separates path parameters from other parameters.
+
+        Args:
+            section: The section node to add content to
+            args_content: The content of the Args section
+            path_params: List of path parameter names
+        """
+        # Parse arguments line by line
+        # Don't strip the whole content - we need to preserve relative indentation
+        args_lines = args_content.split("\n")
+        args_list = []
+        current_arg = None
+        base_indent = None
+
+        for line in args_lines:
+            if not line.strip():
+                continue
+
+            # Detect base indentation level from first argument line
+            if base_indent is None and line.strip():
+                base_indent = len(line) - len(line.lstrip())
+
+            current_indent = len(line) - len(line.lstrip())
+
+            # Check if this is a new argument (matches pattern: name (type): description)
+            match = re.match(r"^\s*(\w+)\s*(?:\(([^)]+)\))?\s*:\s*(.*)$", line)
+
+            if match and (base_indent is None or current_indent <= base_indent):
+                # This is a new argument
+                if current_arg:
+                    args_list.append(current_arg)
+                name, type_info, desc = match.groups()
+                current_arg = {
+                    "name": name,
+                    "type": type_info,
+                    "description": desc.strip(),
+                }
+            elif current_arg and line.strip():
+                # Continuation of description (more indented than argument line)
+                current_arg["description"] += " " + line.strip()
+
+        if current_arg:
+            args_list.append(current_arg)
+
+        # Separate path parameters from other parameters
+        path_args = [arg for arg in args_list if arg["name"] in path_params]
+        other_args = [arg for arg in args_list if arg["name"] not in path_params]
+
+        # Add path parameters section
+        if path_args:
+            params_heading = nodes.paragraph()
+            params_heading += nodes.strong(text="Path Parameters:")
+            section += params_heading
+
+            param_list = nodes.bullet_list()
+            for arg in path_args:
+                list_item = nodes.list_item()
+                param_para = nodes.paragraph()
+
+                param_para += nodes.literal(text=arg["name"])
+                if arg["type"]:
+                    param_para += nodes.Text(f" ({arg['type']})")
+                if arg["description"]:
+                    param_para += nodes.Text(f" – {arg['description']}")
+
+                list_item += param_para
+                param_list += list_item
+
+            section += param_list
+
+        # Add other parameters section (query params, body, etc.)
+        if other_args:
+            params_heading = nodes.paragraph()
+            params_heading += nodes.strong(text="Parameters:")
+            section += params_heading
+
+            param_list = nodes.bullet_list()
+            for arg in other_args:
+                list_item = nodes.list_item()
+                param_para = nodes.paragraph()
+
+                param_para += nodes.literal(text=arg["name"])
+                if arg["type"]:
+                    param_para += nodes.Text(f" ({arg['type']})")
+                if arg["description"]:
+                    param_para += nodes.Text(f" – {arg['description']}")
+
+                list_item += param_para
+                param_list += list_item
+
+            section += param_list
+
+    def _add_returns_section(
+        self, section: nodes.section, section_name: str, content: str
+    ) -> None:
+        """Parse and add Returns section from Google-style docstring.
+
+        Args:
+            section: The section node to add content to
+            section_name: Name of the section (Returns/Yields)
+            content: The content of the section
+        """
+        heading = nodes.paragraph()
+        heading += nodes.strong(text=f"{section_name}:")
+        section += heading
+
+        # Parse as RST
+        content_lines = StringList(content.strip().splitlines(), source="")
+        content_container = nodes.container()
+        nested_parse_with_titles(self.state, content_lines, content_container)
+        section += content_container
 
     def _add_function_parameters(self, section: nodes.section, func: Any) -> None:
         """Extract and document function parameters (query params, body, etc.)."""

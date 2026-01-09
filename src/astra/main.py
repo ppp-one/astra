@@ -260,7 +260,6 @@ async def get_video(request: Request, filename: str):
 
     Args:
         request (Request): FastAPI request object with headers.
-        observatory (str): Observatory name for webcam lookup.
         filename (str): Video filename or path to stream.
 
     Returns:
@@ -290,9 +289,6 @@ async def get_video(request: Request, filename: str):
 @app.get("/api/heartbeat")
 async def heartbeat():
     """Get observatory heartbeat status for health monitoring.
-
-    Args:
-        observatory (str): Observatory name to check.
 
     Returns:
         dict: JSON response with heartbeat status data.
@@ -333,9 +329,6 @@ def close_observatory():
     Stops running schedule if active and closes the observatory.
     Logs all actions for audit trail.
 
-    Args:
-        observatory (str): Observatory name to close.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -363,7 +356,6 @@ def cool_camera(device_name: str):
     specified set temperature with defined tolerance.
 
     Args:
-        observatory (str): Observatory name containing the camera.
         device_name (str): Camera device name to cool.
 
     Returns:
@@ -410,9 +402,6 @@ def cool_camera(device_name: str):
 def complete_headers():
     """Complete FITS header processing for observatory images.
 
-    Args:
-        observatory (str): Observatory name to process headers for.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -438,9 +427,6 @@ async def start_watchdog():
     Resets error states and starts the watchdog process for
     continuous observatory health monitoring.
 
-    Args:
-        observatory (str): Observatory name to start watchdog for.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -459,9 +445,6 @@ async def start_watchdog():
 async def stop_watchdog():
     """Stop observatory watchdog monitoring system.
 
-    Args:
-        observatory (str): Observatory name to stop watchdog for.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -477,9 +460,6 @@ async def stop_watchdog():
 @app.post("/api/roboticswitch")
 async def roboticswitch():
     """Toggle observatory robotic operation mode.
-
-    Args:
-        observatory (str): Observatory name to toggle robotic mode for.
 
     Returns:
         dict: JSON response with current robotic switch state.
@@ -497,9 +477,6 @@ async def roboticswitch():
 async def start_schedule():
     """Start executing the observatory's observation schedule.
 
-    Args:
-        observatory (str): Observatory name to start schedule for.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -516,9 +493,6 @@ async def start_schedule():
 async def stop_schedule():
     """Stop executing the observatory's observation schedule.
 
-    Args:
-        observatory (str): Observatory name to stop schedule for.
-
     Returns:
         dict: JSON response with operation status.
     """
@@ -534,9 +508,6 @@ async def stop_schedule():
 @app.get("/api/schedule")
 async def schedule():
     """Get current observatory schedule with formatted times.
-
-    Args:
-        observatory (str): Observatory name to get schedule for.
 
     Returns:
         list: Schedule items with start/end times formatted as HH:MM:SS,
@@ -584,7 +555,6 @@ async def edit_schedule(schedule_data: str = Body(..., media_type="text/plain"))
     Parses JSONL schedule data and saves to observatory schedule file.
 
     Args:
-        observatory (str): Observatory name to update schedule for.
         schedule_data (str): JSONL formatted schedule data.
 
     Returns:
@@ -630,7 +600,6 @@ async def upload_schedule(file: UploadFile = File(...)):
     """Upload schedule file to replace current observatory schedule.
 
     Args:
-        observatory (str): Observatory name to upload schedule for.
         file (UploadFile): Uploaded schedule file in JSONL format.
 
     Returns:
@@ -873,7 +842,6 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
     including pivot formatting, safety limits, and statistical grouping.
 
     Args:
-        observatory (str): Observatory name to query data for.
         device_type (str): Type of device (e.g., 'ObservingConditions').
         day (float): Number of days back to retrieve data. Defaults to 1.
         since (str): Optional timestamp to get only newer records.
@@ -1045,7 +1013,6 @@ async def log(datetime: str, limit: int = 100):
     """Get observatory log entries before specified datetime.
 
     Args:
-        observatory (str): Observatory name to query logs for.
         datetime (str): Upper limit datetime for log entries.
         limit (int): Maximum number of log entries to return. Defaults to 100.
 
@@ -1071,7 +1038,6 @@ async def websocket_log(websocket: WebSocket):
 
     Args:
         websocket (WebSocket): WebSocket connection object.
-        observatory (str): Observatory name for log streaming.
     """
     await websocket.accept()
     obs = OBSERVATORY
@@ -1128,7 +1094,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
     Args:
         websocket (WebSocket): WebSocket connection object.
-        observatory (str): Observatory name for status monitoring.
     """
     global LAST_IMAGE, LAST_IMAGE_PREVIEW, LAST_IMAGE_TIME
 
@@ -1603,7 +1568,6 @@ async def get_schedule(request: Request):
 
     Args:
         request (Request): FastAPI request object.
-        observatory (str): Observatory name to load schedule for.
 
     Returns:
         TemplateResponse: HTML template with schedule editor and data.

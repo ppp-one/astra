@@ -1,5 +1,5 @@
 Module Reference
-=============
+================
 
 .. autosummary::
    :toctree: generated
