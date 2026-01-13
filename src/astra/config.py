@@ -9,13 +9,34 @@ global configuration access.
 import filecmp
 import os
 import re
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 import yaml
+from platformdirs import user_config_dir
 from ruamel.yaml import YAML
+
+
+class _Colors:
+    """ANSI color codes for CLI output."""
+
+    BLUE = "\033[94m"
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    BOLD = "\033[1m"
+    RESET = "\033[0m"
+
+    @staticmethod
+    def colorize(text: str, color: str) -> str:
+        """Apply color to text if output device is a terminal."""
+        if sys.stdout.isatty():
+            return f"{color}{text}{_Colors.RESET}"
+        return text
 
 
 class Config:
@@ -40,7 +61,9 @@ class Config:
     """
 
     """The path to the configuration YAML file."""
-    CONFIG_PATH = Path(__file__).parent / "config" / "astra_config.yml"
+    CONFIG_PATH = (
+        Path(user_config_dir("astra", ensure_exists=True)) / "astra_config.yml"
+    )
 
     """The path to the directory containing template files."""
     TEMPLATE_DIR = Path(__file__).parent / "config" / "templates"
@@ -63,6 +86,7 @@ class Config:
         gaia_db: Optional[Union[Path, str]] = None,
         allow_default: bool = False,
         propagate_observatory_name: bool = False,
+        reset: bool = False,
     ) -> None:
         """Initialise the configuration settings.
 
@@ -75,7 +99,12 @@ class Config:
             propagate_observatory_name (bool): Whether to automatically modify
                 the observatory config files by substituting the observatory name.
                 Mainly useful for testing.
+            reset (bool): If True, resets the configuration by deleting the config
+                file.
         """
+        if reset:
+            self.reset()
+
         if not self.CONFIG_PATH.exists():
             _ConfigInitialiser.run(observatory_name, folder_assets, gaia_db)
 
@@ -107,19 +136,22 @@ class Config:
         """
         if remove_assets:
             prompt = (
-                input(f"Are you sure you want to remove {self.folder_assets}? [y/n]: ")
+                _ConfigInitialiser._cinput(
+                    f"Are you sure you want to remove {self.folder_assets}? [y/n]: "
+                )
                 .strip()
                 .lower()
             )
             if prompt == "y":
                 if self.folder_assets.exists():
                     self.folder_assets.rmdir()
-                print("Removed assets folder.")
+                _ConfigInitialiser._print_success("Removed assets folder.")
 
-        self.CONFIG_PATH.unlink()
-        print("Removed config file.")
+        if self.CONFIG_PATH.exists():
+            self.CONFIG_PATH.unlink()
+            _ConfigInitialiser._print_success("Removed config file.")
 
-        return None
+        raise SystemExit("Astra base config has been reset.")
 
     def save(self) -> None:
         """Save current configuration settings to YAML file."""
@@ -197,17 +229,22 @@ class Config:
                 )
 
         if unchanged_files:
-            message = (
+            message_1 = (
                 "\nWarning: Observatory config files have not been modified "
-                "from default templates. Please update the following files "
-                "with your observatory's information in:\n\n"
-                f"{self.paths.observatory_config}\n"
-                f"Unchanged files: {', '.join(unchanged_files)}\n"
+                "from default templates.\n"
             )
             if allow_default:
-                print(message)
+                print(_Colors.colorize(message_1, _Colors.YELLOW))
             else:
-                raise SystemExit(message)
+                message_2 = (
+                    "Please update your observatory configuration files located in:\n"
+                    f"{self.paths.observatory_config}\n\n"
+                    f"Unchanged files: {', '.join(unchanged_files)}\n"
+                )
+                exit_message = "Exiting until observatory configuration is updated."
+                print(_Colors.colorize(message_1, _Colors.YELLOW))
+                print(message_2)
+                raise SystemExit(_Colors.colorize(exit_message, _Colors.RED))
 
     def _modify_observatory_config_files(
         self, file_path, old_strings=[], new_strings=[]
@@ -284,7 +321,7 @@ class AssetPaths:
         ):
             if not folder.exists():
                 folder.mkdir(parents=True)
-                print(f"Created folder {folder}")
+                print(_Colors.colorize(f"Created folder {folder}", _Colors.GREEN))
 
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         self.log_file.touch(exist_ok=True)
@@ -315,6 +352,45 @@ class _ConfigInitialiser:
 
     DEFAULT_ASSETS_PATH = Path.home() / "Documents" / "Astra"
 
+    # Gaia database options with magnitude cuts
+    GAIA_DB_OPTIONS = {
+        "1": {"records": "144", "size": "766.0 kB"},
+        "2": {"records": "650", "size": "766.0 kB"},
+        "3": {"records": "2K", "size": "766.0 kB"},
+        "4": {"records": "6K", "size": "766.0 kB"},
+        "5": {"records": "18K", "size": "2.0 MB"},
+        "6": {"records": "58K", "size": "4.5 MB"},
+        "7": {"records": "160K", "size": "10.8 MB"},
+        "8": {"records": "426K", "size": "26.8 MB"},
+        "9": {"records": "1M", "size": "67.2 MB"},
+        "10": {"records": "3M", "size": "172.3 MB"},
+        "11": {"records": "7M", "size": "425.2 MB"},
+        "12": {"records": "16M", "size": "987.6 MB"},
+        "13": {"records": "36M", "size": "2.2 GB"},
+        "14": {"records": "79M", "size": "4.8 GB"},
+        "15": {"records": "161M", "size": "9.8 GB"},
+        "16": {"records": "297M", "size": "18.1 GB"},
+    }
+    GAIA_ZENODO_RECORD = "18214672"
+
+    @staticmethod
+    def _print_header(title: str) -> None:
+        print("\n" + _Colors.colorize("=" * 60, _Colors.BLUE))
+        print(_Colors.colorize(title.center(60), _Colors.BOLD))
+        print(_Colors.colorize("=" * 60, _Colors.BLUE) + "\n")
+
+    @staticmethod
+    def _print_success(message: str) -> None:
+        print(_Colors.colorize(f"✓ {message}", _Colors.GREEN))
+
+    @staticmethod
+    def _print_error(message: str) -> None:
+        print(_Colors.colorize(f"✗ {message}", _Colors.RED))
+
+    @staticmethod
+    def _cinput(prompt: str) -> str:
+        return input(_Colors.colorize(prompt, _Colors.CYAN))
+
     @staticmethod
     def run(
         observatory_name: Optional[str],
@@ -328,10 +404,11 @@ class _ConfigInitialiser:
             folder_assets: Path to assets folder.
             gaia_db: Path to Gaia database file.
         """
+        _ConfigInitialiser._print_header("Welcome to Astra Configuration")
         if any(item is None for item in (observatory_name, folder_assets, gaia_db)):
-            print("\nWelcome to Astra! Please provide the following information:\n")
-        else:
-            print("\nWelcome to Astra!")
+            print(
+                "Please provide the following information to set up your observatory.\n"
+            )
 
         _ConfigInitialiser._validate_paths(folder_assets, gaia_db)
         Config.CONFIG_PATH.parent.mkdir(exist_ok=True)
@@ -343,8 +420,8 @@ class _ConfigInitialiser:
             gaia_db = _ConfigInitialiser._prompt_gaia_db_path()
 
         if observatory_name is None:
-            observatory_name = input(
-                "\nPlease enter the name of the observatory: "
+            observatory_name = _ConfigInitialiser._cinput(
+                "Please enter the name of the observatory: "
             ).strip()
 
         config = {
@@ -356,7 +433,7 @@ class _ConfigInitialiser:
         with open(Config.CONFIG_PATH, "w") as file:
             yaml.dump(config, file)
 
-        print("\nCreated config file.")
+        _ConfigInitialiser._print_success("Configuration file created successfully.")
 
     @staticmethod
     def _prompt_assets_path() -> Path:
@@ -367,9 +444,8 @@ class _ConfigInitialiser:
         """
         while True:
             use_default = (
-                input(
-                    "Use default assets path "
-                    f"({_ConfigInitialiser.DEFAULT_ASSETS_PATH})? [y/n]: "
+                _ConfigInitialiser._cinput(
+                    f"Use default assets path ({_ConfigInitialiser.DEFAULT_ASSETS_PATH})? [y/n]: "
                 )
                 .strip()
                 .lower()
@@ -378,12 +454,16 @@ class _ConfigInitialiser:
             if use_default == "y":
                 return Path(_ConfigInitialiser.DEFAULT_ASSETS_PATH)
             elif use_default == "n":
-                custom_path = Path(input("Please enter the desired path: ").strip())
+                custom_path = Path(
+                    _ConfigInitialiser._cinput(
+                        "Please enter the desired path: "
+                    ).strip()
+                )
                 if custom_path.exists():
                     return custom_path
                 create_path = (
-                    input(
-                        "Error: Path does not exist. Do you want to create it? [y/n]: "
+                    _ConfigInitialiser._cinput(
+                        "Path does not exist. Do you want to create it? [y/n]: "
                     )
                     .strip()
                     .lower()
@@ -392,27 +472,183 @@ class _ConfigInitialiser:
                     custom_path.mkdir(parents=True, exist_ok=True)
                     return custom_path
             else:
-                print("Please enter 'y' or 'n'.")
+                _ConfigInitialiser._print_error("Please enter 'y' or 'n'.")
 
     @staticmethod
     def _prompt_gaia_db_path() -> Optional[str]:
-        """Prompt user for Gaia database location.
+        """Prompt user for Gaia database location with download option.
 
         Returns:
             str or None: Path to Gaia database file or None if not using local DB.
         """
-        while True:
-            use_local = input("\nUse local Gaia DB? [y/n]: ").strip().lower()
+        _ConfigInitialiser._print_header("Gaia Database Configuration")
+        print("The Gaia-2MASS catalog enables offline plate solving and")
+        print("autofocus field selection. Choose a magnitude cut based on")
+        print("your needs (higher = more stars, larger file).\n")
 
-            if use_local == "y":
-                db_path = Path(input("Please enter the path to Gaia DB: ").strip())
-                if db_path.exists():
-                    return str(db_path)
-                print("Error: File does not exist. Please provide a valid path.")
-            elif use_local == "n":
-                return None
+        use_gaia = (
+            _ConfigInitialiser._cinput("Use Gaia database? [y/n]: ").strip().lower()
+        )
+
+        if use_gaia != "y":
+            return ""
+
+        # Check common locations for existing database
+        common_paths = [
+            Path.home() / "gaia_tmass_16_jm_cut.db",
+            Path.home() / "Downloads" / "gaia_tmass_16_jm_cut.db",
+            Path.cwd() / "gaia_tmass_16_jm_cut.db",
+        ]
+
+        for path in common_paths:
+            if path.exists():
+                _ConfigInitialiser._print_success(
+                    f"Found existing Gaia database at: {path}"
+                )
+                use_existing = (
+                    _ConfigInitialiser._cinput("Use this database? [Y/n]: ")
+                    .strip()
+                    .lower()
+                )
+                if use_existing != "n":
+                    return str(path)
+
+        # Offer download or manual path
+        print("\nOptions:")
+        print("  1. Download Gaia database now (choose magnitude cut)")
+        print("  2. I already have it (enter path)")
+        print("  3. Skip for now (can add later in config)")
+
+        choice = _ConfigInitialiser._cinput("\nSelect option [1/2/3]: ").strip()
+
+        if choice == "1":
+            return _ConfigInitialiser._download_gaia_db()
+        elif choice == "2":
+            while True:
+                path = _ConfigInitialiser._cinput(
+                    "Enter path to Gaia database: "
+                ).strip()
+                if path and Path(path).exists():
+                    return path
+                elif not path:
+                    return ""
+                else:
+                    _ConfigInitialiser._print_error(f"File not found: {path}")
+        else:
+            print("\nSkipping Gaia database setup.")
+            print("You can download it later from:")
+            print(f"https://zenodo.org/records/{_ConfigInitialiser.GAIA_ZENODO_RECORD}")
+            return ""
+
+    @staticmethod
+    def _download_gaia_db() -> str:
+        """Download Gaia database from Zenodo with user-selected magnitude cut.
+
+        Returns:
+            str: Path to downloaded database file, or empty string if failed.
+        """
+        _ConfigInitialiser._print_header("Select Gaia Database Magnitude Cut")
+        print("\nMagnitude Cut | Stars       | File Size")
+        print("-" * 60)
+
+        for mag_cut, info in _ConfigInitialiser.GAIA_DB_OPTIONS.items():
+            print(
+                f"      {mag_cut:>2}      | {info['records']:>13} | {info['size']:>10}"
+            )
+
+        print("\nRecommendation: Magnitude 16 for most coverage")
+        print("                Magnitude 10-15 for most small-medium setups")
+        print("                Magnitude 1-9 for testing\n")
+
+        while True:
+            choice = _ConfigInitialiser._cinput(
+                "Select magnitude cut [1-16] or 'c' to cancel: "
+            ).strip()
+
+            if choice.lower() == "c":
+                return ""
+
+            if choice in _ConfigInitialiser.GAIA_DB_OPTIONS:
+                mag_cut = choice
+                break
             else:
-                print("Please enter 'y' or 'n'.")
+                _ConfigInitialiser._print_error(
+                    "Invalid choice. Please enter a number between 1-16."
+                )
+
+        # Construct download URL and filename
+        filename = f"gaia_tmass_{mag_cut}_jm_cut.db"
+        url = f"https://zenodo.org/records/{_ConfigInitialiser.GAIA_ZENODO_RECORD}/files/{filename}?download=1"
+
+        # Determine download path
+        default_path = Path.home() / filename
+        path_input = _ConfigInitialiser._cinput(
+            f"\nDownload path [{default_path}]: "
+        ).strip()
+        download_path = Path(path_input) if path_input else default_path
+
+        # Check if file already exists
+        if download_path.exists():
+            overwrite = (
+                _ConfigInitialiser._cinput(
+                    f"\nFile exists at {download_path}. Overwrite? [y/n]: "
+                )
+                .strip()
+                .lower()
+            )
+            if overwrite != "y":
+                return str(download_path)
+
+        # Perform download
+        print(
+            f"\nDownloading magnitude {mag_cut} database ({_ConfigInitialiser.GAIA_DB_OPTIONS[mag_cut]['size']})..."
+        )
+        print(f"URL: {url}")
+        print(f"Destination: {download_path}\n")
+
+        try:
+            import urllib.request
+
+            def _progress_hook(block_num, block_size, total_size):
+                """Display download progress."""
+                downloaded = block_num * block_size
+                if total_size > 0:
+                    percent = min(100, (downloaded / total_size) * 100)
+                    bar_length = 40
+                    filled = int(bar_length * downloaded / total_size)
+                    bar = "█" * filled + "░" * (bar_length - filled)
+
+                    # Convert bytes to human readable
+                    def human_size(bytes):
+                        for unit in ["B", "KB", "MB", "GB"]:
+                            if bytes < 1024:
+                                return f"{bytes:.1f} {unit}"
+                            bytes /= 1024
+                        return f"{bytes:.1f} TB"
+
+                    # Colorize progress bar
+                    colored_bar = _Colors.colorize(bar, _Colors.GREEN)
+                    print(
+                        f"\r[{colored_bar}] {percent:.1f}% ({human_size(downloaded)} / {human_size(total_size)})   ",
+                        end="",
+                        flush=True,
+                    )
+
+            # Create parent directory if needed
+            download_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Download with progress
+            urllib.request.urlretrieve(url, download_path, reporthook=_progress_hook)
+            print()  # New line after progress bar
+
+            _ConfigInitialiser._print_success(f"Download complete: {download_path}\n")
+            return str(download_path)
+
+        except Exception as e:
+            _ConfigInitialiser._print_error(f"Download failed: {e}")
+            print("\nYou can download manually from:")
+            print(f"https://zenodo.org/records/{_ConfigInitialiser.GAIA_ZENODO_RECORD}")
+            return ""
 
     @staticmethod
     def _validate_paths(

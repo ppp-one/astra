@@ -1635,6 +1635,23 @@ def main():
     Parses command line arguments, configures logging, handles configuration
     reset, and starts the FastAPI server with specified options.
     """
+    print(r"""
+            *        *                 *                 *        *             
+                                                                                 
+        ███            *                  ██              *                     
+       █████                              ██          *                         
+   *   ██ ██                             ███                   *                
+      ██   ██         ██████████    ███████████████    ███████ ██████    █████████   *
+     ███   ███       ██        █         ███               ████          █       ██     
+     ██     ██       ██                  ███           *   ███                   ███   
+    ███ ███ ███       ████████           ███               ███            ██████████   *
+    ██ █████ ██              ████        ███       *       ███          ███      ███    
+ * ███       ███               ██        ███               ███          ██       ███    
+   ██         ███   ████      ███         ██           *   ███          ███     ████    
+  ██           ██      ████████            ████████    ████████████       ██████  ████  
+                                                                                 
+            *             *                       *              *             
+    """)
     from sys import platform
 
     if platform == "linux":
@@ -1650,18 +1667,9 @@ def main():
 
     import argparse
 
-    Config().paths.archive_log_file()
-    logging.basicConfig(
-        format=FileHandler.FORMAT,
-        datefmt=FileHandler.DATEFMT,
-        filename=Config().paths.log_file,
-        level=logging.DEBUG,
-    )
-    logging.Formatter.converter = time.gmtime
-
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY, SERVER_URL
 
-    logger.info(f"Astra version: {__version__}")
+    print(f"Astra config path: {Config.CONFIG_PATH}")
 
     parser = argparse.ArgumentParser(description="Run Astra")
     parser.add_argument(
@@ -1688,21 +1696,29 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.debug:
-        DEBUG = True
-        logging.getLogger().setLevel(logging.DEBUG)
-
     if args.reset:
         prompt = (
-            input(
-                "Are you sure you want to reset Astra's base config"
-                f" located at {Config().CONFIG_PATH}? [y/n]: "
-            )
+            input("Are you sure you want to reset Astra's base config? [y/n]: ")
             .strip()
             .lower()
         )
         if prompt == "y":
-            Config().reset()
+            Config(reset=True)
+
+    Config().paths.archive_log_file()
+    logging.basicConfig(
+        format=FileHandler.FORMAT,
+        datefmt=FileHandler.DATEFMT,
+        filename=Config().paths.log_file,
+        level=logging.DEBUG,
+    )
+    logging.Formatter.converter = time.gmtime
+
+    if args.debug:
+        DEBUG = True
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    logger.info(f"Astra version: {__version__}")
 
     TRUNCATE_FACTOR = args.truncate
 
@@ -1714,7 +1730,7 @@ def main():
     if log_level == "info":
         logging.getLogger().setLevel(logging.INFO)
 
-    SERVER_URL = f"http://localhost:{args.port}"
+    SERVER_URL = f"http://localhost:{args.port}/"
 
     uvicorn.run(
         app,

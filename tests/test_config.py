@@ -44,13 +44,24 @@ class TestConfigInitialiser:
         assert config["observatory_name"] == self.observatory_name
 
         captured = capsys.readouterr()
-        assert "\nCreated config file." in captured.out
+        assert "Configuration file created successfully." in captured.out
 
     def test_run_with_none_parameters(self, monkeypatch, capsys):
         """Test config initialization when no parameters are provided."""
+        # 3 common paths check -> 3 'n's to look for existing DBs
+        # Then '2' to select "I already have it"
         inputs = iter(
-            ["y", "y", str(self.path_to_db), self.observatory_name]
-        )  # Ensure all prompts are handled
+            [
+                "y",  # Use default assets
+                "y",  # Use Gaia DB
+                "n",
+                "n",
+                "n",  # Don't use existing DBs (Home, Downloads, Cwd)
+                "2",  # I already have it
+                str(self.path_to_db),  # Path to DB
+                self.observatory_name,  # Observatory Name
+            ]
+        )
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
         monkeypatch.setattr(Path, "exists", lambda _: True)
 
@@ -66,7 +77,7 @@ class TestConfigInitialiser:
         assert config["observatory_name"] == self.observatory_name
 
         captured = capsys.readouterr()
-        assert "\nCreated config file." in captured.out
+        assert "Configuration file created successfully" in captured.out
 
     def test_prompt_assets_path_creates_directory(self, monkeypatch):
         """Test asset directory creation if it does not exist."""
@@ -83,7 +94,9 @@ class TestConfigInitialiser:
 
     def test_prompt_gaia_db_path(self, monkeypatch):
         """Test Gaia DB path prompt when the path exists."""
-        inputs = iter(["y", str(self.path_to_db)])  # Ensuring all prompts are covered
+        inputs = iter(
+            ["y", "n", "n", "n", "2", str(self.path_to_db)]
+        )  # Ensuring all prompts are covered
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
         monkeypatch.setattr(Path, "exists", lambda _: True)
 
@@ -163,7 +176,8 @@ class TestConfig:
         monkeypatch.setattr("builtins.input", lambda _: "y")
         monkeypatch.setattr(Path, "unlink", MagicMock())
 
-        config.reset(remove_assets=False)
+        with pytest.raises(SystemExit):
+            config.reset(remove_assets=False)
         Path.unlink.assert_called_once()
 
     def test_config_reset_removes_assets_folder(self, monkeypatch):
@@ -173,7 +187,8 @@ class TestConfig:
         monkeypatch.setattr("builtins.input", lambda _: "y")
         monkeypatch.setattr(Path, "rmdir", MagicMock())
 
-        config.reset(remove_assets=True)
+        with pytest.raises(SystemExit):
+            config.reset(remove_assets=True)
         Path.rmdir.assert_called_once()
 
     def test_config_save_updates_file(self, monkeypatch):
