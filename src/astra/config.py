@@ -167,6 +167,16 @@ class Config:
 
         raise SystemExit("Astra base config has been reset.")
 
+    @classmethod
+    def _reset_singleton(cls) -> None:
+        """Reset of the Config singleton.
+
+        For testing only.
+        """
+        with cls._lock:
+            cls._instance = None
+            cls._initialized = False
+
     def save(self) -> None:
         """Save current configuration settings to YAML file."""
 
@@ -215,9 +225,11 @@ class Config:
 
         unchanged_files = []
 
-        # only csv and yml
+        allowed_suffixes = {".yml", ".yaml", ".csv", ".py"}
         for template_file in [f for f in self.TEMPLATE_DIR.iterdir() if f.is_file()]:
             if not template_file.is_file():
+                continue
+            if template_file.suffix.lower() not in allowed_suffixes:
                 continue
             target_file = (
                 self.paths.custom_observatories / template_file.name
@@ -841,7 +853,7 @@ class ObservatoryConfig(dict):
         Raises:
             TypeError: If config is not a Config instance.
         """
-        if config is None:
+        if config is None or not isinstance(config, Config):
             config = Config()
 
         if not isinstance(config, Config):

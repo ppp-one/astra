@@ -133,6 +133,7 @@ class TestConfig:
         self.template_dir.mkdir()  # Create a fake template directory
         monkeypatch.setattr(Config, "TEMPLATE_DIR", self.template_dir)
         monkeypatch.setattr(Config, "CONFIG_PATH", self.config_path)
+        Config._reset_singleton()
 
     def test_config_initialization_creates_config_if_missing(self):
         """Test if Config runs the initializer when the config file is missing."""
