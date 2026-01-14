@@ -583,7 +583,7 @@ class _ConfigInitialiser:
         # Determine download path
         default_path = Path.home() / filename
         path_input = _ConfigInitialiser._cinput(
-            f"\nDownload path [{default_path}]: "
+            f"\nDownload filepath [{default_path}]: "
         ).strip()
         download_path = Path(path_input) if path_input else default_path
 

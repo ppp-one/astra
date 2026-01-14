@@ -69,7 +69,7 @@ ul li, ol li {
 @supports (color: color-mix(in srgb, black, white)) {
     .highlight.terminal-transcript .hll,
     .terminal-transcript .hll {
-        color: color-mix(in srgb, var(--pst-color-primary) 70%, var(--pst-color-text-base)) !important;
+        color: color-mix(in srgb, #29B8DB 70%, var(--pst-color-text-base)) !important;
     }
 }
 
