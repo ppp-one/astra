@@ -120,7 +120,7 @@ def temp_config(tmp_path_factory):
     Config.CONFIG_PATH = config_path
 
     # Clear any potentially existing singleton instance
-    Config._instance = None
+    Config._reset_singleton()
 
     config = Config(
         observatory_name="test_observatory",
@@ -134,7 +134,7 @@ def temp_config(tmp_path_factory):
     observatory_config.save()
 
     # Reload!
-    config._instance = None
+    Config._reset_singleton()
     config = Config()
 
     logging.info("Temporary config created successfully with paths:")
@@ -161,7 +161,7 @@ def temp_config(tmp_path_factory):
             pass
 
         # reset singleton
-        Config._instance = None
+        Config._reset_singleton()
 
 
 @pytest.fixture
