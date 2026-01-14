@@ -5,11 +5,18 @@ Astra uses a flexible scheduling system to automate observatory operations. Sche
 - `device_name`: Name of the camera device (the primary instrument that coordinates all operations)
 - `action_type`: Type of action to perform
 - `action_value`: Parameters for the action
-- `start_time`: When the action should start (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
-- `end_time`: Latest when the action should end (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
+- `start_time`: Earliest time the action is valid to start (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
+- `end_time`: Latest time the action is valid (UTC ISO format: YYYY-MM-DD HH:MM:SS.sss)
 
 ```{admonition} Instrument-Centric Design
 All scheduled actions specify a camera as the `device_name`. The camera acts as the primary instrument that coordinates operations with its paired devices (telescope, dome, filter wheel, focuser, etc.). This design ensures all devices work together as a cohesive system.
+```
+
+```{admonition} Timing and Execution Flow
+The `start_time` and `end_time` fields define a validity window, not a strict duration block.
+
+* **Early Completion**: If an action (e.g., a single exposure) completes successfully before its `end_time`, Astra does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
+* **Validity Check**: Astra respects the timeframe validity. If the current time passes `end_time`, the action is considered expired and will terminate or be skipped.
 ```
 
 ## Example Schedule
