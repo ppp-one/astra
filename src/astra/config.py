@@ -135,7 +135,7 @@ class Config:
                 propagate_observatory_name=propagate_observatory_name,
             )
 
-            self._initialized = True
+            self.__class__._initialized = True
 
     @property
     def observatory_config(self) -> "ObservatoryConfig":
