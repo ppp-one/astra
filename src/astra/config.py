@@ -12,6 +12,7 @@ import re
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict, Optional, Union
 
 import pandas as pd
@@ -72,11 +73,14 @@ class Config:
     TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
     _instance: Optional["Config"] = None
+    _initialized: bool = False
+    _lock = Lock()
 
     def __new__(cls, *args: Any, **kwargs: Any) -> "Config":
         """Ensure singleton pattern - only one Config instance exists."""
-        if cls._instance is None:
-            cls._instance = super(Config, cls).__new__(cls)
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super(Config, cls).__new__(cls)
         return cls._instance
 
     def __init__(
@@ -105,23 +109,33 @@ class Config:
         if reset:
             self.reset()
 
-        if not self.CONFIG_PATH.exists():
-            _ConfigInitialiser.run(observatory_name, folder_assets, gaia_db)
+        # Fast-path check without lock
+        if self.__class__._initialized:
+            return
 
-        config = self._load_from_file()
+        with self.__class__._lock:
+            if self.__class__._initialized:
+                return
 
-        self.observatory_name = config["observatory_name"]
-        self.folder_assets = Path(config["folder_assets"])
-        self.gaia_db = Path(config["gaia_db"])
+            if not self.__class__.CONFIG_PATH.exists():
+                _ConfigInitialiser.run(observatory_name, folder_assets, gaia_db)
 
-        self.paths = AssetPaths(self.folder_assets)
-        if not isinstance(self.paths, AssetPaths):
-            raise TypeError(f"Expected AssetPaths, got {type(self.paths)}")
+            config = self._load_from_file()
 
-        self._initialize_observatory_files(
-            allow_default=allow_default,
-            propagate_observatory_name=propagate_observatory_name,
-        )
+            self.observatory_name = config["observatory_name"]
+            self.folder_assets = Path(config["folder_assets"])
+            self.gaia_db = Path(config["gaia_db"])
+
+            self.paths = AssetPaths(self.folder_assets)
+            if not isinstance(self.paths, AssetPaths):
+                raise TypeError(f"Expected AssetPaths, got {type(self.paths)}")
+
+            self._initialize_observatory_files(
+                allow_default=allow_default,
+                propagate_observatory_name=propagate_observatory_name,
+            )
+
+            self._initialized = True
 
     @property
     def observatory_config(self) -> "ObservatoryConfig":
