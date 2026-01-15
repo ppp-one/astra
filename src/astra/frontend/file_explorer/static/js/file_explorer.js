@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const choices = new Choices('#fits-select', {
-        searchEnabled: true,
-        placeholder: true,
-        placeholderValue: 'Select a FITS file',
-    });
-
     // Make headerGridContainer visible from the start
     const headerGridContainer = document.getElementById("headerGridContainer");
     headerGridContainer.style.display = "grid";

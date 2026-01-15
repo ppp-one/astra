@@ -416,7 +416,6 @@
             const modal = document.getElementById('fits-modal');
             const mainContainer = document.querySelector('.mainContainer');
             if (!modal || !mainContainer) return;
-            console.log(`Opening FITS preview for: ${filePath}`);
             window.__fe_current_file = filePath;
             document.body.classList.add('fe-modal-open');
             mainContainer.style.display = 'grid';

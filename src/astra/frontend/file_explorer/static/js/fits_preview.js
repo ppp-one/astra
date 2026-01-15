@@ -66,12 +66,6 @@ if (window.Worker) {
     }
 }
 
-console.log("searchInput:", searchInput);
-console.log("resetButton:", resetButton);
-console.log("returnButton:", returnButton);
-
-
-
 function parseFITSImage(arrayBuffer, dataView) {
 
     console.time("parseFITSImage");
@@ -340,7 +334,6 @@ if (returnButton) {
 
 if (searchInput) {
     searchInput.addEventListener("input", () => {
-        console.log("Search input changed to:", searchInput.value);
         const query = searchInput.value.toLowerCase();
         const filteredData = Object.fromEntries(
             Object.entries(headerData).filter(([key, value]) => {

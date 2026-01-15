@@ -45,7 +45,7 @@ from PIL import Image
 
 from astra import Config, __version__
 from astra.image_handler import HeaderManager
-from astra.logger import ConsoleStreamHandler, CustomFormatter, FileHandler
+from astra.logger import ConsoleStreamHandler, FileHandler
 from astra.observatory import Observatory
 from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
@@ -54,22 +54,15 @@ from astra.frontend.file_explorer.file_explorer import include_file_explorer
 
 pd.set_option("future.no_silent_downcasting", True)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-root_logger = logging.getLogger()
-root_logger.addHandler(ConsoleStreamHandler())
-root_logger.setLevel(logging.INFO)
-
-for uvicorn_logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
-    ul = logging.getLogger(uvicorn_logger_name)
-    ul.handlers = []
-    ul.propagate = True
-
-# silence httpx logging
-logging.getLogger("httpx").setLevel(logging.WARNING)
-
+# Configure our module + noisy third-party loggers with the project's
+# `ConsoleStreamHandler` and `CustomFormatter` to keep formatting consistent
+# for pre-uvicorn startup messages without modifying the root logger.
 # global variables
+logger = logging.getLogger(__name__)
+ConsoleStreamHandler.attach(logger)
+ConsoleStreamHandler.attach(logging.getLogger("httpx"), level=logging.WARNING)
+ConsoleStreamHandler.attach(logging.getLogger("astropy"), remove_other_handlers=True)
+
 FRONTEND_PATH = Path(__file__).parent / "frontend"
 OBSERVATORY: Observatory = None  # type: ignore
 WEBCAMFEED = {}
@@ -269,7 +262,7 @@ try:
         static_url="/fits_explorer/static",
         fits_url="/fits",
     )
-    logger.info("Registered file explorer at /fits_explorer")
+    logger.debug("Registered file explorer at /fits_explorer")
 except Exception as e:
     logger.error(f"Failed to register file explorer: {e}", exc_info=True)
 
@@ -1785,11 +1778,31 @@ def main():
         log_config={
             "version": 1,
             "disable_existing_loggers": False,
+            "handlers": {
+                "astra": {
+                    "formatter": "astra",
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://sys.stdout",
+                }
+            },
             "formatters": {
-                "custom": {
-                    "()": CustomFormatter,
+                "astra": {
+                    "()": "astra.logger.CustomFormatter",
                     "fmt": "%(levelname)-8s :: %(asctime)s :: %(message)s",
                     "datefmt": "%Y-%m-%d %H:%M:%S",
+                },
+            },
+            "loggers": {
+                "uvicorn": {"handlers": ["astra"], "level": "INFO", "propagate": False},
+                "uvicorn.error": {
+                    "handlers": ["astra"],
+                    "level": "INFO",
+                    "propagate": False,
+                },
+                "uvicorn.access": {
+                    "handlers": ["astra"],
+                    "level": "INFO",
+                    "propagate": False,
                 },
             },
         },

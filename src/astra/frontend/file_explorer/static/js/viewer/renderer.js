@@ -187,8 +187,8 @@ function applyStretchAndRender({ resetGeometry }) {
     latestCanvasData = displayBuffer;
 
     if (resetGeometry || !offscreenCanvas) {
-    canvas.width = imageWidth;
-    canvas.height = imageHeight;
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
         offscreenCanvas = document.createElement('canvas');
         offscreenCanvas.width = imageWidth;
         offscreenCanvas.height = imageHeight;
@@ -758,35 +758,12 @@ function zscale(values, n_samples = 1000, contrast = 0.25, max_reject = 0.5, min
     return { vmin, vmax };
 }
 
-function linearFit(x, y, badpix) {
-    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
-    return au.linearFit(x, y, badpix);
-}
-
-function std(arr) {
-    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
-    return au.std(arr);
-}
-
 function medianValue(arr) {
     const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
     if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
     return au.medianValue(arr);
 }
 
-function quickSelect(arr, k) {
-    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
-    return au.quickSelect(arr, k);
-}
-
-function partition(arr, left, right) {
-    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
-    return au.partition(arr, left, right);
-}
 
 function formatNumber(num, precision) {
     if (Math.floor(num) === num) {

@@ -8,8 +8,6 @@ export function setupInteractions({
     onRequestPreview,
 }) {
     const {
-        headerGridContainer,
-        imageGridContainer,
         headerTable,
         searchInput,
         resetButton,

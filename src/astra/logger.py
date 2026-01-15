@@ -166,6 +166,44 @@ class ConsoleStreamHandler(logging.StreamHandler):
         except Exception:
             self.handleError(record)
 
+    @classmethod
+    def attach(
+        cls,
+        logger: logging.Logger,
+        level: int = logging.INFO,
+        propagate: bool = False,
+        remove_other_handlers: bool = False,
+    ) -> None:
+        """Ensure a `ConsoleStreamHandler` is attached to `logger`.
+
+        This convenience classmethod ensures that the given ``logger`` has a
+        `ConsoleStreamHandler` attached configured at the requested ``level``.
+
+        Parameters:
+            - logger: Logger to configure.
+            - level: Logging level to set on the logger and handler (default
+                ``logging.INFO``).
+            - propagate: Whether log records should propagate to ancestor loggers.
+            - remove_other_handlers: If True, remove non-console handlers from ``logger``
+                before adding the console handler.
+
+        Note:
+        - This method intentionally does not attach handlers to the root
+            logger to avoid interfering with other frameworks (for example,
+            Uvicorn's logging configuration).
+        """
+        if remove_other_handlers:
+            for handler in logger.handlers:
+                if not isinstance(handler, ConsoleStreamHandler):
+                    logger.removeHandler(handler)
+
+        if not any(isinstance(h, ConsoleStreamHandler) for h in logger.handlers):
+            logger.setLevel(level)
+            console_handler = ConsoleStreamHandler()
+            console_handler.setLevel(level)
+            logger.addHandler(console_handler)
+            logger.propagate = propagate
+
 
 class FileHandler(logging.FileHandler):
     FORMAT = "%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s"

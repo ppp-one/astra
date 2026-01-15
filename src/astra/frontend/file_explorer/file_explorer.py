@@ -8,8 +8,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("astra.frontend.file_explorer")
+logger = logging.getLogger("astra")
 
 
 ALLOWED_EXTENSIONS = {
