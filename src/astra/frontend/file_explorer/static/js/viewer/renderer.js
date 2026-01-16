@@ -32,6 +32,8 @@ let zoomInstance = null;
 let themeObserver = null;
 let mouseMoveAttached = false;
 let stateRef = null;
+let resizeDebounceTimer = null;
+let resizePending = false;
 
 let stretchSettings = {
     min: null,
@@ -71,7 +73,13 @@ export function initRenderer(domRefs, state) {
     observeTheme();
     window.addEventListener('resize', resizeImageAndProfiles);
     if (imageGridContainer && !resizeObserver) {
-        resizeObserver = new ResizeObserver(() => resizeImageAndProfiles());
+        resizeObserver = new ResizeObserver(() => {
+            // Debounce to prevent cascading resize loops
+            if (resizeDebounceTimer) clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(() => {
+                resizeImageAndProfiles();
+            }, 16); // ~one frame delay
+        });
         resizeObserver.observe(imageGridContainer);
     }
 
@@ -118,6 +126,11 @@ function initWorker() {
 
 async function renderArrayBuffer(arrayBuffer, { source }) {
     mainContainer.style.display = 'grid';
+
+    // Explicitly clear canvas to remove previous image immediately
+    if (canvas && ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     const parsed = fitsWorker
         ? await parseWithWorker(arrayBuffer)
@@ -213,8 +226,14 @@ function applyStretchAndRender({ resetGeometry }) {
     ctx.imageSmoothingEnabled = false;
 
     if (resetGeometry) {
-        resizeImageAndProfiles();
-        window.requestAnimationFrame(() => resizeImageAndProfiles());
+        // Single deferred resize call after layout settles
+        if (!resizePending) {
+            resizePending = true;
+            window.requestAnimationFrame(() => {
+                resizeImageAndProfiles();
+                resizePending = false;
+            });
+        }
         if (spinner) spinner.style.display = 'grid';
         rect = canvas.getBoundingClientRect();
         scaleX = canvas.width / rect.width;
@@ -446,17 +465,14 @@ function imageInteractionHandler(event, width, height) {
 function resizeImageAndProfiles() {
     if (!canvas || !imageWidth || !imageHeight) return false;
     if (imageGridContainer) {
-        let containerWidth = imageGridContainer.clientWidth || 0;
-        if (!containerWidth || containerWidth < 48) {
-            const panel = imageGridContainer.closest('.fe-modal-panel');
-            if (panel && panel.clientWidth) {
-                containerWidth = Math.max(containerWidth, panel.clientWidth - 64);
-            }
-        }
-        if ((!containerWidth || containerWidth < 48) && mainContainer && mainContainer.clientWidth) {
-            containerWidth = Math.max(containerWidth, mainContainer.clientWidth);
-        }
-        if (!containerWidth || containerWidth < 48) {
+        // Use parent/modal container width to avoid feedback from our own CSS variables
+        let containerWidth = 0;
+        const modal = imageGridContainer.closest('.relative');
+        if (modal && modal.clientWidth) {
+            containerWidth = modal.clientWidth - 64; // Account for modal padding
+        } else if (mainContainer && mainContainer.clientWidth) {
+            containerWidth = mainContainer.clientWidth;
+        } else {
             containerWidth = Math.max(160, (window.innerWidth || 0) - 64);
         }
         if (!containerWidth || containerWidth <= 0) {
@@ -483,7 +499,11 @@ function resizeImageAndProfiles() {
         const roundedH = Math.round(displayH);
         canvas.style.width = `${roundedW}px`;
         canvas.style.height = `${roundedH}px`;
+        // Disconnect observer to prevent resize loop when updating CSS variables
+        if (resizeObserver) resizeObserver.disconnect();
         imageGridContainer.style.setProperty('--image-col-width', `${roundedW}px`);
+        // Reconnect observer after CSS update
+        if (resizeObserver) resizeObserver.observe(imageGridContainer);
     }
     rect = canvas.getBoundingClientRect();
     scaleX = canvas.width / rect.width;
@@ -509,7 +529,11 @@ function computeProfileWidth(totalWidth) {
 
 function applyProfileWidthCSS(w) {
     if (!imageGridContainer) return;
+    // Disconnect observer to prevent resize loop when updating CSS variables
+    if (resizeObserver) resizeObserver.disconnect();
     imageGridContainer.style.setProperty('--profile-width', `${w}px`);
+    // Reconnect observer after CSS update
+    if (resizeObserver) resizeObserver.observe(imageGridContainer);
 }
 
 function updateProfileVisibility(profileWidth) {

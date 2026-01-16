@@ -29,7 +29,8 @@ export async function fetchPreviewFITS(filePath, { hdu = null, maxDim = 512 } = 
 
 export async function fetchFullFITS(filePath, { signal } = {}) {
     const encoded = encodePathSegments(filePath);
-    const url = withBase(`fits/${encoded}`);
+    // Full FITS files are mounted at /fits/ at the app root, not under the explorer prefix
+    const url = `/fits/${encoded}`;
     const response = await fetchOrThrow(url, { signal });
     return response.arrayBuffer();
 }

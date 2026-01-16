@@ -4,41 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FITS File Browser</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="/js/tailwind-3.3.5.js"></script>
+    <script src="/js/d3-7.9.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="static/js/shared/array_utils.js"></script>
-        <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
-        <link rel="stylesheet" href="static/theme.css"> <!-- Theme variables -->
+    <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="static/theme.css"> <!-- Theme variables -->
         <!-- Inline fallback: ensure the explorer root uses theme variables even if external CSS ordering is different -->
 </head>
-<body class="astra-explorer p-6">
-    <div class="max-w-3xl mx-auto astra-panel p-6 rounded-lg shadow-lg">
-        <div class="flex items-center mb-4 flex-wrap gap-2">
-            <button id="home-btn" class="p-2 rounded-full astra-panel hover:opacity-90 mr-2">
-                <i class="fas fa-home"></i> <!-- Home icon -->
-            </button>
-            <button id="back-btn" class="p-2 rounded-full astra-panel hover:opacity-90">
-                <i class="fas fa-arrow-left"></i> <!-- Back arrow icon -->
-            </button>
-            <button id="sort-btn" class="ml-2 p-2 rounded astra-panel hover:opacity-90 text-sm flex items-center justify-center w-10 h-10" aria-label="Toggle sort order"></button>
-            <div class="flex-grow min-w-[140px]">
-                <input type="text" id="search" placeholder="Search..." 
-                       class="w-full p-2 rounded astra-panel placeholder-gray-400">
+<body class="bg-black/90 text-slate-100 text-sm md:text-base">
+    <!-- Header -->
+    <div class="bg-neutral-900/80 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-400 hover:text-white transition-colors" title="Back to Observatory">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </a>
+                    <h1 class="text-xl font-bold text-blue-300">FITS File Browser</h1>
+                </div>
             </div>
         </div>
-
-        <div id="breadcrumbs" class="text-sm astra-muted mb-3 astra-nowrap"></div>
-        <ul id="file-list" class="space-y-2 max-h-[60vh] overflow-auto pr-1"></ul>
     </div>
 
-    <div id="fits-modal" class="fe-modal" aria-hidden="true">
-        <div class="fe-modal-backdrop"></div>
-        <div class="fe-modal-panel" role="dialog" aria-modal="true">
-            <button id="close-fits-modal" class="fe-close" aria-label="Close FITS viewer">&times;</button>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="bg-neutral-900/80 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 shadow-xl shadow-black/50">
+            <!-- Controls -->
+            <div class="flex items-center mb-4 flex-wrap gap-2">
+                <button id="back-btn" class="p-2 rounded-full bg-gray-600/20 hover:bg-gray-600/40 transition-colors" title="Back to parent folder">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button id="sort-btn" class="p-2 rounded bg-gray-600/20 hover:bg-gray-600/40 transition-colors text-sm flex items-center justify-center w-10 h-10" aria-label="Toggle sort order" title="Toggle sort order">
+                    <i class="bi bi-sort-up"></i>
+                </button>
+                <div class="flex-grow min-w-[140px]">
+                    <input type="text" id="search" placeholder="Search..." 
+                           class="w-full p-2 rounded bg-gray-600/20 text-slate-100 placeholder-gray-400 border border-gray-700/50">
+                </div>
+            </div>
+
+            <div id="breadcrumbs" class="text-sm text-gray-400 mb-3 whitespace-nowrap overflow-x-auto"></div>
+            <ul id="file-list" class="space-y-2 max-h-[60vh] overflow-auto pr-1"></ul>
+        </div>
+    </div>
+
+    <div id="fits-modal" class="fixed inset-0 items-center justify-center hidden opacity-0 pointer-events-none transition-opacity duration-150" style="z-index: 1000;" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="relative bg-neutral-900 rounded-lg border border-gray-700/50 shadow-xl" style="width: min(100vw - 16px, 1200px); max-width: min(100vw - 16px, 1200px); max-height: calc(100vh - 16px); overflow: auto; padding: 32px; display: flex; flex-direction: column; gap: 16px;" role="dialog" aria-modal="true">
+            <button id="close-fits-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-4xl leading-none cursor-pointer bg-transparent border-0" aria-label="Close FITS viewer">&times;</button>
             <div id="spinner" role="status" aria-live="polite" aria-hidden="true" aria-label="Loading FITS data"></div>
                 <div class="mainContainer" style="display: none;">
                     <div id="filePathBanner" class="file-path-banner is-empty" role="status" aria-live="polite" title="No file loaded" tabindex="0">No file loaded</div>
@@ -213,13 +233,15 @@
         }
         if (phoneMediaQuery?.addEventListener) {
             phoneMediaQuery.addEventListener('change', () => {
-                if (document.getElementById('fits-modal')?.classList.contains('is-visible')) {
+                const modal = document.getElementById('fits-modal');
+                if (modal?.classList.contains('flex') && !modal.classList.contains('hidden')) {
                     applyMobileLayoutOverride();
                 }
             });
         } else if (phoneMediaQuery?.addListener) {
             phoneMediaQuery.addListener(() => {
-                if (document.getElementById('fits-modal')?.classList.contains('is-visible')) {
+                const modal = document.getElementById('fits-modal');
+                if (modal?.classList.contains('flex') && !modal.classList.contains('hidden')) {
                     applyMobileLayoutOverride();
                 }
             });
@@ -252,7 +274,7 @@
 
             // if modal open, refresh prev/next state
             const modal = document.getElementById('fits-modal');
-            if (modal && modal.classList.contains('is-visible') && window.__fe_current_file) {
+            if (modal && modal.classList.contains('flex') && !modal.classList.contains('hidden') && window.__fe_current_file) {
                 updatePrevNextState(window.__fe_current_file);
             }
         }
@@ -270,10 +292,8 @@
                 item.title = file.name;
                 item.classList.add(
                     'p-2', 'rounded', 'cursor-pointer', 'truncate', 'flex', 'items-center', 'w-full',
-                    file.is_dir ? 'astra-text' : 'astra-text'
+                    'text-slate-100', 'hover:bg-gray-600/40', 'transition-colors'
                 );
-                // use astra-panel as hover background via a helper class
-                item.classList.add('hover:opacity-90');
 
                 if (file.is_dir) {
                     item.onclick = () => fetchFiles(file.path);
@@ -292,11 +312,8 @@
             }
         }
 
-        // Sort button: show only the Bootstrap Icons sort glyph; toggle icon orientation
-    const sortBtn = document.getElementById('sort-btn');
-    sortBtn.innerHTML = '<i class="bi bi-sort-up"></i>';
-        sortBtn.title = 'Sort: default';
-        sortBtn.setAttribute('aria-label', 'Sort: default');
+        // Sort button: toggle icon orientation
+        const sortBtn = document.getElementById('sort-btn');
         sortBtn.addEventListener('click', function () {
             window.__fe_sort_mode = window.__fe_sort_mode === 'default' ? 'reverse' : 'default';
             // swap icon between up/down to indicate order
@@ -354,7 +371,7 @@
             const breadcrumbContainer = document.getElementById("breadcrumbs");
 
             // Home icon always shown as the first clickable element
-            const homeHtml = `<span class="cursor-pointer hover:underline" title="Root" onclick="fetchFiles('')"><i class=\"bi bi-images\" aria-hidden=\"true\"></i></span>`;
+            const homeHtml = `<span class="cursor-pointer hover:underline" title="Root" onclick="fetchFiles('')"><i class="bi bi-house" aria-hidden="true"></i></span>`;
 
             if (!breadcrumbs || breadcrumbs.length === 0) {
                 breadcrumbContainer.innerHTML = homeHtml;
@@ -384,50 +401,29 @@
             }
         });
 
-        // Exit button: navigate back to the hosting Astra application root.
-        document.getElementById('home-btn').addEventListener('click', function () {
-            // window.__ASTRA_FITS_BASE_PATH is injected server-side to indicate the
-            // explorer base (e.g. '/fits_explorer/'). Compute the parent path by
-            // removing the last path segment and navigate there. If embedded in
-            // an iframe, prefer navigating the parent window.
-            const base = window.__ASTRA_FITS_BASE_PATH || "/";
-            const trimmed = base.replace(/\/$/, '');
-            const parts = trimmed.split('/').filter(Boolean);
-            let parentHref = '/';
-            if (parts.length > 0) {
-                parts.pop();
-                parentHref = '/' + parts.join('/');
-                if (!parentHref.endsWith('/')) parentHref += '/';
-            }
-
-            try {
-                if (window.parent && window.parent !== window) {
-                    window.parent.location.href = parentHref;
-                } else {
-                    window.location.href = parentHref;
-                }
-            } catch (e) {
-                window.location.href = parentHref;
-            }
-        });
-
         // Modal logic
         function openFitsModal(filePath) {
             const modal = document.getElementById('fits-modal');
             const mainContainer = document.querySelector('.mainContainer');
+            const spinner = document.getElementById('spinner');
             if (!modal || !mainContainer) return;
             window.__fe_current_file = filePath;
-            document.body.classList.add('fe-modal-open');
+            document.body.style.overflow = 'hidden';
             mainContainer.style.display = 'grid';
-            modal.classList.add('is-visible');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
             modal.setAttribute('aria-hidden', 'false');
             applyMobileLayoutOverride();
             updatePrevNextState(filePath);
-            requestAnimationFrame(() => {
-                if (window.__astraRenderer && typeof window.__astraRenderer.forceResize === 'function') {
-                    window.__astraRenderer.forceResize();
-                }
-            });
+            
+            // Show spinner immediately before loading starts
+            if (spinner) {
+                spinner.style.display = 'grid';
+                spinner.setAttribute('aria-hidden', 'false');
+            }
+            
             const previewPromise = loadPreview(filePath);
             if (previewPromise && typeof previewPromise.then === 'function') {
                 previewPromise.then(() => {
@@ -447,24 +443,31 @@
         function closeFitsModal() {
             const modal = document.getElementById('fits-modal');
             if (!modal) return;
-            modal.classList.remove('is-visible');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 150);
             modal.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('fe-modal-open');
+            document.body.style.overflow = '';
             const container = document.querySelector('.mainContainer');
             if (container) {
                 container.style.display = 'none';
             }
         }
         document.getElementById('close-fits-modal').onclick = closeFitsModal;
-        const modalBackdrop = document.querySelector('#fits-modal .fe-modal-backdrop');
-        if (modalBackdrop) {
-            modalBackdrop.addEventListener('click', closeFitsModal);
-        }
+        // Click on backdrop (first child div with bg-black/50) to close
+        document.getElementById('fits-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFitsModal();
+            }
+        });
 
 
         document.addEventListener('keydown', function(event) {
             const modal = document.getElementById('fits-modal');
-            const modalOpen = modal && modal.classList.contains('is-visible');
+            const modalOpen = modal && modal.classList.contains('flex') && !modal.classList.contains('hidden');
 
             if (event.key === 'Escape') {
                 // Close the modal if it's open

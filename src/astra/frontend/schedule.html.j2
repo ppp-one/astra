@@ -29,8 +29,8 @@
         /* Style each row as a card */
         .schedule-table tr {
             margin-bottom: 1rem;
-            border: 1px solid rgb(55 65 81 / 0.5);
-            /* Equivalent to border-gray-700/50 */
+            border: 1px solid rgb(100 116 139 / 0.5);
+            /* Equivalent to border-slate-500/50 */
             border-radius: 0.5rem;
             /* Equivalent to rounded-lg */
             overflow: hidden;
@@ -42,8 +42,8 @@
             padding-left: 50%;
             /* Create space for the label */
             text-align: right;
-            border-bottom: 1px solid rgb(55 65 81 / 0.3);
-            /* Lighter border for cells */
+            border-bottom: 1px solid rgb(100 116 139 / 0.3);
+            /* Lighter slate border for cells */
         }
 
         .schedule-table tr td:last-child {
@@ -95,7 +95,7 @@
                 position: static;
                 padding-left: 0.5rem;
                 text-align: left;
-                border-bottom: 1px solid rgb(55 65 81 / 0.3);
+                border-bottom: 1px solid rgb(100 116 139 / 0.3);
             }
 
             .schedule-table.desktop-table td:before {
@@ -105,11 +105,11 @@
     </style>
 </head>
 
-<body class="bg-black text-white relative">
+<body class="bg-black/90 text-slate-100 text-sm md:text-base relative">
     <!-- Content -->
     <div class="relative z-10 min-h-screen">
         <!-- Header -->
-        <div class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-40">
+        <div class="bg-neutral-900/80 backdrop-blur-sm border-b border-gray-700/50 sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-4">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-4">
@@ -146,7 +146,7 @@
             <!-- Status Modal -->
             <div id="statusModal"
                 class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center hidden">
-                <div class="bg-gray-800/90 border border-gray-700/50 rounded-lg p-6 mx-4 max-w-md w-full">
+                <div class="bg-neutral-900 border border-gray-700/50 rounded-lg shadow-xl p-6 mx-4 max-w-md w-full">
                     <div class="flex items-center space-x-3 mb-4">
                         <div id="statusIcon" class="w-6 h-6 flex-shrink-0"></div>
                         <h3 id="statusTitle" class="text-lg font-semibold"></h3>
@@ -154,7 +154,7 @@
                     <p id="statusText" class="text-gray-300 mb-6"></p>
                     <div class="flex justify-end">
                         <button id="statusCloseBtn"
-                            class="px-4 py-2 bg-gray-600/80 hover:bg-gray-700/80 rounded-lg text-sm transition-colors">
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
                             Close
                         </button>
                     </div>
@@ -165,7 +165,7 @@
             <input type="file" id="fileInput" accept=".jsonl,.json,.txt" style="display: none;">
 
             <!-- Schedule Visualization -->
-            <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 mb-6">
+            <div class="bg-neutral-900/80 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 shadow-xl shadow-black/50 mb-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">Schedule Timeline (UTC)</h2>
                     {# <button id="toggleChartBtn"
@@ -179,16 +179,16 @@
             </div>
 
             <!-- Schedule Editor -->
-            <div class="bg-gray-800/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50">
+            <div class="bg-neutral-900/80 backdrop-blur-sm p-6 rounded-lg border border-gray-700/50 shadow-xl shadow-black/50">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">Schedule</h2>
                     <div class="flex space-x-2">
                         <button id="sortByTimeBtn"
-                            class="px-4 py-2 bg-slate-600/80 hover:bg-slate-700/80 rounded-lg text-sm transition-colors">
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
                             Sort by Start Time
                         </button>
                         <button id="toggleViewBtn"
-                            class="hidden xl:block px-4 py-2 bg-slate-600/80 hover:bg-slate-700/80 rounded-lg text-sm transition-colors">
+                            class="hidden xl:block px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
                             Table View
                         </button>
                     </div>
@@ -223,7 +223,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm schedule-table">
                         <thead>
-                            <tr class="border-b border-gray-600/50">
+                            <tr class="border-b-2 border-b-slate-500">
                                 <th class="text-left p-2 w-12">#</th>
                                 <th class="text-left p-2">Device Name</th>
                                 <th class="text-left p-2">Action Type</th>
@@ -816,7 +816,7 @@
 
             scheduleData.forEach((item, index) => {
                 const row = document.createElement('tr');
-                row.className = 'border-b border-gray-700/30 hover:bg-gray-700/20 transition-colors';
+                row.className = 'border-b border-slate-500 hover:bg-gray-600/40 transition-colors';
 
                 row.innerHTML = `
                     <td class="p-2 text-gray-400 font-mono text-xs" data-label="#">
