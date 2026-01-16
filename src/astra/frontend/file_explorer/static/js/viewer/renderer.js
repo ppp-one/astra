@@ -419,7 +419,7 @@ function drawLineProfile(profileCtx, profileData, isHorizontal, offset) {
 function imageInteractionHandler(event, width, height) {
     if (!rect) return;
     const x = Math.floor((event.clientX - rect.left) * scaleX);
-        const y = Math.floor((event.clientY - rect.top) * scaleY);
+    const y = Math.floor((event.clientY - rect.top) * scaleY);
 
     const transformedX = Math.floor((x - currentTransform.x * scaleX) / currentTransform.k);
     const transformedY = Math.floor((y - currentTransform.y * scaleY) / currentTransform.k);
@@ -554,46 +554,46 @@ function setupZoom() {
             .zoom()
             .scaleExtent([1, 100])
             .on('zoom', (event) => {
-                    let transform = event.transform;
-                    // compute bounds so the image fully covers the canvas after transform
-                    const k = transform.k;
-                    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+                let transform = event.transform;
+                // compute bounds so the image fully covers the canvas after transform
+                const k = transform.k;
+                const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-                    // allowed transform.x range (so left <= 0 and right >= canvas.width)
-                    let minX = (canvas.width - imageWidth * k) / scaleX; // when right edge aligns with canvas right
-                    let maxX = 0; // when left edge aligns with canvas left
-                    let minY = (canvas.height - imageHeight * k) / scaleY;
-                    let maxY = 0;
+                // allowed transform.x range (so left <= 0 and right >= canvas.width)
+                let minX = (canvas.width - imageWidth * k) / scaleX; // when right edge aligns with canvas right
+                let maxX = 0; // when left edge aligns with canvas left
+                let minY = (canvas.height - imageHeight * k) / scaleY;
+                let maxY = 0;
 
-                    // If the image is smaller than the canvas in a dimension, center it and disallow pan
-                    if (imageWidth * k <= canvas.width) {
-                        const centeredX = (canvas.width - imageWidth * k) / 2 / scaleX;
-                        minX = maxX = centeredX;
-                    }
-                    if (imageHeight * k <= canvas.height) {
-                        const centeredY = (canvas.height - imageHeight * k) / 2 / scaleY;
-                        minY = maxY = centeredY;
-                    }
+                // If the image is smaller than the canvas in a dimension, center it and disallow pan
+                if (imageWidth * k <= canvas.width) {
+                    const centeredX = (canvas.width - imageWidth * k) / 2 / scaleX;
+                    minX = maxX = centeredX;
+                }
+                if (imageHeight * k <= canvas.height) {
+                    const centeredY = (canvas.height - imageHeight * k) / 2 / scaleY;
+                    minY = maxY = centeredY;
+                }
 
-                    const clampedX = clamp(transform.x, minX, maxX);
-                    const clampedY = clamp(transform.y, minY, maxY);
+                const clampedX = clamp(transform.x, minX, maxX);
+                const clampedY = clamp(transform.y, minY, maxY);
 
-                    if (clampedX !== transform.x || clampedY !== transform.y) {
-                        // apply clamped transform back to zoom behavior (this will re-enter zoom handler once)
-                        const ct = d3.zoomIdentity.translate(clampedX, clampedY).scale(k);
-                        d3.select(canvas).call(zoomInstance.transform, ct);
-                        return;
-                    }
+                if (clampedX !== transform.x || clampedY !== transform.y) {
+                    // apply clamped transform back to zoom behavior (this will re-enter zoom handler once)
+                    const ct = d3.zoomIdentity.translate(clampedX, clampedY).scale(k);
+                    d3.select(canvas).call(zoomInstance.transform, ct);
+                    return;
+                }
 
-                    currentTransform = transform;
+                currentTransform = transform;
 
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.save();
-                    ctx.translate(transform.x * scaleX, transform.y * scaleY);
-                    ctx.scale(transform.k, transform.k);
-                    ctx.drawImage(offscreenCanvas, 0, 0, imageWidth, imageHeight);
-                    ctx.restore();
-                });
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(transform.x * scaleX, transform.y * scaleY);
+                ctx.scale(transform.k, transform.k);
+                ctx.drawImage(offscreenCanvas, 0, 0, imageWidth, imageHeight);
+                ctx.restore();
+            });
         d3.select(canvas).call(zoomInstance);
     }
     d3.select(canvas).call(zoomInstance.transform, d3.zoomIdentity);
