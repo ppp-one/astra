@@ -675,13 +675,13 @@ def calculate_twilight_periods(
     sun = get_sun(times)
     altaz_frame = AltAz(obstime=times, location=obs_location)
     sun_altaz = sun.transform_to(altaz_frame)
-    altitudes = sun_altaz.alt.degree
+    altitudes = sun_altaz.alt.degree  # type: ignore
 
     periods = []
     current_phase = None
     period_start = None
 
-    for i, (time_point, altitude) in enumerate(zip(time_points, altitudes)):
+    for i, (time_point, altitude) in enumerate(zip(time_points, altitudes)):  # type: ignore
         # Determine phase based on sun altitude
         if altitude >= 0:
             phase = "day"
@@ -754,8 +754,8 @@ def calculate_celestial_data(obs_location: EarthLocation) -> dict:
         celestial_bodies.append(
             {
                 "name": "Sun",
-                "alt": float(sun_altaz.alt.degree),
-                "az": float(sun_altaz.az.degree),
+                "alt": float(sun_altaz.alt.degree),  # type: ignore
+                "az": float(sun_altaz.az.degree),  # type: ignore
                 "type": "sun",
                 "magnitude": -26.74,
             }
@@ -776,8 +776,8 @@ def calculate_celestial_data(obs_location: EarthLocation) -> dict:
         celestial_bodies.append(
             {
                 "name": "Moon",
-                "alt": float(moon_altaz.alt.degree),
-                "az": float(moon_altaz.az.degree),
+                "alt": float(moon_altaz.alt.degree),  # type: ignore
+                "az": float(moon_altaz.az.degree),  # type: ignore
                 "type": "moon",
                 "magnitude": -12.0,  # Approximate full moon magnitude
                 "phase": float(phase),  # Illumination fraction 0-1
@@ -802,8 +802,8 @@ def calculate_celestial_data(obs_location: EarthLocation) -> dict:
             celestial_bodies.append(
                 {
                     "name": planet_name,
-                    "alt": float(planet_altaz.alt.degree),
-                    "az": float(planet_altaz.az.degree),
+                    "alt": float(planet_altaz.alt.degree),  # type: ignore
+                    "az": float(planet_altaz.az.degree),  # type: ignore
                     "type": "planet",
                     "magnitude": magnitude,
                 }
@@ -839,7 +839,7 @@ async def sky_data():
 
     try:
         obs_location = obs.get_observatory_location()
-        data = calculate_celestial_data(obs_location)
+        data = calculate_celestial_data(obs_location)  # type: ignore
         return {"status": "success", "data": data, "message": ""}
     except Exception as e:
         logger.warning(f"Error calculating sky data: {e}", exc_info=True)
@@ -957,7 +957,9 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
                 start_time = end_time - datetime.timedelta(days=3)
 
                 twilight_periods = calculate_twilight_periods(
-                    start_time, end_time, obs_location
+                    start_time,
+                    end_time,
+                    obs_location,  # type: ignore
                 )
             except Exception as e:
                 logger.warning(f"Error calculating twilight periods: {e}")
@@ -1703,11 +1705,6 @@ def main():
         "--debug", action="store_true", help="run in debug mode (default: false)"
     )
     parser.add_argument(
-        "--auto_reload_frontend",
-        action="store_true",
-        help="Enable Jinja template auto-reload for frontend development",
-    )
-    parser.add_argument(
         "--port",
         type=int,
         default=8000,
@@ -1749,11 +1746,6 @@ def main():
     if args.debug:
         DEBUG = True
         logging.getLogger().setLevel(logging.DEBUG)
-
-    if getattr(args, "auto_reload_frontend", False):
-        FRONTEND.env.auto_reload = True
-        FRONTEND.env.cache = {}
-        logger.info("Frontend dev mode: Jinja template auto-reload enabled")
 
     logger.info(f"Astra version: {__version__}")
 
