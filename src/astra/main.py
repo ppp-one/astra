@@ -37,20 +37,19 @@ from fastapi import Body, FastAPI, File, Request, UploadFile, WebSocket
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
-    StreamingResponse,
     RedirectResponse,
+    StreamingResponse,
 )
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 
 from astra import Config, __version__
+from astra.frontend.file_explorer.file_explorer import include_file_explorer
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, FileHandler
 from astra.observatory import Observatory
 from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
-from astra.frontend.file_explorer.file_explorer import include_file_explorer
-
 
 pd.set_option("future.no_silent_downcasting", True)
 
@@ -74,7 +73,6 @@ LAST_IMAGE_PREVIEW = None  # Stores (jpeg_bytes, headers) tuple
 LAST_IMAGE_TIME = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
-SERVER_URL = None
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -246,7 +244,6 @@ async def lifespan(app: FastAPI):
     """
     # Load observatories
     load_observatories()
-    logger.info(f"Astra version {__version__} started at {SERVER_URL}")
     yield
     # Clean up
     clean_up()
@@ -1696,7 +1693,7 @@ def main():
 
     import argparse
 
-    global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY, SERVER_URL
+    global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
     print(f"Astra config path: {Config.CONFIG_PATH}")
 
@@ -1758,8 +1755,6 @@ def main():
     log_level = "info" if not DEBUG else "debug"
     if log_level == "info":
         logging.getLogger().setLevel(logging.INFO)
-
-    SERVER_URL = f"http://localhost:{args.port}/"
 
     uvicorn.run(
         app,
