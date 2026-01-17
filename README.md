@@ -1,8 +1,10 @@
 # Astra
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+![Tests](https://github.com/ppp-one/astra/actions/workflows/format_and_test.yml/badge.svg?branch=main)
 [![Docs](https://img.shields.io/badge/docs-brightgreen.svg)](https://docs.withastra.io/)
-[![Issues](https://img.shields.io/github/issues/ppp-one/astra)](https://github.com/ppp-one/astra/issues)
 
 Astra (**Automated Survey observaTory Robotised with Alpaca**) is an open-source observatory control software for automating and managing robotic observatories. It integrates seamlessly with [ASCOM Alpaca](https://ascom-standards.org/api/) for hardware control.
 
@@ -69,7 +71,7 @@ Released under the [GNU GPL v3](LICENSE).
 If you use Astra in published research, please cite it as:
 ```
 @software{Pedersen_Astra,
-author = {Pedersen, Peter P. and Degen, David and Garcia, Lionel and Zúñiga-Fernández, Sebastián and Sebastian, Daniel and Queloz, Didier},
+author = {Pedersen, Peter P. and Degen, David and Garcia, Lionel and Zúñiga-Fernández, Sebastián and Sebastian, Daniel and Schroffenegger, Urs and Queloz, Didier},
 license = {GPL-3.0},
 title = {{Astra}},
 url = {https://github.com/ppp-one/astra}
