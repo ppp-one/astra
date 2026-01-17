@@ -214,7 +214,7 @@ def convert_fits_to_preview(fits_file: str) -> tuple[bytes, dict]:
             headers["OBJECT"] = hdulist[0].header["OBJECT"]  # type: ignore
 
     # Apply Z-scale normalization and convert to 8-bit
-    interval = ZScaleInterval(contrast=0.005)
+    interval = ZScaleInterval(contrast=0.25)
     vmin, vmax = interval.get_limits(image_data)
     image_data = np.clip((image_data - vmin) / (vmax - vmin) * 255, 0, 255).astype(
         np.uint8

@@ -445,7 +445,7 @@ input#searchInput {
     border-radius: 8px;
 }
 #search:focus { border-color: rgba(96,165,250,0.18); outline: none; }
-}
+
 .toolbar-icon-button:focus-visible {
     outline: 2px solid rgba(99, 102, 241, 0.7);
     outline-offset: 2px;
