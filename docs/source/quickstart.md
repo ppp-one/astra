@@ -133,4 +133,5 @@ Once the initial setup is complete, you can run *Astra*.
 
 <div style="text-align: center;">
    <img alt="Astra schedule editor" src="_static/ui-schedule-editor.png" style="width: 80%; align=center; margin: 5px 0;" />
+   <img alt="Astra fits viewer" src="_static/ui-fits-viewer.jpg" style="width: 80%; align=center; margin: 5px 0;" />
 </div>
