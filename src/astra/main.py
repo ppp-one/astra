@@ -1731,9 +1731,12 @@ def main():
 
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
-    print(f"Astra config path: {Config.CONFIG_PATH}")
-
     parser = argparse.ArgumentParser(description="Run Astra")
+    parser.add_argument(
+        "--config",
+        type=str,
+        help="path to configuration file (default: ~/.astra/astra_config.yml)",
+    )
     parser.add_argument(
         "--debug", action="store_true", help="run in debug mode (default: false)"
     )
@@ -1757,6 +1760,11 @@ def main():
         "--reset", action="store_true", help="reset the Astra's base config"
     )
     args = parser.parse_args()
+
+    if args.config:
+        Config.CONFIG_PATH = Path(args.config).expanduser().resolve()
+
+    print(f"Astra config path: {Config.CONFIG_PATH}")
 
     if args.reset:
         prompt = (

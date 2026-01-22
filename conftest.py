@@ -110,9 +110,16 @@ def temp_config(tmp_path_factory):
     config_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Copy path gaia database path from initialised config if available
+    gaia_db_file = None
     if Config.CONFIG_PATH.exists():
-        gaia_db_file = Config().gaia_db
-    else:
+        try:
+            candidate = Config().gaia_db
+            if candidate and candidate.exists():
+                gaia_db_file = candidate
+        except Exception:
+            pass
+
+    if gaia_db_file is None:
         gaia_db_file = assets_dir / "dummy_gaia_db.db"
         gaia_db_file.touch()
 

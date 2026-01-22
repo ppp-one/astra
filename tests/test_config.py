@@ -48,15 +48,18 @@ class TestConfigInitialiser:
 
     def test_run_with_none_parameters(self, monkeypatch, capsys):
         """Test config initialization when no parameters are provided."""
-        # 3 common paths check -> 3 'n's to look for existing DBs
-        # Then '2' to select "I already have it"
+        # We mock glob to return nothing so no existing DBs are found.
+        # Flow:
+        # 1. Use default assets? -> y
+        # 2. Use Gaia DB? -> y
+        # 3. No existing DBs found (mocked glob=[])
+        # 4. Select option [1/2/3] -> 2
+        # 5. Enter path -> path_to_db
+        # 6. Enter obs name -> observatory_name
         inputs = iter(
             [
                 "y",  # Use default assets
                 "y",  # Use Gaia DB
-                "n",
-                "n",
-                "n",  # Don't use existing DBs (Home, Downloads, Cwd)
                 "2",  # I already have it
                 str(self.path_to_db),  # Path to DB
                 self.observatory_name,  # Observatory Name
@@ -64,6 +67,7 @@ class TestConfigInitialiser:
         )
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
         monkeypatch.setattr(Path, "exists", lambda _: True)
+        monkeypatch.setattr(Path, "glob", lambda self, pattern: [])
 
         _ConfigInitialiser.run(None, None, None)
 
@@ -94,11 +98,16 @@ class TestConfigInitialiser:
 
     def test_prompt_gaia_db_path(self, monkeypatch):
         """Test Gaia DB path prompt when the path exists."""
+        # 1. Use Gaia DB? -> y
+        # 2. No existing DBs found (mocked glob=[])
+        # 3. Select option [1/2/3] -> 2
+        # 4. Enter path -> path_to_db
         inputs = iter(
-            ["y", "n", "n", "n", "2", str(self.path_to_db)]
+            ["y", "2", str(self.path_to_db)]
         )  # Ensuring all prompts are covered
         monkeypatch.setattr("builtins.input", lambda _: next(inputs))
         monkeypatch.setattr(Path, "exists", lambda _: True)
+        monkeypatch.setattr(Path, "glob", lambda self, pattern: [])
 
         db_path = _ConfigInitialiser._prompt_gaia_db_path()
         assert db_path == str(self.path_to_db)
