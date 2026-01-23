@@ -315,7 +315,7 @@ class HeaderManager:
 
             elif (
                 fits_row["device_type"]
-                not in ["astropy_default", "astra", "astra_fixed", ""]
+                not in ["astropy_default", "astra", "static", ""]
             ) and fits_row["fixed"] is True:
                 # direct ascom command headers
                 device_type = fits_row["device_type"]
@@ -330,7 +330,7 @@ class HeaderManager:
 
                     hdr[row_header] = (val, fits_row["comment"])
 
-            elif fits_row["device_type"] == "astra_fixed":
+            elif fits_row["device_type"] == "static":
                 # fixed headers, ensure datatype
                 try:
                     if fits_row["dtype"] == "float":

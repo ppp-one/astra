@@ -218,7 +218,7 @@ class DeviceManager:
         for _, fits_row in fits_config.iterrows():
             if (
                 fits_row["device_type"]
-                not in ["astropy_default", "astra", "astra_fixed", ""]
+                not in ["astropy_default", "astra", "static", ""]
             ) and fits_row["fixed"] is False:
                 device_type = fits_row["device_type"]
                 if device_type in self.devices:
