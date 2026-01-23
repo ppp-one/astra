@@ -211,6 +211,9 @@
 
         function explorerUrl(relative = "") {
             const base = BASE_PATH.endsWith("/") ? BASE_PATH : `${BASE_PATH}/`;
+            
+            relative = relative.replace(/%5C/gi, '/'); // replace windows backslashes with forward slashes
+
             const trimmed = relative.startsWith("/")
                 ? relative.slice(1)
                 : relative;
