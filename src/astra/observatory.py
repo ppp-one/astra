@@ -1495,11 +1495,9 @@ class Observatory:
         az = action_value.get("az")
         lookup_name = action_value.get("lookup_name")
 
-        # If solar system body provided, get ra/dec
+        # If body provided, get ra/dec
         if lookup_name is not None:
             if "Telescope" in paired_devices:
-                telescope = paired_devices.telescope
-
                 # Get observatory location from telescope (cached)
                 telescope_name = paired_devices["Telescope"]
                 obs_location = self.get_observatory_location(telescope_name)
@@ -1507,7 +1505,7 @@ class Observatory:
                 # Get current time
                 now = Time.now()
 
-                # Get solar system body coordinates
+                # Get body coordinates
                 target_coord = astra.utils.get_body_coordinates(
                     body_name=lookup_name,
                     obs_time=now,
@@ -1524,8 +1522,6 @@ class Observatory:
         # If alt/az provided, convert to ra/dec
         if alt is not None and az is not None:
             if "Telescope" in paired_devices:
-                telescope = paired_devices.telescope
-
                 # Get observatory location from telescope (cached)
                 telescope_name = paired_devices["Telescope"]
                 obs_location = self.get_observatory_location(telescope_name)

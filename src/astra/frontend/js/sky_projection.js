@@ -47,7 +47,7 @@ function convertRaDecToAltAz(ra, dec, lat, lon, datetime) {
     const raRad = (ra * Math.PI) / 180;
     const decRad = (dec * Math.PI) / 180;
     const latRad = (lat * Math.PI) / 180;
-    const lonRad = (lon * Math.PI) / 180;
+    // const lonRad = (lon * Math.PI) / 180;
 
     // Calculate Local Sidereal Time
     const jd = datetime.getTime() / 86400000 + 2440587.5; // Julian Date
@@ -112,9 +112,6 @@ function plotSkyProjection() {
 
     const obs = skyData.observatory;
     const datetime = new Date(skyData.utc_time + "Z"); // Ensure UTC
-    console.log(
-        `Plotting sky projection for ${datetime.toISOString()} at lat=${obs.lat}, lon=${obs.lon}`,
-    );
 
     // Calculate star positions
     const stars = STAR_CATALOG.map(([name, ra, dec, mag]) => {
@@ -144,13 +141,10 @@ function plotSkyProjection() {
     // Calculate telescope positions and trajectories using RA/Dec for consistency
     const telescopeMarkers = telescopes
         .map((tel) => {
-            if (!tel.ra || !tel.dec) return null;
+            if (tel.ra == null || tel.dec == null) return null;
 
             // Use current browser time for telescope calculations (not cached sky data time)
             const currentTime = new Date();
-            console.log(
-                `Telescope ${tel.name}: RA=${tel.ra}, Dec=${tel.dec} at ${currentTime.toISOString()}`,
-            );
 
             // Calculate Alt/Az from RA/Dec
             const { alt, az } = convertRaDecToAltAz(
@@ -159,9 +153,6 @@ function plotSkyProjection() {
                 obs.lat,
                 obs.lon,
                 currentTime,
-            );
-            console.log(
-                `Telescope ${tel.name}: Alt=${alt.toFixed(2)}, Az=${az.toFixed(2)}`,
             );
 
             // Only show if above horizon
@@ -175,7 +166,7 @@ function plotSkyProjection() {
     // Calculate telescope trajectories (24 hours into future)
     const telescopeTrajectories = telescopes
         .map((tel) => {
-            if (!tel.ra || !tel.dec || !tel.tracking) return null;
+            if (tel.ra == null || tel.dec == null || !tel.tracking) return null;
 
             // Use current browser time for trajectory calculations
             const currentTime = new Date();

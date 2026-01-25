@@ -621,7 +621,7 @@ class ObjectActionConfig(BaseActionConfig):
             if self.lookup_name is not None:
                 from astra.utils import get_body_coordinates
 
-                # Resolve solar system body position at start time
+                # Resolve body position at start time
                 target_coord = get_body_coordinates(
                     body_name=self.lookup_name,
                     obs_time=start_time,

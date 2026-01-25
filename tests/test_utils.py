@@ -1,19 +1,21 @@
+import math
+from datetime import datetime
+
+import astropy.units as u
 import numpy as np
 import pandas as pd
 import pytest
-import math
-from datetime import datetime
-from astropy.coordinates import SkyCoord, EarthLocation
+from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time, TimeDelta
-import astropy.units as u
 
 from astra.utils import (
-    interpolate_dfs,
     __to_format,
-    to_jd,
+    get_body_coordinates,
     getLightTravelTimes,
-    time_conversion,
+    interpolate_dfs,
     is_sun_rising,
+    time_conversion,
+    to_jd,
 )
 
 
@@ -278,3 +280,55 @@ def test_setting_detection(location, monkeypatch):
 
     rising, _, _ = is_sun_rising(location)
     assert rising is False
+
+
+def test_get_body_coordinates_solar_system(location, monkeypatch):
+    import astropy.coordinates
+
+    # Mock return value
+    expected_coord = SkyCoord(ra=100 * u.deg, dec=20 * u.deg)
+
+    # Mock get_body to avoid ephemeris calculation/download
+    monkeypatch.setattr(
+        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
+    )
+
+    # Test with a known solar system object
+    result = get_body_coordinates("Jupiter", Time.now(), location)
+
+    assert result.ra == expected_coord.ra
+    assert result.dec == expected_coord.dec
+
+
+def test_get_body_coordinates_deep_sky(location, monkeypatch):
+    import astropy.coordinates
+
+    # Mock return value
+    expected_coord = SkyCoord(ra=10.68 * u.deg, dec=41.27 * u.deg)
+
+    # Mock SkyCoord.from_name to avoid SIMBAD query
+    monkeypatch.setattr(
+        astropy.coordinates.SkyCoord, "from_name", lambda name: expected_coord
+    )
+
+    # Test with a known deep sky object
+    result = get_body_coordinates("M31", Time.now(), location)
+
+    assert result.ra == expected_coord.ra
+    assert result.dec == expected_coord.dec
+
+
+def test_get_body_coordinates_solar_system_case_insensitive(location, monkeypatch):
+    import astropy.coordinates
+
+    expected_coord = SkyCoord(ra=200 * u.deg, dec=-10 * u.deg)
+
+    monkeypatch.setattr(
+        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
+    )
+
+    # Test with uppercase
+    result = get_body_coordinates("MARS", Time.now(), location)
+
+    assert result.ra == expected_coord.ra
+    assert result.dec == expected_coord.dec
