@@ -1043,7 +1043,6 @@
                             dec: parseFloat(Number(item.polled?.Declination?.value || 0).toFixed(1)),
                             tracking: item.polled?.Tracking?.value || false
                         }))
-                        .filter(tel => tel.alt !== 0 || tel.az !== 0); // Filter out invalid positions
 
                     updateTelescopePositions(telescopeData);
                 }

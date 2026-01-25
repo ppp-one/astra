@@ -842,7 +842,7 @@ def calculate_celestial_data(obs_location: EarthLocation) -> dict:
             "lon": float(obs_location.lon.degree),
             "elevation": float(obs_location.height.value),
         },
-        "utc_time": current_time.iso,
+        "utc_time": current_time.isot,
         "celestial_bodies": celestial_bodies,
     }
 
