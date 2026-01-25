@@ -1407,7 +1407,12 @@ class Observatory:
             # Add target RA/DEC to header if present in action_value and not already set
             if action.action_type == "object":
                 action_value = action.action_value
-                if "ra" in action_value and "dec" in action_value:
+                if (
+                    "ra" in action_value
+                    and "dec" in action_value
+                    and action_value["ra"] is not None
+                    and action_value["dec"] is not None
+                ):
                     # Get comments from fits_config
                     ra_comment = (
                         self.fits_config.loc["RA", "comment"]
@@ -1488,6 +1493,33 @@ class Observatory:
         dec = action_value.get("dec")
         alt = action_value.get("alt")
         az = action_value.get("az")
+        lookup_name = action_value.get("lookup_name")
+
+        # If solar system body provided, get ra/dec
+        if lookup_name is not None:
+            if "Telescope" in paired_devices:
+                telescope = paired_devices.telescope
+
+                # Get observatory location from telescope (cached)
+                telescope_name = paired_devices["Telescope"]
+                obs_location = self.get_observatory_location(telescope_name)
+
+                # Get current time
+                now = Time.now()
+
+                # Get solar system body coordinates
+                target_coord = astra.utils.get_body_coordinates(
+                    body_name=lookup_name,
+                    obs_time=now,
+                    obs_location=obs_location,
+                )
+
+                ra = target_coord.ra.deg  # type: ignore
+                dec = target_coord.dec.deg  # type: ignore
+
+                self.logger.info(
+                    f"Retrieved {lookup_name} coordinates RA/Dec ({ra:.2f}°, {dec:.2f}°)"
+                )
 
         # If alt/az provided, convert to ra/dec
         if alt is not None and az is not None:
@@ -2474,6 +2506,21 @@ class Observatory:
             f"Running pointing correction for {action_value['object']} with {action.device_name}"
         )
         try:
+            if action_value["ra"] is None or action_value["dec"] is None:
+                try:
+                    telescope = paired_devices.telescope
+                    ra_hours = telescope.get("RightAscension")
+                    dec_degs = telescope.get("Declination")
+                    action_value["ra"] = ra_hours * 15  # convert to degrees
+                    action_value["dec"] = dec_degs
+                    self.logger.info(
+                        f"Using current telescope coordinates for pointing correction: "
+                        f"RA={action_value['ra']} DEC={action_value['dec']}"
+                    )
+                except Exception as e:
+                    raise ValueError(
+                        "Target RA/DEC not provided in action_value and failed to get from telescope."
+                    ) from e
             (
                 pointing_correction,
                 image_star_mapping,

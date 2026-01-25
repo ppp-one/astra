@@ -285,6 +285,32 @@ def clean_image(data: np.ndarray) -> np.ndarray:
     return med_clean
 
 
+## planet or SIMBAD positions
+def get_body_coordinates(body_name: str, obs_time: Time, obs_location: Any) -> SkyCoord:
+    """Get the position of a celestial body (Solar System or Deep Sky).
+
+    Calculates the apparent celestial coordinates of a specified solar system body
+    or resolves the coordinates of a deep sky object by name.
+
+    Args:
+        body_name (str): Name of the body (e.g., 'mars', 'jupiter', 'M31', 'Vega').
+        obs_time (Time): Observation time (used for solar system bodies).
+        obs_location (EarthLocation): Observer's geographic location (used for solar system bodies).
+
+    Returns:
+        SkyCoord: Position of the body in the sky.
+    """
+    from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
+
+    # Check if the body is in the solar system ephemeris (case-insensitive)
+    # solar_system_ephemeris.bodies normally contains lowercase strings
+    if body_name.lower() in solar_system_ephemeris.bodies:
+        return get_body(body_name, obs_time, obs_location)
+
+    # Otherwise, try to resolve as a deep sky object (ICRS)
+    return SkyCoord.from_name(body_name)
+
+
 ## SPECULOOS EDIT
 def check_astelos_error(
     telescope: Any, close: bool = False

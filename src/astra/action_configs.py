@@ -491,6 +491,7 @@ class ObjectActionConfig(BaseActionConfig):
     dec: Optional[float] = None
     alt: Optional[float] = None
     az: Optional[float] = None
+    lookup_name: Optional[str] = None
     filter: Optional[str] = None
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
@@ -514,6 +515,7 @@ class ObjectActionConfig(BaseActionConfig):
         "dec": "Declination to slew to when overriding current pointing.",
         "alt": "Altitude coordinate when issuing Alt/Az pointings.",
         "az": "Azimuth coordinate when issuing Alt/Az pointings.",
+        "lookup_name": "Name of the celestial body to observe (e.g., 'mars', 'M31').",
         "filter": "Filter name to load before imaging.",
         "focus_shift": "Focus offset relative to the stored best focus.",
         "focus_position": "Absolute focus position override.",
@@ -608,17 +610,47 @@ class ObjectActionConfig(BaseActionConfig):
                 at any of the three check points (start, middle, end)
 
         Note:
-            Only checks visibility when RA and Dec coordinates are provided.
-            Alt/Az coordinates are not checked as they are position-specific.
+            If RA/Dec are not provided, attempts to resolve them from 'lookup_name'
+            or 'alt'/'az' parameters using the start time.
         """
-        # Only check visibility if RA/Dec are provided
-        if self.ra is None or self.dec is None:
+        ra = self.ra
+        dec = self.dec
+
+        # Try to resolve coordinates if RA/Dec are not explicitly provided
+        if ra is None or dec is None:
+            if self.lookup_name is not None:
+                from astra.utils import get_body_coordinates
+
+                # Resolve solar system body position at start time
+                target_coord = get_body_coordinates(
+                    body_name=self.lookup_name,
+                    obs_time=start_time,
+                    obs_location=observatory_location,
+                )
+                ra = target_coord.ra.deg
+                dec = target_coord.dec.deg
+
+            elif self.alt is not None and self.az is not None:
+                # Convert Alt/Az to RA/Dec for proper visibility checking over time
+                # We assume the telescope will track the RA/Dec coordinate corresponding
+                # to this Alt/Az at the start time.
+                altaz_coord = SkyCoord(
+                    alt=u.Quantity(self.alt, u.deg),
+                    az=u.Quantity(self.az, u.deg),
+                    frame=AltAz(obstime=start_time, location=observatory_location),
+                )
+                radec_coord = altaz_coord.transform_to("icrs")
+                ra = radec_coord.ra.deg
+                dec = radec_coord.dec.deg
+
+        # Only check visibility if we have valid coordinates
+        if ra is None or dec is None:
             return
 
         # Create target coordinate
         target = SkyCoord(
-            ra=u.Quantity(self.ra, "deg"),
-            dec=u.Quantity(self.dec, "deg"),
+            ra=u.Quantity(ra, "deg"),
+            dec=u.Quantity(dec, "deg"),
             frame="icrs",
         )
 
@@ -649,7 +681,7 @@ class ObjectActionConfig(BaseActionConfig):
 
         if visibility_issues:
             raise ValueError(
-                f"Target '{self.object}' at RA={self.ra:.2f}°, Dec={self.dec:.2f}° "
+                f"Target '{self.object}' at RA={ra:.2f}°, Dec={dec:.2f}° "
                 f"is not visible during observation window:\n  "
                 + "\n  ".join(visibility_issues)
             )
