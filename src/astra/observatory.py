@@ -2353,7 +2353,7 @@ class Observatory:
             action.start_time + timedelta(hours=obs_location.lon.deg / 15)
         ).strftime("%Y%m%d")
         folder = Config().paths.images / "pointing_model" / date_str
-        folder.mkdir(exist_ok=True)
+        folder.mkdir(parents=True, exist_ok=True)
         self.logger.info(f"{folder} created for pointing model images")
 
         # Generate points (spiral from zenith to 30 deg above horizon)
