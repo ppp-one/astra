@@ -450,13 +450,23 @@ def complete_headers():
 
     obs.logger.info("User initiated completion of headers from web interface")
 
-    HeaderManager.final_headers(
-        obs.database_manager,
-        obs.logger,
-        obs.config,
-        obs.devices,
-        obs.fits_config,
-    )
+    if not obs.thread_manager.is_thread_running("complete_headers"):
+        # run headers completion
+        obs.thread_manager.start_thread(
+            target=HeaderManager.final_headers,
+            device_name="astra",
+            thread_type="Headers",
+            thread_id="complete_headers",
+            args=(
+                obs.database_manager,
+                obs.logger,
+                obs.config,
+                obs.devices,
+                obs.fits_config,
+            ),
+        )
+    else:
+        obs.logger.info("Header completion already in progress, skipping request")
 
     return {"status": "success", "data": "null", "message": ""}
 

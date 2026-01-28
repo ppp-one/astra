@@ -1151,20 +1151,26 @@ class Observatory:
 
             time.sleep(1)
 
-        # run headers completion
-        self.thread_manager.start_thread(
-            target=HeaderManager.final_headers,
-            device_name="astra",
-            thread_type="Headers",
-            thread_id="complete_headers",
-            args=(
-                self.database_manager,
-                self.logger,
-                self.config,
-                self.devices,
-                self.fits_config,
-            ),
-        )
+        # if complete_headers not running, start it
+        if not self.thread_manager.is_thread_running("complete_headers"):
+            # run headers completion
+            self.thread_manager.start_thread(
+                target=HeaderManager.final_headers,
+                device_name="astra",
+                thread_type="Headers",
+                thread_id="complete_headers",
+                args=(
+                    self.database_manager,
+                    self.logger,
+                    self.config,
+                    self.devices,
+                    self.fits_config,
+                ),
+            )
+        else:
+            self.logger.info(
+                "Final header completion already in progress, skipping new request"
+            )
 
         self.schedule_manager.running = False
         self.logger.info(
