@@ -59,7 +59,7 @@ class SPECULOOS(Observatory):
         for dome_name in dome_names:
             dome = self.devices["Dome"][dome_name]
             ShutterStatus = dome.get("ShutterStatus")
-            if ShutterStatus == 0:  # open
+            if ShutterStatus != 1:  # not closed
                 self.speculoos_check_and_ack_error(close=True)
 
         all_telescopes_parked = super().close_observatory(
