@@ -26,6 +26,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "myst_nb",
+    "sphinxarg.ext",
     "_ext.action_configs_autodoc",
     "_ext.fastapi_autodoc",
 ]

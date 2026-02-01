@@ -2,29 +2,6 @@
 
 Observatory operation with _Astra_ is designed to be as automated and safe as possible, with a focus on robotic observing. This guide covers the key aspects of operating _Astra_, including startup, first operations, web interface, watchdog functionality, weather safety, core logic, and troubleshooting.
 
-## Startup
-
-Following [Quickstart](../quickstart), `astra` has a few optional startup options:
-
-```text
-
-    usage: astra [-h] [--config CONFIG] [--debug] [--port PORT] [--truncate TRUNCATE] [--observatory OBSERVATORY] [--reset]
-
-    Run Astra
-
-    options:
-      -h, --help            show this help message and exit
-      --config CONFIG       path to configuration file (default: ~/.astra/astra_config.yml)
-      --debug               run in debug mode (default: false)
-      --port PORT           port to run the server on (default: 8000)
-      --truncate TRUNCATE   truncate schedule by factor and reset time start time to now (default: None)
-      --observatory OBSERVATORY
-                            specify observatory name (default: None)
-      --reset               reset the Astra's base config
-```
-
-In most cases you will run `astra` without any options.
-
 ## First Operations
 
 After starting _Astra_, we assume the following:
@@ -102,6 +79,20 @@ Once focused, calibrate the autoguider and (optionally) build a pointing model.
 }
 
 ```
+
+## Startup
+
+Following [Quickstart](../quickstart), `astra` has a few optional startup options:
+
+```{eval-rst}
+.. argparse::
+   :module: astra.main
+   :func: get_parser
+   :prog: astra
+   :nodescription: true
+```
+
+In most cases you will run `astra` without any additional options.
 
 ## Web Interface
 

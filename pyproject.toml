@@ -13,7 +13,8 @@ docs = [
   "ipywidgets",
   "sphinx-copybutton",
   "docformatter[tomli]",
-  "toml"
+  "toml",
+  "sphinx-argparse"
 ]
 test = [
   "pytest",

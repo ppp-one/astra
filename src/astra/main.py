@@ -1757,6 +1757,40 @@ async def serve_files(request: Request, path: str = ""):
         return HTMLResponse(status_code=404, content="Not Found")
 
 
+def get_parser():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run Astra")
+    parser.add_argument(
+        "--config",
+        type=str,
+        help="path to Astra's base configuration file (default: ~/.astra/astra_config.yml)",
+    )
+    parser.add_argument(
+        "--debug", action="store_true", help="run in debug mode (default: false)"
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="port to run the server on (default: 8000)",
+    )
+    parser.add_argument(
+        "--truncate",
+        type=float,
+        help="truncate schedule by specified factor and reset time start time to now (default: None)",
+    )
+    parser.add_argument(
+        "--observatory",
+        type=str,
+        help="specify observatory name for custom subclassing (default: None)",
+    )
+    parser.add_argument(
+        "--reset", action="store_true", help="reset the Astra's base config"
+    )
+    return parser
+
+
 def main():
     """Main entry point for Astra observatory automation system.
 
@@ -1793,38 +1827,9 @@ def main():
 
         multiprocessing.set_start_method("spawn")
 
-    import argparse
-
     global DEBUG, TRUNCATE_FACTOR, CUSTOM_OBSERVATORY
 
-    parser = argparse.ArgumentParser(description="Run Astra")
-    parser.add_argument(
-        "--config",
-        type=str,
-        help="path to configuration file (default: ~/.astra/astra_config.yml)",
-    )
-    parser.add_argument(
-        "--debug", action="store_true", help="run in debug mode (default: false)"
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=8000,
-        help="port to run the server on (default: 8000)",
-    )
-    parser.add_argument(
-        "--truncate",
-        type=float,
-        help="truncate schedule by factor and reset time start time to now (default: None)",
-    )
-    parser.add_argument(
-        "--observatory",
-        type=str,
-        help="specify observatory name (default: None)",
-    )
-    parser.add_argument(
-        "--reset", action="store_true", help="reset the Astra's base config"
-    )
+    parser = get_parser()
     args = parser.parse_args()
 
     if args.config:
