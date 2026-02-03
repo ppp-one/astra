@@ -28,20 +28,20 @@ Focuser:
     device_number: 0
     focus_position: 10000
     settle_time: 3 # seconds
-    connectable: true
+    connectable: true # optional, default: true
 Camera:
   - device_name: camera_observatoryname
     ip: localhost:11111
     device_number: 0
-    temperature: -20
-    temperature_tolerance: 1
+    temperature: -20 # degrees Celsius
+    temperature_tolerance: 1 # degrees Celsius
     cooling_timeout: 30 # minutes
     flats:
-      target_adu: 31500
-      target_adu_tolerance: 10500
-      bias_offset: 300
-      lower_exptime_limit: 1
-      upper_exptime_limit: 60
+      target_adu: 31500 # ADU
+      target_adu_tolerance: 10500 # ADU
+      bias_offset: 300 # ADU
+      lower_exptime_limit: 1 # seconds
+      upper_exptime_limit: 60 # seconds
     paired_devices:
       Telescope: telescope_observatoryname
       Focuser: focuser_observatoryname
@@ -65,7 +65,7 @@ ObservingConditions:
   - device_name: weather_observatoryname
     ip: localhost:11111
     device_number: 0
-    polling_interval: 5
+    polling_interval: 5 # seconds
     closing_limits:
       Humidity:
         - upper: 70
@@ -93,7 +93,7 @@ SafetyMonitor:
   - device_name: safety_observatoryname
     ip: localhost:11111
     device_number: 0
-    max_safe_duration: 15
+    max_safe_duration: 15 # minutes
 
 Misc:
   backup_time: "12:00" # UTC back up time of polled data (e.g. CCDTemperature) and logs

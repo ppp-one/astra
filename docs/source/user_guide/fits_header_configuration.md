@@ -1,5 +1,11 @@
 # FITS Header Configuration
 
+```{image} ../_static/undraw_images_v4j9.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 _Astra_ automatically generates comprehensive FITS headers for all captured images using
 metadata from your observatory devices.
 This system ensures every image contains the scientific metadata required for analysis.

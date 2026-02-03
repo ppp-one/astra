@@ -1,5 +1,11 @@
 # Quickstart
 
+```{image} /_static/undraw_ideas-flow_lwpa.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 ## First run
 
 During the initial run, you will be prompted to configure your observatory.
@@ -109,6 +115,8 @@ See: [observatory configuration files](user_guide/observatory_configuration).
 ```
 
 ## Normal operation
+
+We recommend following _Astra_'s [operation guide](user_guide/operation) to familiarise yourself before first use.
 
 Once the initial setup is complete, you can run _Astra_.
 

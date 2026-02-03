@@ -1,10 +1,16 @@
 # Installation
 
+```{image} _static/undraw_stars_5pgw.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 ## Prerequisites
 
 Before installing _Astra_, please ensure you have the following prerequisites:
 
-- [_uv_](https://docs.astral.sh/uv/), [_conda_](https://docs.conda.io/projects/conda/), or some Python 3.11 environment
+- [_uv_](https://docs.astral.sh/uv/), [_conda_](https://docs.conda.io/projects/conda/), or some [Python](https://www.python.org/downloads/) 3.11 environment
 - ASCOM Alpaca-compatible devices or [simulators](https://github.com/ppp-one/alpaca-simulators)
 - Optional: [Git](https://git-scm.com/install) (for installation from source)
 
@@ -28,7 +34,7 @@ We recommend using [_uv_](https://docs.astral.sh/uv/) because it provides consis
 Using your terminal, navigate to the _astra_ directory and run:
 
 ```bash
-# Create a new uv environment and install Astra and its dependencies
+# Create a new uv environment, install Astra and its dependencies
 uv sync
 ```
 

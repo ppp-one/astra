@@ -1,5 +1,11 @@
 # Customising Observatories by Subclassing
 
+```{image} ../_static/undraw_verify-data_k0y1.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 There are many reasons why you might consider creating a custom `Observatory` subclass
 to adapt to site-specific behaviour without changing the source code, such as
 

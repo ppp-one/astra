@@ -1,5 +1,11 @@
 # Operation Guide
 
+```{image} ../_static/undraw_adventure_9my9.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 _Astra_ prioritizes safe, fully automated robotic observing. This guide details operational workflows including startup, initial calibration, the web interface, watchdog mechanisms, weather safety, core logic, and troubleshooting.
 
 ## Prerequisites

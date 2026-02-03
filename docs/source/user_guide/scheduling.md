@@ -1,5 +1,11 @@
 # Scheduling Syntax
 
+```{image} ../_static/undraw_advanced-customization_7ms4.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 Astra uses a scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each line represents a scheduled action with these fields:
 
 - `device_name`: Name of the camera device (the primary instrument that coordinates all operations)

@@ -1,5 +1,11 @@
 # Observatory Configuration
 
+```{image} ../_static/undraw_reviewed-docs_tng3.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 _Astra_ requires an observatory configuration file in YAML format. This file defines all devices, their settings, safety limits, and how they interact with each other.
 
 Before setting up your observatory, you'll need to configure two main components:
