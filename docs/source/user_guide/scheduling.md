@@ -1,12 +1,12 @@
 # Scheduling Syntax
 
-```{image} ../_static/undraw_advanced-customization_7ms4.svg
+```{image} ../_static/scheduling-banner.svg
 :class: responsive-banner
 :align: center
 :alt: banner
 ```
 
-Astra uses a scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each line represents a scheduled action with these fields:
+Astra uses a scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each JSON line represents a scheduled action with these fields:
 
 - `device_name`: Name of the camera device (the primary instrument that coordinates all operations)
 - `action_type`: Type of action to perform
@@ -21,8 +21,8 @@ All scheduled actions specify a camera as the `device_name`. The camera acts as 
 ```{admonition} Timing and Execution Flow
 The `start_time` and `end_time` fields define a validity window, not a strict duration block.
 
-* **Early Completion**: If an action (e.g., a single exposure) completes successfully before its `end_time`, Astra does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
-* **Validity Check**: Astra respects the timeframe validity. If the current time passes `end_time`, the action is considered expired and will terminate or be skipped.
+* **Early Completion**: If an action (e.g., observatory open) completes successfully before its `end_time`, Astra does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
+* Astra actions are completed sequentially, ordered by start times, so the next action will not start until the current one finishes, even if the next action's `start_time` has already passed. This is only invalidated if `execute_parallel` varible is set true.
 ```
 
 ## Example Schedule
@@ -97,7 +97,7 @@ Astra supports the following action types for observatory automation, organized 
 - `open`: Open observatory
 - `close`: Close observatory
 - `cool_camera`: Activate camera cooling
-- `object`: Capture light frames with optional pointing correction/autoguiding
+- `object`: Capture light frames with optional pointing correction & autoguiding
 - `calibration`: Capture dark and bias frames
 - `flats`: Capture sky flat field frames
 - `autofocus`: Autofocus
@@ -107,6 +107,10 @@ Astra supports the following action types for observatory automation, organized 
 
 ```{note}
 The `complete_headers` action automatically runs at the end of every schedule execution to ensure complete metadata in all FITS files.
+```
+
+```{note}
+All actions run `cool_camera` as a prerequisite to ensure the camera is at the correct operating temperature before any exposures are taken. Only `open` and `close` run `cool_camera` after their execution.
 ```
 
 ## Action Value Parameters

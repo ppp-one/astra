@@ -1,6 +1,6 @@
 # Observatory Configuration
 
-```{image} ../_static/undraw_reviewed-docs_tng3.svg
+```{image} ../_static/observatory_configuration-banner.svg
 :class: responsive-banner
 :align: center
 :alt: banner
@@ -44,7 +44,7 @@ Each device type has specific configuration parameters detailed below.
 
 All devices share these required parameters:
 
-- `device_name`: Unique identifier for the device (string)
+- `device_name`: Unique identifier for the device (string, e.g., "camera_main")
 - `ip`: Network address of the Alpaca device (string, format: "hostname:port")
 - `device_number`: ASCOM Alpaca device number (integer)
 - `polling_interval`: How often to poll ASCOM properties (set by [FITS header configuration](fits_header_configuration)), in seconds (integer, optional, default: 5)
@@ -54,18 +54,18 @@ All devices share these required parameters:
 
 Additional parameters for telescope mounts:
 
-- `pointing_threshold`: Maximum acceptable pointing error in arcminutes if pointing correction enabled (float)
-- `settle_factor`: Exposure multiplier for calculated settle time after pointing (float)
+- `pointing_threshold`: Maximum acceptable pointing error in arcminutes before pointing correction is applied (float, default: 0.1)
+- `settle_factor`: Exposure multiplier for calculated settle time after pointing - useful for continuous acquisition type cameras (float, default: 0.0)
 - `meridian_flip`: Enable automated meridian flips (boolean, default: false)
 - `meridian_flip_min`: Buffer time in minutes past meridian to trigger flip (float, default: 5)
-- `guider`: Autoguider calibration settings (dict, populated automatically by the calibrate_guiding sequence)
+- `guider`: Autoguider calibration settings (dict, populated automatically by the [calibrate_guiding](scheduling.md#calibrate-guiding-action) sequence)
 
 ## Focuser Configuration
 
 Focuser-specific parameters:
 
 - `focus_position`: Best known absolute focus position (integer)
-- `settle_time`: Time in seconds to wait after move (integer)
+- `settle_time`: Time in seconds to wait after focus position move (integer)
 
 ## Camera Configuration
 
@@ -89,7 +89,7 @@ Camera-specific parameters for cooling and imaging:
 **Device Associations:**
 
 - `paired_devices`: Links to other devices for FITS headers and sequence coordination (dict)
-  - `<device_type>`: Must match the `device_name` used in device configuration (string)
+  - `<device_type>`: `<device_name>` which must match the name used in device configuration (string)
 
 ## Dome Configuration
 
@@ -110,7 +110,7 @@ Weather monitoring and safety parameters:
 **Supported Parameters:**
 
 - Standard ASCOM: `CloudCover`, `DewPoint`, `Humidity`, `Pressure`, `RainRate`, `SkyBrightness`, `SkyQuality`, `SkyTemperature`, `StarFWHM`, `Temperature`, `WindDirection`, `WindGust`, `WindSpeed`
-- Custom: `RelativeSkyTemp` (sky temperature minus ambient temperature, requires both `SkyTemperature` and `Temperature`)
+- Custom: `RelativeSkyTemp` (sky temperature minus ambient temperature; requires both `SkyTemperature` and `Temperature` to be available from your weather station via its ASCOM Alpaca ObservingConditions driver)
 
 ## SafetyMonitor Configuration
 
@@ -122,7 +122,7 @@ Safety system monitoring parameters:
 
 Optional observatory-wide settings:
 
-- `backup_time`: UTC time of day to perform automatic backups of polled data and logs (string, format: "HH:MM")
+- `backup_time`: UTC time of day to perform automatic backups of polled data and logs on the SQLite database (string, format: "HH:MM")
 - `Webcam`: Webcam feed configuration. The URL is embedded in an iframe element in the frontend. Can be:
   - Single URL string for one webcam (e.g., `Webcam: http://localhost:8888/inside`)
   - Array of objects for multiple webcams, each with `name` and `url` properties

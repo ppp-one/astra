@@ -1,5 +1,11 @@
 # Overview
 
+```{image} /_static/overview-banner.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 This User Guide assists users in configuring and operating observatories with _Astra_.
 It covers the main topics required to get started:
 
@@ -17,8 +23,11 @@ It covers the main topics required to get started:
 
 - **[Operation](operation)**:
 
-  Explore the operational lifecycle: from CLI startup options and the multi-process
-  architecture to the web interface.
+  Learn how to safely operate your observatory, including startup, calibration, and safety mechanisms.
+
+- **[Core Logic](core_logic)**:
+
+  Understand the internal workings of _Astra_, including process management, device communication, and error handling.
 
 - **[Customising Observatories by Subclassing](custom_observatories)**:
 

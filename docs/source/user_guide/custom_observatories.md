@@ -1,6 +1,6 @@
 # Customising Observatories by Subclassing
 
-```{image} ../_static/undraw_verify-data_k0y1.svg
+```{image} ../_static/custom_observatories-banner.svg
 :class: responsive-banner
 :align: center
 :alt: banner

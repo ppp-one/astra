@@ -21,17 +21,7 @@ button.theme-switch-button {
 
 
 .responsive-banner {
-  width: 100%;
-  margin: 0 20px;
   max-height: min(250px, 50vw);
-}
-
-@media (min-width: 768px) {
-  .responsive-banner {
-    width: 50%;
-    margin: 0 20px;
-    max-height: min(250px, 25vw);
-  }
 }
 
 /* Code cells */

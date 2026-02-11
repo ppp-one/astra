@@ -1,6 +1,11 @@
 API Endpoints
 ==============
 
+.. image:: ../_static/endpoints-banner.svg
+   :class: responsive-banner
+   :align: center
+   :alt: banner
+
 This page documents all HTTP endpoints exposed by the Astra FastAPI application.
 
 The API provides programmatic access to observatory control, monitoring, and data retrieval functions.

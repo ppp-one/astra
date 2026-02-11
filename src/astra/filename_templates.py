@@ -1,6 +1,6 @@
 """
 This module provides two primary classes for generating filenames used by
-ASTRA when writing image files:
+Astra when writing image files.
 
 - ``FilenameTemplates`` — simple templates using Python ``str.format``.
 - ``JinjaFilenameTemplates`` — richer templates powered by Jinja2 when templates include

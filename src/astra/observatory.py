@@ -1,5 +1,5 @@
 """
-Observatory Control System for Autonomous Astronomical Operations.
+Core observatory control methods for Astra.
 
 This module provides the core Observatory class for managing and controlling
 astronomical observatories. It handles device coordination, safety monitoring,

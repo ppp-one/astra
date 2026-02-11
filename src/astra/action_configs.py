@@ -439,8 +439,8 @@ class CloseActionConfig(BaseActionConfig):
 class CompleteHeadersActionConfig(BaseActionConfig):
     """Complete FITS headers after exposures finish.
 
-    Uses paired device telemetry to fill in metadata that was unavailable at
-    exposure time. Automatically executed at the end of every schedule.
+    Uses paired device polled data to fill in FITS header fields that were unavailable
+    at exposure time. Automatically executed at the end of every schedule.
     """
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
@@ -460,7 +460,7 @@ class CoolCameraActionConfig(BaseActionConfig):
     """Configuration for the ``cool_camera`` schedule action.
 
     Activates the camera cooler and sets the target temperature with specified tolerance
-    from observatory configuration with a 30 minute timeout.
+    and timeout from observatory configuration.
     """
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
@@ -480,10 +480,11 @@ class ObjectActionConfig(BaseActionConfig):
     """Capture a sequence of light frames.
 
     Workflow:
-        1. Pre-sequence setup (pointing, filters, focus, binning, headers)
-        2. Capture exposures
-        3. Perform pointing correction when ``pointing=true``
-        4. Start guiding when ``guiding=true``
+        1. Pre-sequence setup (pointing, filters, focus, binning, sub-framing, headers)
+            - Observatory opens if not already done by a prior action if coordinates specified
+        2. Capture exposures in succession
+        3. Perform pointing correction if ``pointing=true``
+        4. Start autoguiding if ``guiding=true``
         5. Stop exposures, guiding, and tracking at completion
     """
 
@@ -513,20 +514,20 @@ class ObjectActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
         "exptime": "Exposure time per frame in seconds.",
-        "ra": "Right Ascension to slew to when overriding current pointing.",
-        "dec": "Declination to slew to when overriding current pointing.",
+        "ra": "Right Ascension to slew to",
+        "dec": "Declination to slew to",
         "alt": "Altitude coordinate when issuing Alt/Az pointings.",
         "az": "Azimuth coordinate when issuing Alt/Az pointings.",
         "lookup_name": "Instead of specifying ra/dec or alt/az, use SIMBAD/Astropy to look up coordinates for celestial body to observe (e.g., 'mars', 'M31').",
         "filter": "Filter name to load before imaging.",
         "focus_shift": "Focus offset relative to the stored best focus.",
         "focus_position": "Absolute focus position override.",
-        "n": "Number of exposures in the sequence.",
+        "n": "Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.",
         "guiding": "Start autoguiding with Donuts before imaging.",
         "pointing": "Perform pointing correction with twirl before imaging.",
         "bin": "Camera binning factor.",
-        "dir": "Directory path for saving images.",
-        "execute_parallel": "Execute exposure steps concurrently when supported.",
+        "dir": "Base directory path for saving images.",
+        "execute_parallel": "Execute action in parallel mode when supported.",
         "disable_telescope_movement": "Prevent any telescope motion during the sequence.",
         "reset_guiding_reference": "Acquire a fresh guiding reference frame at the start.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
@@ -709,10 +710,10 @@ class CalibrationActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "exptime": "Exposure times (seconds) to iterate.",
         "n": "Exposure counts aligned with each exposure time.",
-        "filter": "Filter specification to use while capturing calibration frames.",
-        "dir": "Directory path for saving images.",
+        "filter": "Filter name to load before imaging.",
+        "dir": "Base directory path for saving images.",
         "bin": "Camera binning factor.",
-        "execute_parallel": "Execute the sequence in parallel mode when supported.",
+        "execute_parallel": "Execute action in parallel mode when supported.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
@@ -756,8 +757,9 @@ class FlatsActionConfig(BaseActionConfig):
     Steps:
         1. Wait for Sun altitude between -1° and -12°
         2. Point to a near-uniform patch of sky opposite the Sun
+            - Opens observatory if not already done by a prior action
         3. Capture exposures and re-position between frames
-        4. Iterate through requested filters while adjusting exposure times
+        4. Iterate through requested filters while auto-adjusting exposure times
     """
 
     filter: List[str] = field(default_factory=list, metadata={"required": True})
@@ -774,9 +776,9 @@ class FlatsActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "filter": "Filters to iterate while capturing flats.",
         "n": "Number of flats to capture per filter.",
-        "dir": "Directory path for saving images.",
+        "dir": "Base directory path for saving images.",
         "bin": "Camera binning factor.",
-        "execute_parallel": "Execute exposures in parallel when supported.",
+        "execute_parallel": "Execute action in parallel mode when supported.",
         "disable_telescope_movement": "Prevent telescope motion during the sequence.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
@@ -816,7 +818,17 @@ class FlatsActionConfig(BaseActionConfig):
 
 @dataclass
 class CalibrateGuidingActionConfig(BaseActionConfig):
-    """Calibrate guiding parameters using timed guide pulses."""
+    """Calibrate guiding parameters using timed guide pulses.
+
+    Steps:
+        1. Slews telescope to RA = LST - 1 hour, Dec = 0° at the start of sequence
+            - Opens observatory if not already done by a prior action
+        2. Issues a series of guide pulses in each cardinal direction with specified duration and settling time
+        3. Captures exposures after each pulse and measures star shifts to determine pixel-to-time scales and camera orientation relative to mount axes
+        4. Averages results over specified number of cycles
+        5. Saves calibration parameters in the observatory configuration for use in guiding
+
+    """
 
     filter: Optional[str] = None
     pulse_time: int = 5000
@@ -836,7 +848,7 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
         "pulse_time": "Duration of guide pulses in milliseconds.",
         "exptime": "Exposure time for calibration images.",
         "settle_time": "Wait time after pulses before exposing.",
-        "number_of_cycles": "How many calibration cycles to run.",
+        "number_of_cycles": "How many calibration cycles to take average over.",
         "focus_shift": "Focus offset relative to best focus.",
         "focus_position": "Absolute focus position override.",
         "bin": "Camera binning factor.",
@@ -860,14 +872,21 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
 
 @dataclass
 class PointingModelActionConfig(BaseActionConfig):
-    """Generate sync points to build a telescope pointing model.
+    """Aid building a telescope pointing model. Astra itself does not build or maintain
+    a pointing model.
 
     Captures a spiral of points from zenith down to 30° altitude while
     avoiding positions within 20° of the Moon.
+
+    Plate solves each pointing and sends SyncToCoordinates commands to the mount. The
+    receipt of these commands can be used to build a pointing model in the mount
+    control software. The action can be configured to use the local star catalog for
+    plate solving to speed up the process if the online Gaia catalog is unavailable or
+    slow.
     """
 
-    n: int = 100
-    exptime: float = 1.0
+    n: int = 50
+    exptime: float = 3.0
     dark_subtraction: bool = False
     object: str = "Pointing Model"
     use_local_db: bool = False
@@ -884,7 +903,7 @@ class PointingModelActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "n": "Number of points to include in the model.",
         "exptime": "Exposure time for each pointing image.",
-        "dark_subtraction": "Enable dark subtraction using matching calibration frames.",
+        "dark_subtraction": "Enable dark subtraction using previously taken calibration frames of same exposure time in the same date folder.",
         "object": "Descriptive label for the pointing run.",
         "use_local_db": "Use local star catalog database for plate solving (faster).",
         "filter": "Filter to use for exposures.",
@@ -1016,11 +1035,12 @@ class AutofocusConfig(BaseActionConfig):
 
     Steps:
         1. Select a suitable autofocus field (or use provided coordinates)
+            - Opens observatory if not already done by a prior action
         2. Move the telescope if needed
         3. Capture images at different focus positions
         4. Measure star sharpness in each image
         5. Fit a curve to determine optimal focus
-        6. Save plots/results and optionally persist the best focus position
+        6. Save plots/results and save the best focus position in the observatory configuration
     """
 
     exptime: float | int = field(default=3.0)

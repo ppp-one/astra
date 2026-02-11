@@ -1,6 +1,6 @@
 # Installation
 
-```{image} _static/undraw_stars_5pgw.svg
+```{image} _static/installation-banner.svg
 :class: responsive-banner
 :align: center
 :alt: banner

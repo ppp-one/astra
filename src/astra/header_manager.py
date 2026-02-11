@@ -1,5 +1,5 @@
 """
-Astronomical image processing and FITS file management utilities.
+FITS header management utilities.
 
 This module provides functions for handling astronomical images captured from
 observatory cameras. It manages image directory creation, data type conversion,

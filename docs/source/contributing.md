@@ -1,5 +1,11 @@
 # Contributing
 
+```{image} _static/contributing-banner.svg
+:class: responsive-banner
+:align: center
+:alt: banner
+```
+
 Thank you for your interest in contributing to _Astra_! This section describes how to set up your development environment and contribute to the project.
 
 ## Development Setup
@@ -87,7 +93,6 @@ _Astra_ follows semantic versioning. Version numbers follow the format `MAJOR.MI
 
 ## Release Process
 
-1. Update `CHANGELOG.md`
-2. Update version number in `pyproject.toml`
-3. Create a git tag for the release
-4. Push the tag to GitHub
+1. Update version number in `pyproject.toml`
+2. Create a git tag for the release
+3. Push the tag to GitHub

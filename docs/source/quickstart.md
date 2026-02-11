@@ -1,6 +1,6 @@
 # Quickstart
 
-```{image} /_static/undraw_ideas-flow_lwpa.svg
+```{image} /_static/quickstart-banner.svg
 :class: responsive-banner
 :align: center
 :alt: banner

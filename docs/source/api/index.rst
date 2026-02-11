@@ -1,6 +1,11 @@
 Module Reference
 ================
 
+.. image:: ../_static/module_reference-banner.svg
+   :class: responsive-banner
+   :align: center
+   :alt: banner
+
 .. autosummary::
    :toctree: generated
    :recursive:
