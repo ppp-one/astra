@@ -15,7 +15,7 @@ It covers the main topics required to get started:
 
 - **[FITS Header Configuration](fits_header_configuration)**:
 
-  Manage FITS headers, linking device methods to FIT keywords.
+  Manage FITS headers, linking device methods to FITS keywords.
 
 - **[Scheduling](scheduling)**:
 

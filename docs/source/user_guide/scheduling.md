@@ -22,7 +22,7 @@ All scheduled actions specify a camera as the `device_name`. The camera acts as 
 The `start_time` and `end_time` fields define a validity window, not a strict duration block.
 
 * **Early Completion**: If an action (e.g., observatory open) completes successfully before its `end_time`, Astra does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
-* Astra actions are completed sequentially, ordered by start times, so the next action will not start until the current one finishes, even if the next action's `start_time` has already passed. This is only invalidated if `execute_parallel` varible is set true.
+* Astra actions are completed sequentially, ordered by start times, so the next action will not start until the current one finishes, even if the next action's `start_time` has already passed. This is only invalidated if `execute_parallel` variable is set true.
 ```
 
 ## Example Schedule

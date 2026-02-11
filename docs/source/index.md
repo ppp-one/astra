@@ -60,12 +60,14 @@ delivering reliable, unattended survey operations, including:
   </tr>
 </table>
 
-```{note}
-This documentation is a work in progress. We are continuously updating and improving it.
-If you have any questions or suggestions, please feel free to reach out to us.
-We appreciate your feedback and contributions to make this documentation better.
+## Developed by
 
-Please use _Astra_ at your own risk.
+_Astra_ is developed by a team of astronomers and software engineers at [Queloz Group, ETH Zürich, Switzerland](https://queloz-group.ethz.ch/), in collaboration with the [SPECULOOS consortia](https://www.speculoos.uliege.be/cms/c_4259452/en/speculoos).
+
+```{note}
+This documentation is a work in progress. We are continuously updating and improving it. If you have any questions or suggestions, please feel free to reach out to us via [GitHub Issues](https://github.com/ppp-one/astra/issues).
+
+We appreciate your feedback and contributions to make this software and documentation better.
 ```
 
 ---

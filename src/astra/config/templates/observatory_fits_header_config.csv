@@ -11,7 +11,7 @@ BUNIT,str,true,static,ADU,Physical unit of array values
 BLANK,int,true,static,-32768,Value used for NULL pixels
 ORIGIN,str,true,static,ORIGIN,Observatory
 TELESCOP,str,true,static,TELESCOPE,Telescope Name
-INSTRUME,str,true,static,INSTRUMEMENT,Instrument used
+INSTRUME,str,true,static,INSTRUMENT,Instrument used
 PI-COI,str,true,static,PI-COI,Name of the PI/Co-I
 OBSERVER,str,true,static,Astra,Name of the observer
 OBJECT,str,true,astra,,Target as given by the user
