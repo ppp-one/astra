@@ -101,7 +101,7 @@ class AutoFastAPIEndpoints(SphinxDirective):
         section += title
 
         intro = nodes.paragraph(
-            text="The following REST API endpoints are available for interacting with the Astra observatory system."
+            text="The following REST API endpoints are available for interacting with the _Astra_ observatory system."
         )
         section += intro
 

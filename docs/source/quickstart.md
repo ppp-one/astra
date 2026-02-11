@@ -109,7 +109,7 @@ Exiting until observatory configuration is updated.
 
 ```{important}
 The configuration files will be created in the `observatory_config` directory.
-You must edit them with your observatory's information before using *Astra* in normal
+You must edit them with your observatory's information before using _Astra_ in normal
 operation.
 See: [observatory configuration files](user_guide/observatory_configuration).
 ```
@@ -132,4 +132,4 @@ Once the initial setup is complete, you can run _Astra_.
 
 3. After a few moments, open your web browser and navigate to the URL `http://host:port`,
    [http://localhost:8000](http://localhost:8000) by default, and you should see
-   Astra's web interface.
+   _Astra_'s web interface.

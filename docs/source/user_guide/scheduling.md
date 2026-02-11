@@ -6,7 +6,7 @@
 :alt: banner
 ```
 
-Astra uses a scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each JSON line represents a scheduled action with these fields:
+_Astra_ uses a scheduling system to automate observatory operations. Schedules are defined using JSONL files (JSON Lines format), where each JSON line represents a scheduled action with these fields:
 
 - `device_name`: Name of the camera device (the primary instrument that coordinates all operations)
 - `action_type`: Type of action to perform
@@ -21,8 +21,8 @@ All scheduled actions specify a camera as the `device_name`. The camera acts as 
 ```{admonition} Timing and Execution Flow
 The `start_time` and `end_time` fields define a validity window, not a strict duration block.
 
-* **Early Completion**: If an action (e.g., observatory open) completes successfully before its `end_time`, Astra does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
-* Astra actions are completed sequentially, ordered by start times, so the next action will not start until the current one finishes, even if the next action's `start_time` has already passed. This is only invalidated if `execute_parallel` variable is set true.
+* **Early Completion**: If an action (e.g., observatory open) completes successfully before its `end_time`, _Astra_ does **not** wait. It moves immediately to the next action (idling only if the next action's `start_time` has not yet been reached).
+* _Astra_ actions are completed sequentially, ordered by start times, so the next action will not start until the current one finishes, even if the next action's `start_time` has already passed. This is only invalidated if `execute_parallel` variable is set true.
 ```
 
 ## Example Schedule
@@ -79,7 +79,7 @@ The `start_time` and `end_time` fields define a validity window, not a strict du
 ```
 
 ```{admonition} JSONL Comments
-Astra's JSONL files support comments using lines that start with `//`:
+_Astra_'s JSONL files support comments using lines that start with `//`:
 ```
 
 ## Schedule File Location
@@ -88,11 +88,11 @@ Place your schedule file in the observatory schedules directory with a `.jsonl` 
 
 - `~/Documents/Astra/schedules/<observatory_name>.jsonl`
 
-Astra will automatically detect and load the JSONL schedule file, with the specified name pattern, if modified.
+_Astra_ will automatically detect and load the JSONL schedule file, with the specified name pattern, if modified.
 
 ## Supported Action Types
 
-Astra supports the following action types for observatory automation, organized by function:
+_Astra_ supports the following action types for observatory automation, organized by function:
 
 - `open`: Open observatory
 - `close`: Close observatory

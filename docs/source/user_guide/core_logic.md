@@ -28,7 +28,7 @@ _Astra_ utilizes a **multi-process architecture** for stability. Each hardware d
 :align: center
 :alt: Inter-process communication diagram
 
-Inter-process communication in *Astra* using separate device processes.
+Inter-process communication in _Astra_ using separate device processes.
 ```
 
 **Data Management**

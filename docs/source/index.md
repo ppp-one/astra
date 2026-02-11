@@ -6,7 +6,7 @@
 :alt: Astra banner
 ```
 
-**Astra** (Automated Survey observaTory Robotised with Alpaca) is an open-source,
+**_Astra_** (Automated Survey observaTory Robotised with Alpaca) is an open-source,
 cross-platform Python system for the sustained, fully autonomous operation of
 astronomical observatories.
 
@@ -106,7 +106,7 @@ user_guide/custom_observatories
 :caption: Developer Documentation
 :hidden:
 
+contributing
 api/index
 api/endpoints
-contributing
 ```
