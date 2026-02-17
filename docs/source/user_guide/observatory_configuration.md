@@ -116,6 +116,13 @@ Weather monitoring and safety parameters:
 - Standard ASCOM: `CloudCover`, `DewPoint`, `Humidity`, `Pressure`, `RainRate`, `SkyBrightness`, `SkyQuality`, `SkyTemperature`, `StarFWHM`, `Temperature`, `WindDirection`, `WindGust`, `WindSpeed`
 - Custom: `RelativeSkyTemp` (sky temperature minus ambient temperature; requires both `SkyTemperature` and `Temperature` to be available from your weather station via its ASCOM Alpaca ObservingConditions driver)
 
+```{important}
+A weather parameter is only used for safety evaluation when **both** conditions are met:
+
+1. It is exposed by your ASCOM Alpaca **ObservingConditions** driver.
+2. It is defined in your [FITS header configuration](fits_header_configuration) such that _Astra_ can retrieve historical values from the local SQLite database for safety monitoring its `max_safe_duration`.
+```
+
 ## SafetyMonitor Configuration
 
 Safety system monitoring parameters:
