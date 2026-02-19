@@ -80,6 +80,21 @@ function addUnits(parameter, weather_safety_limits) {
 
 // Function to generate weather table HTML
 function generateWeatherTable(weather_parameters, latest_values, weather_safety_limits) {
+
+    // remove isSafe, Dome_Open, weather_safe from the parameters
+    const _weather_parameters = [...weather_parameters]; // create a copy to avoid mutating the original array
+    const index = _weather_parameters.indexOf("IsSafe");
+    if (index > -1) {
+        _weather_parameters.splice(index, 1);
+    }
+    const index2 = _weather_parameters.indexOf("Dome_Open");
+    if (index2 > -1) {
+        _weather_parameters.splice(index2, 1);
+    }
+    const index3 = _weather_parameters.indexOf("weather_safe");
+    if (index3 > -1) {
+        _weather_parameters.splice(index3, 1);
+    }
     const percent_to_show = 10;
 
     return `
@@ -95,7 +110,7 @@ function generateWeatherTable(weather_parameters, latest_values, weather_safety_
             </tr>
         </thead>
         <tbody>
-        ${weather_parameters
+        ${_weather_parameters
             .map((parameter, index) => {
                 if (parameter === "datetime") return "";
                 const value = latest_values[parameter];
@@ -160,7 +175,7 @@ function generateWeatherTable(weather_parameters, latest_values, weather_safety_
                         ? "color: orange;"
                         : "";
 
-                return `<tr class="${index != weather_parameters.length - 1 ? 'border-b border-b-slate-500' : ""} hover:bg-gray-600/40 cursor-pointer"
+                return `<tr class="${index != _weather_parameters.length - 1 ? 'border-b border-b-slate-500' : ""} hover:bg-gray-600/40 cursor-pointer"
                             onclick="window.location.href='#plot-${parameter}';">
                             <td class="py-1.5 px-3" style="text-align: left; ${colorStyleLink}">${parameter}</td>
                             <td class="py-1.5 px-3" style="${colorStyleLink} text-align: left;">${weather_safety_limits[parameter].unit
@@ -215,19 +230,6 @@ function updateWeatherTableOnly() {
         };
         return (priority[a] || Infinity) - (priority[b] || Infinity);
     });
-    // remove isSafe, Dome_Open, weather_safe from the parameters
-    const index = weather_parameters.indexOf("IsSafe");
-    if (index > -1) {
-        weather_parameters.splice(index, 1);
-    }
-    const index2 = weather_parameters.indexOf("Dome_Open");
-    if (index2 > -1) {
-        weather_parameters.splice(index2, 1);
-    }
-    const index3 = weather_parameters.indexOf("weather_safe");
-    if (index3 > -1) {
-        weather_parameters.splice(index3, 1);
-    }
 
     const tableHtml = generateWeatherTable(weather_parameters, latest_values, weather_safety_limits);
     document.getElementById(`weather-latest`).innerHTML = tableHtml;
