@@ -39,7 +39,7 @@ class CustomImageClass(Image):
         Performs background subtraction, noise reduction, and systematic
         correction to improve star detection reliability.
         """
-        # if greater than 1Kx1K, crop to 1Kx1K for speed
+        # if greater than 2Kx2K, crop to 2Kx2K for speed
         shapex, shapey = self.raw_image.shape
         if shapex > 2048 and shapey > 2048:
             self.raw_image = self.raw_image[
