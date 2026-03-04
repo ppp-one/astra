@@ -73,7 +73,7 @@ minversion = "6.0"
 testpaths = ["tests"]
 
 [tool.ruff]
-exclude = ["*.yaml"]
+exclude = ["uv.lock", "*.yaml"]
 line-length = 88
 
 [tool.ruff.lint]
