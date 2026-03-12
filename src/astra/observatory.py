@@ -2298,7 +2298,7 @@ class Observatory:
                     wcs=wcs_solve,
                     sequence_counter=cnt,
                 )
-                cnt+=1
+                cnt += 1
                 if not success:
                     break
 
