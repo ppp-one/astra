@@ -220,8 +220,8 @@ class ImageHandler:
         if not filepath.exists():
             return filepath
         suffix = filepath.suffix
-        unique_stamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S.%f")
-        candidate = filepath.with_name(f"{filepath.stem}-{unique_stamp}{suffix}")
+        unique_stamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S-%f")
+        candidate = filepath.with_name(f"{filepath.stem}-v{unique_stamp}{suffix}")
         self.logger.warning(
             f"File already exists, appending unique timestamp suffix: {candidate}."
         )

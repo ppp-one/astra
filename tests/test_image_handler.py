@@ -203,7 +203,11 @@ class TestImageHandler:
         header = ObservatoryHeader.get_test_header()
         image_directory = Path(temp_config.paths.images) / "handler_collision_test"
         image_directory.mkdir(exist_ok=True)
-        handler = ImageHandler(header, image_directory, FilenameTemplates())
+        handler = ImageHandler(
+            header,
+            image_directory,
+            FilenameTemplates.from_dict({"default": "static_file_name.fits"}),
+        )
 
         image = np.array([[1, 2], [3, 4]])
         info = Mock(spec=ImageMetadata)
@@ -222,6 +226,7 @@ class TestImageHandler:
             image, info, maxadu, device_name, exposure_start_datetime
         )
 
+        assert first.name == "static_file_name.fits"
         assert first.exists()
         assert second.exists()
         assert first != second

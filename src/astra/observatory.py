@@ -2260,7 +2260,6 @@ class Observatory:
                 pass
 
         last_flip_check_time = 0
-
         sequence_counter = 0
         for i, exptime in enumerate(exptime_list):
             if not self.check_conditions(action):
