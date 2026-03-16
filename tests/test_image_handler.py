@@ -199,6 +199,33 @@ class TestImageHandler:
         # assert handler.last_image_path == result
         # assert handler.last_image_timestamp == exposure_start_datetime
 
+    def test_save_image_avoids_filename_collisions(self, temp_config):
+        header = ObservatoryHeader.get_test_header()
+        image_directory = Path(temp_config.paths.images) / "handler_collision_test"
+        image_directory.mkdir(exist_ok=True)
+        handler = ImageHandler(header, image_directory, FilenameTemplates())
+
+        image = np.array([[1, 2], [3, 4]])
+        info = Mock(spec=ImageMetadata)
+        info.ImageElementType = 0
+        info.Rank = 2
+        maxadu = 1000
+        device_name = "TestCamera"
+        exposure_start_datetime = datetime.datetime(
+            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+        )
+
+        first = handler.save_image(
+            image, info, maxadu, device_name, exposure_start_datetime
+        )
+        second = handler.save_image(
+            image, info, maxadu, device_name, exposure_start_datetime
+        )
+
+        assert first.exists()
+        assert second.exists()
+        assert first != second
+
     def test_filename_templates_render_same(self):
         jinja_templates = JinjaFilenameTemplates()
         standard_templates = FilenameTemplates()

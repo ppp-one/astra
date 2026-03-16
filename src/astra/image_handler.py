@@ -205,6 +205,7 @@ class ImageHandler:
             sequence_counter=sequence_counter,
             image_directory=image_directory_path,
         )
+        filepath = self._ensure_unique_filepath(filepath=filepath)
 
         # save FITS file
         hdu.writeto(filepath, output_verify="silentfix")
@@ -213,6 +214,18 @@ class ImageHandler:
         self.last_image_timestamp = date
 
         return filepath
+
+    def _ensure_unique_filepath(self, filepath: Path) -> Path:
+        """Check if the filepath already exists. If not, append a unique timestamp."""
+        if not filepath.exists():
+            return filepath
+        suffix = filepath.suffix
+        unique_stamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S.%f")
+        candidate = filepath.with_name(f"{filepath.stem}-{unique_stamp}{suffix}")
+        self.logger.warning(
+            f"File already exists, appending unique timestamp suffix: {candidate}."
+        )
+        return candidate
 
     def get_file_path(
         self,

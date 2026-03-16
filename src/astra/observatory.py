@@ -2260,7 +2260,8 @@ class Observatory:
                 pass
 
         last_flip_check_time = 0
-        cnt = 0
+
+        sequence_counter = 0
         for i, exptime in enumerate(exptime_list):
             if not self.check_conditions(action):
                 break
@@ -2296,9 +2297,10 @@ class Observatory:
                     action=action,
                     log_option=log_option,
                     wcs=wcs_solve,
-                    sequence_counter=cnt,
+                    sequence_counter=sequence_counter,
                 )
-                cnt += 1
+                sequence_counter += 1
+
                 if not success:
                     break
 
