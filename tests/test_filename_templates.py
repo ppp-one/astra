@@ -4,10 +4,18 @@ import datetime
 
 import pytest
 
+import doctest
+import astra.filename_templates
+
 from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
 
 
 class TestFilenameTemplate:
+    def test_doctest_filename_templates(self):
+        # Run all doctest examples in the filename_templates module
+        failures, _ = doctest.testmod(astra.filename_templates, raise_on_error=False)
+        assert failures == 0, "Doctest failures in filename_templates.py"
+
     def test_filename_templates(self):
         templates = FilenameTemplates()
         jinja_templates = JinjaFilenameTemplates()
