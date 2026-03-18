@@ -235,7 +235,16 @@ class FilenameTemplates:
 
         return cls(**valid_keywords)
 
+    def _validate_action_type(self, action_type: str) -> None:
+        if action_type not in self.SUPPORTED_ACTION_TYPES:
+            supported = sorted(self.SUPPORTED_ACTION_TYPES)
+            raise ValueError(
+                f"Invalid action_type: {action_type!r}. Expected one of: {supported}"
+            )
+
     def render_filename(self, action_type, **kwargs) -> str:
+        self._validate_action_type(action_type)
+
         imagetype_standardised = self._get_imagetype(kwargs.pop("imagetype"))
 
         return getattr(self, action_type).format(
@@ -316,6 +325,8 @@ class JinjaFilenameTemplates(FilenameTemplates):
         self._validate()
 
     def render_filename(self, action_type, **kwargs) -> str:
+        self._validate_action_type(action_type)
+
         imagetype_standardised = self._get_imagetype(kwargs.pop("imagetype"))
 
         return self._compiled_templates[action_type].render(

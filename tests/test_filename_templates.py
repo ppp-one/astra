@@ -1,9 +1,10 @@
-"""Unit tests for image_handler module."""
+"""Tests for filename templates."""
+
+import datetime
 
 import pytest
 
 from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
-import datetime
 
 
 class TestFilenameTemplate:
@@ -58,8 +59,63 @@ class TestFilenameTemplate:
 
     def test_filename_templates_invalid_action_type(self):
         templates = FilenameTemplates()
-        with pytest.raises(KeyError):  # render_filename expects valid action_type
+        with pytest.raises(ValueError, match="Invalid action_type"):
             templates.render_filename(action_type="invalid", imagetype="light")
+
+    def test_invalid_action_type_consistent_for_standard_and_jinja(self):
+        templates = FilenameTemplates()
+        jinja_templates = JinjaFilenameTemplates()
+
+        with pytest.raises(ValueError, match="Invalid action_type"):
+            templates.render_filename(action_type="invalid", imagetype="light")
+
+        with pytest.raises(ValueError, match="Invalid action_type"):
+            jinja_templates.render_filename(action_type="invalid", imagetype="light")
+
+    def test_from_dict_dispatches_by_template_syntax(self):
+        plain_templates = FilenameTemplates.from_dict(
+            {"object": "{device}_{object_name}_{timestamp}.fits"}
+        )
+        assert isinstance(plain_templates, FilenameTemplates)
+        assert not isinstance(plain_templates, JinjaFilenameTemplates)
+
+        jinja_templates = FilenameTemplates.from_dict(
+            {"object": "{{ device }}_{{ object_name }}_{{ timestamp }}.fits"}
+        )
+        assert isinstance(jinja_templates, JinjaFilenameTemplates)
+
+    def test_from_dict_ignores_unknown_keys(self):
+        templates = FilenameTemplates.from_dict(
+            {
+                "object": "{device}_{object_name}_{timestamp}.fits",
+                "not_a_supported_action": "{{ this_should_be_ignored }}",
+            }
+        )
+
+        assert isinstance(templates, FilenameTemplates)
+        assert (
+            templates.render_filename(
+                **templates.TEST_KWARGS
+                | {"action_type": "object", "imagetype": "light"}
+            )
+            == "TestCamera_TestObject_2025-01-01_00-00-00.fits"
+        )
+
+    def test_explicit_supported_action_type_templates(self):
+        expected = {
+            "autofocus": "autofocus/20240101/TestCamera_TestFilter_light_300.123_2025-01-01_00-00-00.fits",
+            "calibrate_guiding": "calibrate_guiding/20240101/TestCamera_TestFilter_light_300.123_2025-01-01_00-00-00.fits",
+            "pointing_model": "pointing_model/20240101/TestCamera_TestFilter_light_300.123_2025-01-01_00-00-00.fits",
+            "default": "20240101/TestCamera_TestFilter_light_300.123_2025-01-01_00-00-00.fits",
+        }
+
+        for templates in (FilenameTemplates(), JinjaFilenameTemplates()):
+            for action_type, expected_filename in expected.items():
+                filename = templates.render_filename(
+                    **templates.TEST_KWARGS
+                    | {"action_type": action_type, "imagetype": "light"}
+                )
+                assert filename == expected_filename
 
     def test_jinja_filename_templates_custom_logic(self):
         templates = JinjaFilenameTemplates(
@@ -69,82 +125,87 @@ class TestFilenameTemplate:
             **templates.TEST_KWARGS
             | {"action_type": "flats", "imagetype": "Flat Frame", "exptime": 20}
         )
-        assert "Flat_Flat Frame_" in filename
+        assert filename == "Flat_flat_2025-01-01_00-00-00"
         filename_short = templates.render_filename(
             **templates.TEST_KWARGS
             | {"action_type": "flats", "imagetype": "Flat Frame", "exptime": 5}
         )
-        assert "ShortFlat_Flat Frame" in filename_short
+        assert filename_short == "ShortFlat_flat"
 
-    def test_jinja_stx(self):
+    def test_saintex_filename_template(self):
         templates = JinjaFilenameTemplates(
             object="{{ action_date }}/Raw/{{ datetime_timestamp.strftime('%Y%m%d') }}-{{ datetime_timestamp.strftime('%H%M%S') }}-{{ object_name }}-S001-R001-C{{ '%03d'|format(sequence_counter) }}-{{ filter_name }}.fts",
             calibration="{{ action_date }}/{{ imagetype.capitalize() }}/{{ datetime_timestamp.strftime('%Y%m%d') }}-{{ datetime_timestamp.strftime('%H%M%S') }}-{{ imagetype.capitalize() }}-S001-R001-C{{'%03d'|format(sequence_counter)}}-NoFilt.fts",
             flats="{{ action_date }}/Flat/{{ datetime_timestamp.strftime('%Y%m%d') }}-{{ datetime_timestamp.strftime('%H%M%S') }}-{{  'Dusk' if (datetime_timestamp + datetime.timedelta(hours=-8)).hour > 12 else 'Dawn' }}-{{ filter_name }}-Bin1-Temp_-60-{{ '%03d'|format(sequence_counter) }}.fts",
         )
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {
-                "imagetype": "dark",
-                "action_type": "calibration",
-                "action_date": "20260317",
-                "datetime_timestamp": datetime.datetime(2026, 3, 17, 23, 45, 1, 123),
-                "sequence_counter": 42,
-            }
-        )
-        expected = "20260317/Dark/20260317-234501-Dark-S001-R001-C042-NoFilt.fts"
-        assert filename == expected, f"Got {filename}, expected {expected}"
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {
-                "imagetype": "bias",
-                "action_type": "calibration",
-                "action_date": "20260317",
-                "datetime_timestamp": datetime.datetime(2026, 3, 17, 23, 45, 1, 123),
-                "sequence_counter": 42,
-            }
-        )
-        expected = "20260317/Bias/20260317-234501-Bias-S001-R001-C042-NoFilt.fts"
-        assert filename == expected, f"Got {filename}, expected {expected}"
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {
-                "imagetype": "light",
-                "action_type": "object",
-                "object_name": "M31",
-                "action_date": "20260317",
-                "filter_name": "I+z",
-                "datetime_timestamp": datetime.datetime(2026, 3, 17, 23, 45, 1, 123),
-                "sequence_counter": 42,
-            }
-        )
-        expected = "20260317/Raw/20260317-234501-M31-S001-R001-C042-I+z.fts"
-        assert filename == expected, f"Got {filename}, expected {expected}"
 
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {
-                "imagetype": "flat",
-                "action_type": "flats",
-                "action_date": "20260202",
-                "filter_name": "I+z",
-                "datetime_timestamp": datetime.datetime(2026, 2, 3, 1, 41, 8, 123),
-                "sequence_counter": 42,
-            }
-        )
-        expected = "20260202/Flat/20260203-014108-Dusk-I+z-Bin1-Temp_-60-042.fts"
-        assert filename == expected, f"Got {filename}, expected {expected}"
+        cases = [
+            (
+                {
+                    "imagetype": "dark",
+                    "action_type": "calibration",
+                    "action_date": "20260317",
+                    "datetime_timestamp": datetime.datetime(
+                        2026, 3, 17, 23, 45, 1, 123
+                    ),
+                    "sequence_counter": 42,
+                },
+                "20260317/Dark/20260317-234501-Dark-S001-R001-C042-NoFilt.fts",
+            ),
+            (
+                {
+                    "imagetype": "bias",
+                    "action_type": "calibration",
+                    "action_date": "20260317",
+                    "datetime_timestamp": datetime.datetime(
+                        2026, 3, 17, 23, 45, 1, 123
+                    ),
+                    "sequence_counter": 42,
+                },
+                "20260317/Bias/20260317-234501-Bias-S001-R001-C042-NoFilt.fts",
+            ),
+            (
+                {
+                    "imagetype": "light",
+                    "action_type": "object",
+                    "object_name": "M31",
+                    "action_date": "20260317",
+                    "filter_name": "I+z",
+                    "datetime_timestamp": datetime.datetime(
+                        2026, 3, 17, 23, 45, 1, 123
+                    ),
+                    "sequence_counter": 42,
+                },
+                "20260317/Raw/20260317-234501-M31-S001-R001-C042-I+z.fts",
+            ),
+            (
+                {
+                    "imagetype": "flat",
+                    "action_type": "flats",
+                    "action_date": "20260202",
+                    "filter_name": "I+z",
+                    "datetime_timestamp": datetime.datetime(2026, 2, 3, 1, 41, 8, 123),
+                    "sequence_counter": 42,
+                },
+                "20260202/Flat/20260203-014108-Dusk-I+z-Bin1-Temp_-60-042.fts",
+            ),
+            (
+                {
+                    "imagetype": "flat",
+                    "action_type": "flats",
+                    "action_date": "20260202",
+                    "filter_name": "I+z",
+                    "datetime_timestamp": datetime.datetime(
+                        2026, 2, 3, 14, 13, 34, 123
+                    ),
+                    "sequence_counter": 42,
+                },
+                "20260202/Flat/20260203-141334-Dawn-I+z-Bin1-Temp_-60-042.fts",
+            ),
+        ]
 
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {
-                "imagetype": "flat",
-                "action_type": "flats",
-                "action_date": "20260202",
-                "filter_name": "I+z",
-                "datetime_timestamp": datetime.datetime(2026, 2, 3, 14, 13, 34, 123),
-                "sequence_counter": 42,
-            }
-        )
-        expected = "20260202/Flat/20260203-141334-Dawn-I+z-Bin1-Temp_-60-042.fts"
-        assert filename == expected, f"Got {filename}, expected {expected}"
+        for case_kwargs, expected in cases:
+            filename = templates.render_filename(**templates.TEST_KWARGS | case_kwargs)
+            assert filename == expected, (
+                f"Got {filename}, expected {expected} for kwargs {case_kwargs}"
+            )
