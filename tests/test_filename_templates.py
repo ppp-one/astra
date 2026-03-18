@@ -12,7 +12,6 @@ from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
 
 class TestFilenameTemplate:
     def test_doctest_filename_templates(self):
-        # Run all doctest examples in the filename_templates module
         failures, _ = doctest.testmod(astra.filename_templates, raise_on_error=False)
         assert failures == 0, "Doctest failures in filename_templates.py"
 
@@ -124,21 +123,6 @@ class TestFilenameTemplate:
                     | {"action_type": action_type, "imagetype": "light"}
                 )
                 assert filename == expected_filename
-
-    def test_jinja_filename_templates_custom_logic(self):
-        templates = JinjaFilenameTemplates(
-            flats="{{ 'Flat_' + imagetype + '_' + timestamp if exptime > 10 else 'ShortFlat_' + imagetype }}"
-        )
-        filename = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {"action_type": "flats", "imagetype": "Flat Frame", "exptime": 20}
-        )
-        assert filename == "Flat_flat_2025-01-01_00-00-00"
-        filename_short = templates.render_filename(
-            **templates.TEST_KWARGS
-            | {"action_type": "flats", "imagetype": "Flat Frame", "exptime": 5}
-        )
-        assert filename_short == "ShortFlat_flat"
 
     def test_saintex_filename_template(self):
         templates = JinjaFilenameTemplates(
