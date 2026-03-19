@@ -183,6 +183,8 @@ class Observatory:
         # log start up
         self.logger.debug("Database and DatabaseLoggingHandler initialized")
         self.logger.info(f"Starting observatory {self.name}")
+        if type(self) is not Observatory:
+            self.logger.info(f"Using observatory subclass: {type(self).__name__}")
 
         # warn if debug mode
         if self.logger.getEffectiveLevel() == logging.DEBUG:
