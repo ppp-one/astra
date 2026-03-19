@@ -966,6 +966,7 @@ class Autofocuser:
         return self._run_timestamp
 
     def _output_path(self, save_dir: Path, suffix: str, ext: str) -> Path:
+        save_dir.mkdir(parents=True, exist_ok=True)
         return save_dir / f"autofocus_{self.run_timestamp}_{suffix}.{ext}"
 
     def make_summary_plot(self) -> None:
@@ -1082,7 +1083,8 @@ class Autofocuser:
 
             if last_image_path is None:
                 self.observatory.logger.error(
-                    "Skipping creation of log file: no save_path configured and no last image available."
+                    "Skipping creation of result file: "
+                    "no save_path configured and no last image available."
                 )
                 return
 
@@ -1098,7 +1100,7 @@ class Autofocuser:
                 )
                 result_file.write(f"Autofocuser: {self.autofocuser}\n")
         except Exception as e:
-            self.observatory.logger.exception(f"Error creating log file: {str(e)}")
+            self.observatory.logger.exception(f"Error creating result file: {str(e)}")
 
     def _initialise_logging(self) -> None:
         """Set up logging integration with astrafocus library.
