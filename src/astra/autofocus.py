@@ -25,7 +25,6 @@ import astropy.units as u
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from astrafocus import ExtremumEstimatorRegistry, FocusMeasureOperatorRegistry
 from astrafocus.autofocuser import (
     AnalyticResponseAutofocuser,
@@ -565,6 +564,7 @@ class Autofocuser:
         self.autofocuser = autofocuser
         self.success = success
         self.config: AutofocusConfig = action.action_value  # type: ignore
+        self._run_timestamp: str | None = None
 
         if (
             self.config.calibration_field.fov_width == 0
@@ -689,7 +689,6 @@ class Autofocuser:
             n_exposures=self.config.n_exposures,
             decrease_search_range=self.config.decrease_search_range,
             exposure_time=self.config.exptime,
-            # save_path=self.config.save_path,
             secondary_focus_measure_operators=self.config._secondary_focus_measure_operators,
             focus_measure_operator_kwargs=self.config.focus_measure_operator_kwargs,
             search_range_is_relative=self.config.search_range_is_relative,
@@ -959,6 +958,16 @@ class Autofocuser:
 
         return new_exposure_time
 
+    @property
+    def run_timestamp(self) -> str:
+        """Timestamp shared across all output files for a single run."""
+        if self._run_timestamp is None:
+            self._run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return self._run_timestamp
+
+    def _output_path(self, save_dir: Path, suffix: str, ext: str) -> Path:
+        return save_dir / f"autofocus_{self.run_timestamp}_{suffix}.{ext}"
+
     def make_summary_plot(self) -> None:
         """Create visualization plot of autofocus results.
 
@@ -985,20 +994,21 @@ class Autofocuser:
                     )
                     last_image_path = getattr(image_handler, "last_image_path", None)
                 except Exception:
+                    self.observatory.logger.warning(
+                        "Unable to determine last image path from image handler. "
+                        "No summary plot will be saved."
+                    )
                     last_image_path = None
 
                 if last_image_path is None:
                     self.observatory.logger.warning(
-                        "Skipping creation of summary plot: no save_path configured and no last image available."
+                        "Skipping creation of autofocus summary plot: "
+                        "unable to determine save directory."
                     )
                     return
 
                 save_dir = last_image_path.parent
 
-            # Obtain focus record dataframe. Prefer in-memory record from the
-            # astrafocus autofocuser instance; if not available, try reading CSVs
-            # from the chosen directory.
-            df: pd.DataFrame | None = None
             if (
                 hasattr(self, "autofocuser")
                 and getattr(self.autofocuser, "focus_record", None) is not None
@@ -1006,20 +1016,17 @@ class Autofocuser:
                 try:
                     df = self.autofocuser.focus_record
                 except Exception:
-                    df = None
-
-            if df is None:
-                assert save_dir is not None
-                csv_files = sorted(
-                    [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
-                    key=lambda p: p.stat().st_mtime,
-                )
-                if not csv_files:
-                    self.observatory.logger.error(
-                        f"No focus record CSV found in {save_dir}. Skipping summary plot."
+                    self.observatory.logger.warning(
+                        "Skipping creation of autofocus summary plot: "
+                        "unable to retrieve focus record from autofocuser instance."
                     )
                     return
-                df = pd.read_csv(csv_files[-1])
+            else:
+                self.observatory.logger.warning(
+                    "Skipping creation of autofocus summary plot: "
+                    "autofocuser instance does not have a focus_record attribute."
+                )
+                return
 
             df = df.sort_values("focus_pos")
 
@@ -1040,18 +1047,12 @@ class Autofocuser:
             )
             ax.legend()
 
-            # Build output filename: if we read a CSV file use its stem, otherwise timestamp it.
-            if "csv_files" in locals() and csv_files:
-                out_name = f"{csv_files[-1].stem}.png"
-            else:
-                out_name = (
-                    f"autofocus_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-                )
-
             assert save_dir is not None
-            out_path = Path(save_dir) / out_name
-            plt.savefig(out_path)
+            plt.savefig(self._output_path(save_dir, "summary", "png"))
             plt.close()
+
+            df.to_csv(self._output_path(save_dir, "record", "csv"), index=False)
+
         except Exception as e:
             self.observatory.logger.exception(f"Error creating summary plot: {str(e)}")
 
@@ -1073,7 +1074,10 @@ class Autofocuser:
                     self.action.device_name
                 )
                 last_image_path = getattr(image_handler, "last_image_path", None)
-            except Exception:
+            except Exception as e:
+                self.observatory.logger.error(
+                    f"Error occurred while fetching last image path: {str(e)}"
+                )
                 last_image_path = None
 
             if last_image_path is None:
@@ -1084,20 +1088,8 @@ class Autofocuser:
 
             save_dir = last_image_path.parent
 
-        # derive a timestring for filename; prefer an adjacent CSV if present
-        timestr = None
         assert save_dir is not None
-        csv_files = sorted(
-            [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
-            key=lambda p: p.stat().st_mtime,
-        )
-        if csv_files:
-            timestr = csv_files[-1].stem.split("_")[0]
-
-        if not timestr:
-            timestr = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        result_file_path = Path(save_dir) / f"{timestr}_result.txt"
+        result_file_path = self._output_path(save_dir, "result", "txt")
         try:
             with open(result_file_path, "w") as result_file:
                 result_file.write(f"Best focus position: {self.best_focus_position}\n")
@@ -1217,7 +1209,7 @@ class Autofocuser:
 
         except Exception as e:
             field_of_view = np.array([np.nan, np.nan])
-            self.observatory.error(
+            self.observatory.logger.error(
                 f"Error calculating field of view from paired devices. Exception: {e}"
             )
 
