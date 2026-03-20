@@ -2299,6 +2299,11 @@ class Observatory:
                             ):
                                 guiding = False
                                 pointing_complete = False
+                                if (
+                                    nonsidereal.is_active
+                                    and "Telescope" in paired_devices
+                                ):
+                                    nonsidereal.apply_rates(paired_devices.telescope)
 
                     # Non-sidereal re-centering
                     if nonsidereal.is_active and "Telescope" in paired_devices:

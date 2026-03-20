@@ -358,8 +358,8 @@ def precompute_ephemeris(
         interval_minutes: Ephemeris sampling interval (default 1 min).
 
     Returns:
-        (ra_interp, dec_interp): Two callables mapping elapsed seconds → degrees.
-        RA is wrapped to [-180, 180] to avoid discontinuities at 0°/360°.
+        (ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.
+        RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.
 
     Example usage:
         Examples
@@ -377,7 +377,7 @@ def precompute_ephemeris(
     with solar_system_ephemeris.set("builtin"):
         bodies = get_body(body_name, times, obs_location)
 
-    ra_coords = bodies.ra.wrap_at(180 * u.deg).deg
+    ra_coords = np.unwrap(bodies.ra.rad) * (180.0 / np.pi)
     dec_coords = bodies.dec.deg
     seconds = minutes * 60.0
 
@@ -398,8 +398,8 @@ def compute_nonsidereal_rates_from_interp(
     get_body() calls are needed at runtime.
 
     Args:
-        ra_interp: RA interpolator (seconds → degrees, wrapped to [-180, 180]).
-        dec_interp: Dec interpolator (seconds → degrees).
+        ra_interp: RA interpolator (seconds to degrees, unwrapped/continuous).
+        dec_interp: Dec interpolator (seconds to degrees).
         t_seconds: Elapsed seconds since the ephemeris start_time.
         dt: Finite-difference step in seconds (default 60).
 

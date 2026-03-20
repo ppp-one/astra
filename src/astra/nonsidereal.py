@@ -129,7 +129,7 @@ class NonSiderealManager:
         state = self._state
         try:
             t_seconds = (Time.now() - state.sequence_start_time).to(u.s).value
-            ra_deg = float(state.ra_interp(t_seconds))
+            ra_deg = float(state.ra_interp(t_seconds)) % 360.0  # unwrap → [0, 360)
             dec_deg = float(state.dec_interp(t_seconds))
             telescope = paired_devices.telescope
             self.logger.info(
@@ -137,7 +137,7 @@ class NonSiderealManager:
             )
             telescope.get(
                 "SlewToCoordinatesAsync",
-                RightAscension=ra_deg / 15.0,  # ASCOM expects RA in hours
+                RightAscension=ra_deg / 15.0,  # ASCOM expects RA in hours [0, 24)
                 Declination=dec_deg,
             )
             time.sleep(1)
@@ -176,10 +176,11 @@ class NonSiderealManager:
         ephemeris backends (e.g. JPL Horizons for comets/asteroids).
         """
         lname = action.action_value.get("lookup_name")
-        recenter_interval = int(action.action_value["nonsidereal_recenter_interval"])
+        recenter_interval = int(
+            action.action_value.get("nonsidereal_recenter_interval", 0)
+        )
         if (
             not lname
-            or recenter_interval <= 0
             or action.action_type == "calibration"
             or action.action_value.get("disable_telescope_movement", False)
         ):
@@ -193,10 +194,13 @@ class NonSiderealManager:
             ra_interp, dec_interp = astra.utils.precompute_ephemeris(
                 lname, sequence_start_time, duration_hours, obs_location
             )
-            sequence_start_time = Time.now()  # re-stamp after precompute to avoid drift
-            self.logger.info(
-                f"Non-sidereal ephemeris pre-computed for '{lname}', "
+            recenter_msg = (
                 f"re-centering every {recenter_interval}s"
+                if recenter_interval > 0
+                else "re-centering disabled"
+            )
+            self.logger.info(
+                f"Non-sidereal ephemeris pre-computed for '{lname}', {recenter_msg}"
             )
             return _NonSiderealState(
                 body_name=lname,

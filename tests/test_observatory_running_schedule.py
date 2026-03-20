@@ -116,6 +116,19 @@ def create_schedule_data(
             "action_value": {"filter": ["Clear"], "n": [5]},
             "duration": 2,
         },
+        "nonsidereal_object": {
+            "action_type": "object",
+            "action_value": {
+                "object": "mars",
+                "lookup_name": "mars",
+                "exptime": 1,
+                "filter": "Clear",
+                "guiding": False,
+                "pointing": False,
+                "nonsidereal_recenter_interval": 10,
+            },
+            "duration": 1,
+        },
     }
 
     if action_type not in action_configs:
@@ -125,7 +138,7 @@ def create_schedule_data(
 
     action = {
         "device_name": device_name,
-        "action_type": action_type,
+        "action_type": config.get("action_type", action_type),
         "action_value": config["action_value"],
         "start_time": base_time.isoformat(),
         "end_time": (base_time + timedelta(minutes=config["duration"])).isoformat(),
@@ -337,6 +350,35 @@ def wait_for_schedule_completion(
     assert final_completed > 0, "No actions were completed in the schedule."
 
     return final_completed > 0, final_completed, error_free_maintained
+
+
+def set_location_for_body_visibility(server_url, body_name: str, latitude: float = 0.0):
+    """Set telescope simulator location so that body is near the meridian and above the horizon."""
+    from astropy.coordinates import AltAz, EarthLocation, get_body
+    from astropy.time import Time
+
+    t = Time.now()
+    body = get_body(body_name, t)
+    gmst = t.sidereal_time("mean", "greenwich").deg
+    transit_lon = ((body.ra.deg - gmst + 180) % 360) - 180
+
+    import astropy.units as u
+
+    loc = EarthLocation(lat=latitude * u.deg, lon=transit_lon * u.deg, height=0 * u.m)
+    alt = body.transform_to(AltAz(obstime=t, location=loc)).alt.deg
+    assert alt > 0, (
+        f"{body_name} is not above the horizon at lat={latitude} (alt={alt:.1f}°)"
+    )
+
+    r = requests.put(
+        f"{server_url}/api/v1/telescope/0/sitelatitude", data={"SiteLatitude": latitude}
+    )
+    assert r.status_code == 200, "Failed to set observatory latitude."
+    r = requests.put(
+        f"{server_url}/api/v1/telescope/0/sitelongitude",
+        data={"SiteLongitude": transit_lon},
+    )
+    assert r.status_code == 200, "Failed to set observatory longitude."
 
 
 def set_safety_monitor_safe(server_url):
@@ -616,6 +658,51 @@ class TestScheduleActionTypes:
                 f"{observatory.logger.error_source}"
             )
             assert completed > 0, "No actions were completed"
+
+    def test_nonsidereal_object_action(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
+        """Test object action with non-sidereal tracking via lookup_name.
+
+        Verifies that a sequence using lookup_name='mars' completes without errors,
+        takes at least one image, and that tracking rates are reset on teardown.
+        """
+        set_safety_monitor_safe(server_url)
+        set_location_for_body_visibility(server_url, "mars")
+        schedule_data = create_schedule_data("nonsidereal_object", temp_config)
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data, server_url, temp_config
+            )
+
+            assert error_free_maintained, (
+                "error_free became False during nonsidereal_object action. "
+                f"Error sources: {observatory.logger.error_source}"
+            )
+            assert success, (
+                "nonsidereal_object action did not complete successfully. "
+                f"Error sources: {observatory.logger.error_source}"
+            )
+            assert completed > 0, "No actions were completed"
+
+        # Verify tracking rates were reset via the simulator endpoint
+        ra_rate = (
+            requests.get(f"{server_url}/api/v1/telescope/0/rightascensionrate")
+            .json()
+            .get("Value")
+        )
+        dec_rate = (
+            requests.get(f"{server_url}/api/v1/telescope/0/declinationrate")
+            .json()
+            .get("Value")
+        )
+        assert ra_rate == 0.0, (
+            f"RightAscensionRate was not reset after sequence: {ra_rate}"
+        )
+        assert dec_rate == 0.0, (
+            f"DeclinationRate was not reset after sequence: {dec_rate}"
+        )
 
     def test_autofocus_action(
         self, observatory, schedule_manager, server_url, temp_config
