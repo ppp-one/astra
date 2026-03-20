@@ -10,10 +10,13 @@ from astropy.time import Time, TimeDelta
 
 from astra.utils import (
     __to_format,
+    compute_nonsidereal_rates_from_interp,
     get_body_coordinates,
     getLightTravelTimes,
     interpolate_dfs,
+    is_solar_system_body,
     is_sun_rising,
+    precompute_ephemeris,
     time_conversion,
     to_jd,
 )
@@ -283,15 +286,11 @@ def test_setting_detection(location, monkeypatch):
 
 
 def test_get_body_coordinates_solar_system(location, monkeypatch):
-    import astropy.coordinates
-
     # Mock return value
     expected_coord = SkyCoord(ra=100 * u.deg, dec=20 * u.deg)
 
     # Mock get_body to avoid ephemeris calculation/download
-    monkeypatch.setattr(
-        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
-    )
+    monkeypatch.setattr("astra.utils.get_body", lambda name, time, loc: expected_coord)
 
     # Test with a known solar system object
     result = get_body_coordinates("Jupiter", Time.now(), location)
@@ -319,16 +318,86 @@ def test_get_body_coordinates_deep_sky(location, monkeypatch):
 
 
 def test_get_body_coordinates_solar_system_case_insensitive(location, monkeypatch):
-    import astropy.coordinates
-
     expected_coord = SkyCoord(ra=200 * u.deg, dec=-10 * u.deg)
 
-    monkeypatch.setattr(
-        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
-    )
+    monkeypatch.setattr("astra.utils.get_body", lambda name, time, loc: expected_coord)
 
     # Test with uppercase
     result = get_body_coordinates("MARS", Time.now(), location)
 
     assert result.ra == expected_coord.ra
     assert result.dec == expected_coord.dec
+
+
+# --- Non-sidereal tracking helpers ---
+
+
+def test_is_solar_system_body_known_bodies():
+    assert is_solar_system_body("mars") is True
+    assert is_solar_system_body("jupiter") is True
+    assert is_solar_system_body("moon") is True
+    assert is_solar_system_body("sun") is True
+
+
+def test_is_solar_system_body_case_insensitive():
+    assert is_solar_system_body("MARS") is True
+    assert is_solar_system_body("Jupiter") is True
+
+
+def test_is_solar_system_body_deep_sky():
+    assert is_solar_system_body("M31") is False
+    assert is_solar_system_body("Vega") is False
+    assert is_solar_system_body("") is False
+
+
+def test_precompute_ephemeris_returns_callables(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+
+def test_precompute_ephemeris_ra_dec_ranges(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+
+    # Sample several points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -180.0 <= ra <= 180.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+
+def test_precompute_ephemeris_continuity(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+
+    # Adjacent-second values should be very close (no discontinuity)
+    for t in [0, 1800]:
+        assert abs(float(ra_interp(t + 1)) - float(ra_interp(t))) < 0.01
+        assert abs(float(dec_interp(t + 1)) - float(dec_interp(t))) < 0.01
+
+
+def test_nonsidereal_rates_mars_plausible(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+    ra_rate, dec_rate = compute_nonsidereal_rates_from_interp(ra_interp, dec_interp, 0)
+
+    # Mars moves slowly; rates should be small but non-zero
+    assert abs(ra_rate) < 0.005, f"Mars RA rate unexpectedly large: {ra_rate}"
+    assert abs(dec_rate) < 0.05, f"Mars Dec rate unexpectedly large: {dec_rate}"
+    assert ra_rate != 0.0 or dec_rate != 0.0, "Both rates are zero — unexpected"
+
+
+def test_nonsidereal_rates_moon_faster_than_mars(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_mars, dec_mars = precompute_ephemeris("mars", obs_time, 1.0, location)
+    ra_moon, dec_moon = precompute_ephemeris("moon", obs_time, 1.0, location)
+
+    mars_ra_rate, _ = compute_nonsidereal_rates_from_interp(ra_mars, dec_mars, 0)
+    moon_ra_rate, _ = compute_nonsidereal_rates_from_interp(ra_moon, dec_moon, 0)
+
+    assert abs(moon_ra_rate) > abs(mars_ra_rate), (
+        f"Moon RA rate ({moon_ra_rate}) should exceed Mars rate ({mars_ra_rate})"
+    )
