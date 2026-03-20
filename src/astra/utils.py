@@ -21,12 +21,24 @@ from typing import Any, Tuple
 import astropy.units as u
 import numpy as np
 import pandas as pd
-from astropy.coordinates import AltAz, Angle, SkyCoord, get_sun
+from astropy.coordinates import (
+    AltAz,
+    Angle,
+    EarthLocation,
+    SkyCoord,
+    get_body,
+    get_sun,
+    solar_system_ephemeris,
+)
 from astropy.stats import SigmaClip, sigma_clipped_stats
 from astropy.time import Time
 from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
+from scipy.interpolate import interp1d
+
+_SOLAR_SYSTEM_BODIES: frozenset[str] = frozenset(solar_system_ephemeris.bodies)
+_SOLAR_TO_SIDEREAL = u.Quantity(1, "day").to("sday").value
 
 
 class CustomImageClass(Image):
@@ -198,7 +210,7 @@ def time_conversion(
 
 
 ## for flat fielding
-def is_sun_rising(obs_location: Any) -> Tuple[bool, bool, AltAz]:
+def is_sun_rising(obs_location: EarthLocation) -> Tuple[bool, bool, AltAz]:
     """Determine solar motion and flat field observation readiness.
 
     Analyzes sun position and movement to determine if conditions are suitable
@@ -286,7 +298,9 @@ def clean_image(data: np.ndarray) -> np.ndarray:
 
 
 ## planet or SIMBAD positions
-def get_body_coordinates(body_name: str, obs_time: Time, obs_location: Any) -> SkyCoord:
+def get_body_coordinates(
+    body_name: str, obs_time: Time, obs_location: EarthLocation
+) -> SkyCoord:
     """Get the position of a celestial body (Solar System or Deep Sky).
 
     Calculates the apparent celestial coordinates of a specified solar system body
@@ -300,15 +314,104 @@ def get_body_coordinates(body_name: str, obs_time: Time, obs_location: Any) -> S
     Returns:
         SkyCoord: Position of the body in the sky.
     """
-    from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
-
     # Check if the body is in the solar system ephemeris (case-insensitive)
     # solar_system_ephemeris.bodies normally contains lowercase strings
-    if body_name.lower() in solar_system_ephemeris.bodies:
+    if body_name.lower() in _SOLAR_SYSTEM_BODIES:
         return get_body(body_name, obs_time, obs_location)
 
     # Otherwise, try to resolve as a deep sky object (ICRS)
     return SkyCoord.from_name(body_name)
+
+
+def is_solar_system_body(body_name: str) -> bool:
+    """Return True if name is a known solar system body in the astropy ephemeris.
+
+    O(1) lookup on a lowercase name against the ephemeris bodies set.
+    """
+    return body_name.lower() in _SOLAR_SYSTEM_BODIES
+
+
+def precompute_ephemeris(
+    body_name: str,
+    start_time: Time,
+    duration_hours: float,
+    obs_location: EarthLocation,
+    interval_minutes: float = 1.0,
+) -> tuple["interp1d", "interp1d"]:
+    """Pre-compute a solar system body's sky positions over a time window.
+
+    Performs a single vectorised get_body() call and returns cubic interpolation
+    functions keyed on seconds since start_time.  Querying the interpolators is
+    orders of magnitude faster than repeated get_body() calls at runtime.
+
+    Args:
+        body_name: Name of the solar system body (e.g. 'mars', 'moon').
+        start_time: Start of the observation window.
+        duration_hours: Length of the window in hours.
+        obs_location: Observer EarthLocation.
+        interval_minutes: Ephemeris sampling interval (default 1 min).
+
+    Returns:
+        (ra_interp, dec_interp): Two callables mapping elapsed seconds → degrees.
+        RA is wrapped to [-180, 180] to avoid discontinuities at 0°/360°.
+
+    Example usage:
+        Examples
+    --------
+    Get the position of Mars as observed from Greenwich at the current time:
+        from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris
+        from astropy.time import Time
+        location = EarthLocation.of_site('greenwich')
+        ra_interp, dec_interp = precompute_ephemeris('mars', Time.now(), 4, location)
+    """
+    n_points = int(duration_hours * 60 / interval_minutes) + 1
+    minutes = np.linspace(0, duration_hours * 60, n_points)
+    times = start_time + u.Quantity(minutes, "min")
+
+    with solar_system_ephemeris.set("builtin"):
+        bodies = get_body(body_name, times, obs_location)
+
+    ra_coords = bodies.ra.wrap_at(180 * u.deg).deg
+    dec_coords = bodies.dec.deg
+    seconds = minutes * 60.0
+
+    ra_interp = interp1d(seconds, ra_coords, kind="cubic", fill_value="extrapolate")
+    dec_interp = interp1d(seconds, dec_coords, kind="cubic", fill_value="extrapolate")
+    return ra_interp, dec_interp
+
+
+def compute_nonsidereal_rates_from_interp(
+    ra_interp: interp1d,
+    dec_interp: interp1d,
+    t_seconds: float,
+    dt: float = 60.0,
+) -> tuple[float, float]:
+    """Compute ASCOM RightAscensionRate and DeclinationRate from pre-computed interpolators.
+
+    Uses a finite difference on the interpolated ephemeris so no additional
+    get_body() calls are needed at runtime.
+
+    Args:
+        ra_interp: RA interpolator (seconds → degrees, wrapped to [-180, 180]).
+        dec_interp: Dec interpolator (seconds → degrees).
+        t_seconds: Elapsed seconds since the ephemeris start_time.
+        dt: Finite-difference step in seconds (default 60).
+
+    Returns:
+        (ra_rate, dec_rate) where:
+          ra_rate  - seconds of time per sidereal second  (ASCOM RightAscensionRate)
+          dec_rate - arcseconds per sidereal second       (ASCOM DeclinationRate)
+    """
+    # Scale dt from solar seconds to sidereal seconds for correct per-sidereal-second rates
+    dt_in_sidereal_s = dt * _SOLAR_TO_SIDEREAL
+
+    delta_ra_deg = float(ra_interp(t_seconds + dt)) - float(ra_interp(t_seconds))
+    delta_dec_deg = float(dec_interp(t_seconds + dt)) - float(dec_interp(t_seconds))
+
+    # Convert to ASCOM units (RA: s/s_sidereal, Dec: as/s_sidereal)
+    ra_rate = (delta_ra_deg * 240.0) / dt_in_sidereal_s
+    dec_rate = (delta_dec_deg * 3600.0) / dt_in_sidereal_s
+    return ra_rate, dec_rate
 
 
 ## SPECULOOS EDIT

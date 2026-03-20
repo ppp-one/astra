@@ -510,6 +510,7 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+    nonsidereal_recenter_interval: Optional[int] = None
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -523,7 +524,8 @@ class ObjectActionConfig(BaseActionConfig):
         "focus_shift": "Focus offset relative to the stored best focus.",
         "focus_position": "Absolute focus position override.",
         "n": "Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.",
-        "guiding": "Start autoguiding with Donuts before imaging.",
+        "guiding": "Start autoguiding with Donuts before imaging. Should be False for solar system objects using non-sidereal tracking, as the star field drifts relative to the guide reference.",
+        "nonsidereal_recenter_interval": "For solar system objects (resolved via lookup_name): re-slew to the updated ephemeris position and refresh tracking rates every N seconds (default: 300). Set to 0 to disable.",
         "pointing": "Perform pointing correction with twirl before imaging.",
         "bin": "Camera binning factor.",
         "dir": "Base directory path for saving images.",
