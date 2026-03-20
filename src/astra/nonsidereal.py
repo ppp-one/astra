@@ -168,23 +168,27 @@ class NonSiderealManager:
     def _setup(
         self, action: Action, obs_location: EarthLocation
     ) -> _NonSiderealState | None:
-        """Pre-compute ephemeris. Returns None if the target is not a solar system body."""
+        """Pre-compute ephemeris. Returns None if non-sidereal tracking is not requested.
+
+        Non-sidereal tracking is activated when ``nonsidereal_recenter_interval`` is
+        present and non-zero in the action config.  The body name is passed directly
+        to ``precompute_ephemeris``, which is the single place to add support for new
+        ephemeris backends (e.g. JPL Horizons for comets/asteroids).
+        """
         lname = action.action_value.get("lookup_name")
+        recenter_interval = int(action.action_value["nonsidereal_recenter_interval"])
         if (
             not lname
+            or recenter_interval <= 0
             or action.action_type == "calibration"
             or action.action_value.get("disable_telescope_movement", False)
-            or not astra.utils.is_solar_system_body(lname)
         ):
             return None
 
         try:
-            recenter_interval = int(
-                action.action_value.get("nonsidereal_recenter_interval") or 300
-            )
             duration_hours = (
                 action.end_time - action.start_time
-            ).total_seconds() / 3600 + 0.5  # +0.5 h safety margin past scheduled end
+            ).total_seconds() / 3600 + 0.5  # + 0.5 h safety margin past scheduled end
             sequence_start_time = Time.now()
             ra_interp, dec_interp = astra.utils.precompute_ephemeris(
                 lname, sequence_start_time, duration_hours, obs_location
