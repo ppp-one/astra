@@ -338,14 +338,20 @@ def precompute_ephemeris(
     obs_location: EarthLocation,
     interval_minutes: float = 1.0,
 ) -> tuple["interp1d", "interp1d"]:
-    """Pre-compute a solar system body's sky positions over a time window.
+    """Pre-compute a moving body's sky positions over a time window.
 
     Performs a single vectorised get_body() call and returns cubic interpolation
     functions keyed on seconds since start_time.  Querying the interpolators is
-    orders of magnitude faster than repeated get_body() calls at runtime.
+    orders of magnitude faster than repeated positional lookups at runtime.
+
+    Currently supports astropy built-in bodies (planets, Moon, Sun).  To add
+    support for comets/asteroids, extend this function to detect bodies not in
+    ``_SOLAR_SYSTEM_BODIES`` and delegate to an alternative source (e.g.
+    ``astroquery.jplhorizons``).
 
     Args:
-        body_name: Name of the solar system body (e.g. 'mars', 'moon').
+        body_name: Name of the body (e.g. 'mars', 'moon'). Must be present in
+            astropy's built-in solar system ephemeris.
         start_time: Start of the observation window.
         duration_hours: Length of the window in hours.
         obs_location: Observer EarthLocation.

@@ -486,6 +486,33 @@ class ObjectActionConfig(BaseActionConfig):
         3. Perform pointing correction if ``pointing=true``
         4. Start autoguiding if ``guiding=true``
         5. Stop exposures, guiding, and tracking at completion
+
+    Non-sidereal tracking:
+        Enables differential tracking for moving targets by providing a
+        ``lookup_name`` instead of static ``ra``/``dec``, combined with a non-zero
+        ``nonsidereal_recenter_interval``. The interval controls how often the
+        telescope re-slews to the updated ephemeris position (in seconds).
+        Autoguiding is incompatible with non-sidereal tracking and will be disabled.
+
+        Currently supports astropy built-in bodies (planets, Moon, Sun).
+        Support for comets and asteroids (via JPL Horizons) is planned.
+
+        **Schedule example for tracking Saturn**::
+
+            {
+                "device_name": "camera_name",
+                "action_type": "object",
+                "action_value": {
+                    "object": "Saturn",
+                    "lookup_name": "saturn",
+                    "exptime": 30,
+                    "filter": "Clear",
+                    "nonsidereal_recenter_interval": 300,
+                },
+                "start_time":"2025-01-01 00:00:00.000",
+                "end_time":"2025-01-01 01:00:00.000",
+            }
+
     """
 
     object: str = field(metadata={"required": True})
@@ -510,7 +537,7 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
-    nonsidereal_recenter_interval: Optional[int] = None
+    nonsidereal_recenter_interval: int = 0
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -525,7 +552,7 @@ class ObjectActionConfig(BaseActionConfig):
         "focus_position": "Absolute focus position override.",
         "n": "Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.",
         "guiding": "Start autoguiding with Donuts before imaging. Should be False for solar system objects using non-sidereal tracking, as the star field drifts relative to the guide reference.",
-        "nonsidereal_recenter_interval": "For solar system objects (resolved via lookup_name): re-slew to the updated ephemeris position and refresh tracking rates every N seconds (default: 300). Set to 0 to disable.",
+        "nonsidereal_recenter_interval": "For solar system objects (resolved via lookup_name): re-slew to the updated ephemeris position and refresh tracking rates every N seconds. Set to 0 to disable. Ignored for non-solar-system targets.",
         "pointing": "Perform pointing correction with twirl before imaging.",
         "bin": "Camera binning factor.",
         "dir": "Base directory path for saving images.",
