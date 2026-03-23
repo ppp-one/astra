@@ -400,27 +400,7 @@ class TestImageHandler:
             assert hdul[0].header["IMAGETYP"] == "Flat Frame"
             assert hdul[0].header["EXPTIME"] == 10.0
 
-    def test_save_image_no_header_raises(self, temp_config):
-        handler = ImageHandler(
-            header=None,
-            image_directory=Path(temp_config.paths.images) / "neg_test",
-            observing_date=datetime.datetime(
-                2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
-            ),
-        )
-        image = np.array([[1, 2], [3, 4]])
-        info = self.create_mock_image_info(0, 2)
-        maxadu = 1000
-        device_name = "TestCamera"
-        exposure_start_datetime = datetime.datetime(
-            2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
-        )
-        with pytest.raises(ValueError, match="No FITS header specified to save image."):
-            handler.save_image(
-                image, info, maxadu, device_name, exposure_start_datetime
-            )
-
-    def test_save_image_no_image_directory_raises(self, temp_config):
+    def test_save_image_no_image_directory_raises(self):
         header = self.create_test_header()
         handler = ImageHandler(header=header, image_directory=None)
         image = np.array([[1, 2], [3, 4]])
@@ -597,6 +577,34 @@ class TestImageHandler:
         assert isinstance(handler, ImageHandler)
         assert handler.image_directory == Path("/tmp/test")
         assert handler.observing_date == datetime.datetime(2025, 1, 1)
+        mock_get_date.assert_called_once_with(
+            mock_action.start_time,
+            mock_get_header.return_value.get_observatory_location(),
+        )
+
+    def test_init_missing_location_keys_raises(self):
+        header = ObservatoryHeader.get_test_header()
+        del header["LAT-OBS"]
+        with pytest.raises(ValueError, match="LAT-OBS"):
+            ImageHandler(header=header, image_directory=Path("/tmp/test"))
+
+    @patch("astra.image_handler.HeaderManager.get_base_header")
+    @patch("astra.image_handler.FilenameTemplates.from_dict")
+    def test_from_action_missing_location_keys_raises(
+        self, mock_from_dict, mock_get_header
+    ):
+        header = ObservatoryHeader.get_test_header()
+        del header["LAT-OBS"]
+        mock_get_header.return_value = header
+        mock_from_dict.return_value = FilenameTemplates()
+        mock_action = Mock()
+        mock_action.action_value = {"dir": "/tmp/test"}
+        mock_observatory_config = Mock()
+        mock_observatory_config.get.return_value = {}
+        with pytest.raises(ValueError, match="LAT-OBS"):
+            ImageHandler.from_action(
+                mock_action, Mock(), mock_observatory_config, Mock(), Mock()
+            )
 
     def test_get_observing_night_date(self):
         from astropy.coordinates import EarthLocation
