@@ -1,5 +1,6 @@
 """Test visibility check functionality for ObjectActionConfig."""
 
+import unittest.mock
 from datetime import UTC, datetime, timedelta
 
 import astropy.units as u
@@ -8,6 +9,7 @@ from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 
 from astra.action_configs import ObjectActionConfig
+from astra.utils import NotMovingBodyError
 
 
 @pytest.fixture
@@ -223,14 +225,6 @@ def test_visibility_resolution_from_lookup_name(
 
     from unittest.mock import MagicMock
 
-    import astropy.units as u
-    from astropy.coordinates import SkyCoord
-
-    # The method-under-test imports get_body_coordinates internally:
-    #     from astra.utils import get_body_coordinates
-    # To intercept this, we must ensure 'astra.utils' is loaded in sys.modules
-    # and patch the function on the module object itself.
-
     # 1. Define coordinates that are guaranteed to be known:
     # Start with a Visible target near Zenith (Alt=85 degrees)
     # We calculate the ICRS RA/Dec for this Alt/Az position at the specific test time.
@@ -240,12 +234,18 @@ def test_visibility_resolution_from_lookup_name(
 
     mock_get_body = MagicMock(return_value=zenith_radec)
 
-    import astra.utils
+    import astra.action_configs
 
-    original_func = astra.utils.get_body_coordinates
-    astra.utils.get_body_coordinates = mock_get_body
-
-    try:
+    with (
+        unittest.mock.patch.object(
+            astra.action_configs, "get_body_coordinates", mock_get_body
+        ),
+        unittest.mock.patch.object(
+            astra.action_configs,
+            "precompute_ephemeris",
+            side_effect=NotMovingBodyError("mock"),
+        ),
+    ):
         config = ObjectActionConfig(
             object="Mock Body", exptime=60.0, lookup_name="MockObject"
         )
@@ -260,20 +260,30 @@ def test_visibility_resolution_from_lookup_name(
 
         # Verify our mock was actually used
         mock_get_body.assert_called_once()
-        args, kwargs = mock_get_body.call_args
+        _, kwargs = mock_get_body.call_args
         assert kwargs["body_name"] == "MockObject"
 
-        # 2. Test failure case (Invisible object)
-        # Update mock to return coordinates below the horizon (Alt=-45 degrees)
-        below_horizon = SkyCoord(alt=-45 * u.deg, az=180 * u.deg, frame=altaz_frame)
-        below_radec = below_horizon.transform_to("icrs")
-        mock_get_body.reset_mock()
-        mock_get_body.return_value = below_radec
+    # 2. Test failure case (Invisible object)
+    # Update mock to return coordinates below the horizon (Alt=-45 degrees)
+    below_horizon = SkyCoord(alt=-45 * u.deg, az=180 * u.deg, frame=altaz_frame)
+    below_radec = below_horizon.transform_to("icrs")
+    mock_get_body.reset_mock()
+    mock_get_body.return_value = below_radec
 
-        config_invisible = ObjectActionConfig(
-            object="Invisible Mock Body", exptime=60.0, lookup_name="InvisibleObject"
-        )
+    config_invisible = ObjectActionConfig(
+        object="Invisible Mock Body", exptime=60.0, lookup_name="InvisibleObject"
+    )
 
+    with (
+        unittest.mock.patch.object(
+            astra.action_configs, "get_body_coordinates", mock_get_body
+        ),
+        unittest.mock.patch.object(
+            astra.action_configs,
+            "precompute_ephemeris",
+            side_effect=NotMovingBodyError("mock"),
+        ),
+    ):
         with pytest.raises(
             ValueError, match="is not visible during observation window"
         ):
@@ -283,7 +293,3 @@ def test_visibility_resolution_from_lookup_name(
                 observatory_location=observatory_location,
                 min_altitude=0.0,
             )
-
-    finally:
-        # Restore the original function to avoid side effects on other tests
-        astra.utils.get_body_coordinates = original_func

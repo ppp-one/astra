@@ -19,6 +19,7 @@ from astropy.coordinates import AltAz, Angle, EarthLocation, SkyCoord
 from astropy.time import Time
 
 from astra.config import Config, ObservatoryConfig
+from astra.utils import NotMovingBodyError, get_body_coordinates, precompute_ephemeris
 
 
 @dataclass
@@ -538,6 +539,9 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
     nonsidereal_recenter_interval: int = 0
+    _nonsidereal: bool = field(default=False, init=False, repr=False)
+    _ra_interp: Any = field(default=None, init=False, repr=False)
+    _dec_interp: Any = field(default=None, init=False, repr=False)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -621,6 +625,42 @@ class ObjectActionConfig(BaseActionConfig):
         # Subframe validation
         self.validate_subframe()
 
+    def _resolve_lookup_name(
+        self,
+        start_time: Time,
+        end_time: Time,
+        observatory_location: EarthLocation,
+    ) -> tuple[float, float]:
+        """Resolve lookup_name to (ra_deg, dec_deg) at start_time.
+
+        For solar system bodies and minor bodies (comets/asteroids), pre-computes
+        the ephemeris interpolators and sets _nonsidereal=True as a side effect.
+        For fixed targets (stars, DSOs), falls back to a name resolver and sets
+        _nonsidereal=False.
+
+        Returns:
+            (ra_deg, dec_deg) at start_time.
+        """
+        duration_hours = (end_time - start_time).to_value("hr") + 0.5
+        try:
+            self._ra_interp, self._dec_interp = precompute_ephemeris(
+                self.lookup_name, start_time, duration_hours, observatory_location
+            )
+            self._nonsidereal = True
+            ra = float(self._ra_interp(0.0)) % 360.0
+            dec = float(self._dec_interp(0.0))
+        except NotMovingBodyError:
+            self._nonsidereal = False
+
+            target_coord = get_body_coordinates(
+                body_name=self.lookup_name,
+                obs_time=start_time,
+                obs_location=observatory_location,
+            )
+            ra = target_coord.ra.deg
+            dec = target_coord.dec.deg
+        return ra, dec
+
     def validate_visibility(
         self,
         start_time: Time,
@@ -653,16 +693,9 @@ class ObjectActionConfig(BaseActionConfig):
         # Try to resolve coordinates if RA/Dec are not explicitly provided
         if ra is None or dec is None:
             if self.lookup_name is not None:
-                from astra.utils import get_body_coordinates
-
-                # Resolve body position at start time
-                target_coord = get_body_coordinates(
-                    body_name=self.lookup_name,
-                    obs_time=start_time,
-                    obs_location=observatory_location,
+                ra, dec = self._resolve_lookup_name(
+                    start_time, end_time, observatory_location
                 )
-                ra = target_coord.ra.deg
-                dec = target_coord.dec.deg
 
             elif self.alt is not None and self.az is not None:
                 # Convert Alt/Az to RA/Dec for proper visibility checking over time

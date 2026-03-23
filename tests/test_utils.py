@@ -401,3 +401,26 @@ def test_nonsidereal_rates_moon_faster_than_mars(location):
     assert abs(moon_ra_rate) > abs(mars_ra_rate), (
         f"Moon RA rate ({moon_ra_rate}) should exceed Mars rate ({mars_ra_rate})"
     )
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_minor_body(location):
+    """precompute_ephemeris should resolve a JPL Horizons minor body via astroquery."""
+    obs_time = Time("2025-01-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "90000033", obs_time, duration_hours=1.0, obs_location=location
+    )
+
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+    # Spot-check a few points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -360.0 <= ra <= 360.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+    # Adjacent-second values should be smooth (no discontinuity)
+    assert abs(float(ra_interp(1)) - float(ra_interp(0))) < 0.01
+    assert abs(float(dec_interp(1)) - float(dec_interp(0))) < 0.01

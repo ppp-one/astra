@@ -2223,12 +2223,7 @@ class Observatory:
             f"starting {action.start_time} and ending {action.end_time}"
         )
 
-        obs_location = (
-            self.get_observatory_location(paired_devices["Telescope"])
-            if "Telescope" in paired_devices
-            else None
-        )
-        nonsidereal = NonSiderealManager(action, obs_location, self.logger)
+        nonsidereal = NonSiderealManager(action, self.logger)
 
         self.pre_sequence(action, paired_devices)
 
