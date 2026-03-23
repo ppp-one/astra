@@ -8,7 +8,6 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pytest
 from alpaca.camera import ImageMetadata
-from astropy.coordinates import EarthLocation
 from astropy.io import fits
 
 from astra.filename_templates import FilenameTemplates, JinjaFilenameTemplates
@@ -403,7 +402,11 @@ class TestImageHandler:
 
     def test_save_image_no_header_raises(self, temp_config):
         handler = ImageHandler(
-            header=None, image_directory=Path(temp_config.paths.images) / "neg_test"
+            header=None,
+            image_directory=Path(temp_config.paths.images) / "neg_test",
+            observing_date=datetime.datetime(
+                2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC
+            ),
         )
         image = np.array([[1, 2], [3, 4]])
         info = self.create_mock_image_info(0, 2)
@@ -558,20 +561,6 @@ class TestImageHandler:
         handler = ImageHandler(header, image_directory=None)
         assert handler.has_image_directory() is False
 
-    def test_get_default_observing_date(self):
-        # Test with default longitude
-        result = ImageHandler.get_default_observing_date()
-        assert isinstance(result, datetime.datetime)
-        # Test with custom longitude
-        result_custom = ImageHandler.get_default_observing_date(longitude=120.0)
-        assert isinstance(result_custom, datetime.datetime)
-        # Should be offset by longitude/15 hours
-        # Since it returns midnight, we check the date part
-        now = datetime.datetime.now(datetime.UTC)
-        expected_date = (now + datetime.timedelta(hours=120.0 / 15)).date()
-        assert result_custom.date() == expected_date
-        assert result_custom.time() == datetime.time.min
-
     def test_set_image_dir(self, temp_config):
         # Test user-specified directory
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -609,35 +598,49 @@ class TestImageHandler:
         assert handler.image_directory == Path("/tmp/test")
         assert handler.observing_date == datetime.datetime(2025, 1, 1)
 
-    @patch("astra.image_handler.get_sun")
-    @patch("astra.image_handler.AltAz")
-    def test_get_observing_night_date(self, mock_altaz_cls, mock_get_sun):
-        # Setup real location (Longitude 0 for simplicity)
-        location = EarthLocation(lat=0, lon=0, height=0)
+    def test_get_observing_night_date(self):
+        from astropy.coordinates import EarthLocation
 
-        # Mock sun object and its transformation
-        mock_sun = Mock()
-        mock_get_sun.return_value = mock_sun
-        mock_coord = Mock()
-        mock_sun.transform_to.return_value = mock_coord
+        lon0 = EarthLocation(lat=0, lon=0, height=0)
+        lon_plus3 = EarthLocation(lat=0, lon=45, height=0)  # UTC+3
+        lon_minus7 = EarthLocation(lat=0, lon=-105, height=0)  # UTC-7
 
-        # Test Case 1: Sun Up -> Today
-        mock_coord.alt.deg = 10.0  # Sun is up
-        obs_time = datetime.datetime(2025, 1, 1, 12, 0, 0)
-        result = ImageHandler.get_observing_night_date(obs_time, location)
-        assert result == datetime.datetime(2025, 1, 1, 0, 0, 0)
-
-        # Test Case 2: Sun Down, Morning -> Yesterday
-        mock_coord.alt.deg = -10.0  # Sun is down
-        obs_time = datetime.datetime(2025, 1, 1, 2, 0, 0)  # 2 AM
-        result = ImageHandler.get_observing_night_date(obs_time, location)
+        # --- Naive datetimes, lon=0 ---
+        # Before noon -> previous night
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2025, 1, 1, 9, 0, 0), lon0
+        )
         assert result == datetime.datetime(2024, 12, 31, 0, 0, 0)
 
-        # Test Case 3: Sun Down, Evening -> Today
-        mock_coord.alt.deg = -10.0  # Sun is down
-        obs_time = datetime.datetime(2025, 1, 1, 22, 0, 0)  # 10 PM
-        result = ImageHandler.get_observing_night_date(obs_time, location)
+        # After noon -> tonight
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2025, 1, 1, 22, 0, 0), lon0
+        )
         assert result == datetime.datetime(2025, 1, 1, 0, 0, 0)
+
+        # Exactly at local noon -> tonight (boundary)
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2025, 1, 1, 12, 0, 0), lon0
+        )
+        assert result == datetime.datetime(2025, 1, 1, 0, 0, 0)
+
+        # --- UTC+ observatory: 13:45 UTC = 16:45 local -> tonight ---
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2026, 3, 20, 13, 45, 0), lon_plus3
+        )
+        assert result == datetime.datetime(2026, 3, 20, 0, 0, 0)
+
+        # --- UTC-7 observatory: 13:45 UTC = 06:45 local -> previous night ---
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2026, 3, 20, 13, 45, 0), lon_minus7
+        )
+        assert result == datetime.datetime(2026, 3, 19, 0, 0, 0)
+
+        # --- Timezone-aware (UTC) datetime ---
+        result = ImageHandler.get_observing_night_date(
+            datetime.datetime(2025, 1, 1, 9, 0, 0, tzinfo=datetime.UTC), lon0
+        )
+        assert result == datetime.datetime(2024, 12, 31, 0, 0, 0)
 
     def test_get_file_path(self, temp_config):
         header = ObservatoryHeader.get_test_header()

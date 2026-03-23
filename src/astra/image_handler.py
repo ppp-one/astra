@@ -25,9 +25,8 @@ from typing import List, Optional, Union
 import numpy as np
 import pandas as pd
 from alpaca.camera import ImageMetadata
-from astropy.coordinates import AltAz, EarthLocation, get_sun
+from astropy.coordinates import EarthLocation
 from astropy.io import fits
-from astropy.time import Time
 from astropy.wcs.utils import WCS
 
 from astra.config import Config, ObservatoryConfig
@@ -82,7 +81,10 @@ class ImageHandler:
         self.observing_date = (
             observing_date
             if observing_date is not None
-            else self.get_default_observing_date()
+            else self.get_observing_night_date(
+                datetime.datetime.now(datetime.UTC),
+                self.header.get_observatory_location(),
+            )
         )
         self.filename_templates = (
             filename_templates
@@ -126,9 +128,7 @@ class ImageHandler:
             observatory_config.get("Misc", {}).get("filename_templates", {})
         )
         location = header.get_observatory_location()
-        observing_date = cls.get_observing_night_date(
-            datetime.datetime.now(datetime.UTC), location
-        )
+        observing_date = cls.get_observing_night_date(action.start_time, location)
 
         return cls(
             header=header,
@@ -364,13 +364,12 @@ class ImageHandler:
         observation_time: datetime.datetime, location: EarthLocation
     ) -> datetime.datetime:
         """
-        Calculate the observing night date based on the sun's position.
+        Calculate the observing night date using a local-noon boundary.
 
-        If the sun is up, the date is the current local date.
-        If the sun is down:
-
-        - If it's morning (before noon), the date is yesterday.
-        - If it's evening (after noon), the date is today.
+        All times before local noon are assigned to the previous calendar date
+        (last night), and all times from local noon onward are assigned to the
+        current calendar date (tonight). This keeps post-midnight and
+        post-sunrise calibrations in the same nightly folder until noon.
 
         Parameters:
             observation_time (datetime.datetime): The time of observation (UTC).
@@ -379,35 +378,18 @@ class ImageHandler:
         Returns:
             datetime.datetime: The observing night date (at midnight).
         """
-        # Calculate sun altitude
-        time = Time(observation_time, location=location)
-        sun = get_sun(time)
-        altaz = sun.transform_to(AltAz(obstime=time, location=location))
-
-        # Get local time
+        # Get local time from longitude
         longitude = location.lon.deg
         local_time = observation_time + datetime.timedelta(hours=longitude / 15)
 
-        if altaz.alt.deg > 0:
-            # Sun is Up -> Today
-            obs_date = local_time.date()
+        if local_time.hour < 12:
+            # Morning -> Yesterday
+            obs_date = local_time.date() - datetime.timedelta(days=1)
         else:
-            # Sun is Down
-            if local_time.hour < 12:
-                # Morning -> Yesterday
-                obs_date = local_time.date() - datetime.timedelta(days=1)
-            else:
-                # Evening -> Today
-                obs_date = local_time.date()
+            # Evening -> Today
+            obs_date = local_time.date()
 
         return datetime.datetime.combine(obs_date, datetime.time.min)
-
-    @staticmethod
-    def get_default_observing_date(longitude: float = 0):
-        dt = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-            hours=longitude / 15
-        )
-        return datetime.datetime.combine(dt.date(), datetime.time.min)
 
     def __repr__(self):
         return (
