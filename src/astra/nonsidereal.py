@@ -220,4 +220,11 @@ class NonSiderealManager:
                 f"Non-sidereal tracking rates: dRA={ra_rate:.6f} s/s, dDec={dec_rate:.6f} as/s"
             )
         except Exception as e:
-            self.logger.warning(f"Could not set non-sidereal tracking rates: {e}")
+            if not telescope.get("CanSetRightAscensionRate"):
+                self.logger.warning(
+                    "Mount does not support RightAscensionRate "
+                    "(CanSetRightAscensionRate=False). "
+                    "Non-sidereal tracking is unavailable."
+                )
+            else:
+                self.logger.warning(f"Could not set non-sidereal tracking rates: {e}")
