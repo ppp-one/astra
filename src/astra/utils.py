@@ -41,6 +41,10 @@ _SOLAR_SYSTEM_BODIES: frozenset[str] = frozenset(solar_system_ephemeris.bodies)
 _SOLAR_TO_SIDEREAL = u.Quantity(1, "day").to("sday").value
 
 
+class NotMovingBodyError(ValueError):
+    """Raised when a lookup_name cannot be resolved as a solar system or minor body."""
+
+
 class CustomImageClass(Image):
     """Enhanced image processing class with background subtraction and cleaning."""
 
@@ -373,13 +377,48 @@ def precompute_ephemeris(
     n_points = int(duration_hours * 60 / interval_minutes) + 1
     minutes = np.linspace(0, duration_hours * 60, n_points)
     times = start_time + u.Quantity(minutes, "min")
+    stop_time = start_time + duration_hours * u.hour
 
-    with solar_system_ephemeris.set("builtin"):
-        bodies = get_body(body_name, times, obs_location)
+    if body_name.lower() in _SOLAR_SYSTEM_BODIES:
+        with solar_system_ephemeris.set("builtin"):
+            bodies = get_body(body_name, times, obs_location)
+        seconds = minutes * 60.0
+    else:
+        try:
+            from astroquery.jplhorizons import Horizons
+
+            location = {
+                "lon": obs_location.lon.deg,
+                "lat": obs_location.lat.deg,
+                "elevation": obs_location.height.to(u.km).value,
+            }
+            epochs = {
+                "start": start_time.iso,
+                "stop": stop_time.iso,
+                "step": str(n_points - 1),  # Horizons returns n+1 rows for n steps
+            }
+            try:
+                obj = Horizons(id=body_name, location=location, epochs=epochs)
+                eph = obj.ephemerides()
+            except ValueError:
+                obj = Horizons(
+                    id=body_name,
+                    location=location,
+                    epochs=epochs,
+                    id_type="smallbody",
+                )
+                eph = obj.ephemerides()
+            bodies = SkyCoord(ra=eph["RA"].data * u.deg, dec=eph["DEC"].data * u.deg)
+            seconds = (Time(eph["datetime_jd"], format="jd") - start_time).to(u.s).value
+        except ConnectionError:
+            raise
+        except Exception as e:
+            raise NotMovingBodyError(
+                f"'{body_name}' could not be resolved as a solar system or minor body: {e}"
+            ) from e
 
     ra_coords = np.unwrap(bodies.ra.rad) * (180.0 / np.pi)
     dec_coords = bodies.dec.deg
-    seconds = minutes * 60.0
 
     ra_interp = interp1d(seconds, ra_coords, kind="cubic", fill_value="extrapolate")
     dec_interp = interp1d(seconds, dec_coords, kind="cubic", fill_value="extrapolate")

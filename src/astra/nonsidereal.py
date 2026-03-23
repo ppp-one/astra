@@ -28,7 +28,6 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 import astropy.units as u
-from astropy.coordinates import EarthLocation
 from astropy.time import Time
 
 import astra.utils
@@ -70,7 +69,7 @@ class NonSiderealManager:
 
     Usage::
 
-        manager = NonSiderealManager(action, obs_location, logger)
+        manager = NonSiderealManager(action, logger)
         if manager.is_active:
             manager.apply_rates(telescope)
 
@@ -85,11 +84,10 @@ class NonSiderealManager:
     def __init__(
         self,
         action: Action,
-        obs_location: EarthLocation,
         logger: logging.Logger,
     ) -> None:
         self.logger = logger
-        self._state: _NonSiderealState | None = self._setup(action, obs_location)
+        self._state: _NonSiderealState | None = self._setup(action)
 
     @property
     def is_active(self) -> bool:
@@ -165,53 +163,49 @@ class NonSiderealManager:
         except Exception as e:
             self.logger.warning(f"Could not reset non-sidereal tracking rates: {e}")
 
-    def _setup(
-        self, action: Action, obs_location: EarthLocation
-    ) -> _NonSiderealState | None:
-        """Pre-compute ephemeris. Returns None if non-sidereal tracking is not requested.
+    def _setup(self, action: Action) -> _NonSiderealState | None:
+        """Build state from pre-computed ephemeris in the action config.
 
-        Non-sidereal tracking is activated when ``nonsidereal_recenter_interval`` is
-        present and non-zero in the action config.  The body name is passed directly
-        to ``precompute_ephemeris``, which is the single place to add support for new
-        ephemeris backends (e.g. JPL Horizons for comets/asteroids).
+        Returns None if non-sidereal tracking is not active (``_nonsidereal`` is False)
+        or telescope movement is disabled.  The ephemeris interpolators are computed
+        once at schedule load time (in ``ObjectActionConfig.validate_visibility``) and
+        read here at sequence start — no repeated network or ephemeris calls at runtime.
         """
-        lname = action.action_value.get("lookup_name")
-        recenter_interval = int(
-            action.action_value.get("nonsidereal_recenter_interval", 0)
-        )
         if (
-            not lname
+            not action.action_value.get("_nonsidereal", False)
             or action.action_type == "calibration"
             or action.action_value.get("disable_telescope_movement", False)
         ):
             return None
 
-        try:
-            duration_hours = (
-                action.end_time - action.start_time
-            ).total_seconds() / 3600 + 0.5  # + 0.5 h safety margin past scheduled end
-            sequence_start_time = Time.now()
-            ra_interp, dec_interp = astra.utils.precompute_ephemeris(
-                lname, sequence_start_time, duration_hours, obs_location
+        lname = action.action_value.get("lookup_name")
+        ra_interp = action.action_value.get("_ra_interp")
+        dec_interp = action.action_value.get("_dec_interp")
+        recenter_interval = int(
+            action.action_value.get("nonsidereal_recenter_interval", 0)
+        )
+
+        if ra_interp is None or dec_interp is None:
+            self.logger.error(
+                f"Non-sidereal tracking requested for '{lname}' but ephemeris "
+                "interpolators are missing. This should never happen if the schedule "
+                "was validated correctly at load time."
             )
-            recenter_msg = (
-                f"re-centering every {recenter_interval}s"
-                if recenter_interval > 0
-                else "re-centering disabled"
-            )
-            self.logger.info(
-                f"Non-sidereal ephemeris pre-computed for '{lname}', {recenter_msg}"
-            )
-            return _NonSiderealState(
-                body_name=lname,
-                ra_interp=ra_interp,
-                dec_interp=dec_interp,
-                sequence_start_time=sequence_start_time,
-                recenter_interval=recenter_interval,
-            )
-        except Exception as e:
-            self.logger.warning(f"Could not pre-compute ephemeris for '{lname}': {e}")
             return None
+
+        recenter_msg = (
+            f"re-centering every {recenter_interval}s"
+            if recenter_interval > 0
+            else "re-centering disabled"
+        )
+        self.logger.info(f"Non-sidereal tracking active for '{lname}', {recenter_msg}")
+        return _NonSiderealState(
+            body_name=lname,
+            ra_interp=ra_interp,
+            dec_interp=dec_interp,
+            sequence_start_time=Time(action.start_time),
+            recenter_interval=recenter_interval,
+        )
 
     def _apply_rates(self, telescope: AlpacaDevice, state: _NonSiderealState) -> None:
         """Set ASCOM RightAscensionRate / DeclinationRate from the interpolated ephemeris."""
