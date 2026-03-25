@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="static/js/shared/array_utils.js"></script>
+    <script src="static/js/shared/fileTypes.js"></script>
     <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
     <link rel="stylesheet" href="static/theme.css"> <!-- Theme variables -->
         <!-- Inline fallback: ensure the explorer root uses theme variables even if external CSS ordering is different -->
@@ -119,6 +120,7 @@
                             </div>
                         </div>
                     </div>
+                    <img id="pngImage" style="display:none; max-width:100%; max-height:80vh; object-fit:contain;" alt="PNG preview" />
                     <div id="imageGridContainer" class="grid-container">
                         <canvas id="loadedImage"></canvas>
                         <canvas id="yProfile" width="100"></canvas>
@@ -256,6 +258,10 @@
             });
         }
 
+        function isSupportedPreviewFile(name) {
+            return !!window.__astraFileTypes?.isSupportedPreviewFile?.(name);
+        }
+
         async function fetchFiles(path = "") {
             const query = path ? `?path=${encodePathForQuery(path)}` : "";
             const response = await fetch(explorerUrl(`list/${query}`));
@@ -317,7 +323,7 @@
 
                 if (file.is_dir) {
                     item.onclick = () => fetchFiles(file.path);
-                } else if (file.name.toLowerCase().endsWith('.fits')) {
+                } else if (isSupportedPreviewFile(file.name)) {
                     item.onclick = () => openFitsModal(file.path);
                 } else {
                     item.onclick = () => alert(`Selected: ${file.path}`);
@@ -421,23 +427,32 @@
             modal.setAttribute('aria-hidden', 'false');
             applyMobileLayoutOverride();
             updatePrevNextState(filePath);
-            
-            // Show spinner immediately before loading starts
+
             if (spinner) {
                 spinner.style.display = 'grid';
                 spinner.setAttribute('aria-hidden', 'false');
             }
-            
-            const previewPromise = loadPreview(filePath);
-            if (previewPromise && typeof previewPromise.then === 'function') {
-                previewPromise.then(() => {
+
+            if (typeof window.openViewerFile !== 'function') {
+                if (spinner) {
+                    spinner.style.display = 'none';
+                    spinner.setAttribute('aria-hidden', 'true');
+                }
+                console.warn('Viewer module is still initializing; please retry in a moment.');
+                return;
+            }
+            const openPromise = window.openViewerFile(filePath);
+
+            if (openPromise && typeof openPromise.then === 'function') {
+                openPromise.then(() => {
                     if (window.__astraRenderer && typeof window.__astraRenderer.forceResize === 'function') {
                         window.__astraRenderer.forceResize();
                     }
                 }).catch(() => {
-                    /* swallow; loadPreview already reports errors */
+                    /* swallow; viewer module reports errors */
                 });
             }
+
             const focusable = modal.querySelector('button, select, input');
             if (focusable) {
                 focusable.focus({ preventScroll: true });

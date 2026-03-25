@@ -35,6 +35,11 @@ let stateRef = null;
 let resizeDebounceTimer = null;
 let resizePending = false;
 let lastMouseEvent = null;
+// `renderToken` and `renderDisabled` coordinate cancellation of in-flight
+// render operations. When switching files (for example FITS -> PNG), the
+// token increments and pending stale renders are ignored.
+let renderToken = 0;
+let renderDisabled = false;
 
 let stretchSettings = {
     min: null,
@@ -85,14 +90,22 @@ export function initRenderer(domRefs, state) {
     }
 
     return {
-        async renderFromArrayBuffer(arrayBuffer, { source = 'preview' } = {}) {
+        async renderFromArrayBuffer(arrayBuffer) {
+            if (renderDisabled) return;
             clearMessage();
             toggleSpinner(true);
             try {
-                await renderArrayBuffer(arrayBuffer, { source });
+                await renderArrayBuffer(arrayBuffer);
             } finally {
                 toggleSpinner(false);
             }
+        },
+        cancelPending() {
+            renderDisabled = true;
+            renderToken += 1;
+        },
+        enableRender() {
+            renderDisabled = false;
         },
         updateStretchSettings(partial) {
             updateStretch(partial);
@@ -125,7 +138,8 @@ function initWorker() {
     }
 }
 
-async function renderArrayBuffer(arrayBuffer, { source }) {
+async function renderArrayBuffer(arrayBuffer) {
+    const token = renderToken;
     mainContainer.style.display = 'grid';
 
     // Explicitly clear canvas to remove previous image immediately
@@ -136,6 +150,10 @@ async function renderArrayBuffer(arrayBuffer, { source }) {
     const parsed = fitsWorker
         ? await parseWithWorker(arrayBuffer)
         : parseOnMainThread(arrayBuffer);
+
+    // Abort if a newer render was requested while we were parsing (e.g. user
+    // switched to a PNG file before this FITS parse completed).
+    if (token !== renderToken) return;
 
     imageWidth = parsed.width;
     imageHeight = parsed.height;

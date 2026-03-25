@@ -363,6 +363,14 @@ input#searchInput {
     flex: 1;
 }
 
+/* PNG mode: hide stretch/log controls that apply only to FITS rendering. */
+.viewer-toolbar.png-mode .stretch-group,
+.viewer-toolbar.png-mode .toolbar-divider,
+.viewer-toolbar.png-mode #logToggleButton,
+.viewer-toolbar.png-mode #stretchPanelToggle {
+    display: none !important;
+}
+
 .stretch-sliders {
     display: flex;
     gap: 16px;

@@ -1,4 +1,5 @@
 import { ViewerMode } from './state.js';
+import { isPngFile } from './fileTypes.js';
 
 export function setupInteractions({
     state,
@@ -51,7 +52,7 @@ export function setupInteractions({
         if (mode === ViewerMode.PREVIEW_READY) {
             loadFullFitsButton.disabled = false;
             // icon-only button; title explains action
-            loadFullFitsButton.innerHTML = '<i class="bi bi-grid-1x2" aria-hidden="true"></i>';
+            loadFullFitsButton.innerHTML = '<i class="bi bi-badge-hd" aria-hidden="true"></i>';
             loadFullFitsButton.title = 'Load full FITS file';
         } else if (mode === ViewerMode.FULL_LOADING) {
             loadFullFitsButton.disabled = true;
@@ -62,9 +63,17 @@ export function setupInteractions({
             loadFullFitsButton.innerHTML = '<i class="bi bi-arrow-clockwise" aria-hidden="true"></i>';
             loadFullFitsButton.title = 'Reload full FITS file';
         } else if (mode === ViewerMode.ERROR) {
-            loadFullFitsButton.disabled = false;
+            const currentPath = state.getFile()?.filePath || '';
+            const isPng = isPngFile(currentPath);
+            loadFullFitsButton.disabled = isPng;
             loadFullFitsButton.innerHTML = '<i class="bi bi-exclamation-triangle" aria-hidden="true"></i>';
-            loadFullFitsButton.title = 'Retry loading full FITS';
+            loadFullFitsButton.title = isPng
+                ? 'Full FITS load is only available for FITS files'
+                : 'Retry loading full FITS';
+        } else if (mode === ViewerMode.PNG_LOADING || mode === ViewerMode.PNG_READY || mode === ViewerMode.IDLE) {
+            loadFullFitsButton.disabled = true;
+            loadFullFitsButton.innerHTML = '<i class="bi bi-badge-hd" aria-hidden="true"></i>';
+            loadFullFitsButton.title = 'Full FITS load is only available for FITS files';
         }
     });
 

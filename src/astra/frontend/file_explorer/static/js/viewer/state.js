@@ -1,5 +1,7 @@
 export const ViewerMode = Object.freeze({
     IDLE: 'idle',
+    PNG_LOADING: 'png-loading',
+    PNG_READY: 'png-ready',
     PREVIEW_LOADING: 'preview-loading',
     PREVIEW_READY: 'preview-ready',
     FULL_LOADING: 'full-loading',
