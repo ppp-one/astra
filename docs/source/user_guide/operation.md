@@ -66,6 +66,14 @@ Run the [autofocus action](scheduling.md#autofocus-action). Ensure the `filter` 
 
 Upon successful completion, the optimized focus position is updated in the configuration. Autofocus images and V-curve plot are saved to the `images/autofocus` directory.
 
+```{admonition} Focusing Tip
+:class: tip
+
+**Coarse Search (e.g., `fft`):** Best for broad ranges where stars appear as blurry "donuts." These non-parametric operators measure overall frame sharpness without needing to identify individual stars, making them nearly impossible to "confuse" with distorted optics.
+
+**Fine Tuning (e.g., `HFR`):** Best for precision near the focus peak. These algorithms fit a "V-curve" to the diameters of detected stars. They provide great accuracy once stars are point-like, but will fail during wide searches if the stars are too bloated to be recognized by the star-finder.
+```
+
 <!-- **3. Optional: Pointing model**
 Once focused, build a pointing model. Each pointing is plate solved and sends SyncToCoordinates commands to the mount. The receipt of these commands can be used to build a pointing model in the mount control software. _Astra_ itself does not build or maintain a pointing model.
 
