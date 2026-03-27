@@ -562,6 +562,7 @@ class Autofocuser:
         self.paired_devices = paired_devices
         self.action_value = action.action_value
         self.autofocuser = autofocuser
+        self.error_message: str | None = None
         self.success = success
         self.config: AutofocusConfig = action.action_value  # type: ignore
         self._run_timestamp: str | None = None
@@ -1218,11 +1219,16 @@ class Autofocuser:
         return field_of_view
 
     def determine_default_field_of_view(self, paired_devices):
-        field_of_view = self.calculate_field_of_view(paired_devices)
-        fov_width = float(field_of_view[0])
-        fov_height = float(field_of_view[1])
+        try:
+            field_of_view = self.calculate_field_of_view(paired_devices)
+            fov_width = float(field_of_view[0])
+            fov_height = float(field_of_view[1])
 
-        self.observatory.logger.info(
-            f"Determined field of view width={fov_width}, height={fov_height}."
-        )
-        return fov_width, fov_height
+            self.observatory.logger.info(
+                f"Determined field of view width={fov_width}, height={fov_height}."
+            )
+            return fov_width, fov_height
+        except Exception as e:
+            raise ValueError(
+                f"Error determining default field of view from paired devices: {str(e)}"
+            )

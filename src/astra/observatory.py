@@ -2861,11 +2861,17 @@ class Observatory:
             if not self.check_conditions(action=action):
                 return False
 
-            autofocuser = Autofocuser(
-                observatory=self,
-                action=action,
-                paired_devices=paired_devices,
-            )
+            try:
+                autofocuser = Autofocuser(
+                    observatory=self,
+                    action=action,
+                    paired_devices=paired_devices,
+                )
+            except Exception as e:
+                self.logger.warning(
+                    f"Autofocuser initialization failed for {action.device_name}: {e}"
+                )
+                return False
             autofocuser.determine_autofocus_calibration_field()
             autofocuser.slew_to_calibration_field()
             autofocuser.setup()
