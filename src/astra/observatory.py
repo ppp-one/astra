@@ -67,6 +67,7 @@ from astra.logger import (
 from astra.paired_devices import PairedDevices
 from astra.pointer import calculate_pointing_correction_from_fits
 from astra.queue_manager import QueueManager
+from astra.nonsidereal import NonSiderealManager
 from astra.safety_monitor import SafetyMonitor
 from astra.scheduler import Action, BaseActionConfig, ScheduleManager
 from astra.thread_manager import ThreadManager
@@ -2222,7 +2223,14 @@ class Observatory:
             f"starting {action.start_time} and ending {action.end_time}"
         )
 
+        nonsidereal = NonSiderealManager(action, self.logger)
+
         self.pre_sequence(action, paired_devices)
+
+        # Set initial non-sidereal tracking rates right after the slew completes
+        if nonsidereal.is_active and "Telescope" in paired_devices:
+            nonsidereal.apply_rates(paired_devices.telescope)
+
         action_value = action.action_value
 
         camera = paired_devices.camera
@@ -2244,6 +2252,11 @@ class Observatory:
         pointing_complete = False
         pointing_attempts = 0
         guiding = False
+        if nonsidereal.is_active and action_value.get("guiding"):
+            self.logger.warning(
+                "Guiding is configured but will be disabled: incompatible with non-sidereal tracking"
+            )
+            action_value = {**action_value, "guiding": False}
         wcs_solve = None
 
         # Check if automated meridian flip is enabled in config
@@ -2261,121 +2274,140 @@ class Observatory:
 
         last_flip_check_time = 0
         sequence_counter = 0
-        for i, exptime in enumerate(exptime_list):
-            if not self.check_conditions(action):
-                break
-
-            n_exposures = n_exposures_list[i]
-
-            for exposure in range(n_exposures):
-                # Check for meridian flip every minute
-                if meridian_flip_enabled:
-                    current_time = time.time()
-                    if (
-                        current_time - last_flip_check_time > 60
-                    ) and self.check_conditions(action):
-                        last_flip_check_time = current_time
-                        if self._check_and_perform_meridian_flip(
-                            action, paired_devices, guiding, exptime
-                        ):
-                            guiding = False
-                            pointing_complete = False
-
-                if action_value.get("n"):
-                    log_option = f"{exposure + 1}/{n_exposures}"
-                else:
-                    log_option = None
-
+        try:
+            for i, exptime in enumerate(exptime_list):
                 if not self.check_conditions(action):
                     break
 
-                success, filepath = self.perform_exposure(
-                    camera,
-                    exptime=exptime,
-                    maxadu=maxadu,
-                    action=action,
-                    log_option=log_option,
-                    wcs=wcs_solve,
-                    sequence_counter=sequence_counter,
-                )
-                sequence_counter += 1
+                n_exposures = n_exposures_list[i]
 
-                if not success:
-                    break
+                for exposure in range(n_exposures):
+                    # Check for meridian flip every minute
+                    if meridian_flip_enabled:
+                        current_time = time.time()
+                        if (
+                            current_time - last_flip_check_time > 60
+                        ) and self.check_conditions(action):
+                            last_flip_check_time = current_time
+                            if self._check_and_perform_meridian_flip(
+                                action, paired_devices, guiding, exptime
+                            ):
+                                guiding = False
+                                pointing_complete = False
+                                if (
+                                    nonsidereal.is_active
+                                    and "Telescope" in paired_devices
+                                ):
+                                    nonsidereal.apply_rates(paired_devices.telescope)
 
-                # pointing correction if not already done
-                if action_value.get("pointing") and pointing_complete is False:
-                    if filepath is None:
-                        self.logger.error(
-                            "No image file path returned from exposure, "
-                            "cannot do pointing correction"
-                        )
+                    # Non-sidereal re-centering
+                    if nonsidereal.is_active and "Telescope" in paired_devices:
+                        if nonsidereal.should_recenter():
+                            if guiding:
+                                self.guider_manager.stop_guider(
+                                    paired_devices["Telescope"],
+                                    thread_manager=self.thread_manager,
+                                )
+                            if nonsidereal.recenter(paired_devices, self.wait_for_slew):
+                                guiding = False
+
+                    if action_value.get("n"):
+                        log_option = f"{exposure + 1}/{n_exposures}"
+                    else:
+                        log_option = None
+
+                    if not self.check_conditions(action):
                         break
-                    pointing_complete, wcs_solve = self.pointing_correction(
-                        action,
-                        filepath,
-                        paired_devices,
-                        sync=False,
-                        slew=True,
+
+                    success, filepath = self.perform_exposure(
+                        camera,
+                        exptime=exptime,
+                        maxadu=maxadu,
+                        action=action,
+                        log_option=log_option,
+                        wcs=wcs_solve,
+                        sequence_counter=sequence_counter,
                     )
+                    sequence_counter += 1
 
-                    telescope_settle_factor = paired_devices.get_device_config(
-                        "Telescope"
-                    ).get("settle_factor", 0.0)
-                    time.sleep(exptime * telescope_settle_factor)
+                    if not success:
+                        break
 
-                    pointing_attempts += 1
-
-                    if wcs_solve is not None:
-                        with fits.open(filepath, mode="update") as hdul:
-                            hdul[0].header.update(wcs_solve.to_header())  # type: ignore
-                            hdul.flush()
-
-                    if pointing_complete is False:
-                        wcs_solve = (
-                            None  # to not contaminate the next image if pointing fails
+                    # pointing correction if not already done
+                    if action_value.get("pointing") and pointing_complete is False:
+                        if filepath is None:
+                            self.logger.error(
+                                "No image file path returned from exposure, "
+                                "cannot do pointing correction"
+                            )
+                            break
+                        pointing_complete, wcs_solve = self.pointing_correction(
+                            action,
+                            filepath,
+                            paired_devices,
+                            sync=False,
+                            slew=True,
                         )
 
-                    if pointing_attempts > 3 and pointing_complete is False:
-                        self.logger.warning(
-                            f"Pointing correction for {action_value['object']} with "
-                            f"{action.device_name} failed after {pointing_attempts} attempts"
-                        )
+                        telescope_settle_factor = paired_devices.get_device_config(
+                            "Telescope"
+                        ).get("settle_factor", 0.0)
+                        time.sleep(exptime * telescope_settle_factor)
+
+                        pointing_attempts += 1
+
+                        if wcs_solve is not None:
+                            with fits.open(filepath, mode="update") as hdul:
+                                hdul[0].header.update(wcs_solve.to_header())  # type: ignore
+                                hdul.flush()
+
+                        if pointing_complete is False:
+                            wcs_solve = None  # to not contaminate the next image if pointing fails
+
+                        if pointing_attempts > 3 and pointing_complete is False:
+                            self.logger.warning(
+                                f"Pointing correction for {action_value['object']} with "
+                                f"{action.device_name} failed after {pointing_attempts} attempts"
+                            )
+                            pointing_complete = True
+                    else:
                         pointing_complete = True
-                else:
-                    pointing_complete = True
 
-                # initialise guiding once pointing correction is complete
-                if (
-                    action_value.get("guiding")
-                    and guiding is False
-                    and pointing_complete is True
-                ):
-                    guiding = self.guider_manager.start_guider(
-                        image_handler=self.get_image_handler(camera.device_name),
-                        paired_devices=paired_devices,
-                        thread_manager=self.thread_manager,
-                        reset_guiding_reference=action_value.get(
-                            "reset_guiding_reference", True
-                        ),
-                    )
+                    # initialise guiding once pointing correction is complete
+                    if (
+                        action_value.get("guiding")
+                        and guiding is False
+                        and pointing_complete is True
+                    ):
+                        guiding = self.guider_manager.start_guider(
+                            image_handler=self.get_image_handler(camera.device_name),
+                            paired_devices=paired_devices,
+                            thread_manager=self.thread_manager,
+                            reset_guiding_reference=action_value.get(
+                                "reset_guiding_reference", True
+                            ),
+                        )
+        finally:
+            # stop guiding at end of sequence
+            if action_value.get("guiding", False):
+                self.guider_manager.stop_guider(
+                    paired_devices["Telescope"], thread_manager=self.thread_manager
+                )
 
-        # stop guiding at end of sequence
-        if action_value.get("guiding", False):
-            self.guider_manager.stop_guider(
-                paired_devices["Telescope"], thread_manager=self.thread_manager
-            )
+            # Reset non-sidereal tracking rates before stopping tracking
+            if "Telescope" in paired_devices:
+                nonsidereal.reset_rates(paired_devices.telescope)
 
-        # stop telescope tracking at end of sequence
-        if "Telescope" in paired_devices:
-            self.execute_and_monitor_device_task(
-                "Telescope",
-                "Tracking",
-                False,
-                "Tracking",
-                device_name=paired_devices["Telescope"],
-                log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
-            )
+            # stop telescope tracking at end of sequence
+            if "Telescope" in paired_devices:
+                self.execute_and_monitor_device_task(
+                    "Telescope",
+                    "Tracking",
+                    False,
+                    "Tracking",
+                    device_name=paired_devices["Telescope"],
+                    log_message=f"Stopping telescope {paired_devices['Telescope']} tracking",
+                )
 
     def pointing_model_sequence(
         self, action: Action, paired_devices: PairedDevices
