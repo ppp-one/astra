@@ -309,16 +309,16 @@ wheels = [
 
 [[package]]
 name = "cabaret"
-version = "0.4.5"
+version = "0.4.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
     { name = "astroquery" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/0c/b94ab530441e1e39e986cb8174236f85139a2a7f94a621732c7ea435d6f2/cabaret-0.4.5.tar.gz", hash = "sha256:b1c8d2353c40882c9653588b25a713f7f9aebadff939c251e350f59d9ac62dbb", size = 502276, upload-time = "2025-12-20T17:54:56.603Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/eb/8c/a9ed2df3bf1548796c992f720d4ee0d2567114fe15cbbc1c1cc14c88efef/cabaret-0.4.7.tar.gz", hash = "sha256:9fad80666e267c5d14d3b572299108ab9a9fbd8b8cfe88ca5a502294bc8ce943", size = 634114, upload-time = "2026-04-16T14:22:04.98Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/11/d7e35e1d7b43cd8490b1bd4684995afafd800dedcba29e69d6001efaefaa/cabaret-0.4.5-py3-none-any.whl", hash = "sha256:096d3c1ee24049b6845a3ace096bcabaa4e7d676f1bee700fec3fa2874ce9826", size = 28441, upload-time = "2025-12-20T17:54:55.076Z" },
+    { url = "https://files.pythonhosted.org/packages/20/e8/19084cf42e7c98dc239fdd6be75355ca6d0b8a56bb0ee2719b472ec09f3a/cabaret-0.4.7-py3-none-any.whl", hash = "sha256:ffe9d46520efa2272ab579c86bd3b276f0279b3fd9b01f8f0165bac2b3d7107d", size = 29609, upload-time = "2026-04-16T14:22:03.784Z" },
 ]
 
 [[package]]
