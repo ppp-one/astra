@@ -19,6 +19,7 @@ from astropy.coordinates import AltAz, Angle, EarthLocation, SkyCoord
 from astropy.time import Time
 
 from astra.config import Config, ObservatoryConfig
+from astra.utils import NotMovingBodyError, get_body_coordinates, precompute_ephemeris
 
 
 @dataclass
@@ -486,6 +487,37 @@ class ObjectActionConfig(BaseActionConfig):
         3. Perform pointing correction if ``pointing=true``
         4. Start autoguiding if ``guiding=true``
         5. Stop exposures, guiding, and tracking at completion
+
+    Non-sidereal tracking:
+        Enables differential tracking for moving targets by providing a
+        ``lookup_name`` instead of static ``ra``/``dec``, combined with a non-zero
+        ``nonsidereal_recenter_interval``. The interval controls how often the
+        telescope re-slews to the updated ephemeris position (in seconds).
+        Autoguiding is incompatible with non-sidereal tracking and will be disabled.
+        If using TLE's for Earth-orbiting objects, provide the ``tle`` and use 
+        "TLE" as the ``lookup_name``.
+
+        Currently supports astropy built-in bodies (planets, Moon, Sun) and small 
+        bodies (asteroids, comets) that have ephemerides in JPL Horizons, and 
+        Earth-orbiting objects through TLEs.
+
+        **Schedule example for tracking Saturn**::
+
+            {
+                "device_name": "camera_name",
+                "action_type": "object",
+                "action_value": {
+                    "object": "Saturn",
+                    "lookup_name": "saturn",
+                    "exptime": 30,
+                    "filter": "Clear",
+                    "nonsidereal_recenter_interval": 300,
+                    "nonsidereal_start_lead_time_seconds": 60,
+                },
+                "start_time":"2025-01-01 00:00:00.000",
+                "end_time":"2025-01-01 01:00:00.000",
+            }
+
     """
 
     object: str = field(metadata={"required": True})
@@ -495,6 +527,7 @@ class ObjectActionConfig(BaseActionConfig):
     alt: Optional[float] = None
     az: Optional[float] = None
     lookup_name: Optional[str] = None
+    tle: Optional[str] = None
     filter: Optional[str] = None
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
@@ -510,6 +543,13 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+    nonsidereal_recenter_interval: int = 0
+    nonsidereal_start_lead_time_seconds: float = 60.0
+    _nonsidereal: bool = field(default=False, init=False, repr=False)
+    _ra_interp: Any = field(default=None, init=False, repr=False)
+    _dec_interp: Any = field(default=None, init=False, repr=False)
+    _ra_rate_interp: Any = field(default=None, init=False, repr=False)
+    _dec_rate_interp: Any = field(default=None, init=False, repr=False)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -519,11 +559,14 @@ class ObjectActionConfig(BaseActionConfig):
         "alt": "Altitude coordinate when issuing Alt/Az pointings.",
         "az": "Azimuth coordinate when issuing Alt/Az pointings.",
         "lookup_name": "Instead of specifying ra/dec or alt/az, use SIMBAD/Astropy to look up coordinates for celestial body to observe (e.g., 'mars', 'M31').",
+        "tle": "TLE data for Earth-orbiting objects",
         "filter": "Filter name to load before imaging.",
         "focus_shift": "Focus offset relative to the stored best focus.",
         "focus_position": "Absolute focus position override.",
         "n": "Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.",
-        "guiding": "Start autoguiding with Donuts before imaging.",
+        "guiding": "Start autoguiding with Donuts before imaging. Should be False for solar system objects using non-sidereal tracking, as the star field drifts relative to the guide reference.",
+        "nonsidereal_recenter_interval": "For solar system objects (resolved via lookup_name): re-slew to the updated ephemeris position and refresh tracking rates every N seconds. Set to 0 to disable. Ignored for non-solar-system targets.",
+        "nonsidereal_start_lead_time_seconds": "For non-sidereal targets: initial lead time in seconds used to pre-point before sequence start. The telescope slews to the predicted target position at this offset, waits until the offset time is reached, then starts imaging and applies tracking rates. Set to 0 to start immediately.",
         "pointing": "Perform pointing correction with twirl before imaging.",
         "bin": "Camera binning factor.",
         "dir": "Base directory path for saving images.",
@@ -592,6 +635,61 @@ class ObjectActionConfig(BaseActionConfig):
         # Subframe validation
         self.validate_subframe()
 
+        if self.nonsidereal_start_lead_time_seconds < 0:
+            raise ValueError(
+                "nonsidereal_start_lead_time_seconds must be >= 0, "
+                f"got {self.nonsidereal_start_lead_time_seconds}"
+            )
+
+    def _resolve_lookup_name(
+        self,
+        start_time: Time,
+        end_time: Time,
+        observatory_location: EarthLocation,
+    ) -> tuple[float, float]:
+        """Resolve lookup_name to (ra_deg, dec_deg) at start_time.
+
+        For solar system bodies and minor bodies (comets/asteroids), pre-computes
+        the ephemeris interpolators and sets _nonsidereal=True as a side effect.
+        For fixed targets (stars, DSOs), falls back to a name resolver and sets
+        _nonsidereal=False.
+
+        Returns:
+            (ra_deg, dec_deg) at start_time.
+        """
+        duration_hours = (end_time - start_time).to_value("hr") + 0.5
+        try:
+            (
+                self._ra_interp,
+                self._dec_interp,
+                self._ra_rate_interp,
+                self._dec_rate_interp,
+            ) = precompute_ephemeris(
+                self.lookup_name,
+                start_time,
+                duration_hours,
+                observatory_location,
+                self.nonsidereal_recenter_interval / 60,
+                self.tle,
+                return_rates=True,
+            )
+            self._nonsidereal = True
+            ra = float(self._ra_interp(0.0)) % 360.0
+            dec = float(self._dec_interp(0.0))
+        except NotMovingBodyError:
+            self._nonsidereal = False
+            self._ra_rate_interp = None
+            self._dec_rate_interp = None
+
+            target_coord = get_body_coordinates(
+                body_name=self.lookup_name,
+                obs_time=start_time,
+                obs_location=observatory_location,
+            )
+            ra = target_coord.ra.deg
+            dec = target_coord.dec.deg
+        return ra, dec
+
     def validate_visibility(
         self,
         start_time: Time,
@@ -624,16 +722,9 @@ class ObjectActionConfig(BaseActionConfig):
         # Try to resolve coordinates if RA/Dec are not explicitly provided
         if ra is None or dec is None:
             if self.lookup_name is not None:
-                from astra.utils import get_body_coordinates
-
-                # Resolve body position at start time
-                target_coord = get_body_coordinates(
-                    body_name=self.lookup_name,
-                    obs_time=start_time,
-                    obs_location=observatory_location,
+                ra, dec = self._resolve_lookup_name(
+                    start_time, end_time, observatory_location
                 )
-                ra = target_coord.ra.deg
-                dec = target_coord.dec.deg
 
             elif self.alt is not None and self.az is not None:
                 # Convert Alt/Az to RA/Dec for proper visibility checking over time

@@ -25,8 +25,9 @@ from typing import List, Optional, Union
 import numpy as np
 import pandas as pd
 from alpaca.camera import ImageMetadata
-from astropy.coordinates import EarthLocation
+from astropy.coordinates import AltAz, EarthLocation, get_sun
 from astropy.io import fits
+from astropy.time import Time
 from astropy.wcs.utils import WCS
 
 from astra.config import Config, ObservatoryConfig
@@ -78,20 +79,11 @@ class ImageHandler:
         self.last_image_path: Path | None = None
         self.last_image_timestamp: datetime.datetime | None = None
 
-        if observing_date is not None:
-            self.observing_date = observing_date
-        else:
-            try:
-                location = self.header.get_observatory_location()
-            except KeyError as e:
-                raise ValueError(
-                    f"Cannot derive observing_date: header is missing location key {e}. "
-                    "Provide LAT-OBS, LONG-OBS, and ALT-OBS in the header, "
-                    "or pass observing_date explicitly."
-                ) from e
-            self.observing_date = self.get_observing_night_date(
-                datetime.datetime.now(datetime.UTC), location
-            )
+        self.observing_date = (
+            observing_date
+            if observing_date is not None
+            else self.get_default_observing_date()
+        )
         self.filename_templates = (
             filename_templates
             if isinstance(filename_templates, FilenameTemplates)
@@ -133,15 +125,10 @@ class ImageHandler:
         filename_templates = FilenameTemplates.from_dict(
             observatory_config.get("Misc", {}).get("filename_templates", {})
         )
-        try:
-            location = header.get_observatory_location()
-        except KeyError as e:
-            raise ValueError(
-                f"Cannot derive observing_date: header is missing location key {e}. "
-                "Ensure LAT-OBS, LONG-OBS, and ALT-OBS are present in the FITS "
-                "header config."
-            ) from e
-        observing_date = cls.get_observing_night_date(action.start_time, location)
+        location = header.get_observatory_location()
+        observing_date = cls.get_observing_night_date(
+            datetime.datetime.now(datetime.UTC), location
+        )
 
         return cls(
             header=header,
@@ -174,20 +161,28 @@ class ImageHandler:
             image (list[int] | np.ndarray): Raw image data to save.
             image_info (ImageMetadata): Image metadata for data type determination.
             maxadu (int): Maximum ADU value for the image.
+            header (fits.Header): FITS header containing FILTER, IMAGETYP, OBJECT, EXPTIME.
             device_name (str): Camera/device name for filename generation.
             exposure_start_datetime (datetime): UTC datetime when exposure started.
-            sequence_counter (int): Sequence number for filename generation. Defaults to 0.
-            header (ObservatoryHeader | None): FITS header to use. Defaults to self.header.
-            image_directory (str | Path | None): Directory to save the image. Relative paths
-                are resolved under the configured images root. Defaults to self.image_directory.
-            wcs (WCS | None): World Coordinate System information. Defaults to None.
+            image_directory (str): Subdirectory name within the images directory.
+            wcs (WCS, optional): World Coordinate System information. Defaults to None.
 
         Returns:
             Path: Path to the saved FITS file.
+
+        Note:
+            Filename formats:
+                - Light frames: "{device}_{filter}_{object}_{exptime}_{timestamp}.fits"
+                - Bias/Dark: "{device}_{imagetype}_{exptime}_{timestamp}.fits"
+                - Other: "{device}_{filter}_{imagetype}_{exptime}_{timestamp}.fits"
+
+            Headers automatically updated with DATE-OBS, DATE, and WCS (if provided).
         """
         image_directory_path = self._resolve_image_directory(image_directory)
 
         if header is None:
+            if self.header is None:
+                raise ValueError("No FITS header specified to save image.")
             header = self.header
 
         image_array = self._transform_image_to_array(
@@ -280,17 +275,26 @@ class ImageHandler:
         user_specified_dir: Optional[str] = None,
     ) -> Path | None:
         """
-        Resolve the directory for storing images.
+        Create a directory for storing astronomical images.
 
-        Returns either the user-specified directory (creating it if needed) or
-        the default images directory from the observatory config.
+        Creates a directory for image storage using either a user-specified path
+        or an auto-generated date-based path. The auto-generated path uses the
+        local date calculated from the schedule start time and site longitude.
 
         Parameters:
+            schedule_start_time (datetime, optional): Start time of the observing schedule.
+                Defaults to current UTC time.
+            site_long (float, optional): Site longitude in degrees for local time conversion.
+                Defaults to 0.
             user_specified_dir (str | None, optional): Custom directory path. If provided,
-                the directory is created and returned. Defaults to None.
+                this overrides auto-generation. Defaults to None.
 
         Returns:
-            Path: Path to the image directory.
+            Path: Path object pointing to the created directory.
+
+        Note:
+            Auto-generated directory format is YYYYMMDD based on local date calculated
+            as schedule_start_time + (site_long / 15) hours.
         """
         if user_specified_dir:
             image_directory = Path(user_specified_dir)
@@ -360,12 +364,13 @@ class ImageHandler:
         observation_time: datetime.datetime, location: EarthLocation
     ) -> datetime.datetime:
         """
-        Calculate the observing night date using a local-noon boundary.
+        Calculate the observing night date based on the sun's position.
 
-        All times before local noon are assigned to the previous calendar date
-        (last night), and all times from local noon onward are assigned to the
-        current calendar date (tonight). This keeps post-midnight and
-        post-sunrise calibrations in the same nightly folder until noon.
+        If the sun is up, the date is the current local date.
+        If the sun is down:
+
+        - If it's morning (before noon), the date is yesterday.
+        - If it's evening (after noon), the date is today.
 
         Parameters:
             observation_time (datetime.datetime): The time of observation (UTC).
@@ -374,23 +379,40 @@ class ImageHandler:
         Returns:
             datetime.datetime: The observing night date (at midnight).
         """
-        # Get local time from longitude
+        # Calculate sun altitude
+        time = Time(observation_time, location=location)
+        sun = get_sun(time)
+        altaz = sun.transform_to(AltAz(obstime=time, location=location))
+
+        # Get local time
         longitude = location.lon.deg
         local_time = observation_time + datetime.timedelta(hours=longitude / 15)
 
-        if local_time.hour < 12:
-            # Morning -> Yesterday
-            obs_date = local_time.date() - datetime.timedelta(days=1)
-        else:
-            # Evening -> Today
+        if altaz.alt.deg > 0:
+            # Sun is Up -> Today
             obs_date = local_time.date()
+        else:
+            # Sun is Down
+            if local_time.hour < 12:
+                # Morning -> Yesterday
+                obs_date = local_time.date() - datetime.timedelta(days=1)
+            else:
+                # Evening -> Today
+                obs_date = local_time.date()
 
         return datetime.datetime.combine(obs_date, datetime.time.min)
+
+    @staticmethod
+    def get_default_observing_date(longitude: float = 0):
+        dt = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
+            hours=longitude / 15
+        )
+        return datetime.datetime.combine(dt.date(), datetime.time.min)
 
     def __repr__(self):
         return (
             f"ImageHandler(header={dict(self.header)}, "
-            f"image_directory={self._image_directory}, "
+            f"image_directory={self.image_directory}, "
             f"last_image_path={self.last_image_path}, "
             f"last_image_timestamp={self.last_image_timestamp}, "
             f"filename_templates={self.filename_templates})"

@@ -13,13 +13,12 @@ logger = logging.getLogger("astra")
 
 ALLOWED_EXTENSIONS = {
     ".fits",
-    ".fit",
-    ".fts",
-    ".png",
+    # ".png",
+    # ".jpg",
 }  # Set allowed file types (or None for all)
 
 # Maximum number of items to return from a single directory listing. Prevents
-# expensive scans that could cause long blocking I/O.
+# expensive scans that could be used for DoS or cause long blocking I/O.
 LIST_MAX_ITEMS = 1_000_000
 
 # Static files (UI assets) directory used by both the app factory and router.
@@ -239,9 +238,7 @@ def create_app(
     return app
 
 
-def create_router(
-    fits_dir: Union[Path, Callable[[], Path]], *, fits_url: Optional[str] = "/fits"
-) -> APIRouter:
+def create_router(fits_dir: Union[Path, Callable[[], Path]]) -> APIRouter:
     """Return a router exposing the FITS explorer endpoints for ``fits_dir``.
 
     The router is the single source of truth for all HTTP behaviour so it can be
@@ -249,12 +246,6 @@ def create_router(
     """
 
     router = APIRouter()
-
-    files_base = fits_url or "/fits"
-    if not files_base.startswith("/"):
-        files_base = "/" + files_base
-    if not files_base.endswith("/"):
-        files_base = files_base + "/"
 
     def get_fits_dir() -> Path:
         return fits_dir() if callable(fits_dir) else fits_dir
@@ -289,11 +280,7 @@ def create_router(
         # Also inject a small inline script that sets window.__ASTRA_FITS_BASE_PATH
         # so the embedded case (fetch + innerHTML) has the correct base for JS
         # even when the browser's window.location.pathname is different.
-        injected = (
-            f'<base href="{base}">\n'
-            f'    <script>window.__ASTRA_FITS_BASE_PATH = "{base}"; '
-            f'window.__ASTRA_FITS_FILES_BASE_PATH = "{files_base}";</script>'
-        )
+        injected = f'<base href="{base}">\n    <script>window.__ASTRA_FITS_BASE_PATH = "{base}";</script>'
         if "<base" in html:
             # crude replace to ensure base and script match the request path
             import re
@@ -546,7 +533,7 @@ def include_file_explorer(
             # include step; log and continue.
             logger.exception("Failed to add GZipMiddleware")
 
-    app.include_router(create_router(fits_dir, fits_url=fits_url), prefix=prefix)
+    app.include_router(create_router(fits_dir), prefix=prefix)
 
 
 def parse_arguments():

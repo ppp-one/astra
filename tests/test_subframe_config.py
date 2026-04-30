@@ -134,6 +134,25 @@ class TestSubframeValidation:
                 subframe_height=100,
             )
 
+    def test_nonsidereal_start_lead_time_defaults_to_60_seconds(self):
+        """Test default lead wait used for non-sidereal pre-pointing."""
+        config = ObjectActionConfig(object="M31", exptime=300.0, ra=10.68, dec=41.27)
+        assert config.nonsidereal_start_lead_time_seconds == 60.0
+
+    def test_nonsidereal_start_lead_time_negative_raises(self):
+        """Negative lead wait is invalid."""
+        with pytest.raises(
+            ValueError,
+            match="nonsidereal_start_lead_time_seconds must be >= 0",
+        ):
+            ObjectActionConfig(
+                object="M31",
+                exptime=300.0,
+                ra=10.68,
+                dec=41.27,
+                nonsidereal_start_lead_time_seconds=-1,
+            )
+
 
 class TestSubframeInAllImagingConfigs:
     """Test that subframe works across all imaging action configs."""

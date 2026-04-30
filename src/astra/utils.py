@@ -14,19 +14,62 @@ Key capabilities:
 """
 
 import math
+import logging
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Tuple
 
 import astropy.units as u
 import numpy as np
 import pandas as pd
-from astropy.coordinates import AltAz, Angle, SkyCoord, get_sun
+from astropy.coordinates import (
+    AltAz,
+    Angle,
+    EarthLocation,
+    SkyCoord,
+    get_body,
+    get_sun,
+    solar_system_ephemeris,
+)
 from astropy.stats import SigmaClip, sigma_clipped_stats
 from astropy.time import Time
+from astroquery.jplhorizons import Horizons
 from donuts.image import Image
 from photutils.background import Background2D, MedianBackground
 from scipy import ndimage
+from scipy.interpolate import interp1d
+
+logger = logging.getLogger(__name__)
+
+_SOLAR_SYSTEM_BODIES: frozenset[str] = frozenset(solar_system_ephemeris.bodies)
+_SOLAR_TO_SIDEREAL = u.Quantity(1, "day").to("sday").value
+
+
+class NotMovingBodyError(ValueError):
+    """Raised when a lookup_name cannot be resolved as a solar system or minor body."""
+
+
+def _save_and_log_horizons_output(
+    body_name: str, context: str, eph: Any, call_input: dict[str, Any]
+) -> None:
+    """Persist raw Horizons output locally and mirror the API call input into the logger."""
+    try:
+        from astra.config import Config
+
+        horizons_dir = Config().paths.logs / "horizons"
+        horizons_dir.mkdir(parents=True, exist_ok=True)
+        safe_name = body_name.replace(" ", "_").replace("/", "_")
+        output_path = horizons_dir / f"{safe_name}_{context}_{datetime.utcnow().strftime('%Y%m%dT%H%M%S%f')}.ecsv"
+        eph.write(output_path, format="ascii.ecsv", overwrite=True)
+        logger.warning("Saved raw Horizons output for %s (%s) to %s", body_name, context, output_path)
+    except Exception as exc:
+        logger.warning("Failed to save raw Horizons output for %s (%s): %s", body_name, context, exc)
+
+    try:
+        logger.warning("Horizons API call input for %s (%s): %s", body_name, context, call_input)
+    except Exception as exc:
+        logger.warning("Failed to log Horizons API call input for %s (%s): %s", body_name, context, exc)
 
 
 class CustomImageClass(Image):
@@ -198,7 +241,7 @@ def time_conversion(
 
 
 ## for flat fielding
-def is_sun_rising(obs_location: Any) -> Tuple[bool, bool, AltAz]:
+def is_sun_rising(obs_location: EarthLocation) -> Tuple[bool, bool, AltAz]:
     """Determine solar motion and flat field observation readiness.
 
     Analyzes sun position and movement to determine if conditions are suitable
@@ -286,7 +329,9 @@ def clean_image(data: np.ndarray) -> np.ndarray:
 
 
 ## planet or SIMBAD positions
-def get_body_coordinates(body_name: str, obs_time: Time, obs_location: Any) -> SkyCoord:
+def get_body_coordinates(
+    body_name: str, obs_time: Time, obs_location: EarthLocation, tle: str = None, near: bool = False
+) -> SkyCoord:
     """Get the position of a celestial body (Solar System or Deep Sky).
 
     Calculates the apparent celestial coordinates of a specified solar system body
@@ -300,15 +345,222 @@ def get_body_coordinates(body_name: str, obs_time: Time, obs_location: Any) -> S
     Returns:
         SkyCoord: Position of the body in the sky.
     """
-    from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
-
     # Check if the body is in the solar system ephemeris (case-insensitive)
     # solar_system_ephemeris.bodies normally contains lowercase strings
-    if body_name.lower() in solar_system_ephemeris.bodies:
+    if body_name.lower() in _SOLAR_SYSTEM_BODIES:
         return get_body(body_name, obs_time, obs_location)
+    elif near and tle is None:
+        location = {'lon': obs_location.lon.deg, 'lat': obs_location.lat.deg, 'elevation': obs_location.height.to(u.km).value}
+        call_input = {"id": body_name, "location": location, "epochs": obs_time.jd}
+        obj = Horizons(**call_input)
+        eph = obj.ephemerides()
+        _save_and_log_horizons_output(body_name, "get_body_coordinates", eph, call_input)
+        return SkyCoord(ra=eph["RA"].data * u.deg, dec=eph["DEC"].data * u.deg, obstime=obs_time).transform_to('gcrs')[0]
+    elif near:
+        location = {'lon': obs_location.lon.deg, 'lat': obs_location.lat.deg, 'elevation': obs_location.height.to(u.km).value}
+        call_input = {"id": "TLE", "location": location, "epochs": obs_time.jd, "optional_settings": {"TLE": tle}}
+        obj = Horizons(id='TLE', location=location, epochs=obs_time.jd)
+        eph = obj.ephemerides(optional_settings={"TLE": tle})
+        _save_and_log_horizons_output(body_name, "get_body_coordinates", eph, call_input)
+        return SkyCoord(ra=eph["RA"].data * u.deg, dec=eph["DEC"].data * u.deg, obstime=obs_time).transform_to('gcrs')[0]
 
     # Otherwise, try to resolve as a deep sky object (ICRS)
     return SkyCoord.from_name(body_name)
+
+
+def is_solar_system_body(body_name: str) -> bool:
+    """Return True if name is a known solar system body in the astropy ephemeris.
+
+    O(1) lookup on a lowercase name against the ephemeris bodies set.
+    """
+    return body_name.lower() in _SOLAR_SYSTEM_BODIES
+
+
+def precompute_ephemeris(
+    body_name: str,
+    start_time: Time,
+    duration_hours: float,
+    obs_location: EarthLocation,
+    interval_minutes: float = 1.0,
+    tle_data: str | None = None,
+    return_rates: bool = False,
+) -> tuple["interp1d", "interp1d"] | tuple["interp1d", "interp1d", "interp1d", "interp1d"]:
+    """Pre-compute a moving body's sky positions over a time window.
+
+    Performs a single vectorised get_body() call and returns cubic interpolation
+    functions keyed on seconds since start_time.  Querying the interpolators is
+    orders of magnitude faster than repeated positional lookups at runtime.
+
+    Currently supports astropy built-in bodies (planets, Moon, Sun), minor bodies
+    via JPL Horizons, and Two-Line Element (TLE) sets for satellites and debris.
+
+    Args:
+        body_name: Name of the body (e.g. 'mars', 'moon'). Must be present in
+            astropy's built-in solar system ephemeris, resolvable by JPL Horizons,
+            or 'TLE' if tle_data is provided.
+        start_time: Start of the observation window.
+        duration_hours: Length of the window in hours.
+        obs_location: Observer EarthLocation.
+        interval_minutes: Ephemeris sampling interval (default 1 min).
+        tle_data: Two-line element (TLE) data as a string with two lines separated
+            by newline. Required when body_name is 'TLE'. Example format:
+            "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927\\n
+             2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
+
+    Returns:
+        If return_rates is False (default):
+            (ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.
+            RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.
+
+        If return_rates is True:
+            (ra_interp, dec_interp, ra_rate_interp, dec_rate_interp), where
+            ra_rate_interp and dec_rate_interp map elapsed seconds to ASCOM tracking
+            units (RightAscensionRate in s/s_sidereal and DeclinationRate in as/s_sidereal).
+
+    Raises:
+        NotMovingBodyError: If body cannot be resolved as a solar system body,
+            minor body, or TLE.
+        ValueError: If body_name is 'TLE' but tle_data is not provided.
+
+    Example usage:
+    --------
+    Get the position of Mars as observed from Greenwich at the current time:
+        from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris
+        from astropy.time import Time
+        location = EarthLocation.of_site('greenwich')
+        ra_interp, dec_interp = precompute_ephemeris('mars', Time.now(), 4, location)
+
+    Get position of ISS using TLE data:
+        tle = "1 25544U 98067A   23001.00000000  .00016717  00000-0  29641-3 0  9991\n2 25544  51.6416 339.8014 0002571  235.7582  1.5976 15.54178122381131"
+        ra_interp, dec_interp = precompute_ephemeris('TLE', start_time, 4, location, tle_data=tle)
+    """
+    n_points = int(duration_hours * 60 / interval_minutes) + 1
+    minutes = np.linspace(0, duration_hours * 60, n_points)
+    times = start_time + u.Quantity(minutes, "min")
+    stop_time = start_time + duration_hours * u.hour
+
+    ra_rate_as_per_hour = None
+    dec_rate_as_per_hour = None
+
+    if body_name.lower() in _SOLAR_SYSTEM_BODIES:
+        with solar_system_ephemeris.set("builtin"):
+            bodies = get_body(body_name, times, obs_location)
+        seconds = minutes * 60.0
+    else:
+        try:
+            from astroquery.jplhorizons import Horizons
+
+            location = {
+                "lon": obs_location.lon.deg,
+                "lat": obs_location.lat.deg,
+                "elevation": obs_location.height.to(u.km).value,
+            }
+            epochs = {
+                "start": start_time.iso,
+                "stop": stop_time.iso,
+                "step": str(n_points - 1),  # Horizons returns n+1 rows for n steps
+            }
+            
+            # Handle TLE data
+            if body_name.upper() == "TLE" or tle_data is not None:
+                if tle_data is None:
+                    raise ValueError(
+                        "tle_data parameter is required when body_name is 'TLE'"
+                    )
+                call_input = {
+                    "id": "TLE",
+                    "location": location,
+                    "epochs": epochs,
+                    "optional_settings": {"TLE": tle_data},
+                }
+                obj = Horizons(id='TLE', location=location, epochs=epochs)
+                eph = obj.ephemerides(optional_settings={"TLE": tle_data})
+            else:
+                call_input = {"id": body_name, "location": location, "epochs": epochs}
+                obj = Horizons(id=body_name, location=location, epochs=epochs)
+                eph = obj.ephemerides()
+            _save_and_log_horizons_output(body_name, "precompute_ephemeris", eph, call_input)
+                
+            bodies = SkyCoord(ra=eph["RA"].data * u.deg, dec=eph["DEC"].data * u.deg)
+            seconds = (Time(eph["datetime_jd"], format="jd") - start_time).to(u.s).value
+            if "RA_rate" in eph.colnames and "DEC_rate" in eph.colnames:
+                ra_rate_as_per_hour = np.asarray(eph["RA_rate"], dtype=float)
+                dec_rate_as_per_hour = np.asarray(eph["DEC_rate"], dtype=float)
+        except ConnectionError:
+            raise
+        except Exception as e:
+            raise NotMovingBodyError(
+                f"'{body_name}' could not be resolved as a solar system or minor body: {e}"
+            ) from e
+
+    ra_coords = np.unwrap(bodies.ra.rad) * (180.0 / np.pi)
+    dec_coords = bodies.dec.deg
+
+    ra_interp = interp1d(seconds, ra_coords, kind="cubic", fill_value="extrapolate")
+    dec_interp = interp1d(seconds, dec_coords, kind="cubic", fill_value="extrapolate")
+
+    if not return_rates:
+        return ra_interp, dec_interp
+
+    if ra_rate_as_per_hour is not None and dec_rate_as_per_hour is not None:
+        # Horizons rates are in arcsec/hour (solar seconds). Convert to ASCOM units.
+        ra_rates = (ra_rate_as_per_hour / (15.0 * 3600.0)) / _SOLAR_TO_SIDEREAL
+        dec_rates = (dec_rate_as_per_hour / 3600.0) / _SOLAR_TO_SIDEREAL
+    else:
+        # Fallback for astropy bodies: derive rates from sampled sky positions.
+        ra_rate_deg_per_solar_s = np.gradient(ra_coords, seconds)
+        dec_rate_deg_per_solar_s = np.gradient(dec_coords, seconds)
+        ra_rates = (ra_rate_deg_per_solar_s * 240.0) / _SOLAR_TO_SIDEREAL
+        dec_rates = (dec_rate_deg_per_solar_s * 3600.0) / _SOLAR_TO_SIDEREAL
+
+    ra_rate_interp = interp1d(
+        seconds,
+        ra_rates,
+        kind="linear",
+        fill_value="extrapolate",
+    )
+    dec_rate_interp = interp1d(
+        seconds,
+        dec_rates,
+        kind="linear",
+        fill_value="extrapolate",
+    )
+    return ra_interp, dec_interp, ra_rate_interp, dec_rate_interp
+
+
+def compute_nonsidereal_rates_from_interp(
+    ra_interp: interp1d,
+    dec_interp: interp1d,
+    t_seconds: float,
+    dt: float = 60.0,
+) -> tuple[float, float]:
+    """Compute ASCOM RightAscensionRate and DeclinationRate from pre-computed interpolators.
+
+    Uses a finite difference on the interpolated ephemeris so no additional
+    get_body() calls are needed at runtime.
+
+    Args:
+        ra_interp: RA interpolator (seconds to degrees, unwrapped/continuous).
+        dec_interp: Dec interpolator (seconds to degrees).
+        t_seconds: Elapsed seconds since the ephemeris start_time.
+        dt: Finite-difference step in seconds (default 60).
+
+    Returns:
+        (ra_rate, dec_rate) where:
+          ra_rate  - seconds of time per sidereal second  (ASCOM RightAscensionRate)
+          dec_rate - arcseconds per sidereal second       (ASCOM DeclinationRate)
+    """
+    # Scale dt from solar seconds to sidereal seconds for correct per-sidereal-second rates.
+    # One sidereal second is shorter than one solar second.
+    dt_in_sidereal_s = dt / _SOLAR_TO_SIDEREAL
+
+    delta_ra_deg = float(ra_interp(t_seconds + dt)) - float(ra_interp(t_seconds))
+    delta_dec_deg = float(dec_interp(t_seconds + dt)) - float(dec_interp(t_seconds))
+
+    # Convert to ASCOM units (RA: s/s_sidereal, Dec: as/s_sidereal)
+    ra_rate = (delta_ra_deg * 240.0) / dt_in_sidereal_s
+    dec_rate = (delta_dec_deg * 3600.0) / dt_in_sidereal_s
+    return ra_rate, dec_rate
 
 
 ## SPECULOOS EDIT
