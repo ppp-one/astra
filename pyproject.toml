@@ -39,7 +39,7 @@ classifiers = [
   "Programming Language :: Python :: 3"
 ]
 dependencies = [
-  "astrafocus>=0.1.3",
+  "astrafocus>=0.1.4",
   "astropy",
   "photutils",
   "scipy",
@@ -54,7 +54,7 @@ dependencies = [
   "fastapi[standard]",
   "pyyaml",
   "ruamel.yaml",
-  "cabaret"
+  "cabaret>=0.4.7"
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"
 license = {text = "GPL-3.0"}

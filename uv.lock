@@ -146,9 +146,9 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "alpyca", git = "https://github.com/ppp-one/alpyca.git" },
-    { name = "astrafocus", specifier = ">=0.1.3" },
+    { name = "astrafocus", specifier = ">=0.1.4" },
     { name = "astropy" },
-    { name = "cabaret" },
+    { name = "cabaret", specifier = ">=0.4.7" },
     { name = "donuts" },
     { name = "fastapi", extras = ["standard"] },
     { name = "jinja2" },
@@ -190,7 +190,7 @@ test = [
 
 [[package]]
 name = "astrafocus"
-version = "0.1.3"
+version = "0.1.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
@@ -203,9 +203,9 @@ dependencies = [
     { name = "statsmodels" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d9/48/0ea322a6ddb2b41d5c47b13aeaab3c9a00077e157c1e9b643cafc1621c64/astrafocus-0.1.3.tar.gz", hash = "sha256:74f296426abdf6b3070e12d774878d05d7d881c4023398754e1e44e280b9257f", size = 831535, upload-time = "2026-03-27T16:02:18.233Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/f2/ab461ed95563e792d673671150e5be8fe7795de74903a61989ae9d4eb907/astrafocus-0.1.4.tar.gz", hash = "sha256:d3d776aab0cc713b2c6fa2383731124a34bc8c3a253d1cbeb97b8e3f049862d6", size = 834095, upload-time = "2026-04-23T21:35:03.609Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/25/ff/20d0cebf719036e3015e87417405e97eb93fff20f5f5d14a8737661201f9/astrafocus-0.1.3-py3-none-any.whl", hash = "sha256:6aebd75cd60e87a85c1fda05100ea7728150da03a47f11c9e28feefaf0cb6d74", size = 76331, upload-time = "2026-03-27T16:02:16.826Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/aa/6c1a0f0d919c41a6b4c6a5977588b1845d6848117a640dfa76fea288e924/astrafocus-0.1.4-py3-none-any.whl", hash = "sha256:cbda72790127a4b02bebbe436050fdee09e3e6d4f683792233892fd7dbf3b116", size = 76830, upload-time = "2026-04-23T21:35:01.995Z" },
 ]
 
 [[package]]
@@ -309,16 +309,16 @@ wheels = [
 
 [[package]]
 name = "cabaret"
-version = "0.4.7"
+version = "0.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
     { name = "astroquery" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/8c/a9ed2df3bf1548796c992f720d4ee0d2567114fe15cbbc1c1cc14c88efef/cabaret-0.4.7.tar.gz", hash = "sha256:9fad80666e267c5d14d3b572299108ab9a9fbd8b8cfe88ca5a502294bc8ce943", size = 634114, upload-time = "2026-04-16T14:22:04.98Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/65/ec99cbfb378298ec3e753dc2114fa98d79c56d9e8b9b568967dbcb822400/cabaret-0.5.1.tar.gz", hash = "sha256:8511a70be0788a4571fd86b23135bd09fd446a9a0997660c6cc28a9e2b1239e2", size = 656103, upload-time = "2026-04-24T13:21:20.91Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/e8/19084cf42e7c98dc239fdd6be75355ca6d0b8a56bb0ee2719b472ec09f3a/cabaret-0.4.7-py3-none-any.whl", hash = "sha256:ffe9d46520efa2272ab579c86bd3b276f0279b3fd9b01f8f0165bac2b3d7107d", size = 29609, upload-time = "2026-04-16T14:22:03.784Z" },
+    { url = "https://files.pythonhosted.org/packages/50/b4/8ae0040f1762988b88ced06d80a4bba55c06089770e78a733174c6f01507/cabaret-0.5.1-py3-none-any.whl", hash = "sha256:91bb232645e7462ad4811c142a12def12b639de429c33a82f2864ced1e037041", size = 40064, upload-time = "2026-04-24T13:21:19.447Z" },
 ]
 
 [[package]]
