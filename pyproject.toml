@@ -54,8 +54,8 @@ dependencies = [
   "fastapi[standard]",
   "pyyaml",
   "ruamel.yaml",
-  "cabaret",
-  "astroquery>=0.4.11"
+  "cabaret==0.5.1",
+  "astroquery>=0.4.11",
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"
 license = {text = "GPL-3.0"}

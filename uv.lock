@@ -150,7 +150,7 @@ requires-dist = [
     { name = "astrafocus", specifier = ">=0.1.1" },
     { name = "astropy" },
     { name = "astroquery", specifier = ">=0.4.11" },
-    { name = "cabaret" },
+    { name = "cabaret", specifier = "==0.5.1" },
     { name = "donuts" },
     { name = "fastapi", extras = ["standard"] },
     { name = "jinja2" },
@@ -310,16 +310,16 @@ wheels = [
 
 [[package]]
 name = "cabaret"
-version = "0.4.5"
+version = "0.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
     { name = "astroquery" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/0c/b94ab530441e1e39e986cb8174236f85139a2a7f94a621732c7ea435d6f2/cabaret-0.4.5.tar.gz", hash = "sha256:b1c8d2353c40882c9653588b25a713f7f9aebadff939c251e350f59d9ac62dbb", size = 502276, upload-time = "2025-12-20T17:54:56.603Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/65/ec99cbfb378298ec3e753dc2114fa98d79c56d9e8b9b568967dbcb822400/cabaret-0.5.1.tar.gz", hash = "sha256:8511a70be0788a4571fd86b23135bd09fd446a9a0997660c6cc28a9e2b1239e2", size = 656103, upload-time = "2026-04-24T13:21:20.91Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/11/d7e35e1d7b43cd8490b1bd4684995afafd800dedcba29e69d6001efaefaa/cabaret-0.4.5-py3-none-any.whl", hash = "sha256:096d3c1ee24049b6845a3ace096bcabaa4e7d676f1bee700fec3fa2874ce9826", size = 28441, upload-time = "2025-12-20T17:54:55.076Z" },
+    { url = "https://files.pythonhosted.org/packages/50/b4/8ae0040f1762988b88ced06d80a4bba55c06089770e78a733174c6f01507/cabaret-0.5.1-py3-none-any.whl", hash = "sha256:91bb232645e7462ad4811c142a12def12b639de429c33a82f2864ced1e037041", size = 40064, upload-time = "2026-04-24T13:21:19.447Z" },
 ]
 
 [[package]]

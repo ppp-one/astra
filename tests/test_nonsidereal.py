@@ -15,9 +15,13 @@ from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
 import numpy as np
+import pytest
+import astropy.units as u
 from scipy.interpolate import interp1d
+from astropy.time import Time
 
 from astra.nonsidereal import NonSiderealManager
+from astra.utils import compute_nonsidereal_rates_from_interp
 from astra.scheduler import Action
 
 
@@ -34,6 +38,8 @@ def _make_action(
     disable_telescope_movement=False,
     ra_interp=None,
     dec_interp=None,
+    ra_rate_interp=None,
+    dec_rate_interp=None,
     recenter_interval=0,
     lookup_name="mars",
     start_time=None,
@@ -49,6 +55,8 @@ def _make_action(
         "disable_telescope_movement": disable_telescope_movement,
         "_ra_interp": ra_interp,
         "_dec_interp": dec_interp,
+        "_ra_rate_interp": ra_rate_interp,
+        "_dec_rate_interp": dec_rate_interp,
         "nonsidereal_recenter_interval": recenter_interval,
         "lookup_name": lookup_name,
     }.get(key, default)
@@ -145,6 +153,73 @@ class TestApplyRates:
         # Should not propagate
         mgr.apply_rates(telescope)
         mgr.logger.warning.assert_called_once()
+
+    @patch("astra.utils.compute_nonsidereal_rates_from_interp")
+    def test_uses_precomputed_rate_interpolators_when_available(self, rate_fn):
+        action = _make_action(
+            ra_interp=_make_interp(slope=1e-4, intercept=100.0),
+            dec_interp=_make_interp(slope=0.0, intercept=20.0),
+            ra_rate_interp=_make_interp(slope=0.0, intercept=0.123),
+            dec_rate_interp=_make_interp(slope=0.0, intercept=-4.56),
+        )
+        mgr = NonSiderealManager(action, MagicMock())
+        telescope = MagicMock()
+
+        mgr.apply_rates(telescope)
+
+        telescope.set.assert_any_call("RightAscensionRate", 0.123)
+        telescope.set.assert_any_call("DeclinationRate", -4.56)
+        rate_fn.assert_not_called()
+
+
+class TestNonsiderealRateHelper:
+    def test_compute_nonsidereal_rates_uses_sidereal_second_conversion(self):
+        ra_interp = _make_interp(slope=1.0 / 60.0, intercept=0.0)
+        dec_interp = _make_interp(slope=0.0, intercept=0.0)
+
+        ra_rate, dec_rate = compute_nonsidereal_rates_from_interp(
+            ra_interp,
+            dec_interp,
+            t_seconds=0.0,
+            dt=60.0,
+        )
+
+        assert ra_rate == pytest.approx(4.010951637, rel=1e-9)
+        assert dec_rate == pytest.approx(0.0, abs=1e-12)
+
+
+class TestPrepointAndActivation:
+    def test_prepoint_coordinates_return_offset_position(self):
+        mgr = _make_active_manager(ra_slope=1e-3, dec_slope=2e-3)
+
+        ra_deg, dec_deg = mgr.prepoint_coordinates(lead_time_seconds=60.0)
+
+        assert ra_deg == pytest.approx((100.0 + 0.001 * 60.0) % 360.0)
+        assert dec_deg == pytest.approx(20.0 + 0.002 * 60.0)
+
+    def test_prepoint_coordinates_none_when_inactive(self):
+        action = _make_action(nonsidereal=False)
+        mgr = NonSiderealManager(action, MagicMock())
+        assert mgr.prepoint_coordinates() is None
+
+    def test_tracking_activation_time_is_start_plus_offset(self):
+        start = datetime(2025, 6, 1, 0, 0, 0, tzinfo=UTC)
+        action = _make_action(
+            start_time=start,
+            ra_interp=_make_interp(slope=1e-4, intercept=100.0),
+            dec_interp=_make_interp(slope=0.0, intercept=20.0),
+        )
+        mgr = NonSiderealManager(action, MagicMock())
+
+        activation_time = mgr.tracking_activation_time(lead_time_seconds=60.0)
+
+        assert activation_time is not None
+        assert activation_time.unix == pytest.approx((Time(start) + 60.0 * u.s).unix)
+
+    def test_tracking_activation_time_none_when_inactive(self):
+        action = _make_action(nonsidereal=False)
+        mgr = NonSiderealManager(action, MagicMock())
+        assert mgr.tracking_activation_time() is None
 
 
 class TestResetRates:

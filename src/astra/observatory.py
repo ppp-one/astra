@@ -35,6 +35,7 @@ Note:
 import logging
 import math
 import os
+import threading
 import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -1370,7 +1371,11 @@ class Observatory:
         )
 
     def pre_sequence(
-        self, action: Action, paired_devices: dict | PairedDevices
+        self,
+        action: Action,
+        paired_devices: dict | PairedDevices,
+        near: bool = False,
+        slew_target_radec_deg: tuple[float, float] | None = None,
     ) -> None:
         """
         Prepare the observatory and metadata for a sequence.
@@ -1393,7 +1398,12 @@ class Observatory:
         self.logger.debug(f"Running pre_sequence for {action.summary_string()}")
 
         # prepare observatory for sequence
-        self.setup_observatory(paired_devices, action.action_value)
+        self.setup_observatory(
+            paired_devices,
+            action.action_value,
+            near=near,
+            slew_target_radec_deg=slew_target_radec_deg,
+        )
 
         # Create image handler
         self.setup_image_handler(action=action, paired_devices=paired_devices)
@@ -1460,6 +1470,8 @@ class Observatory:
         paired_devices: PairedDevices | dict,
         action_value: BaseActionConfig,
         filter_list_index: int = 0,
+        near: bool = False,
+        slew_target_radec_deg: tuple[float, float] | None = None,
     ) -> None:
         """
         Prepares the observatory for a sequence by performing necessary setup actions.
@@ -1517,6 +1529,8 @@ class Observatory:
                     body_name=lookup_name,
                     obs_time=now,
                     obs_location=obs_location,
+                    tle=action_value.get("tle"),
+                    near=near
                 )
 
                 ra = target_coord.ra.deg  # type: ignore
@@ -1550,10 +1564,15 @@ class Observatory:
                     f"Converted Alt/Az ({alt:.2f}°, {az:.2f}°) to RA/Dec ({ra:.2f}°, {dec:.2f}°)"
                 )
 
+        slew_ra = ra
+        slew_dec = dec
+        if slew_target_radec_deg is not None:
+            slew_ra, slew_dec = slew_target_radec_deg
+
         # Slew to target coordinates, open observatory if needed
         if (
-            (ra is not None)
-            and (dec is not None)
+            (slew_ra is not None)
+            and (slew_dec is not None)
             and (action_value.get("disable_telescope_movement", False) is False)
             and self.check_conditions()
         ):
@@ -1576,14 +1595,16 @@ class Observatory:
 
                     # slew to target
                     # Convert RA from degrees to hours (RA in deg / 360 * 24 = RA in hours)
-                    ra_hours = ra / 15.0  # 360 degrees / 24 hours = 15 degrees per hour
+                    ra_hours = (
+                        slew_ra / 15.0
+                    )  # 360 degrees / 24 hours = 15 degrees per hour
                     self.logger.info(
-                        f"Slewing Telescope {telescope_name} to RA/Dec {ra:.2f}°/{dec:.2f}°"
+                        f"Slewing Telescope {telescope_name} to RA/Dec {slew_ra:.2f}°/{slew_dec:.2f}°"
                     )
                     telescope.get(
                         "SlewToCoordinatesAsync",
                         RightAscension=ra_hours,  # RA in hours
-                        Declination=dec,  # Dec in degrees
+                        Declination=slew_dec,  # Dec in degrees
                     )
 
                     time.sleep(1)
@@ -1959,6 +1980,8 @@ class Observatory:
         maximal_sleep_time=0.1,
         sequence_counter: int = 0,
         wcs=None,
+        nonsidereal_manager: NonSiderealManager | None = None,
+        telescope: AlpacaDevice | None = None,
     ) -> tuple[bool, Path | None]:
         """
         Execute a camera exposure and handle image acquisition.
@@ -1982,6 +2005,11 @@ class Observatory:
                 in a series. Defaults to 0.
             wcs (WCS, optional): World Coordinate System solution for the image.
                 Defaults to None.
+            nonsidereal_manager (NonSiderealManager | None, optional):
+                Active non-sidereal manager used to refresh tracking rates during
+                long image save operations. Defaults to None.
+            telescope (AlpacaDevice | None, optional): Telescope device used to
+                apply non-sidereal rates while saving. Defaults to None.
 
         Returns:
             tuple: A tuple containing:
@@ -2057,6 +2085,12 @@ class Observatory:
                     exception=e,
                 )
 
+            if (
+                nonsidereal_manager is not None
+                and telescope is not None
+                and nonsidereal_manager.is_active
+            ):
+                nonsidereal_manager.apply_rates(telescope)
             time.sleep(min(maximal_sleep_time, exptime / 10))
             exposure_end_time = time.time()
 
@@ -2076,15 +2110,49 @@ class Observatory:
             image = camera.get("ImageArray")
             image_info = camera.get("ImageArrayInfo")
 
-            filepath = image_handler.save_image(
-                image=image,
-                image_info=image_info,
-                maxadu=maxadu,
-                device_name=camera.device_name,
-                exposure_start_datetime=exposure_start_datetime,
-                wcs=wcs,
-                sequence_counter=sequence_counter,
-            )
+            if (
+                nonsidereal_manager is not None
+                and telescope is not None
+                and nonsidereal_manager.is_active
+            ):
+                save_result: dict[str, Path] = {}
+                save_error: dict[str, Exception] = {}
+
+                def _save_image() -> None:
+                    try:
+                        save_result["filepath"] = image_handler.save_image(
+                            image=image,
+                            image_info=image_info,
+                            maxadu=maxadu,
+                            device_name=camera.device_name,
+                            exposure_start_datetime=exposure_start_datetime,
+                            wcs=wcs,
+                            sequence_counter=sequence_counter,
+                        )
+                    except Exception as e:
+                        save_error["error"] = e
+
+                save_thread = threading.Thread(target=_save_image, daemon=True)
+                save_thread.start()
+
+                while save_thread.is_alive():
+                    nonsidereal_manager.apply_rates(telescope)
+                    save_thread.join(timeout=0.1)
+
+                if "error" in save_error:
+                    raise save_error["error"]
+
+                filepath = save_result["filepath"]
+            else:
+                filepath = image_handler.save_image(
+                    image=image,
+                    image_info=image_info,
+                    maxadu=maxadu,
+                    device_name=camera.device_name,
+                    exposure_start_datetime=exposure_start_datetime,
+                    wcs=wcs,
+                    sequence_counter=sequence_counter,
+                )
 
             self.logger.info(
                 f"Image saved as {os.path.basename(filepath)}. "
@@ -2224,12 +2292,22 @@ class Observatory:
         )
 
         nonsidereal = NonSiderealManager(action, self.logger)
+        nonsidereal_lead_seconds = float(
+            action.action_value.get("nonsidereal_start_lead_time_seconds", 60.0)
+        )
+        nonsidereal_prepoint = nonsidereal.prepoint_coordinates(
+            lead_time_seconds=nonsidereal_lead_seconds
+        )
+        nonsidereal_activation_time = nonsidereal.tracking_activation_time(
+            lead_time_seconds=nonsidereal_lead_seconds
+        )
 
-        self.pre_sequence(action, paired_devices)
-
-        # Set initial non-sidereal tracking rates right after the slew completes
-        if nonsidereal.is_active and "Telescope" in paired_devices:
-            nonsidereal.apply_rates(paired_devices.telescope)
+        self.pre_sequence(
+            action,
+            paired_devices,
+            near=nonsidereal.is_active,
+            slew_target_radec_deg=nonsidereal_prepoint,
+        )
 
         action_value = action.action_value
 
@@ -2275,6 +2353,32 @@ class Observatory:
         last_flip_check_time = 0
         sequence_counter = 0
         try:
+            if (
+                nonsidereal.is_active
+                and "Telescope" in paired_devices
+                and nonsidereal_activation_time is not None
+            ):
+                initial_wait_seconds = (
+                    nonsidereal_activation_time - Time.now()
+                ).to_value("s")
+                if initial_wait_seconds > 0:
+                    self.logger.info(
+                        "Non-sidereal pre-point complete. Waiting "
+                        f"{initial_wait_seconds:.1f}s to start imaging and tracking rates."
+                    )
+                while Time.now() < nonsidereal_activation_time:
+                    if not self.check_conditions(action):
+                        break
+                    remaining_seconds = (
+                        nonsidereal_activation_time - Time.now()
+                    ).to_value("s")
+                    if remaining_seconds <= 0:
+                        break
+                    time.sleep(min(1.0, remaining_seconds))
+
+                if self.check_conditions(action):
+                    nonsidereal.apply_rates(paired_devices.telescope)
+
             for i, exptime in enumerate(exptime_list):
                 if not self.check_conditions(action):
                     break
@@ -2327,6 +2431,12 @@ class Observatory:
                         log_option=log_option,
                         wcs=wcs_solve,
                         sequence_counter=sequence_counter,
+                        nonsidereal_manager=nonsidereal,
+                        telescope=(
+                            paired_devices.telescope
+                            if "Telescope" in paired_devices
+                            else None
+                        ),
                     )
                     sequence_counter += 1
 

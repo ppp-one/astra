@@ -6,9 +6,11 @@ import numpy as np
 import pandas as pd
 import pytest
 from astropy.coordinates import EarthLocation, SkyCoord
+from astropy.table import Table
 from astropy.time import Time, TimeDelta
 
 from astra.utils import (
+    NotMovingBodyError,
     __to_format,
     compute_nonsidereal_rates_from_interp,
     get_body_coordinates,
@@ -357,6 +359,47 @@ def test_precompute_ephemeris_returns_callables(location):
     assert callable(dec_interp)
 
 
+def test_precompute_ephemeris_return_rates_from_horizons(location, monkeypatch):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+
+    class FakeHorizons:
+        def __init__(self, id, location, epochs):
+            self.id = id
+
+        def ephemerides(self, optional_settings=None):
+            return Table(
+                {
+                    "RA": [10.0, 10.1, 10.2, 10.3],
+                    "DEC": [20.0, 20.1, 20.2, 20.3],
+                    "datetime_jd": [
+                        obs_time.jd,
+                        obs_time.jd + 1.0 / 24.0,
+                        obs_time.jd + 2.0 / 24.0,
+                        obs_time.jd + 3.0 / 24.0,
+                    ],
+                    "RA_rate": [5400.0, 5400.0, 5400.0, 5400.0],
+                    "DEC_rate": [7200.0, 7200.0, 7200.0, 7200.0],
+                }
+            )
+
+    monkeypatch.setattr("astroquery.jplhorizons.Horizons", FakeHorizons)
+
+    ra_interp, dec_interp, ra_rate_interp, dec_rate_interp = precompute_ephemeris(
+        "90000033",
+        obs_time,
+        3.0,
+        location,
+        return_rates=True,
+    )
+
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+    assert callable(ra_rate_interp)
+    assert callable(dec_rate_interp)
+    assert float(ra_rate_interp(0.0)) == pytest.approx(0.0997, abs=1e-3)
+    assert float(dec_rate_interp(0.0)) == pytest.approx(1.9945, abs=1e-3)
+
+
 def test_precompute_ephemeris_ra_dec_ranges(location):
     obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
     ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
@@ -424,3 +467,111 @@ def test_precompute_ephemeris_minor_body(location):
     # Adjacent-second values should be smooth (no discontinuity)
     assert abs(float(ra_interp(1)) - float(ra_interp(0))) < 0.01
     assert abs(float(dec_interp(1)) - float(dec_interp(0))) < 0.01
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle(location):
+    """precompute_ephemeris should resolve a TLE via astroquery.jplhorizons."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, duration_hours=1.0, obs_location=location, tle_data=tle_data)
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+    # Spot-check a few points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -360.0 <= ra <= 360.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_missing_data(location):
+    """Should raise ValueError if body_name is 'TLE' but tle_data is None."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    
+    with pytest.raises(ValueError, match="tle_data parameter is required"):
+        precompute_ephemeris("TLE", obs_time, 1.0, location)
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_case_insensitive(location):
+    """Should accept 'TLE', 'tle', 'Tle' etc."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+    
+    for name_variant in ["TLE", "tle", "Tle"]:
+        ra_interp, dec_interp = precompute_ephemeris(
+            name_variant, obs_time, 1.0, location, tle_data=tle_data
+        )
+        assert callable(ra_interp)
+        assert callable(dec_interp)
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_invalid_data(location):
+    """Should raise NotMovingBodyError for malformed TLE data."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    invalid_tle = "this is not valid tle data"
+    
+    with pytest.raises(NotMovingBodyError):
+        precompute_ephemeris("TLE", obs_time, 1.0, location, tle_data=invalid_tle)
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_rates_plausible(location):
+    """ISS (TLE) should have appreciable tracking rates."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+    
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, 1.0, location, tle_data=tle_data
+    )
+    ra_rate, dec_rate = compute_nonsidereal_rates_from_interp(ra_interp, dec_interp, 0)
+    
+    # ISS moves much faster than planets
+    assert abs(ra_rate) > 0.01, "ISS should have significant RA rate"
+
+@pytest.mark.network
+def test_precompute_ephemeris_minor_body_fallback(location):
+    """Should fallback to id_type='smallbody' for objects like comets."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "C/2023 A3", obs_time, 1.0, location  # Comet example
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+@pytest.mark.network
+def test_precompute_ephemeris_unresolvable_body(location):
+    """Should raise NotMovingBodyError with descriptive message."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    
+    with pytest.raises(NotMovingBodyError, match="could not be resolved"):
+        precompute_ephemeris("12345INVALID", obs_time, 1.0, location)
+
+@pytest.mark.network
+def test_precompute_ephemeris_short_interval(location):
+    """Should handle very short observation windows with fine resolution."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "mars", obs_time, duration_hours=0.1, interval_minutes=0.5, obs_location=location
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+    
+    # Should produce consistent values
+    t1 = float(ra_interp(0))
+    t2 = float(ra_interp(60))
+    assert abs(t2 - t1) < 0.1  # Should change smoothly
+
+@pytest.mark.network
+def test_precompute_ephemeris_different_tle_objects(location):
+    """Should work with different satellite TLEs."""
+    obs_time = Time("2010-01-01T00:00:00", format="isot", scale="utc")
+    
+    # Example: Hubble Space Telescope TLE
+    tle_hst = "1 20580U 90037B   10001.00000000  .00001524  00000-0  75821-5 0  8017\n2 20580  28.4698 279.0467 0002853 247.4627 112.6160 15.09299652680691"
+    
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, 1.0, location, tle_data=tle_hst
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)

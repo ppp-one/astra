@@ -1,12 +1,13 @@
 """Non-sidereal (solar system body) tracking for observatory imaging sequences.
 
 This module provides the machinery for tracking solar system objects (comets,
-asteroids, planets) whose celestial coordinates change significantly over short
-timescales. It uses high-precision cubic interpolation of pre-computed ephemerides
-to provide smooth, differential tracking rates to the telescope mount via ASCOM.
+asteroids, planets, Earth-orbiting objects) whose celestial coordinates change 
+significantly over short timescales. It uses high-precision cubic interpolation 
+of pre-computed ephemerides to provide smooth, differential tracking rates to 
+the telescope mount via ASCOM.
 
 Key Capabilities:
-    - Ephemeris Pre-computation: Uses Astropy to generate a sequence of
+    - Ephemeris Pre-computation: Uses Astropy or JPL Horizons to generate a sequence of
       positions for a given object over the duration of an observation.
     - Cubic Interpolation: Provides sub-second precision for RA/Dec coordinates
       without requiring repeated, expensive lookups.
@@ -55,6 +56,8 @@ class _NonSiderealState:
     body_name: str
     ra_interp: Any
     dec_interp: Any
+    ra_rate_interp: Any
+    dec_rate_interp: Any
     sequence_start_time: Time
     recenter_interval: int
     last_recenter_time: float = field(default_factory=time.time)
@@ -98,6 +101,30 @@ class NonSiderealManager:
         if self._state is None:
             return
         self._apply_rates(telescope, self._state)
+
+    def prepoint_coordinates(self, lead_time_seconds: float = 60.0) -> tuple[float, float] | None:
+        """Return RA/Dec for an initial lead-pointing slew.
+
+        Args:
+            lead_time_seconds: Seconds after sequence start used as the pre-pointing
+                target. Default is 60 seconds.
+
+        Returns:
+            Tuple of (ra_deg, dec_deg) or None when non-sidereal tracking is inactive.
+        """
+        if self._state is None:
+            return None
+
+        state = self._state
+        ra_deg = float(state.ra_interp(lead_time_seconds)) % 360.0
+        dec_deg = float(state.dec_interp(lead_time_seconds))
+        return (ra_deg, dec_deg)
+
+    def tracking_activation_time(self, lead_time_seconds: float = 60.0) -> Time | None:
+        """Return the time when non-sidereal rates and imaging should begin."""
+        if self._state is None:
+            return None
+        return self._state.sequence_start_time + lead_time_seconds * u.s
 
     def should_recenter(self) -> bool:
         """Return True if the recenter interval has elapsed."""
@@ -181,6 +208,8 @@ class NonSiderealManager:
         lname = action.action_value.get("lookup_name")
         ra_interp = action.action_value.get("_ra_interp")
         dec_interp = action.action_value.get("_dec_interp")
+        ra_rate_interp = action.action_value.get("_ra_rate_interp")
+        dec_rate_interp = action.action_value.get("_dec_rate_interp")
         recenter_interval = int(
             action.action_value.get("nonsidereal_recenter_interval", 0)
         )
@@ -203,6 +232,8 @@ class NonSiderealManager:
             body_name=lname,
             ra_interp=ra_interp,
             dec_interp=dec_interp,
+            ra_rate_interp=ra_rate_interp,
+            dec_rate_interp=dec_rate_interp,
             sequence_start_time=Time(action.start_time),
             recenter_interval=recenter_interval,
         )
@@ -211,9 +242,13 @@ class NonSiderealManager:
         """Set ASCOM RightAscensionRate / DeclinationRate from the interpolated ephemeris."""
         try:
             t_seconds = (Time.now() - state.sequence_start_time).to(u.s).value
-            ra_rate, dec_rate = astra.utils.compute_nonsidereal_rates_from_interp(
-                state.ra_interp, state.dec_interp, t_seconds
-            )
+            if state.ra_rate_interp is not None and state.dec_rate_interp is not None:
+                ra_rate = float(state.ra_rate_interp(t_seconds))
+                dec_rate = float(state.dec_rate_interp(t_seconds))
+            else:
+                ra_rate, dec_rate = astra.utils.compute_nonsidereal_rates_from_interp(
+                    state.ra_interp, state.dec_interp, t_seconds
+                )
             telescope.set("RightAscensionRate", ra_rate)
             telescope.set("DeclinationRate", dec_rate)
             self.logger.info(
