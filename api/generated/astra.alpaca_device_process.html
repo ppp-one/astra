@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.alpaca_device_process &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.alpaca_device_process';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.autofocus" href="astra.autofocus.html" />
+    <link rel="prev" title="astra.action_configs" href="astra.action_configs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.alpaca_device_process</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceError"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceError.from_device"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceError.from_device()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceIPCError"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceIPCError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.RemoteDeviceError"><code class="docutils literal notranslate"><span class="pre">RemoteDeviceError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.device"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.device</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.metadata"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.front_pipe"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.front_pipe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.back_pipe"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.back_pipe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.lock"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.lock</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.get"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.set"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.start_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.start_poll()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop_poll()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.pause_polls"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.pause_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.resume_polls"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.resume_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_list"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_latest()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.run"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.listenFront__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.listenFront__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.get__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.get__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.set__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.set__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.loop__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.loop__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.start_poll__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.start_poll__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop_poll__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_list__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_list__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_latest__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.force_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.force_poll()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.alpaca_device_process">
+<span id="astra-alpaca-device-process"></span><h1>astra.alpaca_device_process<a class="headerlink" href="#module-astra.alpaca_device_process" title="Link to this heading">#</a></h1>
+<p>ALPACA device multiprocessing wrapper for astronomical device control.</p>
+<p>This module provides a multiprocessing-based wrapper for ALPACA astronomical
+devices, enabling concurrent device polling, method execution, and data logging.
+It implements a producer-consumer pattern with pipes for communication between
+the main process and device-specific subprocesses.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><p>AlpacaDevice: Multiprocessing wrapper for ALPACA astronomical devices</p>
+</dd>
+</dl>
+<p>The module supports various ALPACA device types including telescopes, cameras,
+filter wheels, focusers, domes, and environmental monitoring equipment.</p>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpacaDevice</span></code></a>(ip, device_type, device_number, ...)</p></td>
+<td><p>Multiprocessing wrapper for ALPACA astronomical devices.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Exceptions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.alpaca_device_process.AlpacaDeviceError" title="astra.alpaca_device_process.AlpacaDeviceError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpacaDeviceError</span></code></a></p></td>
+<td><p>Base error for AlpacaDevice failures (IPC or remote).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.alpaca_device_process.AlpacaDeviceIPCError" title="astra.alpaca_device_process.AlpacaDeviceIPCError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlpacaDeviceIPCError</span></code></a></p></td>
+<td><p>Error communicating with the device subprocess (IPC).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.alpaca_device_process.RemoteDeviceError" title="astra.alpaca_device_process.RemoteDeviceError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RemoteDeviceError</span></code></a></p></td>
+<td><p>Remote/network error when the device subprocess fails to contact ALPACA HTTP server.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDeviceError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.alpaca_device_process.</span></span><span class="sig-name descname"><span class="pre">AlpacaDeviceError</span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDeviceError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDeviceError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Base error for AlpacaDevice failures (IPC or remote).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDeviceError.from_device">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><span class="pre">Exception</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.alpaca_device_process.AlpacaDeviceError" title="astra.alpaca_device_process.AlpacaDeviceError"><span class="pre">AlpacaDeviceError</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDeviceError.from_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDeviceError.from_device" title="Link to this definition">#</a></dt>
+<dd><p>Create an appropriate AlpacaDeviceError subclass from a device and original exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDeviceIPCError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.alpaca_device_process.</span></span><span class="sig-name descname"><span class="pre">AlpacaDeviceIPCError</span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDeviceIPCError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDeviceIPCError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#astra.alpaca_device_process.AlpacaDeviceError" title="astra.alpaca_device_process.AlpacaDeviceError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlpacaDeviceError</span></code></a></p>
+<p>Error communicating with the device subprocess (IPC).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.RemoteDeviceError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.alpaca_device_process.</span></span><span class="sig-name descname"><span class="pre">RemoteDeviceError</span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#RemoteDeviceError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.RemoteDeviceError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#astra.alpaca_device_process.AlpacaDeviceError" title="astra.alpaca_device_process.AlpacaDeviceError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlpacaDeviceError</span></code></a></p>
+<p>Remote/network error when the device subprocess fails to contact ALPACA HTTP server.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.alpaca_device_process.</span></span><span class="sig-name descname"><span class="pre">AlpacaDevice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Process</span></code></a></p>
+<p>Multiprocessing wrapper for ALPACA astronomical devices.</p>
+<p>Provides a process-based interface for ALPACA devices with concurrent
+polling capabilities, method execution, and inter-process communication
+via pipes. Supports automatic retry logic and comprehensive error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> (<em>str</em>) – IP address of the ALPACA device server.</p></li>
+<li><p><strong>device_type</strong> (<em>str</em>) – Type of device (e.g., ‘Telescope’, ‘Camera’).</p></li>
+<li><p><strong>device_number</strong> (<em>int</em>) – Device number on the ALPACA server.</p></li>
+<li><p><strong>device_name</strong> (<em>str</em>) – User-friendly name for the device.</p></li>
+<li><p><strong>queue</strong> – Multiprocessing queue for logging and data communication.</p></li>
+<li><p><strong>connectable</strong> (<em>bool</em>) – Whether to attempt initial connection to the device.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em>) – Enable debug logging for device operations.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.device" title="Link to this definition">#</a></dt>
+<dd><p>ALPACA device instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.metadata" title="Link to this definition">#</a></dt>
+<dd><p>Device identification information.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.front_pipe">
+<span class="sig-name descname"><span class="pre">front_pipe</span></span><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.front_pipe" title="Link to this definition">#</a></dt>
+<dd><p>Communication pipe for main process.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.back_pipe">
+<span class="sig-name descname"><span class="pre">back_pipe</span></span><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.back_pipe" title="Link to this definition">#</a></dt>
+<dd><p>Communication pipe for device subprocess.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.lock">
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.lock" title="Link to this definition">#</a></dt>
+<dd><p>Thread lock for pipe synchronization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.get" title="Link to this definition">#</a></dt>
+<dd><p>Execute device method with automatic retry and error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device method to execute.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em> – Result from the device method execution.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – If the device method execution fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.set" title="Link to this definition">#</a></dt>
+<dd><p>Set device property value with error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device property to set.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – Value to assign to the property.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em> – Result from the property setter.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – If the property setting fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.start_poll">
+<span class="sig-name descname"><span class="pre">start_poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.start_poll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.start_poll" title="Link to this definition">#</a></dt>
+<dd><p>Start continuous polling of a device method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device method to poll.</p></li>
+<li><p><strong>delay</strong> (<em>float</em>) – Polling interval in seconds.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.stop_poll">
+<span class="sig-name descname"><span class="pre">stop_poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.stop_poll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll" title="Link to this definition">#</a></dt>
+<dd><p>Stop polling for a specific method or all methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> (<em>Optional[str]</em>) – Method name to stop polling, or None for all.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.pause_polls">
+<span class="sig-name descname"><span class="pre">pause_polls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.pause_polls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.pause_polls" title="Link to this definition">#</a></dt>
+<dd><p>Temporarily pause all active polling operations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.resume_polls">
+<span class="sig-name descname"><span class="pre">resume_polls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.resume_polls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.resume_polls" title="Link to this definition">#</a></dt>
+<dd><p>Resume all paused polling operations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.poll_list">
+<span class="sig-name descname"><span class="pre">poll_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.poll_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.poll_list" title="Link to this definition">#</a></dt>
+<dd><p>Get list of currently active polling methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>List[str]</em> – List of method names being polled.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – If polling list retrieval fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.poll_latest">
+<span class="sig-name descname"><span class="pre">poll_latest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.poll_latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest" title="Link to this definition">#</a></dt>
+<dd><p>Get latest polling results for all active methods.</p>
+<p>Uses non-blocking lock acquisition to avoid blocking the WebSocket
+when get/set operations are in progress. If the lock is unavailable,
+returns cached data from the last successful read.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>Dict[str, Dict[str, Any]]</em> –</p>
+<dl class="simple">
+<dt>Dictionary mapping method names to</dt><dd><p>their latest values and timestamps.
+Returns None if cache is empty and lock
+is unavailable.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.stop" title="Link to this definition">#</a></dt>
+<dd><p>Stop the device process and clean up resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.run" title="Link to this definition">#</a></dt>
+<dd><p>Main process loop for handling device operations.</p>
+<p>Runs in the device subprocess to handle method calls, polling,
+and inter-process communication. Sets up signal handlers for
+graceful shutdown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.listenFront__">
+<span class="sig-name descname"><span class="pre">listenFront__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.listenFront__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.listenFront__" title="Link to this definition">#</a></dt>
+<dd><p>Listen for and process messages from the main process.</p>
+<p>Handles various message types including method calls, polling
+control, and shutdown commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – True to continue running, False to stop the process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.get__">
+<span class="sig-name descname"><span class="pre">get__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.get__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.get__" title="Link to this definition">#</a></dt>
+<dd><p>Backend method execution with retry logic and error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device method to execute.</p></li>
+<li><p><strong>pipe</strong> (<em>bool</em>) – Whether to send result via pipe or return directly.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments for the method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Union[Any, Dict[str, Any]]</em> – Method result or status dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.set__">
+<span class="sig-name descname"><span class="pre">set__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.set__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.set__" title="Link to this definition">#</a></dt>
+<dd><p>Backend property setter with retry logic and error handling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device property to set.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – Value to assign to the property.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.loop__">
+<span class="sig-name descname"><span class="pre">loop__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.loop__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.loop__" title="Link to this definition">#</a></dt>
+<dd><p>Continuous polling loop for a specific device method.</p>
+<p>Runs in a separate thread to continuously poll a device method
+at the specified interval, logging results to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device method to poll.</p></li>
+<li><p><strong>delay</strong> (<em>float</em>) – Polling interval in seconds.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.start_poll__">
+<span class="sig-name descname"><span class="pre">start_poll__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.start_poll__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.start_poll__" title="Link to this definition">#</a></dt>
+<dd><p>Start a new polling thread for the specified method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – Name of the device method to start polling.</p></li>
+<li><p><strong>delay</strong> (<em>float</em>) – Polling interval in seconds.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.stop_poll__">
+<span class="sig-name descname"><span class="pre">stop_poll__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.stop_poll__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll__" title="Link to this definition">#</a></dt>
+<dd><p>Stop polling for a specific method or all methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>Optional[str]</em>) – Method name to stop polling, or None for all.</p></li>
+<li><p><strong>*args</strong> – Additional arguments (used for signal handlers).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.poll_list__">
+<span class="sig-name descname"><span class="pre">poll_list__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.poll_list__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.poll_list__" title="Link to this definition">#</a></dt>
+<dd><p>Send current polling list via pipe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.poll_latest__">
+<span class="sig-name descname"><span class="pre">poll_latest__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.poll_latest__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest__" title="Link to this definition">#</a></dt>
+<dd><p>Send latest polling results via pipe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.stop__">
+<span class="sig-name descname"><span class="pre">stop__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.stop__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.stop__" title="Link to this definition">#</a></dt>
+<dd><p>Stop the device process and close communication pipes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Additional arguments (used for signal handlers).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.alpaca_device_process.AlpacaDevice.force_poll">
+<span class="sig-name descname"><span class="pre">force_poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/alpaca_device_process.html#AlpacaDevice.force_poll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.alpaca_device_process.AlpacaDevice.force_poll" title="Link to this definition">#</a></dt>
+<dd><p>Immediately poll a device method once and write the result to the database via the queue.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.action_configs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.action_configs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.autofocus.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.autofocus</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceError"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceError.from_device"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceError.from_device()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDeviceIPCError"><code class="docutils literal notranslate"><span class="pre">AlpacaDeviceIPCError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.RemoteDeviceError"><code class="docutils literal notranslate"><span class="pre">RemoteDeviceError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.device"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.device</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.metadata"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.metadata</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.front_pipe"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.front_pipe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.back_pipe"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.back_pipe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.lock"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.lock</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.get"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.set"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.set()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.start_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.start_poll()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop_poll()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.pause_polls"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.pause_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.resume_polls"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.resume_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_list"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_latest()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.run"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.listenFront__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.listenFront__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.get__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.get__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.set__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.set__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.loop__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.loop__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.start_poll__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.start_poll__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop_poll__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop_poll__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_list__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_list__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.poll_latest__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.poll_latest__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.stop__"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.stop__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.alpaca_device_process.AlpacaDevice.force_poll"><code class="docutils literal notranslate"><span class="pre">AlpacaDevice.force_poll()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

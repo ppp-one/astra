@@ -1,0 +1,1424 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.alpaca_device_process &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/alpaca_device_process';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.alpaca_device_process</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ALPACA device multiprocessing wrapper for astronomical device control.</span>
+
+<span class="sd">This module provides a multiprocessing-based wrapper for ALPACA astronomical</span>
+<span class="sd">devices, enabling concurrent device polling, method execution, and data logging.</span>
+<span class="sd">It implements a producer-consumer pattern with pipes for communication between</span>
+<span class="sd">the main process and device-specific subprocesses.</span>
+
+<span class="sd">Classes:</span>
+<span class="sd">    AlpacaDevice: Multiprocessing wrapper for ALPACA astronomical devices</span>
+
+<span class="sd">The module supports various ALPACA device types including telescopes, cameras,</span>
+<span class="sd">filter wheels, focusers, domes, and environmental monitoring equipment.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">Process</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span> <span class="k">as</span> <span class="n">ThreadingLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.covercalibrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoverCalibrator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.dome</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dome</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.filterwheel</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterWheel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.focuser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Focuser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.observingconditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservingConditions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.rotator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.safetymonitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">SafetyMonitor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.switch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Switch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.telescope</span><span class="w"> </span><span class="kn">import</span> <span class="n">Telescope</span>
+
+<span class="n">ALPACA_DEVICE_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Telescope&quot;</span><span class="p">:</span> <span class="n">Telescope</span><span class="p">,</span>
+    <span class="s2">&quot;Camera&quot;</span><span class="p">:</span> <span class="n">Camera</span><span class="p">,</span>
+    <span class="s2">&quot;CoverCalibrator&quot;</span><span class="p">:</span> <span class="n">CoverCalibrator</span><span class="p">,</span>
+    <span class="s2">&quot;Dome&quot;</span><span class="p">:</span> <span class="n">Dome</span><span class="p">,</span>
+    <span class="s2">&quot;FilterWheel&quot;</span><span class="p">:</span> <span class="n">FilterWheel</span><span class="p">,</span>
+    <span class="s2">&quot;Focuser&quot;</span><span class="p">:</span> <span class="n">Focuser</span><span class="p">,</span>
+    <span class="s2">&quot;ObservingConditions&quot;</span><span class="p">:</span> <span class="n">ObservingConditions</span><span class="p">,</span>
+    <span class="s2">&quot;Rotator&quot;</span><span class="p">:</span> <span class="n">Rotator</span><span class="p">,</span>
+    <span class="s2">&quot;SafetyMonitor&quot;</span><span class="p">:</span> <span class="n">SafetyMonitor</span><span class="p">,</span>
+    <span class="s2">&quot;Switch&quot;</span><span class="p">:</span> <span class="n">Switch</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300</span>
+<span class="c1"># https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio</span>
+
+
+<div class="viewcode-block" id="AlpacaDeviceError">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDeviceError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlpacaDeviceError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base error for AlpacaDevice failures (IPC or remote).&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AlpacaDeviceError.from_device">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDeviceError.from_device">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_device</span><span class="p">(</span>
+        <span class="n">device</span><span class="p">:</span> <span class="s2">&quot;AlpacaDevice&quot;</span><span class="p">,</span>
+        <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span>
+        <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AlpacaDeviceError&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an appropriate AlpacaDeviceError subclass from a device and original exception.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">method_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">(&#39;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># classify the exception as remote/network if it looks like a requests/HTTP error</span>
+        <span class="n">is_remote</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">):</span>
+                <span class="n">is_remote</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># requests may not be available or exc may not be the same class object;</span>
+            <span class="c1"># fall back to message heuristics</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_remote</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;connection refused&quot;</span> <span class="ow">in</span> <span class="n">s</span>
+                <span class="ow">or</span> <span class="s2">&quot;max retries exceeded&quot;</span> <span class="ow">in</span> <span class="n">s</span>
+                <span class="ow">or</span> <span class="s2">&quot;newconnectionerror&quot;</span> <span class="ow">in</span> <span class="n">s</span>
+            <span class="p">):</span>
+                <span class="n">is_remote</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">is_remote</span><span class="p">:</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">RemoteDeviceError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">AlpacaDeviceIPCError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># preserve original exception as cause so callers can inspect it</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span> <span class="o">=</span> <span class="n">exc</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">e</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AlpacaDeviceIPCError">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDeviceIPCError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlpacaDeviceIPCError</span><span class="p">(</span><span class="n">AlpacaDeviceError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error communicating with the device subprocess (IPC).&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RemoteDeviceError">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.RemoteDeviceError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RemoteDeviceError</span><span class="p">(</span><span class="n">AlpacaDeviceError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remote/network error when the device subprocess fails to contact ALPACA HTTP server.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="AlpacaDevice">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlpacaDevice</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multiprocessing wrapper for ALPACA astronomical devices.</span>
+
+<span class="sd">    Provides a process-based interface for ALPACA devices with concurrent</span>
+<span class="sd">    polling capabilities, method execution, and inter-process communication</span>
+<span class="sd">    via pipes. Supports automatic retry logic and comprehensive error handling.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ip (str): IP address of the ALPACA device server.</span>
+<span class="sd">        device_type (str): Type of device (e.g., &#39;Telescope&#39;, &#39;Camera&#39;).</span>
+<span class="sd">        device_number (int): Device number on the ALPACA server.</span>
+<span class="sd">        device_name (str): User-friendly name for the device.</span>
+<span class="sd">        queue: Multiprocessing queue for logging and data communication.</span>
+<span class="sd">        connectable (bool): Whether to attempt initial connection to the device.</span>
+<span class="sd">        debug (bool): Enable debug logging for device operations.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        device: ALPACA device instance.</span>
+<span class="sd">        metadata: Device identification information.</span>
+<span class="sd">        front_pipe: Communication pipe for main process.</span>
+<span class="sd">        back_pipe: Communication pipe for device subprocess.</span>
+<span class="sd">        lock: Thread lock for pipe synchronization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">device_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">queue</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">connectable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+
+        <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;Telescope&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Camera&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;CoverCalibrator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Dome&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;FilterWheel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Focuser&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ObservingConditions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Rotator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SafetyMonitor&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Switch&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">ALPACA_DEVICE_TYPES</span><span class="p">[</span><span class="n">device_type</span><span class="p">](</span><span class="n">ip</span><span class="p">,</span> <span class="n">device_number</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;ip&quot;</span><span class="p">:</span> <span class="n">ip</span><span class="p">,</span>
+                        <span class="s2">&quot;device_type&quot;</span><span class="p">:</span> <span class="n">device_type</span><span class="p">,</span>
+                        <span class="s2">&quot;device_number&quot;</span><span class="p">:</span> <span class="n">device_number</span><span class="p">,</span>
+                        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> is not a valid device type&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_number</span> <span class="o">=</span> <span class="n">device_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">device_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span> <span class="o">=</span> <span class="n">device_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ip&quot;</span><span class="p">:</span> <span class="n">ip</span><span class="p">,</span>
+            <span class="s2">&quot;device_type&quot;</span><span class="p">:</span> <span class="n">device_type</span><span class="p">,</span>
+            <span class="s2">&quot;device_number&quot;</span><span class="p">:</span> <span class="n">device_number</span><span class="p">,</span>
+            <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectable</span> <span class="o">=</span> <span class="n">connectable</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pause</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># _poll_lock is created in run() because threading.Lock cannot be pickled</span>
+        <span class="c1"># for subprocess spawning on macOS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ThreadingLock</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Cache for poll_latest in main process - allows non-blocking reads</span>
+        <span class="c1"># when get/set operations hold the lock</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> loaded&quot;</span><span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1">## FRONTEND METHODS</span>
+
+<div class="viewcode-block" id="AlpacaDevice.get">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute device method with automatic retry and error handling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device method to execute.</span>
+<span class="sd">            **kwargs: Keyword arguments to pass to the method.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: Result from the device method execution.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the device method execution fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## method getter</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">AlpacaDeviceError</span><span class="o">.</span><span class="n">from_device</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.set">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.set">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set device property value with error handling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device property to set.</span>
+<span class="sd">            value (Any): Value to assign to the property.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: Result from the property setter.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the property setting fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## property setter</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">AlpacaDeviceError</span><span class="o">.</span><span class="n">from_device</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.start_poll">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.start_poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start continuous polling of a device method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device method to poll.</span>
+<span class="sd">            delay (float): Polling interval in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;start_poll&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">delay</span><span class="p">}])</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.stop_poll">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.stop_poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop polling for a specific method or all methods.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (Optional[str]): Method name to stop polling, or None for all.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;stop_poll&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">}])</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.pause_polls">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.pause_polls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pause_polls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Temporarily pause all active polling operations.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;pause_polls&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.resume_polls">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.resume_polls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resume_polls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resume all paused polling operations.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;resume_polls&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.poll_list">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.poll_list">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of currently active polling methods.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str]: List of method names being polled.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If polling list retrieval fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;poll_list&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">AlpacaDeviceError</span><span class="o">.</span><span class="n">from_device</span><span class="p">(</span>
+                    <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="s2">&quot;poll_list&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.poll_latest">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.poll_latest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll_latest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get latest polling results for all active methods.</span>
+
+<span class="sd">        Uses non-blocking lock acquisition to avoid blocking the WebSocket</span>
+<span class="sd">        when get/set operations are in progress. If the lock is unavailable,</span>
+<span class="sd">        returns cached data from the last successful read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, Dict[str, Any]]: Dictionary mapping method names to</span>
+<span class="sd">                                     their latest values and timestamps.</span>
+<span class="sd">                                     Returns None if cache is empty and lock</span>
+<span class="sd">                                     is unavailable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Try non-blocking lock acquisition</span>
+        <span class="n">acquired</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">acquired</span><span class="p">:</span>
+            <span class="c1"># Lock held by get/set - return cached data immediately</span>
+            <span class="c1"># This prevents WebSocket blocking during slow device operations</span>
+            <span class="c1"># Return None if cache is empty to match caller expectations</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># type: ignore[return-value]</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;poll_latest&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                <span class="c1"># On error, still return cached data rather than raising</span>
+                <span class="c1"># to keep WebSocket responsive</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># type: ignore[return-value]</span>
+                <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Update cache with fresh data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cached_poll_latest</span> <span class="o">=</span> <span class="n">msg</span>
+                <span class="k">return</span> <span class="n">msg</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.stop">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.stop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the device process and clean up resources.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;AlpacaDevice </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_number</span><span class="si">}</span><span class="s2"> stopping&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+
+    <span class="c1">## BACKEND CORE</span>
+
+<div class="viewcode-block" id="AlpacaDevice.run">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main process loop for handling device operations.</span>
+
+<span class="sd">        Runs in the device subprocess to handle method calls, polling,</span>
+<span class="sd">        and inter-process communication. Sets up signal handlers for</span>
+<span class="sd">        graceful shutdown.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create threading lock here because it cannot be pickled for subprocess spawning</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span> <span class="o">=</span> <span class="n">ThreadingLock</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;AlpacaDevice </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_number</span><span class="si">}</span><span class="s2"> started &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;with pid [</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_poll__</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_poll__</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listenFront__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;AlpacaDevice </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_number</span><span class="si">}</span><span class="s2"> stopped&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.listenFront__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.listenFront__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">listenFront__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Listen for and process messages from the main process.</span>
+
+<span class="sd">        Handles various message types including method calls, polling</span>
+<span class="sd">        control, and shutdown commands.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True to continue running, False to stop the process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">r</span>
+
+            <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;get&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get__</span><span class="p">(</span><span class="o">**</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;set&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set__</span><span class="p">(</span><span class="o">**</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;start_poll&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">start_poll__</span><span class="p">(</span><span class="o">**</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;stop_poll&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_poll__</span><span class="p">(</span><span class="o">**</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;pause_polls&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pause</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;resume_polls&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pause</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;poll_list&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">poll_list__</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;poll_latest&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">poll_latest__</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;listenFront__ : unknown message&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    <span class="c1">## BACKEND METHODS</span>
+
+<div class="viewcode-block" id="AlpacaDevice.get__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.get__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pipe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Backend method execution with retry logic and error handling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device method to execute.</span>
+<span class="sd">            pipe (bool): Whether to send result via pipe or return directly.</span>
+<span class="sd">            **kwargs: Keyword arguments for the method.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[Any, Dict[str, Any]]: Method result or status dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## method getter</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># permit 3 attempts</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;not get&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Getting method: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;not get&quot;</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+                        <span class="c1"># if kwargs, call method with kwargs</span>
+                        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="s2">&quot;no_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">()</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                                <span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                            <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                            <span class="s2">&quot;Get method success: &quot;</span>
+                                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                        <span class="p">),</span>
+                                    <span class="p">},</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                    <span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Get method failed with data </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">, trying again...&quot;</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># final run. If error, caught by try/except</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;not get&quot;</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+                <span class="c1"># if kwargs, call method with kwargs</span>
+                <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;no_kwargs&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                    <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;Get method success: &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pipe</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># check if valid, need args?</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pipe</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Get method error with data </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="c1"># send a plain Exception with the string message to avoid</span>
+                <span class="c1"># pickling issues when the original exception class isn&#39;t</span>
+                <span class="c1"># importable in the parent process (e.g. DriverException)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;null&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Get method error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.set__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.set__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Backend property setter with retry logic and error handling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device property to set.</span>
+<span class="sd">            value (Any): Value to assign to the property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## property setter</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># permit 3 attempts</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;not set&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Setting method: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;not set&quot;</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                                <span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                            <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                            <span class="sa">f</span><span class="s2">&quot;Set method success: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> with data </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                        <span class="p">),</span>
+                                    <span class="p">},</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                    <span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Set method failed with data </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">, trying again...&quot;</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># final run. If error, caught by try/except</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;not set&quot;</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                            <span class="p">{</span>
+                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                    <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Set method success: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, with data </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">},</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># check if valid, need args?</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;Set method error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.loop__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.loop__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Continuous polling loop for a specific device method.</span>
+
+<span class="sd">        Runs in a separate thread to continuously poll a device method</span>
+<span class="sd">        at the specified interval, logging results to the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device method to poll.</span>
+<span class="sd">            delay (float): Polling interval in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;datetime&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># Check if we should continue polling (under lock)</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_pause</span><span class="p">:</span>
+                    <span class="n">get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get__</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">pipe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">get</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">get</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="c1">## try again, just in case...</span>
+                        <span class="n">get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get__</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">pipe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">get</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="n">get</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">get</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+                    <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Safely enqueue the polling result; if the queue is closed or</span>
+                    <span class="c1"># otherwise unavailable, stop this poll thread gracefully instead</span>
+                    <span class="c1"># of letting the exception crash the thread.</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                                <span class="p">{</span>
+                                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                        <span class="sa">f</span><span class="s2">&quot;INSERT INTO polling VALUES &quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&#39;,  &quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">dt_str</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+                                    <span class="p">),</span>
+                                <span class="p">},</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">q_exc</span><span class="p">:</span>
+                        <span class="c1"># Common failures include BrokenPipeError when the manager</span>
+                        <span class="c1"># or parent process has exited. Record a minimal local</span>
+                        <span class="c1"># failure state and stop polling this method.</span>
+                        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+                        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;null&quot;</span>
+                            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;loop__: queue.put failed for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">q_exc</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                            <span class="c1"># best effort to not raise from the exception handler</span>
+                            <span class="k">pass</span>
+                        <span class="k">break</span>
+
+                    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
+
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;null&quot;</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+            <span class="c1"># try to enqueue an error log; if the queue is gone, fallback to</span>
+            <span class="c1"># printing and stop polling this method.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Loop error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">q_exc</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;loop__: failed to queue loop error for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">q_exc</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.start_poll__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.start_poll__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_poll__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start a new polling thread for the specified method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): Name of the device method to start polling.</span>
+<span class="sd">            delay (float): Polling interval in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span>
+            <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop__</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">delay</span><span class="p">),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;poll started with </span><span class="si">{</span><span class="n">delay</span><span class="si">}</span><span class="s2"> second cadence&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.stop_poll__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.stop_poll__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_poll__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop polling for a specific method or all methods.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (Optional[str]): Method name to stop polling, or None for all.</span>
+<span class="sd">            *args: Additional arguments (used for signal handlers).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, all polls stopped&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">((</span><span class="n">method</span><span class="p">)</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">))</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;info&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> poll stopped.&quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="si">}</span><span class="s2"> left in poll list, and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="si">}</span><span class="s2"> &quot;</span>
+                                <span class="s2">&quot;left in poll dict&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Stop poll error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> not in poll list.&quot;</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.poll_list__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.poll_list__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll_list__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send current polling list via pipe.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                <span class="c1"># Send a copy to avoid iteration issues during pickling</span>
+                <span class="n">snapshot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_list</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;poll_list error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.poll_latest__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.poll_latest__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll_latest__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send latest polling results via pipe.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_lock</span><span class="p">:</span>
+                <span class="c1"># Send a deep copy to avoid iteration issues during pickling</span>
+                <span class="n">snapshot</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_latest</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;poll_latest error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.stop__">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.stop__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the device process and close communication pipes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args: Additional arguments (used for signal handlers).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># close pipes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">front_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">back_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AlpacaDevice.force_poll">
+<a class="viewcode-back" href="../../api/generated/astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice.force_poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">force_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Immediately poll a device method once and write the result to the database via the queue.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+            <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;INSERT INTO polling VALUES &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&#39;,  &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">dt_str</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;Force poll error: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

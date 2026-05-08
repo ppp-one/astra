@@ -1,0 +1,1184 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.scheduler &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/scheduler';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.scheduler</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Scheduler for observatory actions and device management.</span>
+
+<span class="sd">Key capabilities:</span>
+<span class="sd">    - Schedule management for observatory devices</span>
+<span class="sd">    - Action validation and time updates</span>
+<span class="sd">    - File reading and writing for schedules</span>
+<span class="sd">    - Integration with observatory configuration and device management</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">EarthLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.action_configs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ACTION_CONFIGS</span><span class="p">,</span>
+    <span class="n">BaseActionConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+
+
+<div class="viewcode-block" id="ActionStatus">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ActionStatus">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ActionStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Status of a scheduled action.&quot;&quot;&quot;</span>
+
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;pending&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
+    <span class="n">FINISHED</span> <span class="o">=</span> <span class="s2">&quot;finished&quot;</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;failed&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Action">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Action</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A scheduled action for a device.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from astra.scheduler import Action</span>
+<span class="sd">    &gt;&gt;&gt; from astra.action_configs import ObjectActionConfig</span>
+<span class="sd">    &gt;&gt;&gt; from datetime import datetime, UTC</span>
+<span class="sd">    &gt;&gt;&gt; action = Action(</span>
+<span class="sd">    ...     device_name=&quot;test_camera&quot;,</span>
+<span class="sd">    ...     action_type=&quot;object&quot;,</span>
+<span class="sd">    ...     action_value=ObjectActionConfig(</span>
+<span class="sd">    ...         object=&quot;M42&quot;,</span>
+<span class="sd">    ...         exptime=10.0,</span>
+<span class="sd">    ...     ),</span>
+<span class="sd">    ...     start_time=datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),</span>
+<span class="sd">    ...     end_time=datetime(2024, 1, 1, 12, 5, 0, tzinfo=UTC),</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; action.validate()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">action_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">action_value</span><span class="p">:</span> <span class="n">BaseActionConfig</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">end_time</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">completed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">ActionStatus</span> <span class="o">=</span> <span class="n">ActionStatus</span><span class="o">.</span><span class="n">PENDING</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO enforce start_time, end_time are datetime / UTC?</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Action.get">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Action.validate">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Validate action_value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ActionConfig validation failed for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Validate time order</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span> <span class="n">datetime</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Schedule error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> for device </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;start_time and end_time must be datetime objects.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Schedule error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> for device </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;start_time </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="si">}</span><span class="s2"> must be before end_time </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Action.update_times">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.update_times">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_times</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">time_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">new_start_time</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Action&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the start and end times to present day factored by the time factor.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+        <span class="n">new_end_time</span> <span class="o">=</span> <span class="n">new_start_time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">/</span> <span class="n">time_factor</span>
+
+        <span class="k">return</span> <span class="n">Action</span><span class="p">(</span>
+            <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="p">,</span>
+            <span class="n">action_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">new_start_time</span><span class="p">,</span>
+            <span class="n">end_time</span><span class="o">=</span><span class="n">new_end_time</span><span class="p">,</span>
+            <span class="n">completed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Action.summary_string">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.summary_string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Running </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> sequence for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;starting </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="si">}</span><span class="s2"> and ending </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="Action.set_status">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.set_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">ActionStatus</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">ActionStatus</span><span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span></div>
+
+
+<div class="viewcode-block" id="Action.to_dict">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Action.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iso</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a JSON-serializable dict representation of this Action.</span>
+
+<span class="sd">        iso: if True, format datetimes as ISO strings (for JSONL); otherwise</span>
+<span class="sd">             keep datetime objects (for DataFrame).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">av</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;action_value&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">av</span> <span class="o">=</span> <span class="n">av</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">av</span><span class="p">,</span> <span class="s2">&quot;to_jsonable&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">av</span><span class="o">.</span><span class="n">to_jsonable</span><span class="p">()</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;start_time&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iso</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;isoformat&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">start</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;isoformat&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">end</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;device_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;action_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="n">av</span><span class="p">,</span>
+            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end</span><span class="p">,</span>
+            <span class="s2">&quot;completed&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;completed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="n">ActionStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Every property on a new line, slightly indented</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;Action(</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  device_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  action_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  action_value=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  start_time=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  end_time=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  completed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="si">!r}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  status=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="si">!r}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;)&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Schedule">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Schedule</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">Action</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of scheduled actions.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from astra.scheduler import Schedule, Action</span>
+<span class="sd">    &gt;&gt;&gt; from astra.action_configs import ObjectActionConfig, OpenActionConfig</span>
+<span class="sd">    &gt;&gt;&gt; from datetime import datetime, UTC</span>
+<span class="sd">    &gt;&gt;&gt; actions = [</span>
+<span class="sd">    ...     Action(</span>
+<span class="sd">    ...         device_name=&quot;test_camera&quot;,</span>
+<span class="sd">    ...         action_type=&quot;open&quot;,</span>
+<span class="sd">    ...         action_value=OpenActionConfig(),</span>
+<span class="sd">    ...         start_time=datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),</span>
+<span class="sd">    ...         end_time=datetime(2024, 1, 1, 12, 30, 0, tzinfo=UTC),</span>
+<span class="sd">    ...     ),</span>
+<span class="sd">    ...     Action(</span>
+<span class="sd">    ...         device_name=&quot;test_camera&quot;,</span>
+<span class="sd">    ...         action_type=&quot;object&quot;,</span>
+<span class="sd">    ...         action_value=ObjectActionConfig(</span>
+<span class="sd">    ...             object=&quot;M42&quot;,</span>
+<span class="sd">    ...             exptime=10.0,</span>
+<span class="sd">    ...         ),</span>
+<span class="sd">    ...         start_time=datetime(2024, 1, 1, 12, 30, 0, tzinfo=UTC),</span>
+<span class="sd">    ...         end_time=datetime(2024, 1, 1, 12, 35, 0, tzinfo=UTC),</span>
+<span class="sd">    ...     ),</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; schedule = Schedule(actions)</span>
+<span class="sd">    &gt;&gt;&gt; schedule.validate()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ACTION_CONFIGS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseActionConfig</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ACTION_CONFIGS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Action</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_by_start_time</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Schedule.from_file">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Schedule&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a schedule file and return a Schedule instance with parsed schedule data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename: Path to the schedule file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">schedule_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">schedule_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">schedule_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.jsonl&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">schedule_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="c1"># 1. Read the file line by line to filter out comments safely</span>
+                <span class="c1">#    We strip whitespace to check for empty lines or comments</span>
+                <span class="n">valid_lines</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">line</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;//&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+
+                <span class="c1"># 2. Join the valid lines into one massive string</span>
+                <span class="n">full_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">valid_lines</span><span class="p">)</span>
+
+                <span class="c1"># 3. decode the objects one by one</span>
+                <span class="n">decoder</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="p">()</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_text</span><span class="p">):</span>
+                    <span class="c1"># Skip any whitespace/newlines between objects</span>
+                    <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_text</span><span class="p">)</span> <span class="ow">and</span> <span class="n">full_text</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                        <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_text</span><span class="p">):</span>
+                        <span class="k">break</span>
+
+                    <span class="c1"># raw_decode parses one valid JSON object and returns:</span>
+                    <span class="c1"># obj: the parsed dictionary</span>
+                    <span class="c1"># end_pos: the index in the string where this object ended</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="p">,</span> <span class="n">end_pos</span> <span class="o">=</span> <span class="n">decoder</span><span class="o">.</span><span class="n">raw_decode</span><span class="p">(</span><span class="n">full_text</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                        <span class="n">pos</span> <span class="o">=</span> <span class="n">end_pos</span>
+                    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                        <span class="c1"># Handle cases where the file might end abruptly or have garbage</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Parsing error or end of data at position </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="c1"># Create the DataFrame</span>
+            <span class="n">schedule</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">schedule_path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">schedule</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">schedule</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;mixed&quot;</span>
+        <span class="p">)</span>
+        <span class="n">schedule</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">schedule</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;mixed&quot;</span>
+        <span class="p">)</span>
+        <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">schedule</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.from_dataframe">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.from_dataframe">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dataframe</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">observatory_config</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Schedule&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a Schedule instance from a pandas DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame with schedule data</span>
+<span class="sd">            observatory_config: Optional observatory configuration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">action_type</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="s2">&quot;action_type&quot;</span><span class="p">]</span>
+            <span class="n">config_cls</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ACTION_CONFIGS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">action_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">config_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown action_type: </span><span class="si">{</span><span class="n">action_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">action_value</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">action</span><span class="p">[</span><span class="s2">&quot;action_value&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">action</span><span class="p">[</span><span class="s2">&quot;action_value&quot;</span><span class="p">]</span>
+            <span class="n">default_dict</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">defaults_from_observatory_config</span><span class="p">(</span>
+                <span class="n">observatory_config</span><span class="o">=</span><span class="n">observatory_config</span><span class="p">,</span> <span class="n">device_name</span><span class="o">=</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">action_config</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">action_value</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">)</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Action</span><span class="p">(</span>
+                    <span class="n">device_name</span><span class="o">=</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">],</span>
+                    <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+                    <span class="n">action_value</span><span class="o">=</span><span class="n">action_config</span><span class="p">,</span>
+                    <span class="n">start_time</span><span class="o">=</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">],</span>
+                    <span class="n">end_time</span><span class="o">=</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.update_times">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.update_times">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the start and end times of all actions in this Schedule to present day,</span>
+<span class="sd">        factored by the time factor. Modifies the schedule in-place.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_actions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ss_time_diff</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">start_time</span> <span class="o">-</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span>
+                <span class="n">ss_time_diff</span> <span class="o">=</span> <span class="n">ss_time_diff</span> <span class="o">/</span> <span class="n">time_factor</span>
+                <span class="n">new_start_time</span> <span class="o">=</span> <span class="n">new_actions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start_time</span> <span class="o">+</span> <span class="n">ss_time_diff</span>
+
+            <span class="n">new_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">update_times</span><span class="p">(</span>
+                    <span class="n">time_factor</span><span class="o">=</span><span class="n">time_factor</span><span class="p">,</span> <span class="n">new_start_time</span><span class="o">=</span><span class="n">new_start_time</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">updated_action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_actions</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_action</span></div>
+
+
+<div class="viewcode-block" id="Schedule.validate">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">filterwheel_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">observatory_location</span><span class="p">:</span> <span class="n">EarthLocation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_altitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the schedule actions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filterwheel_names: Optional dict mapping filterwheel names to their filter lists</span>
+<span class="sd">                              for validation. e.g., {&quot;fw1&quot;: [&quot;Clear&quot;, &quot;Red&quot;, &quot;Green&quot;]}</span>
+<span class="sd">            observatory_location: Optional EarthLocation for visibility checks</span>
+<span class="sd">            min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If any action fails validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">filterwheel_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">validate_filters</span><span class="p">(</span><span class="n">filterwheel_names</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Filter validation failed for </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;action on device </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">observatory_location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">validate_visibility</span><span class="p">(</span>
+                        <span class="n">start_time</span><span class="o">=</span><span class="n">Time</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]),</span>
+                        <span class="n">end_time</span><span class="o">=</span><span class="n">Time</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]),</span>
+                        <span class="n">observatory_location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">,</span>
+                        <span class="n">min_altitude</span><span class="o">=</span><span class="n">min_altitude</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Visibility validation failed for object action on device &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.get_by_device">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.get_by_device">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_by_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Action</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">action</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">device_name</span> <span class="o">==</span> <span class="n">device_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Schedule.sort_by_start_time">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.sort_by_start_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sort_by_start_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a new Schedule sorted by start_time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">action</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.to_dataframe">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.to_dataframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">iso</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.save_to_csv">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.save_to_csv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the schedule to a CSV file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.is_completed">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.is_completed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">completed</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.reset_completion">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.reset_completion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_completion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="n">ActionStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Schedule([</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">actions</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">])&quot;</span>
+
+<div class="viewcode-block" id="Schedule.to_jsonl_string">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.to_jsonl_string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonl_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the schedule to a JSONL string.&quot;&quot;&quot;</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">iso</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.to_one_line_string">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.to_one_line_string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_one_line_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the schedule to a single line string.&quot;&quot;&quot;</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;from </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">start_time</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">end_time</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Schedule: </span><span class="si">{</span><span class="n">actions</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="Schedule.save_to_jsonl">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.save_to_jsonl">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_jsonl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the schedule to a JSONL file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.jsonl&quot;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.jsonl&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_jsonl_string</span><span class="p">()</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_string</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Schedule.convert_action_value_string">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.Schedule.convert_action_value_string">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_action_value_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">action_value_str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read an old schedule CSV file and convert it to a Schedule instance.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+        <span class="c1"># Replace single quotes with double quotes</span>
+        <span class="n">action_value_str</span> <span class="o">=</span> <span class="n">action_value_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+        <span class="c1"># Replace tuples (parentheses) with lists (brackets)</span>
+        <span class="n">action_value_str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\(([^()]*)\)&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;[\1]&quot;</span><span class="p">,</span> <span class="n">action_value_str</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">action_value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">action_value_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">action_value</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">action_value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ScheduleManager">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScheduleManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">schedule_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">truncate_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">device_manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">schedule_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">truncate_factor</span> <span class="o">=</span> <span class="n">truncate_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span> <span class="o">=</span> <span class="n">device_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule_mtime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mtime</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_mtime</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ScheduleManager.get_filterwheel_names">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_filterwheel_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_filterwheel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get available filter names from all filterwheels.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict mapping filterwheel device names to their filter lists.</span>
+<span class="sd">            Empty dict if device_manager is not available or no filterwheels exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">filterwheel_names</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">&quot;FilterWheel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">fw_name</span><span class="p">,</span> <span class="n">fw_device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span>
+                <span class="s2">&quot;FilterWheel&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">names</span> <span class="o">=</span> <span class="n">fw_device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Names&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">names</span><span class="p">:</span>
+                        <span class="n">filterwheel_names</span><span class="p">[</span><span class="n">fw_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">names</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Could not get filter names from FilterWheel </span><span class="si">{</span><span class="n">fw_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">filterwheel_names</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.get_observatory_location">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_observatory_location">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_observatory_location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;EarthLocation | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get observatory location from telescope device.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            EarthLocation object if telescope device is available, None otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+                <span class="c1"># Get first available telescope</span>
+                <span class="n">telescope_devices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">telescope_devices</span><span class="p">:</span>
+                    <span class="n">telescope</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">telescope_devices</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+                    <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+                    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">EarthLocation</span>
+
+                    <span class="n">obs_lat</span> <span class="o">=</span> <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SiteLatitude&quot;</span><span class="p">)</span>
+                    <span class="n">obs_lon</span> <span class="o">=</span> <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SiteLongitude&quot;</span><span class="p">)</span>
+                    <span class="n">obs_alt</span> <span class="o">=</span> <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SiteElevation&quot;</span><span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">EarthLocation</span><span class="p">(</span>
+                        <span class="n">lat</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_lat</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                        <span class="n">lon</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_lon</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                        <span class="n">height</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_alt</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">),</span>
+                    <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not get observatory location from telescope: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.get_schedule">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_schedule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schedule</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid schedule loaded.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.read">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.read">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schedule</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read and process the observatory schedule from CSV file.</span>
+
+<span class="sd">        Loads the schedule CSV file and converts it to a pandas DataFrame with</span>
+<span class="sd">        proper datetime parsing. Automatically reloads the schedule if the file</span>
+<span class="sd">        has been modified since the last read. Supports schedule truncation for</span>
+<span class="sd">        development and testing purposes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame or None: A DataFrame containing the schedule data with</span>
+<span class="sd">                properly parsed &#39;start_time&#39; and &#39;end_time&#39; columns, or None if</span>
+<span class="sd">                an error occurs during reading.</span>
+
+<span class="sd">        Features:</span>
+
+<span class="sd">        - Automatic file modification detection and reload</span>
+<span class="sd">        - Datetime parsing for start_time and end_time columns</span>
+<span class="sd">        - Optional schedule truncation for development (via truncate_factor)</span>
+<span class="sd">        - Error handling with logging and error source tracking</span>
+
+<span class="sd">        File Format:</span>
+
+<span class="sd">        - CSV file with columns including start_time, end_time, device_name,</span>
+<span class="sd">          action_type, and action_value</span>
+<span class="sd">        - Datetime columns should be in ISO format compatible with pandas</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Schedule is sorted by start_time after loading</span>
+<span class="sd">            - Truncation moves schedule to current time for testing</span>
+<span class="sd">            - File modification time is tracked to enable automatic reloading</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># self.schedule_manager.read()</span>
+            <span class="n">schedule_mtime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mtime</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">schedule_mtime</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_mtime</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Schedule updating while the previous schedule is running. This will not take effect until the new schedule is run.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading schedule&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">schedule_mtime</span> <span class="o">=</span> <span class="n">schedule_mtime</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">schedule</span> <span class="o">=</span> <span class="n">Schedule</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule_path</span><span class="p">)</span>
+                    <span class="n">schedule</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+                        <span class="n">filterwheel_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_filterwheel_names</span><span class="p">(),</span>
+                        <span class="n">observatory_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">(),</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Schedule read: </span><span class="si">{</span><span class="n">schedule</span><span class="o">.</span><span class="n">to_one_line_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">schedule</span><span class="o">.</span><span class="n">update_times</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">truncate_factor</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Schedule truncated by factor </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">truncate_factor</span><span class="si">}</span><span class="s2">. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Truncated schedule: </span><span class="si">{</span><span class="n">schedule</span><span class="o">.</span><span class="n">to_one_line_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule</span>
+
+                    <span class="k">return</span> <span class="n">schedule</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Warning: Issue processing schedule: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, please try again&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="s2">&quot;Schedule&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Error reading schedule&quot;</span><span class="p">,</span> <span class="n">exception</span><span class="o">=</span><span class="n">e</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.reload_if_updated">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.reload_if_updated">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reload_if_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reload the schedule if the schedule file has been modified.</span>
+
+<span class="sd">        Checks if the schedule file has been updated since it was last read.</span>
+<span class="sd">        If the file has been modified, it reloads the schedule and updates</span>
+<span class="sd">        the internal state accordingly.</span>
+
+<span class="sd">        Process:</span>
+<span class="sd">            1. Checks if the schedule file modification time is greater than</span>
+<span class="sd">            the last recorded modification time.</span>
+<span class="sd">            2. If updated, calls the read() method to reload the schedule.</span>
+<span class="sd">            3. Updates the internal schedule state.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Does not interrupt a currently running schedule.</span>
+<span class="sd">            - Logs a warning if attempting to update while running.</span>
+<span class="sd">            - Useful for dynamic schedule updates during operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_schedule_updated</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Schedule file updated, reloading&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.get_mtime">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_mtime">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the modification timestamp of the schedule file.</span>
+
+<span class="sd">        Retrieves the last modification time of the schedule CSV file to enable</span>
+<span class="sd">        automatic detection of schedule updates. Returns 0 if the file doesn&#39;t</span>
+<span class="sd">        exist, which can be used to detect when no schedule is available.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The Unix timestamp of the schedule file&#39;s last modification</span>
+<span class="sd">                time, or 0.0 if the file does not exist.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Used by read_schedule() to detect file changes</span>
+<span class="sd">            - Enables automatic schedule reloading during operation</span>
+<span class="sd">            - Returns 0 for non-existent files to simplify logic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.is_schedule_updated">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.is_schedule_updated">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_schedule_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the schedule file has been modified since last read.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mtime</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_mtime</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.stop_schedule">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.stop_schedule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_manager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop the currently running schedule execution thread.</span>
+
+<span class="sd">        Safely stops the schedule execution by setting the schedule_running flag</span>
+<span class="sd">        to False and waiting for the schedule thread to complete. This ensures</span>
+<span class="sd">        that any ongoing actions can finish cleanly before the schedule stops.</span>
+
+<span class="sd">        Process:</span>
+<span class="sd">            1. Sets schedule_running flag to False (signals thread to stop)</span>
+<span class="sd">            2. Finds the schedule thread in the threads list</span>
+<span class="sd">            3. Waits for the thread to complete using join()</span>
+<span class="sd">            4. Logs the stopping action</span>
+
+<span class="sd">        Thread Safety:</span>
+<span class="sd">            - Uses thread.join() to ensure clean shutdown</span>
+<span class="sd">            - Schedule thread checks schedule_running flag regularly</span>
+<span class="sd">            - Ongoing actions are allowed to complete before stopping</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - If no schedule is running, logs a warning and returns</span>
+<span class="sd">            - Essential for emergency stops and robotic switch operations</span>
+<span class="sd">            - Used when weather becomes unsafe or errors occur</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping schedule&quot;</span><span class="p">)</span>
+            <span class="n">thread_manager</span><span class="o">.</span><span class="n">stop_thread</span><span class="p">(</span><span class="s2">&quot;schedule&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Schedule not running&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.get_completion_status">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_completion_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_completion_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">completed</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ScheduleManager.get_completed_percentage">
+<a class="viewcode-back" href="../../api/generated/astra.scheduler.html#astra.scheduler.ScheduleManager.get_completed_percentage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_completed_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">completed</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">completed</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

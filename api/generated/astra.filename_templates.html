@@ -1,0 +1,787 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.filename_templates &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.filename_templates';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.guiding" href="astra.guiding.html" />
+    <link rel="prev" title="astra.device_manager" href="astra.device_manager.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.filename_templates</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-behavior">Key behavior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configurations">Example configurations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-str-format-configurations">Example str.format() configurations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-jinja2-configurations">Example Jinja2 configurations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.object"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.calibration"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.flats"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.autofocus"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.calibrate_guiding"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.pointing_model"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.default"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.default</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.TEST_KWARGS"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.TEST_KWARGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ACTION_TYPES"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_ACTION_TYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_IMAGETYPES"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_IMAGETYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ARGS"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_ARGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.from_dict"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.from_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.render_filename"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.render_filename()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.object"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.calibration"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.flats"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.autofocus"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.calibrate_guiding"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.pointing_model"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.default"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.default</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.render_filename"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.render_filename()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.filename_templates">
+<span id="astra-filename-templates"></span><h1>astra.filename_templates<a class="headerlink" href="#module-astra.filename_templates" title="Link to this heading">#</a></h1>
+<p>This module provides two primary classes for generating filenames used by
+Astra when writing image files.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FilenameTemplates</span></code> — simple templates using Python <code class="docutils literal notranslate"><span class="pre">str.format</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code> — richer templates powered by Jinja2 when templates include
+template logic (<code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">...</span> <span class="pre">}}</span></code>) at the cost of a slightly slower template rendering.</p></li>
+</ul>
+<section id="key-behavior">
+<h2>Key behavior<a class="headerlink" href="#key-behavior" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Normalises <code class="docutils literal notranslate"><span class="pre">imagetype</span></code> values to a standard set
+(<code class="docutils literal notranslate"><span class="pre">light</span></code>, <code class="docutils literal notranslate"><span class="pre">bias</span></code>, <code class="docutils literal notranslate"><span class="pre">dark</span></code>, <code class="docutils literal notranslate"><span class="pre">flat</span></code>, <code class="docutils literal notranslate"><span class="pre">default</span></code>).</p></li>
+<li><p>Validates templates against a set of test keyword arguments to catch formatting errors
+early.</p></li>
+<li><p>Automatically selects the Jinja2-based implementation when input templates contain
+Jinja2 markers.</p></li>
+</ul>
+</section>
+<section id="quick-example">
+<h2>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">#</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilenameTemplates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span><span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span><span class="p">)</span>
+<span class="go">&#39;20240101/TestCamera_TestFilter_TestObject_300.123_2025-01-01_00-00-00.fits&#39;</span>
+</pre></div>
+</div>
+<p>For details and advanced examples see the class docstrings for
+<code class="docutils literal notranslate"><span class="pre">FilenameTemplates</span></code> and <code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code>.</p>
+</section>
+<section id="example-configurations">
+<h2>Example configurations<a class="headerlink" href="#example-configurations" title="Link to this heading">#</a></h2>
+<section id="example-str-format-configurations">
+<h3>Example str.format() configurations<a class="headerlink" href="#example-str-format-configurations" title="Link to this heading">#</a></h3>
+<p>The following is the default used by ASTRA in <cite>observatory_config.yaml</cite>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">filename_templates</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">calibration</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">flats</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">autofocus</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">calibrate_guiding</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">pointing_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="example-jinja2-configurations">
+<h3>Example Jinja2 configurations<a class="headerlink" href="#example-jinja2-configurations" title="Link to this heading">#</a></h3>
+<p>The following code would be identical to the default used by ASTRA in
+<cite>observatory_config.yaml</cite>, but using Jinja2 syntax. See the example in
+<a class="reference internal" href="#astra.filename_templates.JinjaFilenameTemplates" title="astra.filename_templates.JinjaFilenameTemplates"><code class="xref py py-class docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code></a> for more advanced examples using Jinja2 logic.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">filename_templates</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">object_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">calibration</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">flats</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">autofocus</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;autofocus/{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">calibrate_guiding</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;calibrate_guiding/{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">pointing_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pointing_model/{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">action_date</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">filter_name</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">imagetype</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">&#39;%.3f&#39;|format(exptime)</span><span class="nv"> </span><span class="s">}}_{{</span><span class="nv"> </span><span class="s">timestamp</span><span class="nv"> </span><span class="s">}}.fits&quot;</span>
+</pre></div>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.filename_templates.FilenameTemplates" title="astra.filename_templates.FilenameTemplates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilenameTemplates</span></code></a>([object, calibration, ...])</p></td>
+<td><p>Filename templates using Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str.format" title="(in Python v3.14)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.format()</span></code></a> syntax.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.filename_templates.JinjaFilenameTemplates" title="astra.filename_templates.JinjaFilenameTemplates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code></a>(object, calibration, ...)</p></td>
+<td><p>Filename templates using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> syntax.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.filename_templates.</span></span><span class="sig-name descname"><span class="pre">FilenameTemplates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autofocus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrate_guiding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/filename_templates.html#FilenameTemplates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.filename_templates.FilenameTemplates" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#astra.filename_templates.FilenameTemplates.object" title="astra.filename_templates.FilenameTemplates.object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Filename templates using Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str.format" title="(in Python v3.14)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.format()</span></code></a> syntax.</p>
+<p>The templates can be customised by passing a dictionary to
+<a class="reference internal" href="#astra.filename_templates.FilenameTemplates.from_dict" title="astra.filename_templates.FilenameTemplates.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FilenameTemplates.from_dict()</span></code></a>, which is the constructor used in astra.
+If the templates contain Jinja2 syntax, the <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> class will
+be used instead, which allows more advanced logic.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilenameTemplates</span>
+</pre></div>
+</div>
+<p>Default templates</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span><span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;light&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;20240101/TestCamera_TestFilter_TestObject_300.123_2025-01-01_00-00-00.fits&#39;</span>
+</pre></div>
+</div>
+<p>Let’s create a template with more advanced logic using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> syntax.
+As the following example illustrates, <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> supports more complex logic,
+than <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str.format" title="(in Python v3.14)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.format()</span></code></a> syntax, at the cost of a slightly slower template
+rendering performance.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flat_template</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="c1"># use subdirs</span>
+<span class="gp">... </span>    <span class="s2">&quot;{{ imagetype.split(&#39;_&#39;)[0].upper() }}/{{ device }}_&quot;</span>
+<span class="gp">... </span>    <span class="c1"># customise timestamp format</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;{{ datetime_timestamp.strftime(&#39;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S.</span><span class="si">%f</span><span class="s2">&#39;)[:-5] }}_&quot;</span>
+<span class="gp">... </span>    <span class="c1"># Add custom logic</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;{{ &#39;Dusk&#39; if (datetime_timestamp + datetime.timedelta(hours=5)).hour &gt; 12 else &#39;Dawn&#39; }}&quot;</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;_sequence_{{ &#39;</span><span class="si">%03d</span><span class="s2">&#39;|format(sequence_counter) }}&quot;</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;.fits&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename_templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;flats&quot;</span><span class="p">:</span> <span class="n">flat_template</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename_templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">filename_templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;flats&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;Flat Frame&quot;</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#astra.filename_templates.JinjaFilenameTemplates" title="astra.filename_templates.JinjaFilenameTemplates"><code class="xref py py-class docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code></a> for more advanced template logic using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.object">
+<span class="sig-name descname"><span class="pre">object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.object" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.calibration">
+<span class="sig-name descname"><span class="pre">calibration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.calibration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.flats">
+<span class="sig-name descname"><span class="pre">flats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.flats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.autofocus">
+<span class="sig-name descname"><span class="pre">autofocus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.autofocus" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.calibrate_guiding">
+<span class="sig-name descname"><span class="pre">calibrate_guiding</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.calibrate_guiding" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.pointing_model">
+<span class="sig-name descname"><span class="pre">pointing_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.pointing_model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.default">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits'</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.default" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.TEST_KWARGS">
+<span class="sig-name descname"><span class="pre">TEST_KWARGS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'action_date':</span> <span class="pre">'20240101',</span> <span class="pre">'action_datetime':</span> <span class="pre">datetime.datetime(2024,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">'action_type':</span> <span class="pre">'object',</span> <span class="pre">'datetime':</span> <span class="pre">&lt;module</span> <span class="pre">'datetime'</span> <span class="pre">from</span> <span class="pre">'/home/runner/work/_temp/uv-python-dir/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/datetime.py'&gt;,</span> <span class="pre">'datetime_timestamp':</span> <span class="pre">datetime.datetime(2025,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">'device':</span> <span class="pre">'TestCamera',</span> <span class="pre">'exptime':</span> <span class="pre">300.123456,</span> <span class="pre">'filter_name':</span> <span class="pre">'TestFilter',</span> <span class="pre">'imagetype':</span> <span class="pre">'light',</span> <span class="pre">'object_name':</span> <span class="pre">'TestObject',</span> <span class="pre">'sequence_counter':</span> <span class="pre">0,</span> <span class="pre">'timestamp':</span> <span class="pre">'2025-01-01_00-00-00'}</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.TEST_KWARGS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.SUPPORTED_ACTION_TYPES">
+<span class="sig-name descname"><span class="pre">SUPPORTED_ACTION_TYPES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['object',</span> <span class="pre">'calibration',</span> <span class="pre">'flats',</span> <span class="pre">'autofocus',</span> <span class="pre">'calibrate_guiding',</span> <span class="pre">'pointing_model',</span> <span class="pre">'default']</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ACTION_TYPES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.SUPPORTED_IMAGETYPES">
+<span class="sig-name descname"><span class="pre">SUPPORTED_IMAGETYPES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['light',</span> <span class="pre">'bias',</span> <span class="pre">'dark',</span> <span class="pre">'flat',</span> <span class="pre">'default']</span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_IMAGETYPES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.SUPPORTED_ARGS">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SUPPORTED_ARGS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ARGS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.from_dict">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.filename_templates.FilenameTemplates" title="astra.filename_templates.FilenameTemplates"><span class="pre">FilenameTemplates</span></a></span></span><a class="reference internal" href="../../_modules/astra/filename_templates.html#FilenameTemplates.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.from_dict" title="Link to this definition">#</a></dt>
+<dd><p>Create FilenameTemplates from a dictionary.</p>
+<p>If the templates contain Jinja2 syntax, the JinjaFilenameTemplates class will
+be used instead.</p>
+<p class="rubric">Examples</p>
+<p>Basic Example using <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str.format" title="(in Python v3.14)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.format()</span></code></a> syntax:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilenameTemplates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{object_name}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;flats&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{device}</span><span class="s2">_FLAT_</span><span class="si">{timestamp}</span><span class="s2">.fits&quot;</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">templates</span><span class="p">)</span>
+<span class="go">&lt;class &#39;astra.filename_templates.FilenameTemplates&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;light&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;TestCamera_TestObject_2025-01-01_00-00-00.fits&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;flats&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;Flat Frame&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;TestCamera_FLAT_2025-01-01_00-00-00.fits&#39;</span>
+</pre></div>
+</div>
+<p>Example using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> syntax:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilenameTemplates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;{{ device }}_{{ object_name }}_{{ timestamp }}.fits&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;flats&quot;</span><span class="p">:</span> <span class="s2">&quot;{{ device }}_FLAT_{{ timestamp }}.fits&quot;</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">templates</span><span class="p">)</span>
+<span class="go">&lt;class &#39;astra.filename_templates.JinjaFilenameTemplates&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;light&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;TestCamera_TestObject_2025-01-01_00-00-00.fits&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;flats&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;Flat Frame&quot;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;TestCamera_FLAT_2025-01-01_00-00-00.fits&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.filename_templates.FilenameTemplates.render_filename">
+<span class="sig-name descname"><span class="pre">render_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/filename_templates.html#FilenameTemplates.render_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.filename_templates.FilenameTemplates.render_filename" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.filename_templates.</span></span><span class="sig-name descname"><span class="pre">JinjaFilenameTemplates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">object_name</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autofocus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;autofocus/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrate_guiding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;calibrate_guiding/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointing_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;pointing_model/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_compiled_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~jinja2.environment.Template]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/filename_templates.html#JinjaFilenameTemplates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#astra.filename_templates.FilenameTemplates" title="astra.filename_templates.FilenameTemplates"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilenameTemplates</span></code></a></p>
+<p>Filename templates using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> syntax.</p>
+<p class="rubric">Examples</p>
+<p>Let’s create a template with more advanced logic using <a class="reference external" href="https://jinja.palletsprojects.com/en/stable/api/#jinja2.Template" title="(in Jinja v3.1.x)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jinja2.Template</span></code></a> syntax.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">JinjaFilenameTemplates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flat_template</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="c1"># use subdirs</span>
+<span class="gp">... </span>    <span class="s2">&quot;{{ imagetype.split(&#39;_&#39;)[0].upper() }}/{{ device }}_&quot;</span>
+<span class="gp">... </span>    <span class="c1"># customise timestamp format</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;{{ datetime_timestamp.strftime(&#39;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S.</span><span class="si">%f</span><span class="s2">&#39;)[:-5] }}_&quot;</span>
+<span class="gp">... </span>    <span class="c1"># Add custom logic</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;{{ &#39;Dusk&#39; if (datetime_timestamp + datetime.timedelta(hours=5)).hour &gt; 12 else &#39;Dawn&#39; }}&quot;</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;_sequence_{{ &#39;</span><span class="si">%03d</span><span class="s2">&#39;|format(sequence_counter) }}&quot;</span>
+<span class="gp">... </span>    <span class="o">+</span> <span class="s2">&quot;.fits&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename_templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;flats&quot;</span><span class="p">:</span> <span class="n">flat_template</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename_templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="o">**</span><span class="n">filename_templates</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;flats&quot;</span><span class="p">,</span> <span class="s2">&quot;imagetype&quot;</span><span class="p">:</span> <span class="s2">&quot;Flat Frame&quot;</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits&#39;</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.object">
+<span class="sig-name descname"><span class="pre">object</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">object_name</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.object" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.calibration">
+<span class="sig-name descname"><span class="pre">calibration</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.calibration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.flats">
+<span class="sig-name descname"><span class="pre">flats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.flats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.autofocus">
+<span class="sig-name descname"><span class="pre">autofocus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;autofocus/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.autofocus" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.calibrate_guiding">
+<span class="sig-name descname"><span class="pre">calibrate_guiding</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;calibrate_guiding/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.calibrate_guiding" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.pointing_model">
+<span class="sig-name descname"><span class="pre">pointing_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;pointing_model/{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.pointing_model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.default">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;{{</span> <span class="pre">action_date</span> <span class="pre">}}/{{</span> <span class="pre">device</span> <span class="pre">}}_{{</span> <span class="pre">filter_name</span> <span class="pre">}}_{{</span> <span class="pre">imagetype</span> <span class="pre">}}_{{</span> <span class="pre">'%.3f'|format(exptime)</span> <span class="pre">}}_{{</span> <span class="pre">timestamp</span> <span class="pre">}}.fits&quot;</span></span><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.default" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.filename_templates.JinjaFilenameTemplates.render_filename">
+<span class="sig-name descname"><span class="pre">render_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/filename_templates.html#JinjaFilenameTemplates.render_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.filename_templates.JinjaFilenameTemplates.render_filename" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.device_manager.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.device_manager</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.guiding.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.guiding</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-behavior">Key behavior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configurations">Example configurations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-str-format-configurations">Example str.format() configurations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-jinja2-configurations">Example Jinja2 configurations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.object"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.calibration"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.flats"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.autofocus"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.calibrate_guiding"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.pointing_model"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.default"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.default</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.TEST_KWARGS"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.TEST_KWARGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ACTION_TYPES"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_ACTION_TYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_IMAGETYPES"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_IMAGETYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.SUPPORTED_ARGS"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.SUPPORTED_ARGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.from_dict"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.from_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.FilenameTemplates.render_filename"><code class="docutils literal notranslate"><span class="pre">FilenameTemplates.render_filename()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.object"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.calibration"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.flats"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.autofocus"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.calibrate_guiding"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.pointing_model"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.default"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.default</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.filename_templates.JinjaFilenameTemplates.render_filename"><code class="docutils literal notranslate"><span class="pre">JinjaFilenameTemplates.render_filename()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

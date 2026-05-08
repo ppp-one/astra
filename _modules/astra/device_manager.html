@@ -1,0 +1,903 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.device_manager &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/device_manager';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.device_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Device management for Alpaca devices within the Astra framework.</span>
+
+<span class="sd">Key capabilities:</span>
+<span class="sd">    - Load and initialize Alpaca devices based on observatory configuration</span>
+<span class="sd">    - Connect to devices and start polling for FITS header data</span>
+<span class="sd">    - Pause and resume polling during critical operations</span>
+<span class="sd">    - Monitor device responsiveness for watchdog functionality</span>
+<span class="sd">    - Force immediate polling for specific device types</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.alpaca_device_process</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AlpacaDevice</span><span class="p">,</span>
+    <span class="n">AlpacaDeviceIPCError</span><span class="p">,</span>
+    <span class="n">RemoteDeviceError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.queue_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueueManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.thread_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadManager</span>
+
+
+<div class="viewcode-block" id="DeviceManager">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeviceManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages loading, connecting, polling, pausing/resuming,</span>
+<span class="sd">    and monitoring all Alpaca devices for an observatory.</span>
+
+<span class="sd">    This class handles the lifecycle of devices including:</span>
+
+<span class="sd">    - Loading device configurations</span>
+<span class="sd">    - Establishing connections</span>
+<span class="sd">    - Starting/stopping polling for FITS header data</span>
+<span class="sd">    - Pausing/resuming polls during critical operations</span>
+<span class="sd">    - Checking device responsiveness for watchdog monitoring</span>
+<span class="sd">    - Forcing immediate polls for specific device types</span>
+
+<span class="sd">    It interacts with the ObservatoryConfig for device settings,</span>
+<span class="sd">    uses the ObservatoryLogger for logging, and relies on</span>
+<span class="sd">    QueueManager and ThreadManager for asynchronous operations.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (ObservatoryLogger): Logger for logging messages and errors.</span>
+<span class="sd">        queue_manager (QueueManager): Manages the queue for inter-thread communication.</span>
+<span class="sd">        thread_manager (ThreadManager): Manages threads for concurrent operations.</span>
+<span class="sd">        devices (dict): Dictionary of loaded devices organized by type and name.</span>
+<span class="sd">        device_task_monitor_queue (dict): Tracks tasks for monitoring device status.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory_config</span><span class="p">:</span> <span class="n">ObservatoryConfig</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">queue_manager</span><span class="p">:</span> <span class="n">QueueManager</span><span class="p">,</span>
+        <span class="n">thread_manager</span><span class="p">:</span> <span class="n">ThreadManager</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observatory_config</span> <span class="o">=</span> <span class="n">observatory_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue_manager</span> <span class="o">=</span> <span class="n">queue_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread_manager</span> <span class="o">=</span> <span class="n">thread_manager</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AlpacaDevice</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_task_monitor_queue</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observatory_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObservatoryConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the observatory configuration, reloading if the file has been modified.</span>
+
+<span class="sd">        This property provides access to the observatory configuration and automatically</span>
+<span class="sd">        reloads it if the underlying configuration file has been modified since the</span>
+<span class="sd">        last access.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ObservatoryConfig: The current observatory configuration object.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If the configuration is reloaded, devices may need to be restarted</span>
+<span class="sd">            (TODO: implement automatic device restart).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observatory_config</span><span class="o">.</span><span class="n">is_outdated</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Config file modified, reloading.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_observatory_config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+            <span class="c1"># TODO restart devices</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observatory_config</span>
+
+<div class="viewcode-block" id="DeviceManager.load_devices">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.load_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and initialize Alpaca devices based on the observatory configuration.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading devices&quot;</span><span class="p">)</span>
+        <span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+        <span class="n">devices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AlpacaDevice</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">:</span>
+            <span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="s2">&quot;Misc&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">AlpacaDevice</span><span class="p">(</span>
+                        <span class="n">ip</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;ip&quot;</span><span class="p">],</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_number</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_number&quot;</span><span class="p">],</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">],</span>
+                        <span class="n">queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">queue_manager</span><span class="o">.</span><span class="n">queue</span><span class="p">,</span>
+                        <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
+                        <span class="n">connectable</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connectable&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
+                    <span class="p">)</span>
+                    <span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">device_task_monitor_queue</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;device_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">],</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error loading </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;device_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="n">devices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Devices loaded&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_telescopes_in_domes</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;DeviceManager&quot;</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;check_telescopes_in_domes&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Error checking telescopes in domes after loading devices&quot;</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.connect_all">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.connect_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect to all loaded devices and start polling for FITS header data.</span>
+
+<span class="sd">        Establishes connections to all initialized devices and begins regular polling</span>
+<span class="sd">        of device properties needed for FITS headers. Different polling intervals</span>
+<span class="sd">        are used based on device criticality:</span>
+
+<span class="sd">        - **Most devices**: 5-second intervals</span>
+<span class="sd">        - **SafetyMonitor**: 1-second intervals for safety-critical data</span>
+
+<span class="sd">        The method:</span>
+<span class="sd">            1. Connects to all devices in the devices dictionary</span>
+<span class="sd">            2. Starts polling threads for non-fixed FITS header properties</span>
+<span class="sd">            3. Sets up special high-frequency polling for safety monitors</span>
+<span class="sd">            4. Starts the watchdog process after all connections are established</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: Device connection errors are logged and added to error_source,</span>
+<span class="sd">                but do not prevent other devices from being connected.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - SPECULOOS observatories skip focuser connection due to compatibility issues</span>
+<span class="sd">            - A 1-second delay is added after connections before starting the watchdog</span>
+<span class="sd">              to ensure devices are ready</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to devices&quot;</span><span class="p">)</span>
+        <span class="n">successful_connections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">connectable</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                            <span class="s2">&quot;Connected&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                        <span class="p">)</span>  <span class="c1">## slow?</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> connected&quot;</span><span class="p">)</span>
+                        <span class="n">successful_connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> skipping connection as marked not connectable&quot;</span>
+                        <span class="p">)</span>
+                <span class="k">except</span> <span class="n">RemoteDeviceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> not responding (network/HTTP error).&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="n">AlpacaDeviceIPCError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;IPC error with device process for </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error connecting to </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">successful_connections</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;No devices connected successfully. &quot;</span>
+                <span class="s2">&quot;Check network and astra configuration. Exiting.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_all_devices</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Some devices failed to connect.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">successful_connections</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">connectable</span>
+            <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span>
+            <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Some devices failed to connect (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">successful_connections</span><span class="p">)</span><span class="si">}</span><span class="s2"> successful). &quot;</span>
+                <span class="s2">&quot;Check logs for details. &quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting polling non-fixed fits headers&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">fits_row</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span>
+                <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;astropy_default&quot;</span><span class="p">,</span> <span class="s2">&quot;astra&quot;</span><span class="p">,</span> <span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="p">)</span> <span class="ow">and</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">device_type</span> <span class="o">=</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span>
+
+                        <span class="c1"># find polling delay in self.observatory_config</span>
+                        <span class="n">delay</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;polling_interval&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">[</span><span class="n">device_type</span><span class="p">]</span>
+                                <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">device_name</span>
+                            <span class="p">),</span>
+                            <span class="mi">5</span><span class="p">,</span>  <span class="c1"># default fallback if device not found</span>
+                        <span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="c1"># 5 second polling</span>
+                            <span class="n">device</span><span class="o">.</span><span class="n">start_poll</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">],</span> <span class="n">delay</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                                <span class="n">device_type</span><span class="p">,</span>
+                                <span class="n">device_name</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Error starting polling for </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;SafetyMonitor&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">:</span>
+            <span class="n">device_type</span> <span class="o">=</span> <span class="s2">&quot;SafetyMonitor&quot;</span>
+            <span class="n">device_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># find polling delay in self.observatory_config</span>
+                <span class="n">delay</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;polling_interval&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">[</span><span class="n">device_type</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">device_name</span>
+                    <span class="p">),</span>
+                    <span class="mi">1</span><span class="p">,</span>  <span class="c1"># default fallback if device not found</span>
+                <span class="p">)</span>
+                <span class="n">device</span><span class="o">.</span><span class="n">start_poll</span><span class="p">(</span><span class="s2">&quot;IsSafe&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>  <span class="c1"># 1 second polling</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                    <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                    <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error starting polling for </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connect all sequence complete&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># wait for devices to connect and start polling</span></div>
+
+        <span class="c1"># TODO: check one device&#39;s latest polling is valid before starting watchdog</span>
+
+<div class="viewcode-block" id="DeviceManager.pause_polls">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.pause_polls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pause_polls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pause polling for specified device types or all devices.</span>
+
+<span class="sd">        Temporarily stops the regular polling of device properties. This is useful</span>
+<span class="sd">        during critical operations where device communication needs to be minimized</span>
+<span class="sd">        or when devices need to be accessed exclusively by other processes.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            device_types (list, optional): A list of device type strings to pause</span>
+<span class="sd">                polling for (e.g., [&#39;Telescope&#39;, &#39;Camera&#39;]). If None, pauses</span>
+<span class="sd">                polling for all device types. Defaults to None.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Only device types that exist in the devices dictionary will be affected</span>
+<span class="sd">            - Polling can be resumed using the resume_polls() method</span>
+<span class="sd">            - This is commonly used in SPECULOOS operations before critical commands</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">device_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pausing polls for </span><span class="si">{</span><span class="n">device_types</span><span class="si">}</span><span class="s2"> if present&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pausing polls for all devices&quot;</span><span class="p">)</span>
+            <span class="n">device_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="n">device_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">pause_polls</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                            <span class="n">device_type</span><span class="p">,</span>
+                            <span class="n">device_name</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> could not pause polls&quot;</span><span class="p">,</span>
+                            <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.resume_polls">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.resume_polls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resume_polls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resume polling for specified device types or all devices.</span>
+
+<span class="sd">        Restarts the regular polling of device properties that was previously</span>
+<span class="sd">        paused using pause_polls(). This restores normal device monitoring</span>
+<span class="sd">        and data collection for FITS headers.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            device_types (list, optional): A list of device type strings to resume</span>
+<span class="sd">                polling for (e.g., [&#39;Telescope&#39;, &#39;Camera&#39;]). If None, resumes</span>
+<span class="sd">                polling for all device types. Defaults to None.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Only device types that exist in the devices dictionary will be affected</span>
+<span class="sd">            - This should be called after pause_polls() to restore normal operation</span>
+<span class="sd">            - Errors during resume are logged but don&#39;t prevent other devices from resuming</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">device_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resuming polls for </span><span class="si">{</span><span class="n">device_types</span><span class="si">}</span><span class="s2"> if present&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resuming polls for all devices&quot;</span><span class="p">)</span>
+            <span class="n">device_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="n">device_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">resume_polls</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                            <span class="n">device_type</span><span class="p">,</span>
+                            <span class="n">device_name</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> could not resume polls&quot;</span><span class="p">,</span>
+                            <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.stop_all_devices">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.stop_all_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_all_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop all devices and their associated processes.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping all devices&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error stopping </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All devices stopped&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.check_devices_alive">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.check_devices_alive">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_devices_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if all connected devices are responsive and alive.</span>
+
+<span class="sd">        Iterates through all loaded devices and tests their responsiveness by</span>
+<span class="sd">        calling the is_alive() method. This helps detect communication failures,</span>
+<span class="sd">        device crashes, or network issues that could affect observatory operations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if all devices are responsive, False if any device fails</span>
+<span class="sd">                to respond or encounters an error.</span>
+
+<span class="sd">        Side Effects:</span>
+<span class="sd">            - Adds unresponsive devices to error_source list for monitoring</span>
+<span class="sd">            - Logs error messages for each unresponsive device</span>
+<span class="sd">            - Returns False immediately if any device fails</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Called regularly by the watchdog for continuous health monitoring</span>
+<span class="sd">            - Critical for detecting device failures before they affect observations</span>
+<span class="sd">            - Used to trigger error handling and recovery procedures</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                            <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                            <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> unresponsive&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="n">device_type</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> unresponsive. &quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.force_poll_observing_conditions">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.force_poll_observing_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">force_poll_observing_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Force an immediate poll of all ObservingConditions devices.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;ObservingConditions&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;ObservingConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">fits_row</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ObservingConditions&quot;</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">]</span>
+                    <span class="p">):</span>
+                        <span class="n">device</span><span class="o">.</span><span class="n">force_poll</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.list_device_names">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.list_device_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_device_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paired_devices</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List device names of a given type, optionally filtered by paired devices.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">paired_devices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">[]</span> <span class="k">if</span> <span class="n">device_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device_type</span> <span class="k">else</span> <span class="p">[</span><span class="n">paired_devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">device_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span>
+            <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="n">device_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeviceManager.check_telescopes_in_domes">
+<a class="viewcode-back" href="../../api/generated/astra.device_manager.html#astra.device_manager.DeviceManager.check_telescopes_in_domes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_telescopes_in_domes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check telescope assignments in domes.</span>
+
+<span class="sd">        Warn if:</span>
+<span class="sd">            - There are telescopes not assigned to any dome</span>
+<span class="sd">            - There are domes assigned to telescopes that are not connected</span>
+
+<span class="sd">        Raise error if:</span>
+<span class="sd">            - Dome configuration is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">assigned_telescopes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">dome_issues</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">dome_conf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">telescopes</span> <span class="o">=</span> <span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;telescopes&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">telescopes</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="n">dome_issues</span><span class="p">[</span><span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;telescopes_field_invalid&quot;</span><span class="p">:</span> <span class="n">telescopes</span>
+                    <span class="p">}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Dome </span><span class="si">{</span><span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;device_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&lt;unknown&gt;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> has an invalid &#39;telescopes&#39; field: </span><span class="si">{</span><span class="n">telescopes</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">assigned_telescopes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">telescopes</span><span class="p">)</span>
+                <span class="c1"># detect references to telescopes that don&#39;t exist</span>
+                <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">telescopes</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+                    <span class="n">dome_issues</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                        <span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">),</span> <span class="p">{}</span>
+                    <span class="p">)[</span><span class="s2">&quot;missing_telescopes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">missing</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Dome </span><span class="si">{</span><span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;device_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&lt;unknown&gt;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> references missing telescope(s): </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">dome_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span><span class="p">)</span>
+                <span class="n">dome_issues</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;config_error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                    <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span>
+                    <span class="n">device_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error reading dome config for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">unassigned_telescopes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">assigned_telescopes</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">unassigned_telescopes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The following telescope(s) are not assigned to any dome: &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unassigned_telescopes</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;. &quot;</span>
+                <span class="s2">&quot;Domes may close without checking whether these telescopes are parked.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s1">&#39;Telescope&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;are the connected telescopes.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">assigned_telescopes</span><span class="si">}</span><span class="s2"> are the assigned telescopes.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;All telescopes are assigned to domes.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Find domes with telescopes not in devices and log a warning</span>
+        <span class="n">missing_telescopes</span> <span class="o">=</span> <span class="n">assigned_telescopes</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">missing_telescopes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The following telescope(s) assigned to domes are not connected: &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_telescopes</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

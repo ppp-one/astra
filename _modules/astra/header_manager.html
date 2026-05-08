@@ -1,0 +1,1063 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.header_manager &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/header_manager';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.header_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">FITS header management utilities.</span>
+
+<span class="sd">This module provides functions for handling astronomical images captured from</span>
+<span class="sd">observatory cameras. It manages image directory creation, data type conversion,</span>
+<span class="sd">and FITS file saving with proper headers and metadata.</span>
+
+<span class="sd">Key features:</span>
+<span class="sd">    - Automatic directory creation with date-based naming</span>
+<span class="sd">    - Image data type conversion and array reshaping for FITS compatibility</span>
+<span class="sd">    - FITS file saving with comprehensive metadata and WCS support</span>
+<span class="sd">    - Intelligent filename generation based on observation parameters</span>
+
+<span class="sd">The module handles various image types including light frames, bias frames,</span>
+<span class="sd">dark frames, and calibration images, ensuring proper metadata preservation</span>
+<span class="sd">and file organization for astronomical data processing pipelines.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">EarthLocation</span><span class="p">,</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.database_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">BaseActionConfig</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HeaderManager&quot;</span><span class="p">,</span> <span class="s2">&quot;ObservatoryHeader&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ObservatoryHeader">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ObservatoryHeader</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">Header</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A FITS header subclass with observatory-specific properties and methods.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        ra (float): Right Ascension in hours.</span>
+<span class="sd">        dec (float): Declination in degrees.</span>
+<span class="sd">        airmass (float): Airmass value.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from astra.image_handler import ObservatoryHeader</span>
+<span class="sd">        &gt;&gt;&gt; header = ObservatoryHeader.get_test_header()</span>
+<span class="sd">        &gt;&gt;&gt; header.validate()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;REQUIRED_KEYS (List[str]): List of required header keys for validation.&quot;&quot;&quot;</span>
+    <span class="n">REQUIRED_KEYS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;LONG-OBS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LAT-OBS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DEC&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;EXPTIME&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DATE-OBS&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ra</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Right Ascension&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">airmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;AIRMASS&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+
+<div class="viewcode-block" id="ObservatoryHeader.validate">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that all required keys are present in the header.&quot;&quot;&quot;</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">REQUIRED_KEYS</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required header keys: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.get_target_sky_coordinates">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.get_target_sky_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target_sky_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;DEC&quot;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.get_observatory_location">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.get_observatory_location">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_observatory_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obs_lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;LAT-OBS&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">obs_lon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;LONG-OBS&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">obs_alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ALT-OBS&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">EarthLocation</span><span class="p">(</span>
+            <span class="n">lat</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_lat</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+            <span class="n">lon</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_lon</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">obs_alt</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.get_test_header">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.get_test_header">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_test_header</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ObservatoryHeader&quot;</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;LONG-OBS&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">70.403</span><span class="p">,</span>
+                <span class="s2">&quot;LAT-OBS&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">24.625</span><span class="p">,</span>
+                <span class="s2">&quot;ALT-OBS&quot;</span><span class="p">:</span> <span class="mi">2400</span><span class="p">,</span>
+                <span class="s2">&quot;RA&quot;</span><span class="p">:</span> <span class="mf">14.053488</span><span class="p">,</span>
+                <span class="s2">&quot;DEC&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">47.3756</span><span class="p">,</span>
+                <span class="s2">&quot;AIRMASS&quot;</span><span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="s2">&quot;DATE-END&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01T00:30:00.000&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ALTITUDE&quot;</span><span class="p">:</span> <span class="mi">2400</span><span class="p">,</span>
+                <span class="s2">&quot;EXPTIME&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+                <span class="s2">&quot;DATE-OBS&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01T00:00:00.000&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">header</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.update_fits_header_times">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.update_fits_header_times">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_fits_header_times</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">exposure_start_datetime</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;DATE-OBS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">exposure_start_datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;UTC datetime start of exposure&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;DATE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;UTC datetime file written&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">date</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.set_imagetype">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.set_imagetype">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_imagetype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">use_light</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the IMAGETYP header based on action type.</span>
+<span class="sd">        Returns True if the image is a light frame, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">use_light</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s2">&quot;calibration&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Bias Frame&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Dark Frame&quot;</span>
+            <span class="n">use_light</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s2">&quot;flats&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Flat Frame&quot;</span>
+        <span class="k">elif</span> <span class="n">action_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;autofocus&quot;</span><span class="p">,</span> <span class="s2">&quot;calibrate_guiding&quot;</span><span class="p">,</span> <span class="s2">&quot;pointing&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Light Frame&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Unknown Frame&quot;</span>
+
+        <span class="k">return</span> <span class="n">use_light</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.set_action_type">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.set_action_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_action_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the action type related headers based on the Action object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ASTRATYP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">action_type</span><span class="p">,</span> <span class="s2">&quot;Type of action performed by astra&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.add_times">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.add_times">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_times</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">SkyCoord</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add comprehensive time information to FITS header.</span>
+
+<span class="sd">        Calculates and adds various time formats to FITS header including</span>
+<span class="sd">        Julian Day variants, Modified Julian Day, and astronomical time corrections.</span>
+<span class="sd">        Also computes airmass from altitude.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            self (dict): FITS header dictionary to modify in-place.</span>
+<span class="sd">            fits_config (pd.DataFrame): Configuration with header specifications.</span>
+<span class="sd">            location (EarthLocation): Observer&#39;s geographic location.</span>
+<span class="sd">            target (SkyCoord): Target celestial coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">exposure_start_datetime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;DATE-OBS&quot;</span><span class="p">])</span>  <span class="c1"># type : ignore</span>
+
+        <span class="n">dateend</span> <span class="o">=</span> <span class="n">exposure_start_datetime</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span>
+            <span class="n">seconds</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">])</span>  <span class="c1"># type : ignore</span>
+        <span class="p">)</span>
+        <span class="n">jd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">to_jd</span><span class="p">(</span><span class="n">exposure_start_datetime</span><span class="p">)</span>
+        <span class="n">jdend</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">to_jd</span><span class="p">(</span><span class="n">dateend</span><span class="p">)</span>
+
+        <span class="n">mjd</span> <span class="o">=</span> <span class="n">jd</span> <span class="o">-</span> <span class="mf">2400000.5</span>
+        <span class="n">mjdend</span> <span class="o">=</span> <span class="n">jdend</span> <span class="o">-</span> <span class="mf">2400000.5</span>
+
+        <span class="n">hjd</span><span class="p">,</span> <span class="n">bjd</span><span class="p">,</span> <span class="n">lstsec</span><span class="p">,</span> <span class="n">ha</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">time_conversion</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row_header</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="p">[</span><span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>  <span class="c1"># noqa: E712</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;astra&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;JD-OBS&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;JD-END&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">jdend</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;HJD-OBS&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">hjd</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;BJD-OBS&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bjd</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;MJD-OBS&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mjd</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;MJD-END&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mjdend</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;DATE-END&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">dateend</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">),</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;LST&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lstsec</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;HA&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ha</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryHeader.add_airmass">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.ObservatoryHeader.add_airmass">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_airmass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="mi">90</span> <span class="o">-</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;ALTITUDE&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;AIRMASS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span>
+                <span class="p">(</span><span class="mf">1.002432</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.148386</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0096467</span><span class="p">)</span>
+                <span class="o">/</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span>
+                    <span class="o">+</span> <span class="mf">0.149864</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                    <span class="o">+</span> <span class="mf">0.0102963</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="mf">0.000303978</span>
+                <span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">fits_config</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;AIRMASS&quot;</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+        <span class="p">)</span>  <span class="c1"># https://doi.org/10.1364/AO.33.001108, https://en.wikipedia.org/wiki/Air_mass_(astronomy)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_ra_from_hours_to_degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;RA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span> <span class="o">*</span> <span class="p">(</span><span class="mi">360</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="HeaderManager">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.HeaderManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HeaderManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the creation and updating of FITS headers for astronomical images.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="HeaderManager.get_base_header">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.HeaderManager.get_base_header">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_header</span><span class="p">(</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">action_value</span><span class="p">:</span> <span class="n">BaseActionConfig</span><span class="p">,</span>
+        <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObservatoryHeader</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a base FITS header with observatory and observation information.</span>
+
+<span class="sd">        Constructs a comprehensive FITS header containing fixed observatory parameters,</span>
+<span class="sd">        current device status, astronomical coordinates, and observation metadata.</span>
+<span class="sd">        The header is built from the FITS configuration file and current system state.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            paired_devices (PairedDevices): Object containing the devices being used</span>
+<span class="sd">                for the current observation sequence.</span>
+<span class="sd">            action_value (dict): Dictionary containing observation parameters from</span>
+<span class="sd">                the schedule, including target coordinates, filters, and settings.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            fits.Header: A complete FITS header object containing:</span>
+<span class="sd">                - Fixed observatory information (location, instrument details)</span>
+<span class="sd">                - Current astronomical conditions (coordinates, time)</span>
+<span class="sd">                - Device-specific parameters (telescope pointing, filter position)</span>
+<span class="sd">                - Observation metadata (object name, exposure settings)</span>
+
+<span class="sd">        Header Categories:</span>
+<span class="sd">            - astra: Observatory and software version information</span>
+<span class="sd">            - astropy_default: Standard astronomical coordinate systems</span>
+<span class="sd">            - Device-specific: Current status from telescopes, cameras, etc.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Some header values are populated from real-time device polling</span>
+<span class="sd">            - Coordinate transformations are performed for various reference frames</span>
+<span class="sd">            - Observatory location and timing information is automatically included</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating base header&quot;</span><span class="p">)</span>
+
+        <span class="n">hdr</span> <span class="o">=</span> <span class="n">ObservatoryHeader</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row_header</span><span class="p">,</span> <span class="n">fits_row</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;astra&quot;</span> <span class="ow">and</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># custom headers</span>
+                <span class="k">if</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;FILTER&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">filter_wheel</span>
+                    <span class="n">pos</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Position&quot;</span><span class="p">)</span>
+                    <span class="n">names</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Names&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;XPIXSZ&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">camera</span>
+                    <span class="n">binx</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BinX&quot;</span><span class="p">)</span>
+                    <span class="n">xpixsize</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PixelSizeX&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">binx</span> <span class="o">*</span> <span class="n">xpixsize</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;YPIXSZ&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">camera</span>
+                    <span class="n">biny</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BinY&quot;</span><span class="p">)</span>
+                    <span class="n">ypixsize</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PixelSizeY&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">biny</span> <span class="o">*</span> <span class="n">ypixsize</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;APTAREA&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ApertureArea&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;APTDIA&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ApertureDiameter&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;FOCALLEN&quot;</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FocalLength&quot;</span><span class="p">)</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;OBJECT&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">row_header</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">action_value</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">action_value</span><span class="p">[</span><span class="n">row_header</span><span class="o">.</span><span class="n">lower</span><span class="p">()],</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">,</span> <span class="s2">&quot;IMAGETYP&quot;</span><span class="p">]:</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">row_header</span> <span class="o">==</span> <span class="s2">&quot;ASTRA&quot;</span><span class="p">:</span>
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">astra</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown header: </span><span class="si">{</span><span class="n">fits_row</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span>
+                <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;astropy_default&quot;</span><span class="p">,</span> <span class="s2">&quot;astra&quot;</span><span class="p">,</span> <span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="p">)</span> <span class="ow">and</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;fixed&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># direct ascom command headers</span>
+                <span class="n">device_type</span> <span class="o">=</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">device_type</span> <span class="ow">in</span> <span class="n">paired_devices</span><span class="p">:</span>
+                    <span class="n">device</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_type</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> not found in paired_devices&quot;</span>
+                    <span class="p">)</span>
+
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">])</span>
+
+                    <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;static&quot;</span><span class="p">:</span>
+                <span class="c1"># fixed headers, ensure datatype</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="nb">float</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]),</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="nb">int</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]),</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]),</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="nb">bool</span><span class="p">(</span><span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]),</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">hdr</span><span class="p">[</span><span class="n">row_header</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">],</span>
+                            <span class="n">fits_row</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">fits_row</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Headers&quot;</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid value for data type: </span><span class="si">{</span><span class="n">fits_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Base header created&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">hdr</span></div>
+
+
+<div class="viewcode-block" id="HeaderManager.final_headers">
+<a class="viewcode-back" href="../../api/generated/astra.header_manager.html#astra.header_manager.HeaderManager.final_headers">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">final_headers</span><span class="p">(</span>
+        <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">observatory_config</span><span class="p">:</span> <span class="n">ObservatoryConfig</span><span class="p">,</span>
+        <span class="n">devices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Complete FITS headers with interpolated device data.</span>
+
+<span class="sd">        Post-processes captured images by adding dynamic header information that</span>
+<span class="sd">        wasn&#39;t available at exposure time. Uses polled device data to interpolate</span>
+<span class="sd">        accurate values for each image timestamp, ensuring complete and accurate</span>
+<span class="sd">        FITS headers for scientific analysis.</span>
+
+<span class="sd">        The process:</span>
+<span class="sd">            1. Retrieves incomplete images from the database</span>
+<span class="sd">            2. Groups images by camera for efficient processing</span>
+<span class="sd">            3. Queries polled device data around image timestamps</span>
+<span class="sd">            4. Interpolates device values to exact exposure times</span>
+<span class="sd">            5. Updates FITS files with complete headers</span>
+<span class="sd">            6. Marks images as header-complete in database</span>
+
+<span class="sd">        Key Features:</span>
+<span class="sd">            - Time-interpolated device values for precise timestamps</span>
+<span class="sd">            - Handles multiple cameras and device types simultaneously</span>
+<span class="sd">            - Preserves original headers while adding missing information</span>
+<span class="sd">            - Robust error handling with detailed logging</span>
+
+<span class="sd">        Data Sources:</span>
+<span class="sd">            - Device polling data from database</span>
+<span class="sd">            - FITS configuration file for header mapping</span>
+<span class="sd">            - Original image FITS headers for timing information</span>
+
+<span class="sd">        Error Handling:</span>
+<span class="sd">            - Individual image failures don&#39;t stop batch processing</span>
+<span class="sd">            - All errors are logged and added to error_source</span>
+<span class="sd">            - Database consistency maintained even with partial failures</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Typically run after observation sequences complete</span>
+<span class="sd">            - Critical for ensuring complete scientific metadata</span>
+<span class="sd">            - May take significant time for large image sets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Completing headers&quot;</span><span class="p">)</span>
+            <span class="n">df_images</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_get_incomplete_images</span><span class="p">(</span><span class="n">database_manager</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">df_images</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No headers to complete, as there are no images.&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">for</span> <span class="n">camera_name</span> <span class="ow">in</span> <span class="n">df_images</span><span class="p">[</span><span class="s2">&quot;camera_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing images from camera: </span><span class="si">{</span><span class="n">camera_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">df_images_filt</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_filter_images_by_camera</span><span class="p">(</span>
+                    <span class="n">df_images</span><span class="p">,</span> <span class="n">camera_name</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">df_images_filt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> images to process.&quot;</span><span class="p">)</span>
+
+                <span class="n">paired_devices</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_get_paired_devices</span><span class="p">(</span>
+                    <span class="n">camera_name</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span> <span class="n">observatory_config</span>
+                <span class="p">)</span>
+                <span class="n">df_images_filt</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_prepare_image_times</span><span class="p">(</span><span class="n">df_images_filt</span><span class="p">)</span>
+                <span class="n">df_poll</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_get_polling_data</span><span class="p">(</span>
+                    <span class="n">database_manager</span><span class="p">,</span> <span class="n">df_images_filt</span>
+                <span class="p">)</span>
+                <span class="n">df_poll_unique</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_get_unique_poll_headers</span><span class="p">(</span>
+                    <span class="n">df_poll</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">,</span> <span class="n">paired_devices</span>
+                <span class="p">)</span>
+                <span class="n">df_inp</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_interpolate_poll_data</span><span class="p">(</span>
+                    <span class="n">df_poll</span><span class="p">,</span> <span class="n">df_poll_unique</span><span class="p">,</span> <span class="n">df_images_filt</span>
+                <span class="p">)</span>
+                <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_update_fits_files</span><span class="p">(</span>
+                    <span class="n">df_images_filt</span><span class="p">,</span>
+                    <span class="n">df_inp</span><span class="p">,</span>
+                    <span class="n">df_poll_unique</span><span class="p">,</span>
+                    <span class="n">database_manager</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="p">,</span>
+                    <span class="n">fits_config</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Completing headers... Done.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="s2">&quot;Headers&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Error completing headers&quot;</span><span class="p">,</span> <span class="n">exception</span><span class="o">=</span><span class="n">e</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_incomplete_images</span><span class="p">(</span><span class="n">database_manager</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">database_manager</span><span class="o">.</span><span class="n">execute_select_to_df</span><span class="p">(</span>
+            <span class="s2">&quot;SELECT * FROM images WHERE complete_hdr = 0;&quot;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s2">&quot;images&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter_images_by_camera</span><span class="p">(</span><span class="n">df_images</span><span class="p">,</span> <span class="n">camera_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">df_images</span><span class="p">[</span><span class="n">df_images</span><span class="p">[</span><span class="s2">&quot;camera_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">camera_name</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_paired_devices</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="n">devices</span><span class="p">,</span> <span class="n">observatory_config</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span>
+            <span class="n">camera_name</span><span class="o">=</span><span class="n">camera_name</span><span class="p">,</span>
+            <span class="n">devices</span><span class="o">=</span><span class="n">devices</span><span class="p">,</span>
+            <span class="n">observatory_config</span><span class="o">=</span><span class="n">observatory_config</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_image_times</span><span class="p">(</span><span class="n">df_images_filt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;date_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;date_obs&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">df_images_filt</span> <span class="o">=</span> <span class="n">df_images_filt</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;date_obs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
+            <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;date_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">to_jd</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">while</span> <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span>
+                <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(),</span>
+                <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df_images_filt</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_polling_data</span><span class="p">(</span>
+        <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">,</span> <span class="n">df_images_filt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;date_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;10 sec&quot;</span><span class="p">)</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;date_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;10 sec&quot;</span><span class="p">)</span>
+        <span class="n">df_poll</span> <span class="o">=</span> <span class="n">database_manager</span><span class="o">.</span><span class="n">execute_select_to_df</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;SELECT * FROM polling WHERE datetime BETWEEN &quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot; AND &quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;;&#39;</span><span class="p">,</span>
+            <span class="n">table</span><span class="o">=</span><span class="s2">&quot;polling&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df_poll</span><span class="p">[</span><span class="s2">&quot;jd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">df_poll</span><span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">to_jd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df_poll</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_poll_headers</span><span class="p">(</span>
+        <span class="n">df_poll</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">df_poll_unique</span> <span class="o">=</span> <span class="n">df_poll</span><span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">,</span> <span class="s2">&quot;device_name&quot;</span><span class="p">,</span> <span class="s2">&quot;device_command&quot;</span><span class="p">]</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+        <span class="n">df_poll_unique</span> <span class="o">=</span> <span class="n">df_poll_unique</span><span class="p">[</span>
+            <span class="n">df_poll_unique</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                    <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="p">),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">df_poll_unique</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_poll_unique</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fits_config</span><span class="p">[</span>
+                <span class="p">(</span><span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">])</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">])</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df_poll_unique</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_poll_unique</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fits_config</span><span class="p">[</span>
+                <span class="p">(</span><span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">])</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="n">fits_config</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">])</span>
+            <span class="p">][</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df_poll_unique</span> <span class="o">=</span> <span class="n">df_poll_unique</span><span class="p">[</span>
+            <span class="n">df_poll_unique</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">df_poll_unique</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_interpolate_poll_data</span><span class="p">(</span>
+        <span class="n">df_poll</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df_poll_unique</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df_images_filt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">df_inp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">df_poll_unique</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">poll_row</span> <span class="ow">in</span> <span class="n">df_poll_unique</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">df_poll_filtered</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">df_poll</span><span class="p">[</span>
+                    <span class="p">(</span><span class="n">df_poll</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">poll_row</span><span class="p">[</span><span class="s2">&quot;device_type&quot;</span><span class="p">])</span>
+                    <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_poll</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">poll_row</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">])</span>
+                    <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_poll</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">poll_row</span><span class="p">[</span><span class="s2">&quot;device_command&quot;</span><span class="p">])</span>
+                <span class="p">]</span>
+                <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;jd&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;jd&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">df_poll_filtered</span><span class="p">[</span><span class="s2">&quot;device_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span>
+                <span class="n">df_poll_filtered</span><span class="p">[</span><span class="s2">&quot;device_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;True&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0&quot;</span><span class="p">}</span>
+                <span class="p">),</span>
+                <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">df_inp</span><span class="p">[</span><span class="n">poll_row</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_dfs</span><span class="p">(</span>
+                <span class="n">df_images_filt</span><span class="p">[</span><span class="s2">&quot;jd_obs&quot;</span><span class="p">],</span> <span class="n">df_poll_filtered</span><span class="p">[</span><span class="s2">&quot;device_value&quot;</span><span class="p">]</span>
+            <span class="p">)[</span><span class="s2">&quot;device_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df_inp</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_fits_files</span><span class="p">(</span>
+        <span class="n">df_images_filt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df_inp</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df_poll_unique</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">df_images_filt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">processed_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_images_filt</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># update logger every 10%</span>
+                <span class="k">if</span> <span class="n">row_index</span> <span class="o">%</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">length</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Completing headers... </span><span class="si">{</span><span class="nb">int</span><span class="p">((</span><span class="n">row_index</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">HeaderManager</span><span class="o">.</span><span class="n">_update_single_fits_file</span><span class="p">(</span>
+                    <span class="n">row_index</span><span class="p">,</span>
+                    <span class="n">row</span><span class="p">,</span>
+                    <span class="n">df_inp</span><span class="p">,</span>
+                    <span class="n">df_poll_unique</span><span class="p">,</span>
+                    <span class="n">fits_config</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error completing headers: </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;filepath&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">processed_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;filepath&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">processed_files</span><span class="p">:</span>
+            <span class="c1"># Update in batches to avoid SQL query length limits</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed_files</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">processed_files</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+                <span class="n">files_str</span> <span class="o">=</span> <span class="s1">&#39;&quot;, &quot;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;UPDATE images SET complete_hdr = 1 WHERE filename IN (&quot;</span><span class="si">{</span><span class="n">files_str</span><span class="si">}</span><span class="s1">&quot;)&#39;</span>
+                <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_single_fits_file</span><span class="p">(</span>
+        <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">df_inp</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">df_poll_unique</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;filepath&quot;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filehandle</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">ObservatoryHeader</span><span class="p">(</span><span class="n">filehandle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">for</span> <span class="n">header_entry</span> <span class="ow">in</span> <span class="n">df_inp</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="c1"># Only write if not already present in header (preserve target coordinates)</span>
+                <span class="k">if</span> <span class="n">header_entry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                    <span class="n">header</span><span class="p">[</span><span class="n">header_entry</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">df_inp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row_index</span><span class="p">][</span><span class="n">header_entry</span><span class="p">],</span>
+                        <span class="n">df_poll_unique</span><span class="p">[</span><span class="n">df_poll_unique</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">header_entry</span><span class="p">][</span>
+                            <span class="s2">&quot;comment&quot;</span>
+                        <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Only convert RA from hours to degrees if it came from polled data (not already in degrees)</span>
+            <span class="k">if</span> <span class="s2">&quot;RA-DEG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                <span class="n">header</span><span class="o">.</span><span class="n">_convert_ra_from_hours_to_degrees</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Remove the marker flag - it&#39;s just for internal tracking</span>
+                <span class="k">del</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;RA-DEG&quot;</span><span class="p">]</span>
+
+            <span class="n">location</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">()</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get_target_sky_coordinates</span><span class="p">()</span>
+            <span class="n">header</span><span class="o">.</span><span class="n">add_times</span><span class="p">(</span><span class="n">fits_config</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="n">header</span><span class="o">.</span><span class="n">add_airmass</span><span class="p">(</span><span class="n">fits_config</span><span class="p">)</span>
+
+            <span class="c1"># Assign the modified header back to the HDU</span>
+            <span class="n">filehandle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
+            <span class="n">filehandle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_checksum</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">filehandle</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s2">&quot;silentfix&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

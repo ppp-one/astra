@@ -1,0 +1,652 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.autofocus &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.autofocus';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.calibrate_guiding" href="astra.calibrate_guiding.html" />
+    <link rel="prev" title="astra.alpaca_device_process" href="astra.alpaca_device_process.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.autofocus</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser"><code class="docutils literal notranslate"><span class="pre">Autofocuser</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.best_focus_position"><code class="docutils literal notranslate"><span class="pre">Autofocuser.best_focus_position</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.run"><code class="docutils literal notranslate"><span class="pre">Autofocuser.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.setup"><code class="docutils literal notranslate"><span class="pre">Autofocuser.setup()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_autofocus_calibration_field"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_autofocus_calibration_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.slew_to_calibration_field"><code class="docutils literal notranslate"><span class="pre">Autofocuser.slew_to_calibration_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.reduce_exposure_time"><code class="docutils literal notranslate"><span class="pre">Autofocuser.reduce_exposure_time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.make_summary_plot"><code class="docutils literal notranslate"><span class="pre">Autofocuser.make_summary_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.create_result_file"><code class="docutils literal notranslate"><span class="pre">Autofocuser.create_result_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.save_best_focus_position"><code class="docutils literal notranslate"><span class="pre">Autofocuser.save_best_focus_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_focus_measure_operator"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_focus_measure_operator()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_extremum_estimator"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_extremum_estimator()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.calculate_field_of_view"><code class="docutils literal notranslate"><span class="pre">Autofocuser.calculate_field_of_view()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_default_field_of_view"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_default_field_of_view()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.autofocus">
+<span id="astra-autofocus"></span><h1>astra.autofocus<a class="headerlink" href="#module-astra.autofocus" title="Link to this heading">#</a></h1>
+<p>Automated telescope autofocus system for astronomical observations.</p>
+<p>This module provides a comprehensive autofocus system for astronomical telescopes,
+integrating with ALPACA devices and the astrafocus library. It supports various
+focus measurement operators, automatic target selection using Gaia catalog data,
+and sophisticated focusing algorithms for optimal image quality.</p>
+<dl class="simple">
+<dt>Key components:</dt><dd><ul class="simple">
+<li><p>Camera, focuser, and telescope interfaces for ALPACA devices</p></li>
+<li><p>Automated target selection using Gaia star catalog</p></li>
+<li><p>Multiple focus measurement algorithms (HFR, FFT, variance-based)</p></li>
+<li><p>Defocusing and refocusing capabilities</p></li>
+<li><p>Comprehensive logging and result visualization</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">AstraAutofocusDeviceManager</span></code>(observatory, ...)</p></td>
+<td><p>Device manager for Astra autofocus operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">AstraCamera</span></code>(observatory, ...[, maxadu])</p></td>
+<td><p>Camera interface for autofocus operations with ALPACA devices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">AstraFocuser</span></code>(observatory, alpaca_device_focuser)</p></td>
+<td><p>Focuser interface for Astra observatory automation system.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">AstraTelescope</span></code>(observatory, ...)</p></td>
+<td><p>Telescope interface for Astra observatory automation system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.autofocus.Autofocuser" title="astra.autofocus.Autofocuser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Autofocuser</span></code></a>(observatory, action, paired_devices)</p></td>
+<td><p>Main autofocus orchestration class for Astra observatory.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Defocuser</span></code>(observatory, paired_devices[, action])</p></td>
+<td><p>Defocusing control for creating intentionally out-of-focus images.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.autofocus.</span></span><span class="sig-name descname"><span class="pre">Autofocuser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">autofocuser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NonParametricResponseAutofocuser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AnalyticResponseAutofocuser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Main autofocus orchestration class for Astra observatory.</p>
+<p>Coordinates complete autofocus operations including target selection,
+focus measurement, and optimization using multiple algorithms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observatory</strong> (<em>Any</em>) – Main Astra instance for system coordination.</p></li>
+<li><p><strong>action</strong> (<em>Action</em>) – Action configuration for the autofocus.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Device manager for observatory components.</p></li>
+<li><p><strong>action_value</strong> (<em>dict</em>) – Configuration values for autofocus action.</p></li>
+<li><p><strong>save_path</strong> (<em>Optional[Path]</em>) – Directory path for saving autofocus data.</p></li>
+<li><p><strong>autofocuser</strong> (<em>Optional[Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]]</em>) – Specific autofocus algorithm instance.</p></li>
+<li><p><strong>success</strong> (<em>bool</em>) – Success flag for autofocus operation.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.best_focus_position">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">best_focus_position</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#astra.autofocus.Autofocuser.best_focus_position" title="Link to this definition">#</a></dt>
+<dd><p>Get the best focus position found by the autofocuser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em> – Optimal focus position determined by autofocus algorithm.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If autofocuser has not been set up yet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.run" title="Link to this definition">#</a></dt>
+<dd><p>Execute the autofocus sequence.</p>
+<p>Runs the complete autofocus operation using the configured algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em> – True if autofocus completed successfully, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.setup" title="Link to this definition">#</a></dt>
+<dd><p>Set up the autofocus system with devices and algorithms.</p>
+<p>Configures camera, focuser, telescope interfaces and initializes
+the autofocus algorithm with specified parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.determine_autofocus_calibration_field">
+<span class="sig-name descname"><span class="pre">determine_autofocus_calibration_field</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.determine_autofocus_calibration_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.determine_autofocus_calibration_field" title="Link to this definition">#</a></dt>
+<dd><p>Determine optimal celestial coordinates for autofocus operation.</p>
+<p>Selects suitable star field for autofocus using Gaia catalog data and
+zenith neighborhood analysis. Uses various selection criteria including
+magnitude ranges, field of view, and star density preferences.</p>
+<dl class="simple">
+<dt>Selection methods:</dt><dd><ul class="simple">
+<li><p>‘single’: Isolated star closest to zenith</p></li>
+<li><p>‘maximal’: Star with maximum neighbors in field</p></li>
+<li><p>‘any’: Any suitable star closest to zenith</p></li>
+</ul>
+</dd>
+</dl>
+<p>Updates self.config.calibration_field.coordinates with selected coordinates or
+sets self.success to False if no suitable field found.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.slew_to_calibration_field">
+<span class="sig-name descname"><span class="pre">slew_to_calibration_field</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.slew_to_calibration_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.slew_to_calibration_field" title="Link to this definition">#</a></dt>
+<dd><p>Slew telescope to the determined autofocus calibration field.</p>
+<p>Moves the telescope to the coordinates selected for autofocus operations.
+Updates action_value with target coordinates and initiates observatory setup.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.reduce_exposure_time">
+<span class="sig-name descname"><span class="pre">reduce_exposure_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autofocus_device_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AstraAutofocusDeviceManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposure_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_reduction_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimal_exposure_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.reduce_exposure_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.reduce_exposure_time" title="Link to this definition">#</a></dt>
+<dd><p>Automatically reduce exposure time to prevent saturation.</p>
+<p>Takes test exposures and progressively reduces exposure time if saturation
+is detected, ensuring optimal image quality for focus measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>autofocus_device_manager</strong> (<em>AstraAutofocusDeviceManager</em>) – Device manager for camera access.</p></li>
+<li><p><strong>exposure_time</strong> (<em>float</em>) – Initial exposure time in seconds.</p></li>
+<li><p><strong>reduction_factor</strong> (<em>float</em>) – Factor by which to reduce exposure time.</p></li>
+<li><p><strong>max_reduction_steps</strong> (<em>int</em>) – Maximum number of reduction iterations.</p></li>
+<li><p><strong>minimal_exposure_time</strong> (<em>float</em>) – Minimum allowed exposure time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Optimal exposure time that avoids saturation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.make_summary_plot">
+<span class="sig-name descname"><span class="pre">make_summary_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.make_summary_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.make_summary_plot" title="Link to this definition">#</a></dt>
+<dd><p>Create visualization plot of autofocus results.</p>
+<p>Generates a summary plot showing focus measure vs focuser position
+with the determined best focus position marked. Saves plot to the
+autofocus results directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.create_result_file">
+<span class="sig-name descname"><span class="pre">create_result_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.create_result_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.create_result_file" title="Link to this definition">#</a></dt>
+<dd><p>Create text file with autofocus results summary.</p>
+<p>Writes a summary file containing the best focus position, algorithm used,
+and autofocuser configuration for future reference.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.save_best_focus_position">
+<span class="sig-name descname"><span class="pre">save_best_focus_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.save_best_focus_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.save_best_focus_position" title="Link to this definition">#</a></dt>
+<dd><p>Save determined best focus position to observatory configuration.</p>
+<p>Updates the focuser configuration with the optimal focus position
+found during autofocus operation for future use.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.determine_focus_measure_operator">
+<span class="sig-name descname"><span class="pre">determine_focus_measure_operator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.determine_focus_measure_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.determine_focus_measure_operator" title="Link to this definition">#</a></dt>
+<dd><p>Select focus measurement algorithm from configuration.</p>
+<p>Determines the appropriate focus measure operator based on user preferences,
+supporting various algorithms like HFR, 2D Gaussian, FFT, and variance-based methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple[Any, str]</em> – Focus measure operator class and descriptive name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.determine_extremum_estimator">
+<span class="sig-name descname"><span class="pre">determine_extremum_estimator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.determine_extremum_estimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.determine_extremum_estimator" title="Link to this definition">#</a></dt>
+<dd><p>Select extremum estimation algorithm for focus curve analysis.</p>
+<p>Chooses appropriate curve fitting method for determining optimal focus
+from focus measure vs position data. Supports LOWESS, median filter,
+spline, and RBF methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>astrafee.RobustExtremumEstimator</em> – Configured extremum estimator instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.calculate_field_of_view">
+<span class="sig-name descname"><span class="pre">calculate_field_of_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.calculate_field_of_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.calculate_field_of_view" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the field of view of the camera-telescope system.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.autofocus.Autofocuser.determine_default_field_of_view">
+<span class="sig-name descname"><span class="pre">determine_default_field_of_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/autofocus.html#Autofocuser.determine_default_field_of_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.autofocus.Autofocuser.determine_default_field_of_view" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.alpaca_device_process.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.alpaca_device_process</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.calibrate_guiding.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.calibrate_guiding</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser"><code class="docutils literal notranslate"><span class="pre">Autofocuser</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.best_focus_position"><code class="docutils literal notranslate"><span class="pre">Autofocuser.best_focus_position</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.run"><code class="docutils literal notranslate"><span class="pre">Autofocuser.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.setup"><code class="docutils literal notranslate"><span class="pre">Autofocuser.setup()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_autofocus_calibration_field"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_autofocus_calibration_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.slew_to_calibration_field"><code class="docutils literal notranslate"><span class="pre">Autofocuser.slew_to_calibration_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.reduce_exposure_time"><code class="docutils literal notranslate"><span class="pre">Autofocuser.reduce_exposure_time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.make_summary_plot"><code class="docutils literal notranslate"><span class="pre">Autofocuser.make_summary_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.create_result_file"><code class="docutils literal notranslate"><span class="pre">Autofocuser.create_result_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.save_best_focus_position"><code class="docutils literal notranslate"><span class="pre">Autofocuser.save_best_focus_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_focus_measure_operator"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_focus_measure_operator()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_extremum_estimator"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_extremum_estimator()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.calculate_field_of_view"><code class="docutils literal notranslate"><span class="pre">Autofocuser.calculate_field_of_view()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.autofocus.Autofocuser.determine_default_field_of_view"><code class="docutils literal notranslate"><span class="pre">Autofocuser.determine_default_field_of_view()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,613 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Operation Guide &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/operation';</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Core Logic" href="core_logic.html" />
+    <link rel="prev" title="Scheduling Syntax" href="scheduling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Operation Guide</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-schedule-autofocus-calibrate-guiding">First Schedule - Autofocus &amp; Calibrate Guiding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-interface">Web Interface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#startup-options">Startup Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.main-get_parser-named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="operation-guide">
+<h1>Operation Guide<a class="headerlink" href="#operation-guide" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/operation-banner.svg" />
+<p><em>Astra</em> prioritizes safe, fully automated robotic observing. This guide details operational workflows including first schedule, the web interface, startup options, and troubleshooting.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>For reliable and safe operation, please ensure the following prerequisites are met:</p>
+<ul class="simple">
+<li><p><strong>Independent Safety:</strong> An independent safety system is in place to monitor the observatory and weather (exposing its state as an ASCOM SafetyMonitor).</p>
+<ul>
+<li><p>This system must be capable of independently closing the observatory should the computer running <em>Astra</em> fail.</p></li>
+<li><p><strong>Recommendation:</strong> Configure the independent safety monitor with slightly relaxed weather thresholds compared to <em>Astra</em> (e.g., safety monitor set to trigger at 10% higher wind speeds than <em>Astra</em>). This ensures <em>Astra</em> triggers closure first, reserving the independent system as a fail-safe.</p></li>
+</ul>
+</li>
+<li><p><strong>Properly Configured Hardware:</strong> All device hardware is connected, aligned, and the dome is slaved (if not roll-off). In the <a class="reference internal" href="observatory_configuration.html"><span class="doc std std-doc">observatory configuration</span></a>, please ensure:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">close_dome_on_telescope_error</span></code> flag is set correctly for your needs, default is <code class="docutils literal notranslate"><span class="pre">false</span></code>. Independent to this, the observatory will always close if a non-telescope/dome device encounters an error.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">focus_position</span></code> is set to a known good value.</p></li>
+<li><p>The target camera <code class="docutils literal notranslate"><span class="pre">temperature</span></code> is defined; <em>Astra</em> uses this value during cooling sequences.</p></li>
+</ul>
+</li>
+<li><p><strong>Accurate Timekeeping:</strong> The system and telescope clocks are accurate (e.g., via NTP or GPS).</p></li>
+</ul>
+</section>
+<section id="first-schedule-autofocus-calibrate-guiding">
+<h2>First Schedule - Autofocus &amp; Calibrate Guiding<a class="headerlink" href="#first-schedule-autofocus-calibrate-guiding" title="Link to this heading">#</a></h2>
+<p>On first schedule run, you should autofocus and calibrate guiding to ensure optimal image quality and guiding performance for subsequent schedules.</p>
+<p>Create a schedule file containing the following sequence (adjust times as needed) and then turn the robotic switch on (see <a class="reference internal" href="#web-interface"><span class="xref myst">Web Interface</span></a> below):</p>
+<p><strong>1. Open</strong>
+First, trigger the <a class="reference internal" href="scheduling.html#open-action"><span class="std std-ref">open action</span></a>. This opens the observatory and automatically cools the camera to the temperature defined in your configuration.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// Open observatory and cool</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;device_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;camera_main&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;open&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">  </span><span class="nt">&quot;start_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-23 22:30:00.000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;end_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-24 10:00:00.000&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>2. Autofocus</strong>
+Run the <a class="reference internal" href="scheduling.html#autofocus-action"><span class="std std-ref">autofocus action</span></a>. Ensure the <code class="docutils literal notranslate"><span class="pre">filter</span></code> matches one installed in your wheel.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// Autofocus</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;device_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;camera_main&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;autofocus&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;exptime&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;filter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;V&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;search_range_is_relative&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;search_range&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;n_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;n_exposures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;start_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-23 22:35:00.000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;end_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-23 22:50:00.000&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Upon successful completion, the optimized focus position is updated in the configuration. Autofocus images and V-curve plot are saved to the <code class="docutils literal notranslate"><span class="pre">images/autofocus</span></code> directory.</p>
+<!-- **3. Optional: Pointing model**
+Once focused, build a pointing model. Each pointing is plate solved and sends SyncToCoordinates commands to the mount. The receipt of these commands can be used to build a pointing model in the mount control software. _Astra_ itself does not build or maintain a pointing model.
+
+```json
+// Optional: Pointing Model
+{
+  "device_name": "camera_main",
+  "action_type": "pointing_model",
+  "action_value": {},
+  "start_time": "2025-08-23 23:10:00.000",
+  "end_time": "2025-08-24 00:10:00.000"
+}
+``` -->
+<p><strong>3. Calibrate guiding</strong>
+Finally, <a class="reference internal" href="scheduling.html#calibrate-guiding-action"><span class="std std-ref">calibrate the autoguider parameters</span></a>. The schedule measures the response of the PulseGuide command and the orientation of the camera on the sky.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// Calibrate Guiding</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;device_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;camera_main&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;calibrate_guiding&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">  </span><span class="nt">&quot;start_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-23 22:50:00.000&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;end_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-23 23:10:00.000&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After this, you can run science observation schedules with guiding enabled.</p>
+</section>
+<section id="web-interface">
+<h2>Web Interface<a class="headerlink" href="#web-interface" title="Link to this heading">#</a></h2>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/ui-robotic-switch-screenshot.jpg"><img alt="Top portion of _Astra_'s web interface" src="../_images/ui-robotic-switch-screenshot.jpg" style="width: 80%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Top portion of <em>Astra</em>’s web interface</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p><em>Astra</em> provides a modern web interface for monitoring and control. If needed, API documentation is available at <a class="reference external" href="http://localhost:8000/docs">http://localhost:8000/docs</a> after startup or here at <a class="reference internal" href="../api/endpoints.html"><span class="doc std std-doc">API Endpoints</span></a> – but most users will interact with the web interface for operation.</p>
+<p>The header bar displays critical system status:</p>
+<ul class="simple">
+<li><p><strong>Observatory Name</strong>: Turns red if system errors are present.</p></li>
+<li><p><strong>UTC Time</strong>: Current universal time.</p></li>
+<li><p><strong>Watchdog Status</strong>: Green when the watchdog is running, red if stopped. It should always be running during operation to ensure safety mechanisms are active. If stopped, the system will not execute any schedule actions and will ignore weather and device statuses.</p></li>
+<li><p><strong>Weather Status</strong>: Green indicates safe conditions, red indicates unsafe - dictated by the SafetyMonitor and internal safety monitor logic.</p></li>
+<li><p><strong>Schedule Status</strong>: Green when a schedule is active, gray when idle.</p></li>
+<li><p><strong>Robotic Operations Switch</strong>: The master switch for automated control (green=enabled, gray=disabled).</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Enabling the <strong>Robotic Operations Switch</strong> will immediately start processing any valid, loaded schedule.</p>
+<p>To reload a new schedule while running, you must first disable the robotic switch, then enable it again after the schedule has changed. This is to ensure the previous schedule is fully unloaded before starting the new one.</p>
+</div>
+<p>The interface is organized into four main operational views:</p>
+<ul class="simple">
+<li><p><strong>Summary</strong>: Real-time dashboard of device status, error states, and polled data. Also displays the latest scientific images and, if configured, live webcam or all-sky feeds.</p></li>
+<li><p><strong>Logs</strong>: Centralized view for system and device logs. It also displays the currently loaded schedule and line-by-line execution status, and guiding graphs.</p></li>
+<li><p><strong>Weather</strong>: Detailed environmental monitoring including 3-day graph history, current values, and safety limit thresholds used by the internal safety monitor logic (defined in the <a class="reference internal" href="observatory_configuration.html#observingconditions-configuration"><span class="std std-ref">observatory configuration</span></a>).</p></li>
+<li><p><strong>Controls</strong>: Sky map showing telescope position and some manual override controls.</p></li>
+</ul>
+</section>
+<section id="startup-options">
+<h2>Startup Options<a class="headerlink" href="#startup-options" title="Link to this heading">#</a></h2>
+<p>Following <a class="reference internal" href="../quickstart.html"><span class="doc std std-doc">Quickstart</span></a>, <code class="docutils literal notranslate"><span class="pre">astra</span></code> has a few optional startup options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">astra</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">config</span> <span class="n">CONFIG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span>
+             <span class="p">[</span><span class="o">--</span><span class="n">truncate</span> <span class="n">TRUNCATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">observatory</span> <span class="n">OBSERVATORY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">reset</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="astra.main-get_parser-named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#astra.main-get_parser-named-arguments" title="Link to this heading">#</a></h3>
+<dl class="option-list">
+<dt><kbd>--config</kbd></dt>
+<dd><p>path to Astra’s base configuration file (default: ~/.astra/astra_config.yml)</p>
+</dd>
+<dt><kbd>--debug</kbd></dt>
+<dd><p>run in debug mode (default: false)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+<dt><kbd>--port</kbd></dt>
+<dd><p>port to run the server on (default: 8000)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">8000</span></code></p>
+</dd>
+<dt><kbd>--truncate</kbd></dt>
+<dd><p>truncate schedule by specified factor and reset time start time to now (default: None)</p>
+</dd>
+<dt><kbd>--observatory</kbd></dt>
+<dd><p>specify observatory name for custom subclassing (default: None)</p>
+</dd>
+<dt><kbd>--reset</kbd></dt>
+<dd><p>reset the Astra’s base config</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</section>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Each <em>Astra</em> instance runs exactly one observatory at a time, determined by the <code class="docutils literal notranslate"><span class="pre">observatory_name</span></code> field in your base configuration file (<code class="docutils literal notranslate"><span class="pre">~/.astra/astra_config.yml</span></code>).</p>
+</div>
+<p><strong>Key Options:</strong></p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--config</span></code></strong>: Specify a different base configuration file. Useful for running multiple observatories (each needs different <code class="docutils literal notranslate"><span class="pre">--config</span></code> and <code class="docutils literal notranslate"><span class="pre">--port</span></code>).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">--observatory</span></code></strong>: Select a custom Python subclass for site-specific behavior (see <a class="reference internal" href="custom_observatories.html"><span class="doc std std-doc">Custom Observatories</span></a>). Optional - only needed if you’ve created custom subclasses.</p></li>
+</ul>
+<p>In most cases you will run <code class="docutils literal notranslate"><span class="pre">astra</span></code> without any additional options.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
+<p><strong>Schedule Not Starting?</strong></p>
+<ul class="simple">
+<li><p><strong>Watchdog</strong>: Ensure the Watchdog is running.</p></li>
+<li><p><strong>Robotic Mode</strong>: Verify the Robotic Operations Switch is enabled.</p></li>
+<li><p><strong>Time</strong>: Confirm the schedule’s <code class="docutils literal notranslate"><span class="pre">start_time</span></code> and <code class="docutils literal notranslate"><span class="pre">end_time</span></code> are valid for the current time.</p></li>
+<li><p><strong>Syntax</strong>: Validate the schedule file is valid JSONL format.</p></li>
+<li><p><strong>Config</strong>: Ensure referenced device names match your configuration exactly.</p></li>
+</ul>
+<p><strong>Actions Skipping?</strong></p>
+<ul class="simple">
+<li><p><strong>Weather</strong>: Weather-dependent actions do not run during unsafe conditions.</p></li>
+<li><p><strong>Consistency</strong>: Check that device names in the schedule match <code class="docutils literal notranslate"><span class="pre">observatory.yaml</span></code>.</p></li>
+<li><p><strong>Conflicts</strong>: Check for timing overlaps or impossible constraints.</p></li>
+<li><p><strong>Dependencies</strong>: Ensure required paired devices are configured.</p></li>
+</ul>
+<p><strong>Incomplete Sequences?</strong></p>
+<ul class="simple">
+<li><p><strong>Safety</strong>: Intermittent weather issues can abort a running sequence.</p></li>
+<li><p><strong>Timing</strong>: Ensure sufficient duration was allocated for the action to complete.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="scheduling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Scheduling Syntax</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="core_logic.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Core Logic</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-schedule-autofocus-calibrate-guiding">First Schedule - Autofocus &amp; Calibrate Guiding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-interface">Web Interface</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#startup-options">Startup Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.main-get_parser-named-arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

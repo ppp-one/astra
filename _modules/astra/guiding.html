@@ -1,0 +1,1681 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.guiding &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/guiding';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.guiding</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Astronomical telescope autoguiding system with PID control.</span>
+
+<span class="sd">This module provides automated guiding functionality for astronomical telescopes</span>
+<span class="sd">using image-based tracking with PID control loops. It implements the complete</span>
+<span class="sd">guiding workflow from image acquisition to telescope correction commands.</span>
+
+<span class="sd">Key Features:</span>
+<span class="sd">    - Real-time star tracking using the Donuts image registration library</span>
+<span class="sd">    - PID control loops for precise telescope corrections</span>
+<span class="sd">    - Database logging of guiding performance and corrections</span>
+<span class="sd">    - Support for German Equatorial Mount (GEM) pier side changes</span>
+<span class="sd">    - Outlier rejection and statistical analysis of guiding errors</span>
+<span class="sd">    - Automatic reference image management per field/filter combination</span>
+<span class="sd">    - Background subtraction and image cleaning for robust star detection</span>
+
+<span class="sd">The system continuously monitors incoming images, compares them to reference</span>
+<span class="sd">images, calculates pointing errors, and applies corrective pulse guide commands</span>
+<span class="sd">to keep the telescope accurately tracking celestial objects.</span>
+
+<span class="sd">Components:</span>
+<span class="sd">    CustomImageClass: Image preprocessing for robust star detection</span>
+<span class="sd">    Guider: Main autoguiding class with PID control</span>
+<span class="sd">    PID: Discrete PID controller implementation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">radians</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">copyfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.telescope</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlignmentModes</span><span class="p">,</span> <span class="n">GuideDirections</span><span class="p">,</span> <span class="n">PierSide</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">donuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">Donuts</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.database_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.image_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.thread_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomImageClass</span>
+
+<span class="c1"># rejection buffer length</span>
+<span class="n">GUIDE_BUFFER_LENGTH</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="c1"># number images allowed during pull in period</span>
+<span class="n">IMAGES_TO_STABILISE</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1"># outlier rejection sigma</span>
+<span class="n">SIGMA_BUFFER</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1"># max allowed shift to correct</span>
+<span class="n">MAX_ERROR_PIXELS</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="c1"># max alloed shift to correct during stabilisation</span>
+<span class="n">MAX_ERROR_STABIL_PIXELS</span> <span class="o">=</span> <span class="mi">40</span>
+
+<span class="c1"># IsPulseGuiding timeout</span>
+<span class="n">IS_PULSE_GUIDING_TIMEOUT</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># seconds</span>
+
+
+<div class="viewcode-block" id="GuiderManager">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.GuiderManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GuiderManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guider_dict</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">database_manager</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        guider_dict: dict[str, Guider] - mapping telescope names to Guider instances</span>
+<span class="sd">        logger: logging.Logger or ObservatoryLogger</span>
+<span class="sd">        database_manager: DatabaseManager</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guider</span> <span class="o">=</span> <span class="n">guider_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+
+<div class="viewcode-block" id="GuiderManager.from_observatory">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.GuiderManager.from_observatory">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_observatory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">observatory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GuiderManager&quot;</span><span class="p">:</span>
+        <span class="n">guider_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Guider</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">device_name</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]:</span>
+                <span class="n">telescope</span> <span class="o">=</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">][</span><span class="n">device_name</span><span class="p">]</span>
+                <span class="n">telescope_index</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">i</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">observatory</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">device_name</span>
+                <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;guider&quot;</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">][</span><span class="n">telescope_index</span><span class="p">]:</span>
+                    <span class="n">guider_params</span> <span class="o">=</span> <span class="n">observatory</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">][</span><span class="n">telescope_index</span><span class="p">][</span>
+                        <span class="s2">&quot;guider&quot;</span>
+                    <span class="p">]</span>
+                    <span class="n">guider_dict</span><span class="p">[</span><span class="n">device_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Guider</span><span class="p">(</span>
+                        <span class="n">telescope</span><span class="p">,</span>
+                        <span class="n">logger</span><span class="o">=</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                        <span class="n">database_manager</span><span class="o">=</span><span class="n">observatory</span><span class="o">.</span><span class="n">database_manager</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">=</span><span class="n">guider_params</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">guider_dict</span><span class="p">,</span> <span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">observatory</span><span class="o">.</span><span class="n">database_manager</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GuiderManager.refresh_telescope_from_config">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.GuiderManager.refresh_telescope_from_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refresh_telescope_from_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">observatory</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">telescope_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reload guider parameters for a single telescope from observatory config.</span>
+
+<span class="sd">        This is intended for post-guiding-calibration updates where the telescope&#39;s</span>
+<span class="sd">        ``guider`` block has been modified and persisted to observatory config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            observatory: Observatory instance providing devices/config/logger/database.</span>
+<span class="sd">            telescope_name (str): Telescope device name to refresh guider for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if guider was created/refreshed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No telescopes found; skipping guider refresh&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">telescope_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Telescope </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2"> not found in devices; skipping guider refresh&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">telescope_config</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">d</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">observatory</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">telescope_name</span>
+            <span class="p">),</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">telescope_config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">&quot;guider&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">telescope_config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No guider config found for telescope </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">; skipping guider refresh&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">telescope_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">[</span><span class="n">telescope_name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">[</span><span class="n">telescope_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Guider</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">][</span><span class="n">telescope_name</span><span class="p">],</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+            <span class="n">database_manager</span><span class="o">=</span><span class="n">observatory</span><span class="o">.</span><span class="n">database_manager</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">telescope_config</span><span class="p">[</span><span class="s2">&quot;guider&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Reloaded guider parameters from config for telescope </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="GuiderManager.start_guider">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.GuiderManager.start_guider">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_guider</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image_handler</span><span class="p">:</span> <span class="n">ImageHandler</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">thread_manager</span><span class="p">:</span> <span class="n">ThreadManager</span><span class="p">,</span>
+        <span class="n">reset_guiding_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start the autoguiding system for telescope tracking.</span>
+
+<span class="sd">        Initializes and starts the guiding system to maintain accurate telescope</span>
+<span class="sd">        tracking during long exposures. Creates a separate thread for guiding</span>
+<span class="sd">        operations to run concurrently with image acquisition.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            image_handler (ImageHandler): Image handler for managing image files.</span>
+<span class="sd">            paired_devices (PairedDevices): Object containing telescope and guide</span>
+<span class="sd">                camera devices for the guiding system.</span>
+<span class="sd">            thread_manager (ThreadManager): Thread manager for tracking guiding thread.</span>
+<span class="sd">            reset_guiding_reference (bool, optional): If True, clears existing reference</span>
+<span class="sd">                image from database before starting guiding, forcing creation of a new</span>
+<span class="sd">                reference. Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if guider was started successfully, False otherwise.</span>
+
+<span class="sd">        Process:</span>
+<span class="sd">            1. Logs guiding start for the specified telescope</span>
+<span class="sd">            2. Optionally clears existing reference image if reset flag is set</span>
+<span class="sd">            3. Creates guider thread with appropriate parameters</span>
+<span class="sd">            4. Starts the guiding thread in background</span>
+<span class="sd">            5. Adds thread to observatory&#39;s thread tracking list</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Guiding runs in a separate thread to avoid blocking main operations</span>
+<span class="sd">            - Thread is tracked in self.threads for proper cleanup</span>
+<span class="sd">            - Filter name formatting removes single quotes for compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting guiding for </span><span class="si">{</span><span class="n">paired_devices</span><span class="p">[</span><span class="s1">&#39;Telescope&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Clear reference image if requested</span>
+        <span class="k">if</span> <span class="n">reset_guiding_reference</span><span class="p">:</span>
+            <span class="c1"># Get current field info from image handler if available</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">telescope_name</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]</span>
+                <span class="n">camera_name</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="p">[</span><span class="s2">&quot;Camera&quot;</span><span class="p">]</span>
+                <span class="n">guider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">[</span><span class="n">telescope_name</span><span class="p">]</span>
+
+                <span class="c1"># Try to get field info from the most recent header</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OBJECT&quot;</span><span class="p">)</span>
+                <span class="n">filt</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FILTER&quot;</span><span class="p">)</span>
+                <span class="n">exptime</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_handler</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">))</span>
+                <span class="n">pierside</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SideOfPier&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">and</span> <span class="n">filt</span> <span class="ow">and</span> <span class="n">exptime</span><span class="p">:</span>
+                    <span class="n">guider</span><span class="o">.</span><span class="n">clearReferenceImage</span><span class="p">(</span>
+                        <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">,</span>
+                        <span class="n">filt</span><span class="o">=</span><span class="n">filt</span><span class="p">,</span>
+                        <span class="n">exptime</span><span class="o">=</span><span class="n">exptime</span><span class="p">,</span>
+                        <span class="n">camera</span><span class="o">=</span><span class="n">camera_name</span><span class="p">,</span>
+                        <span class="n">pierside</span><span class="o">=</span><span class="n">pierside</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Could not determine field/filter/exptime for clearing reference. &quot;</span>
+                        <span class="s2">&quot;New reference will be created when guiding starts.&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error clearing guiding reference: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">binning</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BinX&quot;</span><span class="p">)</span>
+
+        <span class="n">thread_manager</span><span class="o">.</span><span class="n">start_thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">[</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">guider_loop</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">paired_devices</span><span class="p">[</span><span class="s2">&quot;Camera&quot;</span><span class="p">],</span>
+                <span class="n">image_handler</span><span class="p">,</span>
+                <span class="n">binning</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">thread_type</span><span class="o">=</span><span class="s2">&quot;guider&quot;</span><span class="p">,</span>
+            <span class="n">device_name</span><span class="o">=</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">],</span>
+            <span class="n">thread_id</span><span class="o">=</span><span class="s2">&quot;guider&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="GuiderManager.stop_guider">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.GuiderManager.stop_guider">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_guider</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">telescope_name</span><span class="p">,</span> <span class="n">thread_manager</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop guiding for a given telescope.</span>
+
+<span class="sd">        This function finds the correct guider thread using the telescope&#39;s</span>
+<span class="sd">        device name, sets its running flag to False, and then waits for the</span>
+<span class="sd">        thread to terminate.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            telescope_name (str): The name of the telescope whose guider</span>
+<span class="sd">                            should be stopped.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the guider was stopped successfully, False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">thread_info</span> <span class="ow">in</span> <span class="n">thread_manager</span><span class="o">.</span><span class="n">threads</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">thread_info</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;guider&quot;</span>
+                <span class="ow">and</span> <span class="n">thread_info</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">telescope_name</span>
+            <span class="p">):</span>
+                <span class="c1"># Get the guider instance and set its running flag to False</span>
+                <span class="n">guider_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guider</span><span class="p">[</span><span class="n">telescope_name</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">guider_instance</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopping guiding for </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">guider_instance</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="c1"># Wait for the thread to finish</span>
+                    <span class="n">thread_info</span><span class="p">[</span><span class="s2">&quot;thread&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+                    <span class="c1"># Remove the thread from the list</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Guiding for </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2"> stopped successfully.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Guider">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Guider</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Automated telescope guiding system with PID control and statistical analysis.</span>
+
+<span class="sd">    Implements a complete autoguiding solution that continuously monitors telescope</span>
+<span class="sd">    pointing accuracy and applies corrective pulse guide commands. Features include</span>
+<span class="sd">    PID control loops, outlier rejection, database logging, and support for German</span>
+<span class="sd">    Equatorial Mounts with pier side changes.</span>
+
+<span class="sd">    The guider maintains statistical buffers for error analysis, handles field</span>
+<span class="sd">    stabilization periods, and manages reference images per field/filter combination.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        telescope: Alpaca telescope device for pulse guiding commands</span>
+<span class="sd">        observatory: Astra observatory instance for logging and database access</span>
+<span class="sd">        PIX2TIME: Pixel-to-millisecond conversion factors for guide pulses</span>
+<span class="sd">        DIRECTIONS: Mapping of guide directions to Alpaca constants</span>
+<span class="sd">        RA_AXIS: Which axis (x/y) corresponds to Right Ascension</span>
+<span class="sd">        PID_COEFFS: PID controller coefficients for x and y axes</span>
+<span class="sd">        running: Flag to control guiding loop execution</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; guider = Guider(telescope, astra_instance, {</span>
+<span class="sd">        ...     &quot;PIX2TIME&quot;: {&quot;+x&quot;: 100, &quot;-x&quot;: 100, &quot;+y&quot;: 100, &quot;-y&quot;: 100},</span>
+<span class="sd">        ...     &quot;DIRECTIONS&quot;: {&quot;+x&quot;: &quot;East&quot;, &quot;-x&quot;: &quot;West&quot;, &quot;+y&quot;: &quot;North&quot;, &quot;-y&quot;: &quot;South&quot;},</span>
+<span class="sd">        ...     &quot;RA_AXIS&quot;: &quot;x&quot;,</span>
+<span class="sd">        ...     &quot;PID_COEFFS&quot;: {&quot;x&quot;: {&quot;p&quot;: 0.8, &quot;i&quot;: 0.1, &quot;d&quot;: 0.1}, ...}</span>
+<span class="sd">        ... })</span>
+<span class="sd">        &gt;&gt;&gt; guider.guider_loop(&quot;camera1&quot;, &quot;/data/*.fits&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">telescope</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the autoguider with telescope, logging, and PID parameters.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            telescope: Alpaca telescope device for sending pulse guide commands.</span>
+<span class="sd">            logger: Astra observatory logger for logging messages.</span>
+<span class="sd">            database_manager: Astra database manager for logging guiding data.</span>
+<span class="sd">            params (dict): Configuration dictionary containing:</span>
+<span class="sd">                - PIX2TIME: Pixel to millisecond conversion factors</span>
+<span class="sd">                - DIRECTIONS: Guide direction mappings</span>
+<span class="sd">                - RA_AXIS: Which axis corresponds to RA (&quot;x&quot; or &quot;y&quot;)</span>
+<span class="sd">                - PID_COEFFS: PID controller coefficients for both axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: camera angle?</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="n">telescope</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+
+        <span class="c1"># set up the database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_tables</span><span class="p">()</span>  <span class="c1"># this is assuming we&#39;re using the same db.  Should we have a separate one for guiding?</span>
+
+        <span class="c1"># set up the image glob string</span>
+        <span class="c1"># create reference directory if not exists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">images</span> <span class="o">/</span> <span class="s2">&quot;autoguider_ref&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># pulseGuide conversions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PIX2TIME</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;PIX2TIME&quot;</span><span class="p">]</span>
+
+        <span class="c1"># guide directions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;North&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideNorth</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;South&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideSouth</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;East&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideEast</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;West&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="n">direction</span><span class="p">]</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                    <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Guider&quot;</span><span class="p">,</span>
+                    <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid guide direction </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;DIRECTIONS&#39;</span><span class="p">][</span><span class="n">direction</span><span class="p">]</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> config&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># RA axis alignment along x or y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RA_AXIS</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;RA_AXIS&quot;</span><span class="p">]</span>
+
+        <span class="c1"># PID loop coefficients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;PID_COEFFS&quot;</span><span class="p">]</span>
+
+        <span class="c1"># minimum guide interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MIN_GUIDE_INTERVAL</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MIN_GUIDE_INTERVAL&quot;</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+
+        <span class="c1"># set up variables</span>
+        <span class="c1"># initialise the PID controllers for X and Y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span><span class="p">:</span> <span class="n">PID</span> <span class="o">=</span> <span class="n">PID</span><span class="o">.</span><span class="n">from_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span><span class="p">:</span> <span class="n">PID</span> <span class="o">=</span> <span class="n">PID</span><span class="o">.</span><span class="n">from_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_x&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_y&quot;</span><span class="p">])</span>
+
+        <span class="c1"># ag correction buffers - used for outlier rejection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Guider.create_tables">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.create_tables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create database tables for autoguider reference images and logging.</span>
+
+<span class="sd">        Creates three tables:</span>
+<span class="sd">            - autoguider_ref: Reference image metadata and validity periods</span>
+<span class="sd">            - autoguider_log: Detailed guiding corrections and statistics</span>
+<span class="sd">            - autoguider_info_log: General status and info messages</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">db_command_0</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;CREATE TABLE IF NOT EXISTS autoguider_ref (</span>
+<span class="s2">                ref_id mediumint auto_increment primary key,</span>
+<span class="s2">                field varchar(100) not null,</span>
+<span class="s2">                camera varchar(20) not null,</span>
+<span class="s2">                ref_image varchar(100) not null,</span>
+<span class="s2">                filter varchar(20) not null,</span>
+<span class="s2">                exptime varchar(20) not null,</span>
+<span class="s2">                pierside int not null,</span>
+<span class="s2">                valid_from datetime not null,</span>
+<span class="s2">                valid_until datetime</span>
+<span class="s2">                );&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">db_command_0</span><span class="p">)</span>
+
+        <span class="n">db_command_1</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;CREATE TABLE IF NOT EXISTS autoguider_log (</span>
+<span class="s2">                datetime timestamp default current_timestamp,</span>
+<span class="s2">                telescope_name varchar(50) not null,</span>
+<span class="s2">                night date not null,</span>
+<span class="s2">                reference varchar(150) not null,</span>
+<span class="s2">                comparison varchar(150) not null,</span>
+<span class="s2">                stabilised varchar(5) not null,</span>
+<span class="s2">                shift_x double not null,</span>
+<span class="s2">                shift_y double not null,</span>
+<span class="s2">                pre_pid_x double not null,</span>
+<span class="s2">                pre_pid_y double not null,</span>
+<span class="s2">                post_pid_x double not null,</span>
+<span class="s2">                post_pid_y double not null,</span>
+<span class="s2">                std_buff_x double not null,</span>
+<span class="s2">                std_buff_y double not null,</span>
+<span class="s2">                culled_max_shift_x varchar(5) not null,</span>
+<span class="s2">                culled_max_shift_y varchar(5) not null</span>
+<span class="s2">                );</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">db_command_1</span><span class="p">)</span>
+
+        <span class="n">db_command_2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;CREATE TABLE IF NOT EXISTS autoguider_info_log (</span>
+<span class="s2">                message_id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">                camera varchar(20) NOT NULL,</span>
+<span class="s2">                message varchar(500) NOT NULL</span>
+<span class="s2">                );</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">db_command_2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Guider.logShiftsToDb">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.logShiftsToDb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">logShiftsToDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qry_args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log autoguiding corrections and statistics to the database.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            qry_args (tuple): Tuple containing guiding data in order:</span>
+<span class="sd">                night, reference, comparison, stabilised, shift_x, shift_y,</span>
+<span class="sd">                pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,</span>
+<span class="sd">                std_buff_y, culled_max_shift_x, culled_max_shift_y</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO autoguider_log</span>
+<span class="s2">            (telescope_name, night, reference, comparison, stabilised, shift_x, shift_y,</span>
+<span class="s2">            pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,</span>
+<span class="s2">            std_buff_y, culled_max_shift_x, culled_max_shift_y)</span>
+<span class="s2">            VALUES</span>
+<span class="s2">            (&#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;,</span>
+<span class="s2">            &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">qry</span> <span class="o">%</span> <span class="n">qry_args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Guider.logMessageToDb">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.logMessageToDb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">logMessageToDb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">camera_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log status messages to the database.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            camera_name (str): Name of the camera being autoguided.</span>
+<span class="sd">            message (str): Status or info message to log.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO autoguider_info_log</span>
+<span class="s2">            (camera, message)</span>
+<span class="s2">            VALUES</span>
+<span class="s2">            (&#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="n">qry_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">qry</span> <span class="o">%</span> <span class="n">qry_args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Guider.guide">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.guide">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guide</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">images_to_stabilise</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">camera_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">binning</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">gem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply telescope guiding corrections using PID control with outlier rejection.</span>
+
+<span class="sd">        Processes measured pointing errors through PID controllers, applies outlier</span>
+<span class="sd">        rejection during stable operation, and sends pulse guide commands to the telescope.</span>
+<span class="sd">        Handles declination scaling for RA corrections and German Equatorial Mount</span>
+<span class="sd">        pier side changes.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            x (float): Guide correction needed in X direction (pixels).</span>
+<span class="sd">            y (float): Guide correction needed in Y direction (pixels).</span>
+<span class="sd">            images_to_stabilise (int): Images remaining in stabilization period.</span>
+<span class="sd">                Negative values indicate stable operation.</span>
+<span class="sd">            camera_name (str): Name of the camera for logging.</span>
+<span class="sd">            binning (int, optional): Image binning factor. Defaults to 1.</span>
+<span class="sd">            gem (bool, optional): Whether telescope is German Equatorial Mount. Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (success, pidx, pidy, sigma_x, sigma_y) where:</span>
+<span class="sd">                - success (bool): Whether correction was applied</span>
+<span class="sd">                - pidx, pidy (float): Actual corrections sent to mount</span>
+<span class="sd">                - sigma_x, sigma_y (float): Buffer standard deviations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">gem</span><span class="p">:</span>
+            <span class="n">current_pierside</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SideOfPier&quot;</span><span class="p">)</span>
+
+        <span class="c1"># get telescope declination to scale RA corrections</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Declination&quot;</span><span class="p">)</span>
+        <span class="n">dec_rads</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span>
+        <span class="n">cos_dec</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">dec_rads</span><span class="p">)</span>
+        <span class="c1"># pop the earliest buffer value if &gt; 30 measurements</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">GUIDE_BUFFER_LENGTH</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">GUIDE_BUFFER_LENGTH</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">images_to_stabilise</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">CURRENT_MAX_SHIFT</span> <span class="o">=</span> <span class="n">MAX_ERROR_PIXELS</span>
+            <span class="c1"># kill anything that is &gt; sigma_buffer sigma buffer stats</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">GUIDE_BUFFER_LENGTH</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">GUIDE_BUFFER_LENGTH</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;Filling AG stats buffer...&quot;</span><span class="p">)</span>
+                <span class="n">sigma_x</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">sigma_y</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sigma_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="p">))</span>
+                <span class="n">sigma_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">SIGMA_BUFFER</span> <span class="o">*</span> <span class="n">sigma_x</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">SIGMA_BUFFER</span> <span class="o">*</span> <span class="n">sigma_y</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                        <span class="n">camera_name</span><span class="p">,</span>
+                        <span class="s2">&quot;Guide error &gt; </span><span class="si">{}</span><span class="s2"> sigma * buffer errors, ignoring...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">SIGMA_BUFFER</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+                    <span class="c1"># store the original values in the buffer, even if correction</span>
+                    <span class="c1"># was too big, this will allow small outliers to be caught</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;Ignoring AG buffer during stabilisation&quot;</span><span class="p">)</span>
+            <span class="n">CURRENT_MAX_SHIFT</span> <span class="o">=</span> <span class="n">MAX_ERROR_STABIL_PIXELS</span>
+            <span class="n">sigma_x</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">sigma_y</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update the PID controllers, run them in parallel</span>
+        <span class="n">pidx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">pidy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># check if we are stabilising and allow for the max shift</span>
+        <span class="k">if</span> <span class="n">images_to_stabilise</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pidx</span> <span class="o">&gt;=</span> <span class="n">CURRENT_MAX_SHIFT</span><span class="p">:</span>
+                <span class="n">pidx</span> <span class="o">=</span> <span class="n">CURRENT_MAX_SHIFT</span>
+            <span class="k">elif</span> <span class="n">pidx</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span><span class="p">:</span>
+                <span class="n">pidx</span> <span class="o">=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span>
+            <span class="k">if</span> <span class="n">pidy</span> <span class="o">&gt;=</span> <span class="n">CURRENT_MAX_SHIFT</span><span class="p">:</span>
+                <span class="n">pidy</span> <span class="o">=</span> <span class="n">CURRENT_MAX_SHIFT</span>
+            <span class="k">elif</span> <span class="n">pidy</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span><span class="p">:</span>
+                <span class="n">pidy</span> <span class="o">=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;PID: </span><span class="si">{0:.2f}</span><span class="s2">  </span><span class="si">{1:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pidx</span><span class="p">,</span> <span class="n">pidy</span><span class="p">))</span>
+
+        <span class="c1"># make another check that the post PID values are not &gt; Max allowed</span>
+        <span class="c1"># using &gt;= allows for the stabilising runs to get through</span>
+        <span class="c1"># abs() on -ve duration otherwise throws back an error</span>
+        <span class="k">if</span> <span class="n">pidy</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pidy</span> <span class="o">&lt;=</span> <span class="n">CURRENT_MAX_SHIFT</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">guide_time_y</span> <span class="o">=</span> <span class="n">pidy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIX2TIME</span><span class="p">[</span><span class="s2">&quot;+y&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">binning</span>
+
+            <span class="n">y_p_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;+y&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RA_AXIS</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="n">guide_time_y</span> <span class="o">=</span> <span class="n">guide_time_y</span> <span class="o">/</span> <span class="n">cos_dec</span>
+
+                <span class="k">if</span> <span class="n">gem</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">elif</span> <span class="n">current_pierside</span> <span class="o">==</span> <span class="n">PierSide</span><span class="o">.</span><span class="n">pierEast</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;+y&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span><span class="p">:</span>
+                        <span class="n">y_p_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideEast</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">y_p_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PulseGuide&quot;</span><span class="p">)(</span>
+                <span class="n">Direction</span><span class="o">=</span><span class="n">y_p_dir</span><span class="p">,</span> <span class="n">Duration</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">guide_time_y</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pidy</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pidy</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">guide_time_y</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pidy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIX2TIME</span><span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">binning</span><span class="p">)</span>
+
+            <span class="n">y_n_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RA_AXIS</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="n">guide_time_y</span> <span class="o">=</span> <span class="n">guide_time_y</span> <span class="o">/</span> <span class="n">cos_dec</span>
+
+                <span class="k">if</span> <span class="n">gem</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">elif</span> <span class="n">current_pierside</span> <span class="o">==</span> <span class="n">PierSide</span><span class="o">.</span><span class="n">pierEast</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span><span class="p">:</span>
+                        <span class="n">y_n_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideEast</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">y_n_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PulseGuide&quot;</span><span class="p">)(</span>
+                <span class="n">Direction</span><span class="o">=</span><span class="n">y_n_dir</span><span class="p">,</span> <span class="n">Duration</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">guide_time_y</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IsPulseGuiding&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">IS_PULSE_GUIDING_TIMEOUT</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Pulse guiding timed out after </span><span class="si">{</span><span class="n">IS_PULSE_GUIDING_TIMEOUT</span><span class="si">}</span><span class="s2"> seconds.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pidx</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pidx</span> <span class="o">&lt;=</span> <span class="n">CURRENT_MAX_SHIFT</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">guide_time_x</span> <span class="o">=</span> <span class="n">pidx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIX2TIME</span><span class="p">[</span><span class="s2">&quot;+x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">binning</span>
+
+            <span class="n">x_p_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;+x&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RA_AXIS</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+                <span class="n">guide_time_x</span> <span class="o">=</span> <span class="n">guide_time_x</span> <span class="o">/</span> <span class="n">cos_dec</span>
+
+                <span class="k">if</span> <span class="n">gem</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">current_pierside</span> <span class="o">==</span> <span class="n">PierSide</span><span class="o">.</span><span class="n">pierEast</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;+x&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span><span class="p">:</span>
+                        <span class="n">x_p_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideEast</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">x_p_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PulseGuide&quot;</span><span class="p">)(</span>
+                <span class="n">Direction</span><span class="o">=</span><span class="n">x_p_dir</span><span class="p">,</span> <span class="n">Duration</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">guide_time_x</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pidx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pidx</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">CURRENT_MAX_SHIFT</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">guide_time_x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pidx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIX2TIME</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">binning</span><span class="p">)</span>
+
+            <span class="n">x_n_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RA_AXIS</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+                <span class="n">guide_time_x</span> <span class="o">=</span> <span class="n">guide_time_x</span> <span class="o">/</span> <span class="n">cos_dec</span>
+
+                <span class="k">if</span> <span class="n">gem</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="n">current_pierside</span> <span class="o">==</span> <span class="n">PierSide</span><span class="o">.</span><span class="n">pierEast</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># keep as is</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">[</span><span class="s2">&quot;-x&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span><span class="p">:</span>
+                        <span class="n">x_n_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideEast</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">x_n_dir</span> <span class="o">=</span> <span class="n">GuideDirections</span><span class="o">.</span><span class="n">guideWest</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PulseGuide&quot;</span><span class="p">)(</span>
+                <span class="n">Direction</span><span class="o">=</span><span class="n">x_n_dir</span><span class="p">,</span> <span class="n">Duration</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">guide_time_x</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IsPulseGuiding&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">IS_PULSE_GUIDING_TIMEOUT</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Pulse guiding timed out after </span><span class="si">{</span><span class="n">IS_PULSE_GUIDING_TIMEOUT</span><span class="si">}</span><span class="s2"> seconds.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;Guide correction Applied&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                <span class="n">camera_name</span><span class="p">,</span>
+                <span class="s2">&quot;Guide correction NOT Applied due to self.running=False&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># store the original values in the buffer</span>
+        <span class="c1"># only if we are not stabilising</span>
+        <span class="k">if</span> <span class="n">images_to_stabilise</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BUFF_Y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pidx</span><span class="p">,</span> <span class="n">pidy</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span></div>
+
+
+<div class="viewcode-block" id="Guider.getReferenceImage">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.getReferenceImage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getReferenceImage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exptime</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pierside</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the current reference image path for given observation parameters.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            field (str): Target field name.</span>
+<span class="sd">            filt (str): Filter name.</span>
+<span class="sd">            exptime (str): Exposure time.</span>
+<span class="sd">            camera (str): Camera name.</span>
+<span class="sd">            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: Path to reference image, or None if not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">filt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exptime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Field, filter, and exptime must be provided&quot;</span><span class="p">)</span>
+
+        <span class="n">tnow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">qry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT ref_image</span>
+<span class="s2">            FROM autoguider_ref</span>
+<span class="s2">            WHERE field = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND filter = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND exptime = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND valid_from &lt;= &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND camera = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND pierside = </span><span class="si">%d</span>
+<span class="s2">            AND (valid_until IS NULL OR valid_until &gt; &#39;</span><span class="si">%s</span><span class="s2">&#39;)</span>
+<span class="s2">            ORDER BY valid_from DESC</span>
+<span class="s2">            LIMIT 1</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="n">qry_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">exptime</span><span class="p">,</span> <span class="n">tnow</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">pierside</span><span class="p">,</span> <span class="n">tnow</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">qry</span> <span class="o">%</span> <span class="n">qry_args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">ref_image</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref_image</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ref_image</span></div>
+
+
+<div class="viewcode-block" id="Guider.clearReferenceImage">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.clearReferenceImage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clearReferenceImage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exptime</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pierside</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear reference image from the database for given observation parameters.</span>
+
+<span class="sd">        Sets valid_until to current time for matching reference images, effectively</span>
+<span class="sd">        invalidating them so a new reference will be created on next guiding run.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            field (str): Target field name.</span>
+<span class="sd">            filt (str): Filter name.</span>
+<span class="sd">            exptime (str): Exposure time.</span>
+<span class="sd">            camera (str): Camera name.</span>
+<span class="sd">            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">filt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exptime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot clear reference image: field, filter, or exptime is None&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">tnow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">qry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            UPDATE autoguider_ref</span>
+<span class="s2">            SET valid_until = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            WHERE field = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND filter = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND exptime = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND camera = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span>
+<span class="s2">            AND pierside = </span><span class="si">%d</span>
+<span class="s2">            AND valid_until IS NULL</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="n">qry_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">tnow</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">exptime</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">pierside</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">qry</span> <span class="o">%</span> <span class="n">qry_args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+            <span class="n">camera</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Reference cleared for field=</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">, filter=</span><span class="si">{</span><span class="n">filt</span><span class="si">}</span><span class="s2">, pierside=</span><span class="si">{</span><span class="n">pierside</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Guider.setReferenceImage">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.setReferenceImage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setReferenceImage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exptime</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref_image</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">camera</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pierside</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a new reference image in the database and copy to reference directory.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            field (str): Target field name.</span>
+<span class="sd">            filt (str): Filter name.</span>
+<span class="sd">            exptime (str): Exposure time.</span>
+<span class="sd">            ref_image (str): Path to image file to use as reference.</span>
+<span class="sd">            camera (str): Camera name.</span>
+<span class="sd">            pierside (int): Telescope pier side (1=West, 0=East, -1=Unknown).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">filt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exptime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Field, filter, and exptime must be provided&quot;</span><span class="p">)</span>
+
+        <span class="n">tnow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">qry</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO autoguider_ref</span>
+<span class="s2">            (field, camera, ref_image,</span>
+<span class="s2">            filter, exptime, valid_from, pierside)</span>
+<span class="s2">            VALUES</span>
+<span class="s2">            (&#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, &#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%d</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="n">qry_args</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">field</span><span class="p">,</span>
+            <span class="n">camera</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ref_image</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">filt</span><span class="p">,</span>
+            <span class="n">exptime</span><span class="p">,</span>
+            <span class="n">tnow</span><span class="p">,</span>
+            <span class="n">pierside</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">qry</span> <span class="o">%</span> <span class="n">qry_args</span><span class="p">)</span>
+
+        <span class="c1"># copy the file to the autoguider_ref location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Copying reference image </span><span class="si">{</span><span class="n">ref_image</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">copyfile</span><span class="p">(</span>
+            <span class="n">ref_image</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ref_image</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Guider.waitForImage">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.waitForImage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">waitForImage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">camera_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">image_handler</span><span class="p">:</span> <span class="n">ImageHandler</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for new images to appear in the monitoring directory.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            camera_name (str): Camera name for logging.</span>
+<span class="sd">            image_handler (ImageHandler): Image handler instance to monitor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (newest_image, newest_field, newest_filter, newest_exptime)</span>
+<span class="sd">                Returns (None, None, None, None) if self.running becomes False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+        <span class="n">orig_last_image_timestamp</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">last_image_timestamp</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="c1"># Check if a new image has appeared</span>
+            <span class="n">last_image_timestamp</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">last_image_timestamp</span>
+            <span class="n">exptime</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">)</span>
+            <span class="n">current_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+
+            <span class="c1"># if no images yet, wait</span>
+            <span class="k">if</span> <span class="n">last_image_timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># check if we have waited long enough</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">current_timestamp</span> <span class="o">-</span> <span class="n">start_timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nb">max</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MIN_GUIDE_INTERVAL</span><span class="p">,</span> <span class="n">exptime</span>
+            <span class="p">):</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># check if a new image has appeared to guide on</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">current_timestamp</span> <span class="o">-</span> <span class="n">last_image_timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">last_image_timestamp</span> <span class="o">!=</span> <span class="n">orig_last_image_timestamp</span>
+            <span class="p">):</span>
+                <span class="n">newest_image</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">last_image_path</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">newest_image</span><span class="p">)</span>
+                    <span class="n">newest_filter</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;FILTER&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                    <span class="n">newest_field</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;OBJECT&quot;</span><span class="p">]</span>
+                    <span class="n">newest_exptime</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                        <span class="n">camera_name</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Problem accessing fits file </span><span class="si">{</span><span class="n">newest_image</span><span class="si">}</span><span class="s2">, skipping... Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">return</span> <span class="n">newest_image</span><span class="p">,</span> <span class="n">newest_field</span><span class="p">,</span> <span class="n">newest_filter</span><span class="p">,</span> <span class="n">newest_exptime</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Guider.guider_loop">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.Guider.guider_loop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guider_loop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">camera_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">image_handler</span><span class="p">:</span> <span class="n">ImageHandler</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">binning</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main autoguiding loop using image_handler for new images.</span>
+<span class="sd">        Continuously monitors image_handler.last_image_path and last_image_timestamp,</span>
+<span class="sd">        processes new images, updates reference images, measures shifts, and applies guiding corrections.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting guider loop for </span><span class="si">{</span><span class="n">camera_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+                <span class="c1"># Get telescope alignment mode</span>
+                <span class="n">gem</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AlignmentMode&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">AlignmentModes</span><span class="o">.</span><span class="n">algGermanPolar</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">gem</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Telescope is in German equatorial mode&quot;</span><span class="p">)</span>
+
+                <span class="n">telescope_pierside</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SideOfPier&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Wait for the first image</span>
+                <span class="n">newest_image</span><span class="p">,</span> <span class="n">current_field</span><span class="p">,</span> <span class="n">current_filter</span><span class="p">,</span> <span class="n">current_exptime</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">waitForImage</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="n">image_handler</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">newest_image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No image found to start guiding.&quot;</span><span class="p">)</span>
+                    <span class="k">return</span>
+
+                <span class="c1"># Reference image logic</span>
+                <span class="n">ref_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getReferenceImage</span><span class="p">(</span>
+                    <span class="n">current_field</span><span class="p">,</span>
+                    <span class="n">current_filter</span><span class="p">,</span>
+                    <span class="n">current_exptime</span><span class="p">,</span>
+                    <span class="n">camera_name</span><span class="p">,</span>
+                    <span class="n">telescope_pierside</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ref_file</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ref_file</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setReferenceImage</span><span class="p">(</span>
+                        <span class="n">current_field</span><span class="p">,</span>
+                        <span class="n">current_filter</span><span class="p">,</span>
+                        <span class="n">current_exptime</span><span class="p">,</span>
+                        <span class="n">newest_image</span><span class="p">,</span>
+                        <span class="n">camera_name</span><span class="p">,</span>
+                        <span class="n">telescope_pierside</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">ref_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reference_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">newest_image</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Ref_File created: </span><span class="si">{</span><span class="n">ref_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Ref_File: </span><span class="si">{</span><span class="n">ref_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">donuts_ref</span> <span class="o">=</span> <span class="n">Donuts</span><span class="p">(</span>
+                    <span class="n">ref_file</span><span class="p">,</span>
+                    <span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">subtract_bkg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">downweight_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">image_class</span><span class="o">=</span><span class="n">CustomImageClass</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">images_to_stabilise</span> <span class="o">=</span> <span class="n">IMAGES_TO_STABILISE</span>
+                <span class="n">stabilised</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+
+                <span class="c1"># Main guiding loop</span>
+                <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+                    <span class="p">(</span>
+                        <span class="n">check_file</span><span class="p">,</span>
+                        <span class="n">current_field</span><span class="p">,</span>
+                        <span class="n">current_filter</span><span class="p">,</span>
+                        <span class="n">current_exptime</span><span class="p">,</span>
+                    <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waitForImage</span><span class="p">(</span><span class="n">camera_name</span><span class="p">,</span> <span class="n">image_handler</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">check_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Check pierside change</span>
+                    <span class="k">if</span> <span class="n">gem</span><span class="p">:</span>
+                        <span class="n">current_pierside</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SideOfPier&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">current_pierside</span> <span class="o">!=</span> <span class="n">telescope_pierside</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Pierside changed from </span><span class="si">{</span><span class="n">telescope_pierside</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">current_pierside</span><span class="si">}</span><span class="s2">, resetting guider loop...&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Pierside changed from </span><span class="si">{</span><span class="n">telescope_pierside</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">current_pierside</span><span class="si">}</span><span class="s2">, resetting guider loop...&quot;</span>
+                            <span class="p">)</span>
+                            <span class="k">break</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                            <span class="n">camera_name</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;REF: </span><span class="si">{</span><span class="n">ref_file</span><span class="si">}</span><span class="s2"> CHECK: </span><span class="si">{</span><span class="n">check_file</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">current_filter</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">images_to_stabilise</span> <span class="o">-=</span> <span class="mi">1</span>
+                        <span class="c1"># PID reset logic</span>
+                        <span class="k">if</span> <span class="n">images_to_stabilise</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span>
+                                <span class="s2">&quot;Stabilisation complete, reseting PID loop...&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span> <span class="o">=</span> <span class="n">PID</span><span class="o">.</span><span class="n">from_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span> <span class="o">=</span> <span class="n">PID</span><span class="o">.</span><span class="n">from_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_x&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_y&quot;</span><span class="p">])</span>
+                        <span class="k">elif</span> <span class="n">images_to_stabilise</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;Stabilising using P=1.0, I=0.0, D=0.0&quot;</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span> <span class="o">=</span> <span class="n">PID</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span> <span class="o">=</span> <span class="n">PID</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDx</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_x&quot;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">PIDy</span><span class="o">.</span><span class="n">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PID_COEFFS</span><span class="p">[</span><span class="s2">&quot;set_y&quot;</span><span class="p">])</span>
+                        <span class="c1"># Load comparison image and measure shift</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">h2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">check_file</span><span class="p">)</span>
+                            <span class="k">del</span> <span class="n">h2</span>
+                        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">&quot;Problem opening CHECK: </span><span class="si">{</span><span class="n">check_file</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span> <span class="s2">&quot;Breaking back to look for new file...&quot;</span>
+                            <span class="p">)</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># reset culled tags</span>
+                        <span class="n">culled_max_shift_x</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+                        <span class="n">culled_max_shift_y</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+
+                        <span class="c1"># work out shift here</span>
+                        <span class="n">shift</span> <span class="o">=</span> <span class="n">donuts_ref</span><span class="o">.</span><span class="n">measure_shift</span><span class="p">(</span><span class="n">check_file</span><span class="p">)</span>
+                        <span class="n">shift_x</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">shift_y</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># type: ignore</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                            <span class="n">camera_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;x shift: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">shift_x</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                            <span class="n">camera_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y shift: </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">shift_y</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># revoke stabilisation early if shift less than 2 pixels</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="nb">abs</span><span class="p">(</span><span class="n">shift_x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">2.0</span>
+                            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">shift_y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">2.0</span>
+                            <span class="ow">and</span> <span class="n">images_to_stabilise</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                        <span class="p">):</span>
+                            <span class="n">images_to_stabilise</span> <span class="o">=</span> <span class="mi">1</span>
+
+                        <span class="c1"># Check if shift greater than max allowed error in post pull in state</span>
+                        <span class="k">if</span> <span class="n">images_to_stabilise</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">stabilised</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+                            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">shift_x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_PIXELS</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                    <span class="n">camera_name</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;X shift &gt; </span><span class="si">{</span><span class="n">MAX_ERROR_PIXELS</span><span class="si">}</span><span class="s2">, applying no correction&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+                                <span class="n">culled_max_shift_x</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pre_pid_x</span> <span class="o">=</span> <span class="n">shift_x</span>
+                            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">shift_y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_PIXELS</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                    <span class="n">camera_name</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Y shift &gt; </span><span class="si">{</span><span class="n">MAX_ERROR_PIXELS</span><span class="si">}</span><span class="s2">, applying no correction&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+                                <span class="n">culled_max_shift_y</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pre_pid_y</span> <span class="o">=</span> <span class="n">shift_y</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logMessageToDb</span><span class="p">(</span>
+                                <span class="n">camera_name</span><span class="p">,</span>
+                                <span class="s2">&quot;Allowing field to stabilise, imposing new max error clip&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="n">stabilised</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+                            <span class="k">if</span> <span class="n">shift_x</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_STABIL_PIXELS</span><span class="p">:</span>
+                                <span class="n">pre_pid_x</span> <span class="o">=</span> <span class="n">MAX_ERROR_STABIL_PIXELS</span>
+                            <span class="k">elif</span> <span class="n">shift_x</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">MAX_ERROR_STABIL_PIXELS</span><span class="p">:</span>
+                                <span class="n">pre_pid_x</span> <span class="o">=</span> <span class="o">-</span><span class="n">MAX_ERROR_STABIL_PIXELS</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pre_pid_x</span> <span class="o">=</span> <span class="n">shift_x</span>
+
+                            <span class="k">if</span> <span class="n">shift_y</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_STABIL_PIXELS</span><span class="p">:</span>
+                                <span class="n">pre_pid_y</span> <span class="o">=</span> <span class="n">MAX_ERROR_STABIL_PIXELS</span>
+                            <span class="k">elif</span> <span class="n">shift_y</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">MAX_ERROR_STABIL_PIXELS</span><span class="p">:</span>
+                                <span class="n">pre_pid_y</span> <span class="o">=</span> <span class="o">-</span><span class="n">MAX_ERROR_STABIL_PIXELS</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pre_pid_y</span> <span class="o">=</span> <span class="n">shift_y</span>
+
+                        <span class="c1"># if either axis is off by &gt; MAX error then stop everything, no point guiding</span>
+                        <span class="c1"># in 1 axis, need to figure out the source of the problem and run again</span>
+                        <span class="k">if</span> <span class="n">culled_max_shift_x</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span> <span class="ow">or</span> <span class="n">culled_max_shift_y</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                            <span class="p">(</span>
+                                <span class="n">pre_pid_x</span><span class="p">,</span>
+                                <span class="n">pre_pid_y</span><span class="p">,</span>
+                                <span class="n">post_pid_x</span><span class="p">,</span>
+                                <span class="n">post_pid_y</span><span class="p">,</span>
+                                <span class="n">std_buff_x</span><span class="p">,</span>
+                                <span class="n">std_buff_y</span><span class="p">,</span>
+                            <span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+                                <span class="p">(</span>
+                                    <span class="n">applied</span><span class="p">,</span>
+                                    <span class="n">post_pid_x</span><span class="p">,</span>
+                                    <span class="n">post_pid_y</span><span class="p">,</span>
+                                    <span class="n">std_buff_x</span><span class="p">,</span>
+                                    <span class="n">std_buff_y</span><span class="p">,</span>
+                                <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guide</span><span class="p">(</span>
+                                    <span class="n">pre_pid_x</span><span class="p">,</span>
+                                    <span class="n">pre_pid_y</span><span class="p">,</span>
+                                    <span class="n">images_to_stabilise</span><span class="p">,</span>
+                                    <span class="n">camera_name</span><span class="p">,</span>
+                                    <span class="n">binning</span><span class="p">,</span>
+                                    <span class="n">gem</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">break</span>
+
+                        <span class="c1"># Extract night date from directory path</span>
+                        <span class="n">night_path</span> <span class="o">=</span> <span class="n">image_handler</span><span class="o">.</span><span class="n">last_image_path</span><span class="o">.</span><span class="n">parent</span>
+                        <span class="n">night_date</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+                            <span class="n">night_path</span>
+                        <span class="p">)</span>  <span class="c1"># Get just the date folder name</span>
+
+                        <span class="n">log_list</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+                            <span class="n">night_date</span><span class="p">,</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">ref_file</span><span class="p">),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">check_file</span><span class="p">),</span>
+                            <span class="n">stabilised</span><span class="p">,</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">shift_x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">shift_y</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">pre_pid_x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">pre_pid_y</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">post_pid_x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">post_pid_y</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">std_buff_x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">std_buff_y</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                            <span class="n">culled_max_shift_x</span><span class="p">,</span>
+                            <span class="n">culled_max_shift_y</span><span class="p">,</span>
+                        <span class="p">]</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logShiftsToDb</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">log_list</span><span class="p">))</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guider post_pid_x shift: </span><span class="si">{</span><span class="n">post_pid_x</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Guider post_pid_y shift: </span><span class="si">{</span><span class="n">post_pid_y</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Guider&quot;</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">telescope</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Error in guide loop&quot;</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping guider loop.&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">PID loop controller</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="PID">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.PID">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PID</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discrete PID controller for autoguiding corrections.</span>
+
+<span class="sd">    Implements a digital PID control loop with configurable proportional, integral,</span>
+<span class="sd">    and derivative gains. Includes integrator clamping to prevent windup.</span>
+
+<span class="sd">    Based on: http://code.activestate.com/recipes/577231-discrete-pid-controller/</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        kp (float, optional): Proportional gain. Defaults to 0.5.</span>
+<span class="sd">        ki (float, optional): Integral gain. Defaults to 0.25.</span>
+<span class="sd">        kd (float, optional): Derivative gain. Defaults to 0.0.</span>
+<span class="sd">        derivator (float, optional): Initial derivative term. Defaults to 0.</span>
+<span class="sd">        integrator (float, optional): Initial integrator value. Defaults to 0.</span>
+<span class="sd">        integrator_max (float, optional): Maximum integrator value. Defaults to 500.</span>
+<span class="sd">        integrator_min (float, optional): Minimum integrator value. Defaults to -500.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">ki</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">kd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">derivator</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">integrator</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">integrator_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">integrator_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">kp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ki</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">kd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivator</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">derivator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">integrator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">integrator_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">integrator_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_point</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="PID.update">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.PID.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate PID output for given input and feedback.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            current_value (float): Current process value (feedback).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: PID controller output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_point</span> <span class="o">-</span> <span class="n">current_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator_max</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator_max</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator_min</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span>
+        <span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">i_value</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_value</span>
+        <span class="k">return</span> <span class="n">pid</span></div>
+
+
+<div class="viewcode-block" id="PID.initialize_set_point">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.PID.initialize_set_point">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_set_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_point</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the PID setpoint and reset integrator/derivator.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            set_point (float): Desired target value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_point</span> <span class="o">=</span> <span class="n">set_point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivator</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="PID.from_config_dict">
+<a class="viewcode-back" href="../../api/generated/astra.guiding.html#astra.guiding.PID.from_config_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_config_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;PID&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a PID instance from a configuration dictionary.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            config (dict): Configuration with keys &#39;p&#39;, &#39;i&#39;, &#39;d&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">kp</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
+            <span class="n">ki</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;i&quot;</span><span class="p">],</span>
+            <span class="n">kd</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

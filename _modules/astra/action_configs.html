@@ -1,0 +1,1675 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.action_configs &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/action_configs';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.action_configs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Action configuration dataclasses for observatory operations.</span>
+
+<span class="sd">Key capabilities:</span>
+<span class="sd">    - Define structured configurations for various observatory actions</span>
+<span class="sd">    - Validate required fields and types for action parameters</span>
+<span class="sd">    - Provide defaults from observatory configuration</span>
+<span class="sd">    - Support dictionary-like access to action configuration fields</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">AltAz</span><span class="p">,</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">EarthLocation</span><span class="p">,</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">ObservatoryConfig</span>
+
+
+<div class="viewcode-block" id="BaseActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseActionConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for action configurations.</span>
+
+<span class="sd">    This class serves as a base for specific action configurations,</span>
+<span class="sd">    providing validation and dictionary-like access to its fields.</span>
+<span class="sd">    It supports type validation, required fields, and merging with default values,</span>
+<span class="sd">    centralizing common functionality for all action configurations and ensuring</span>
+<span class="sd">    that the action values passed by the user are valid.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from astra.action_configs import AutofocusConfig</span>
+<span class="sd">        &gt;&gt;&gt; autofocus_config = AutofocusConfig(exptime=3.0)</span>
+<span class="sd">        &gt;&gt;&gt; exptime in autofocus_config</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; autofocus_config[&#39;exptime&#39;]</span>
+<span class="sd">        3.0</span>
+<span class="sd">        &gt;&gt;&gt; autofocus_config.get(&#39;not_available&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseActionConfig.from_dict">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance from a dictionary, merging with defaults.&quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">merge_config_dicts</span><span class="p">(</span><span class="n">config_dict</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracting action values </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.defaults_from_observatory_config">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.defaults_from_observatory_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">defaults_from_observatory_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Camera&quot;</span><span class="p">,</span>
+        <span class="n">observatory_config</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve default values for this action from the observatory configuration.</span>
+
+<span class="sd">        Returns a dict suitable for passing as `default_dict` into from_dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># lazy-import to avoid cycle at module import time</span>
+
+        <span class="n">oc</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">observatory_config</span>
+            <span class="k">if</span> <span class="n">observatory_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">observatory_config</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oc</span><span class="p">,</span> <span class="n">ObservatoryConfig</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">action_key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">oc</span><span class="p">,</span> <span class="s2">&quot;get_device_config&quot;</span><span class="p">):</span>
+                <span class="n">device_conf</span> <span class="o">=</span> <span class="n">oc</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="n">device_type</span><span class="p">,</span> <span class="n">device_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device_conf</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">device_conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">action_key</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{}</span>
+                <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># Fall through to empty fallback if accessor fails</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate required fields and types of all fields.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If required fields are missing.</span>
+<span class="sd">            TypeError: If any field has an incorrect type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">type_errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># Check required fields</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># Type validation for all fields</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">type_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing required fields: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">type_errors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type errors in fields: </span><span class="si">{</span><span class="n">type_errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">expected_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">expected_type</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">expected_type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">is</span> <span class="nb">float</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Handle Optional/Union types</span>
+        <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
+            <span class="n">allowed_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">allowed_types</span><span class="p">:</span>
+                <span class="n">t_origin</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">t_origin</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">t_origin</span><span class="p">):</span>
+                        <span class="k">break</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">allowed_types</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="c1"># Handle lists and tuples</span>
+        <span class="k">elif</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">origin</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="n">elem_type</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">elem_type</span><span class="p">:</span>
+                <span class="c1"># Handle Union types inside lists (e.g., List[float | int])</span>
+                <span class="n">elem_origin</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">elem_type</span><span class="p">)</span>
+                <span class="n">elem_args</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">elem_type</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">elem_origin</span> <span class="ow">is</span> <span class="n">Union</span>
+                    <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">elem_type</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;types&quot;</span>
+                    <span class="ow">and</span> <span class="n">elem_type</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;UnionType&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">allowed_elem_types</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                        <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">elem_args</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">elem_type</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">allowed_elem_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">allowed_elem_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">elem_type</span><span class="p">,)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">allowed_elem_types</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span>
+                            <span class="n">f</span><span class="p">,</span> <span class="n">allowed_elem_types</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">specifier</span><span class="o">=</span><span class="s2">&quot;elements&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># Handle dicts</span>
+        <span class="k">elif</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="n">key_type</span><span class="p">,</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key_type</span><span class="p">:</span>
+                <span class="n">key_origin</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">key_type</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key_origin</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">key_origin</span><span class="p">):</span>
+                            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span>
+                                <span class="n">f</span><span class="p">,</span> <span class="n">key_origin</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">specifier</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span>
+                            <span class="p">)</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span>
+                            <span class="n">f</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">specifier</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span>
+                        <span class="p">)</span>
+            <span class="k">if</span> <span class="n">value_type</span><span class="p">:</span>
+                <span class="n">value_origin</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">value_type</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">value_origin</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">value_origin</span><span class="p">):</span>
+                            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span>
+                                <span class="n">f</span><span class="p">,</span> <span class="n">value_origin</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">specifier</span><span class="o">=</span><span class="s2">&quot;values&quot;</span>
+                            <span class="p">)</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">value_type</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span>
+                            <span class="n">f</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">specifier</span><span class="o">=</span><span class="s2">&quot;values&quot;</span>
+                        <span class="p">)</span>
+        <span class="c1"># Handle enums</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">expected_type</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="c1"># Handle all other types (non-parameterized)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="c1"># Otherwise, skip type check</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="BaseActionConfig.format_type_error">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.format_type_error">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_type_error</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">specifier</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifier</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">specifier</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expected_type</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.get">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get attribute value by key with optional default.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: Attribute name to retrieve.</span>
+<span class="sd">            default: Value to return if attribute is not found.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Attribute value or default if not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseActionConfig.keys">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of field names in the dataclass.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">item</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<div class="viewcode-block" id="BaseActionConfig.validate_filters">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.validate_filters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filterwheel_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that filter(s) exist in the available filterwheels.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filterwheel_names: Dict mapping filterwheel device names to lists of filter names.</span>
+<span class="sd">                              e.g., {&quot;fw1&quot;: [&quot;Clear&quot;, &quot;Red&quot;, &quot;Green&quot;, &quot;Blue&quot;]}</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If a filter is specified but doesn&#39;t exist in any filterwheel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get filter value from the config</span>
+        <span class="n">filter_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">filter_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filterwheel_names</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c1"># No filter specified or no filterwheels available</span>
+
+        <span class="c1"># Handle both single filter and list of filters</span>
+        <span class="n">filters_to_check</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">filter_value</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">filter_value</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Collect all available filter names from all filterwheels</span>
+        <span class="n">all_available_filters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">fw_filters</span> <span class="ow">in</span> <span class="n">filterwheel_names</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">all_available_filters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fw_filters</span><span class="p">)</span>
+
+        <span class="c1"># Check each filter</span>
+        <span class="n">invalid_filters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filters_to_check</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_available_filters</span><span class="p">:</span>
+                <span class="n">invalid_filters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid_filters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Filter(s) </span><span class="si">{</span><span class="n">invalid_filters</span><span class="si">}</span><span class="s2"> not found in available filters: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">all_available_filters</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.validate_subframe">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.validate_subframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_subframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate subframe parameters.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If subframe parameters are invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subframe_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_width&quot;</span><span class="p">)</span>
+        <span class="n">subframe_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_height&quot;</span><span class="p">)</span>
+        <span class="n">subframe_center_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_center_x&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">subframe_center_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_center_y&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="c1"># Check dimensions are positive if specified</span>
+        <span class="k">if</span> <span class="n">subframe_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subframe_width</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;subframe_width must be positive, got </span><span class="si">{</span><span class="n">subframe_width</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">subframe_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subframe_height</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;subframe_height must be positive, got </span><span class="si">{</span><span class="n">subframe_height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check center coordinates are in valid range [0, 1]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">subframe_center_x</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;subframe_center_x must be between 0 and 1, got </span><span class="si">{</span><span class="n">subframe_center_x</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">subframe_center_y</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;subframe_center_y must be between 0 and 1, got </span><span class="si">{</span><span class="n">subframe_center_y</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If only one dimension is specified, require both</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">subframe_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">subframe_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Both subframe_width and subframe_height must be specified together. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got: width=</span><span class="si">{</span><span class="n">subframe_width</span><span class="si">}</span><span class="s2">, height=</span><span class="si">{</span><span class="n">subframe_height</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.validate_visibility">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.validate_visibility">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_visibility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+        <span class="n">observatory_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+        <span class="n">min_altitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the target is visible during the scheduled observation window.</span>
+
+<span class="sd">        Checks target visibility at the beginning, middle, and end of the planned</span>
+<span class="sd">        observation to ensure the target remains observable throughout.</span>
+
+<span class="sd">        Only implemented for object actions; override in subclasses as needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.has_subframe">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.has_subframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_subframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if subframing is enabled.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if subframe_width and subframe_height are specified, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_width&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subframe_height&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.merge_config_dicts">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.merge_config_dicts">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_config_dicts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge default_dict and config_dict, keeping only keys in dataclass.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">config_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">default_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">default_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">}</span> <span class="o">|</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__annotations__</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="BaseActionConfig.to_jsonable">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.BaseActionConfig.to_jsonable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Angle</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">deg</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="p">}</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">isot</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">convert</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">convert</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;__dataclass_fields__&quot;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">convert</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+
+        <span class="k">return</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OpenActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.OpenActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open the observatory for observations.</span>
+
+<span class="sd">    Steps:</span>
+<span class="sd">        1. Opens dome shutter</span>
+<span class="sd">        2. Unparks telescope</span>
+<span class="sd">        3. Cools camera</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="OpenActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.OpenActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CloseActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CloseActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloseActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the observatory safely.</span>
+
+<span class="sd">    Steps:</span>
+<span class="sd">        1. Stop any active guiding operations</span>
+<span class="sd">        2. Stop telescope slewing and tracking</span>
+<span class="sd">        3. Park the telescope</span>
+<span class="sd">        4. Park the dome and close shutter</span>
+<span class="sd">        5. Cools camera</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;close&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="CloseActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CloseActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CompleteHeadersActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CompleteHeadersActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompleteHeadersActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete FITS headers after exposures finish.</span>
+
+<span class="sd">    Uses paired device polled data to fill in FITS header fields that were unavailable</span>
+<span class="sd">    at exposure time. Automatically executed at the end of every schedule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;complete_headers&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="CompleteHeadersActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CompleteHeadersActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CoolCameraActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CoolCameraActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoolCameraActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for the ``cool_camera`` schedule action.</span>
+
+<span class="sd">    Activates the camera cooler and sets the target temperature with specified tolerance</span>
+<span class="sd">    and timeout from observatory configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;cool_camera&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="CoolCameraActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CoolCameraActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ObjectActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.ObjectActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ObjectActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture a sequence of light frames.</span>
+
+<span class="sd">    Workflow:</span>
+<span class="sd">        1. Pre-sequence setup (pointing, filters, focus, binning, sub-framing, headers)</span>
+<span class="sd">            - Observatory opens if not already done by a prior action if coordinates specified</span>
+<span class="sd">        2. Capture exposures in succession</span>
+<span class="sd">        3. Perform pointing correction if ``pointing=true``</span>
+<span class="sd">        4. Start autoguiding if ``guiding=true``</span>
+<span class="sd">        5. Stop exposures, guiding, and tracking at completion</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">object</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">exptime</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">ra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">alt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">az</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lookup_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">focus_shift</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">focus_position</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">guiding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">pointing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">execute_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">disable_telescope_movement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reset_guiding_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;Target name.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure time per frame in seconds.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="s2">&quot;Right Ascension to slew to&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="s2">&quot;Declination to slew to&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;alt&quot;</span><span class="p">:</span> <span class="s2">&quot;Altitude coordinate when issuing Alt/Az pointings.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;az&quot;</span><span class="p">:</span> <span class="s2">&quot;Azimuth coordinate when issuing Alt/Az pointings.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lookup_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Instead of specifying ra/dec or alt/az, use SIMBAD/Astropy to look up coordinates for celestial body to observe (e.g., &#39;mars&#39;, &#39;M31&#39;).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filter name to load before imaging.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;Focus offset relative to the stored best focus.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_position&quot;</span><span class="p">:</span> <span class="s2">&quot;Absolute focus position override.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;guiding&quot;</span><span class="p">:</span> <span class="s2">&quot;Start autoguiding with Donuts before imaging.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pointing&quot;</span><span class="p">:</span> <span class="s2">&quot;Perform pointing correction with twirl before imaging.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="s2">&quot;Base directory path for saving images.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;execute_parallel&quot;</span><span class="p">:</span> <span class="s2">&quot;Execute action in parallel mode when supported.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;disable_telescope_movement&quot;</span><span class="p">:</span> <span class="s2">&quot;Prevent any telescope motion during the sequence.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reset_guiding_reference&quot;</span><span class="p">:</span> <span class="s2">&quot;Acquire a fresh guiding reference frame at the start.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal location of the subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical location of the subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;M42&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
+            <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="mf">83.82208</span><span class="p">,</span>
+            <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">5.39111</span><span class="p">,</span>
+            <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;guiding&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;pointing&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="ObjectActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.ObjectActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing required fields: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Coordinate system validation</span>
+        <span class="n">has_radec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">has_altaz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">az</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># Can&#39;t mix coordinate systems</span>
+        <span class="k">if</span> <span class="n">has_radec</span> <span class="ow">and</span> <span class="n">has_altaz</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot specify both RA/Dec and Alt/Az coordinates. &quot;</span>
+                <span class="s2">&quot;Use either &#39;ra&#39; and &#39;dec&#39; OR &#39;alt&#39; and &#39;az&#39;, not both.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Must provide complete coordinate pairs</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ra</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Both &#39;ra&#39; and &#39;dec&#39; must be provided together. Got: ra=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ra</span><span class="si">}</span><span class="s2">, dec=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">az</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">az</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Both &#39;alt&#39; and &#39;az&#39; must be provided together. Got: alt=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alt</span><span class="si">}</span><span class="s2">, az=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">az</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Subframe validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ObjectActionConfig.validate_visibility">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.ObjectActionConfig.validate_visibility">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_visibility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+        <span class="n">observatory_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+        <span class="n">min_altitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the target is visible during the scheduled observation window.</span>
+
+<span class="sd">        Checks target visibility at the beginning, middle, and end of the planned</span>
+<span class="sd">        observation to ensure the target remains observable throughout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_time: Observation start time as astropy Time object</span>
+<span class="sd">            end_time: Observation end time as astropy Time object</span>
+<span class="sd">            observatory_location: Observatory location as EarthLocation object</span>
+<span class="sd">            min_altitude: Minimum altitude in degrees for target to be considered visible (default: 0°)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If RA/Dec are not provided or if target is below minimum altitude</span>
+<span class="sd">                at any of the three check points (start, middle, end)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If RA/Dec are not provided, attempts to resolve them from &#39;lookup_name&#39;</span>
+<span class="sd">            or &#39;alt&#39;/&#39;az&#39; parameters using the start time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ra</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span>
+
+        <span class="c1"># Try to resolve coordinates if RA/Dec are not explicitly provided</span>
+        <span class="k">if</span> <span class="n">ra</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">astra.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_body_coordinates</span>
+
+                <span class="c1"># Resolve body position at start time</span>
+                <span class="n">target_coord</span> <span class="o">=</span> <span class="n">get_body_coordinates</span><span class="p">(</span>
+                    <span class="n">body_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">,</span>
+                    <span class="n">obs_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+                    <span class="n">obs_location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">ra</span> <span class="o">=</span> <span class="n">target_coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span>
+                <span class="n">dec</span> <span class="o">=</span> <span class="n">target_coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">alt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">az</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Convert Alt/Az to RA/Dec for proper visibility checking over time</span>
+                <span class="c1"># We assume the telescope will track the RA/Dec coordinate corresponding</span>
+                <span class="c1"># to this Alt/Az at the start time.</span>
+                <span class="n">altaz_coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                    <span class="n">alt</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alt</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                    <span class="n">az</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">az</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                    <span class="n">frame</span><span class="o">=</span><span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">radec_coord</span> <span class="o">=</span> <span class="n">altaz_coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="s2">&quot;icrs&quot;</span><span class="p">)</span>
+                <span class="n">ra</span> <span class="o">=</span> <span class="n">radec_coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span>
+                <span class="n">dec</span> <span class="o">=</span> <span class="n">radec_coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+
+        <span class="c1"># Only check visibility if we have valid coordinates</span>
+        <span class="k">if</span> <span class="n">ra</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Create target coordinate</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+            <span class="n">ra</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span><span class="p">),</span>
+            <span class="n">dec</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">dec</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span><span class="p">),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check times: start, middle, end</span>
+        <span class="n">mid_time</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">start_time</span><span class="o">.</span><span class="n">unix</span> <span class="o">+</span> <span class="n">end_time</span><span class="o">.</span><span class="n">unix</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;unix&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">check_times</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="n">start_time</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;middle&quot;</span><span class="p">,</span> <span class="n">mid_time</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">visibility_issues</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">check_time</span> <span class="ow">in</span> <span class="n">check_times</span><span class="p">:</span>
+            <span class="c1"># Transform to horizontal coordinates</span>
+            <span class="n">altaz_frame</span> <span class="o">=</span> <span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">check_time</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">)</span>
+            <span class="n">target_altaz</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">altaz_frame</span><span class="p">)</span>
+
+            <span class="n">altitude</span> <span class="o">=</span> <span class="n">target_altaz</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">deg</span>  <span class="c1"># type: ignore</span>
+
+            <span class="k">if</span> <span class="n">altitude</span> <span class="o">&lt;</span> <span class="n">min_altitude</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">visibility_issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: altitude </span><span class="si">{</span><span class="n">altitude</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">° (below </span><span class="si">{</span><span class="n">min_altitude</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">° limit)&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">visibility_issues</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Target &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="si">}</span><span class="s2">&#39; at RA=</span><span class="si">{</span><span class="n">ra</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">°, Dec=</span><span class="si">{</span><span class="n">dec</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">° &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;is not visible during observation window:</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">visibility_issues</span><span class="p">)</span>
+            <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CalibrationActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CalibrationActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CalibrationActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture a sequence of calibration images (bias/dark).&quot;&quot;&quot;</span>
+
+    <span class="n">exptime</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">n</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">execute_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure times (seconds) to iterate.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure counts aligned with each exposure time.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filter name to load before imaging.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="s2">&quot;Base directory path for saving images.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;execute_parallel&quot;</span><span class="p">:</span> <span class="s2">&quot;Execute action in parallel mode when supported.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;calibration&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="CalibrationActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CalibrationActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]</span>
+            <span class="p">):</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing required fields: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ensure exptime and n have the same length</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exptime</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;exptime&#39; and &#39;n&#39; must have the same length. Got: exptime=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exptime</span><span class="si">}</span><span class="s2">, n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Subframe validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FlatsActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.FlatsActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlatsActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture a sequence of sky flats as the sky brightness evolves.</span>
+
+<span class="sd">    Steps:</span>
+<span class="sd">        1. Wait for Sun altitude between -1° and -12°</span>
+<span class="sd">        2. Point to a near-uniform patch of sky opposite the Sun</span>
+<span class="sd">            - Opens observatory if not already done by a prior action</span>
+<span class="sd">        3. Capture exposures and re-position between frames</span>
+<span class="sd">        4. Iterate through requested filters while auto-adjusting exposure times</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">n</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="nb">dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">execute_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">disable_telescope_movement</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filters to iterate while capturing flats.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of flats to capture per filter.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="s2">&quot;Base directory path for saving images.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;execute_parallel&quot;</span><span class="p">:</span> <span class="s2">&quot;Execute action in parallel mode when supported.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;disable_telescope_movement&quot;</span><span class="p">:</span> <span class="s2">&quot;Prevent telescope motion during the sequence.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;flats&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">],</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="FlatsActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.FlatsActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]</span>
+            <span class="p">):</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing required fields: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ensure filter and n have the same length</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;filter&#39; and &#39;n&#39; must have the same length. Got: filter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="si">}</span><span class="s2">, n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Subframe validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CalibrateGuidingActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CalibrateGuidingActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CalibrateGuidingActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calibrate guiding parameters using timed guide pulses.</span>
+
+<span class="sd">    Steps:</span>
+<span class="sd">        1. Slews telescope to RA = LST - 1 hour, Dec = 0° at the start of sequence</span>
+<span class="sd">            - Opens observatory if not already done by a prior action</span>
+<span class="sd">        2. Issues a series of guide pulses in each cardinal direction with specified duration and settling time</span>
+<span class="sd">        3. Captures exposures after each pulse and measures star shifts to determine pixel-to-time scales and camera orientation relative to mount axes</span>
+<span class="sd">        4. Averages results over specified number of cycles</span>
+<span class="sd">        5. Saves calibration parameters in the observatory configuration for use in guiding</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pulse_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="n">exptime</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">settle_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">number_of_cycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">focus_shift</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">focus_position</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filter to use during calibration.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pulse_time&quot;</span><span class="p">:</span> <span class="s2">&quot;Duration of guide pulses in milliseconds.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure time for calibration images.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;settle_time&quot;</span><span class="p">:</span> <span class="s2">&quot;Wait time after pulses before exposing.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number_of_cycles&quot;</span><span class="p">:</span> <span class="s2">&quot;How many calibration cycles to take average over.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;Focus offset relative to best focus.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_position&quot;</span><span class="p">:</span> <span class="s2">&quot;Absolute focus position override.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;calibrate_guiding&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="CalibrateGuidingActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.CalibrateGuidingActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PointingModelActionConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.PointingModelActionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointingModelActionConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aid building a telescope pointing model. Astra itself does not build or maintain</span>
+<span class="sd">    a pointing model.</span>
+
+<span class="sd">    Captures a spiral of points from zenith down to 30° altitude while</span>
+<span class="sd">    avoiding positions within 20° of the Moon.</span>
+
+<span class="sd">    Plate solves each pointing and sends SyncToCoordinates commands to the mount. The</span>
+<span class="sd">    receipt of these commands can be used to build a pointing model in the mount</span>
+<span class="sd">    control software. The action can be configured to use the local star catalog for</span>
+<span class="sd">    plate solving to speed up the process if the online Gaia catalog is unavailable or</span>
+<span class="sd">    slow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">exptime</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">dark_subtraction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">object</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Pointing Model&quot;</span>
+    <span class="n">use_local_db</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">focus_shift</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">focus_position</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of points to include in the model.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure time for each pointing image.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dark_subtraction&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable dark subtraction using previously taken calibration frames of same exposure time in the same date folder.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;Descriptive label for the pointing run.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;use_local_db&quot;</span><span class="p">:</span> <span class="s2">&quot;Use local star catalog database for plate solving (faster).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filter to use for exposures.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;Focus offset relative to best focus.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_position&quot;</span><span class="p">:</span> <span class="s2">&quot;Absolute focus position override.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">:</span> <span class="s2">&quot;Directory path for saving images.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;pointing_model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="PointingModelActionConfig.validate">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.PointingModelActionConfig.validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SelectionMethod">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.SelectionMethod">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SelectionMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">SINGLE</span> <span class="o">=</span> <span class="s2">&quot;single&quot;</span>
+    <span class="n">MAXIMAL</span> <span class="o">=</span> <span class="s2">&quot;maximal&quot;</span>
+    <span class="n">ANY</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span>
+
+<div class="viewcode-block" id="SelectionMethod.from_string">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.SelectionMethod.from_string">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SelectionMethod&quot;</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__members__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown selection_method: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. Fall back to &#39;SINGLE&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SINGLE</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AutofocusCalibrationFieldConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.AutofocusCalibrationFieldConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutofocusCalibrationFieldConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for automated autofocus calibration field selection.&quot;&quot;&quot;</span>
+
+    <span class="n">maximal_zenith_angle</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Angle</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">airmass_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.01</span>
+    <span class="n">g_mag_range</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="n">j_mag_range</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="n">fov_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fov_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">selection_method</span><span class="p">:</span> <span class="n">SelectionMethod</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;single&quot;</span>
+    <span class="n">use_gaia</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">observation_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Time</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">maximal_number_of_stars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100_000</span>
+    <span class="n">ra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_coordinates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SkyCoord</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;maximal_zenith_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;Maximum zenith angle allowed when selecting autofocus fields.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;airmass_threshold&quot;</span><span class="p">:</span> <span class="s2">&quot;Highest acceptable airmass for autofocus candidates.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;g_mag_range&quot;</span><span class="p">:</span> <span class="s2">&quot;Inclusive Gaia G magnitude range to consider.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;j_mag_range&quot;</span><span class="p">:</span> <span class="s2">&quot;Inclusive 2MASS J magnitude range to consider.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fov_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the field of view in degrees.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fov_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the field of view in degrees.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;selection_method&quot;</span><span class="p">:</span> <span class="s2">&quot;Strategy for selecting stars (single, maximal, any).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;use_gaia&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to rely on Gaia catalog sources.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;observation_time&quot;</span><span class="p">:</span> <span class="s2">&quot;Observation time used when evaluating constraints.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;maximal_number_of_stars&quot;</span><span class="p">:</span> <span class="s2">&quot;Maximum number of stars to query or consider.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="s2">&quot;Fixed Right Ascension used to bypass automatic selection.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="s2">&quot;Fixed Declination used to bypass automatic selection.&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus.targeting</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_airmass_threshold_crossover</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span>
+                <span class="n">find_airmass_threshold_crossover</span><span class="p">(</span>
+                    <span class="n">airmass_threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">airmass_threshold</span>
+                <span class="p">)</span>
+                <span class="o">*</span> <span class="mi">180</span>
+                <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximal_zenith_angle</span><span class="p">,</span> <span class="n">Angle</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;maximal_zenith_angle must be of type float, int.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_method</span><span class="p">,</span> <span class="n">SelectionMethod</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selection_method</span> <span class="o">=</span> <span class="n">SelectionMethod</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_method</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Calibration coordinates have not been set.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@coordinates</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SkyCoord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coordinates</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="AutofocusCalibrationFieldConfig.from_dict">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.AutofocusCalibrationFieldConfig.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AutofocusCalibrationFieldConfig&quot;</span><span class="p">:</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">merge_config_dicts</span><span class="p">(</span><span class="n">config_dict</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;selection_method&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;selection_method&quot;</span><span class="p">],</span> <span class="n">SelectionMethod</span>
+        <span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;selection_method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SelectionMethod</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;selection_method&quot;</span><span class="p">],</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AutofocusConfig">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.AutofocusConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutofocusConfig</span><span class="p">(</span><span class="n">BaseActionConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform an autofocus sweep to determine the optimal focus position.</span>
+
+<span class="sd">    Steps:</span>
+<span class="sd">        1. Select a suitable autofocus field (or use provided coordinates)</span>
+<span class="sd">            - Opens observatory if not already done by a prior action</span>
+<span class="sd">        2. Move the telescope if needed</span>
+<span class="sd">        3. Capture images at different focus positions</span>
+<span class="sd">        4. Measure star sharpness in each image</span>
+<span class="sd">        5. Fit a curve to determine optimal focus</span>
+<span class="sd">        6. Save plots/results and save the best focus position in the observatory configuration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">exptime</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">bin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">reduce_exposure_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">search_range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">search_range_is_relative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">n_steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+    <span class="n">n_exposures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">decrease_search_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">star_find_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">fwhm</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">percent_to_cut</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">focus_measure_operator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HFR&quot;</span>
+    <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">extremum_estimator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;LOWESS&quot;</span>
+    <span class="n">extremum_estimator_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">secondary_focus_measure_operators</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;fft&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;normalized_variance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tenengrad&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">calibration_field</span><span class="p">:</span> <span class="n">AutofocusCalibrationFieldConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">AutofocusCalibrationFieldConfig</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;flatten&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">subframe_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">subframe_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">_focus_measure_operator</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_secondary_focus_measure_operators</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">FIELD_DESCRIPTIONS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="s2">&quot;Exposure time for focus frames in seconds.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;Filter to use during autofocus procedure.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;Camera binning factor.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_range&quot;</span><span class="p">:</span> <span class="s2">&quot;Range of focus positions to search. Accepts a single width or explicit bounds.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_range_is_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;Interpret search_range relative to the current focus position.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_steps&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of steps for each sweep.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n_exposures&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;Number of exposures at each focus position or an array specifying exposures for each sweep. &quot;</span>
+            <span class="s2">&quot;If an integer is given, the same number of exposures is used for each sweep. &quot;</span>
+            <span class="s2">&quot;If an array is given, the length of the array must match the number of sweeps. &quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;decrease_search_range&quot;</span><span class="p">:</span> <span class="s2">&quot;Reduce the search range after each sweep.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;star_find_threshold&quot;</span><span class="p">:</span> <span class="s2">&quot;DAOStarFinder threshold for star detection.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fwhm&quot;</span><span class="p">:</span> <span class="s2">&quot;DAOStarFinder FWHM of the Gaussian kernel in pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;percent_to_cut&quot;</span><span class="p">:</span> <span class="s2">&quot;Percentage of worst-performing focus samples to drop when shrinking the range.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;focus_measure_operator&quot;</span><span class="p">:</span> <span class="s2">&quot;Focus metric to optimize (e.g., hfr, gauss, tenengrad, fft, normalized_variance).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reduce_exposure_time&quot;</span><span class="p">:</span> <span class="s2">&quot;Automatically shorten exposures to prevent saturation.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save&quot;</span><span class="p">:</span> <span class="s2">&quot;Persist the optimal focus position back into observatory configuration.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;extremum_estimator&quot;</span><span class="p">:</span> <span class="s2">&quot;Curve-fitting method used to determine the minimum (LOWESS, medianfilter, spline, rbf).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;extremum_estimator_kwargs&quot;</span><span class="p">:</span> <span class="s2">&quot;Additional keyword overrides for the extremum estimator.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;secondary_focus_measure_operators&quot;</span><span class="p">:</span> <span class="s2">&quot;Additional focus metrics to compute for diagnostics.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save_path&quot;</span><span class="p">:</span> <span class="s2">&quot;Directory override for saving autofocus results.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_width&quot;</span><span class="p">:</span> <span class="s2">&quot;Width of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_height&quot;</span><span class="p">:</span> <span class="s2">&quot;Height of the requested subframe in binned pixels.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_x&quot;</span><span class="p">:</span> <span class="s2">&quot;Horizontal subframe center (0=left, 1=right).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subframe_center_y&quot;</span><span class="p">:</span> <span class="s2">&quot;Vertical subframe center (0=top, 1=bottom).&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">EXAMPLE_SCHEDULE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="s2">&quot;camera_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">:</span> <span class="s2">&quot;autofocus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_value&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;exptime&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;search_range_is_relative&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;search_range&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;n_steps&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+            <span class="s2">&quot;n_exposures&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-01-01 00:00:00.000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-02-01 00:00:00.000&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus</span><span class="w"> </span><span class="kn">import</span> <span class="n">FocusMeasureOperatorRegistry</span>
+
+        <span class="c1"># Store operator classes, not instances, to avoid premature initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_secondary_focus_measure_operators</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">FocusMeasureOperatorRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">key</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">FocusMeasureOperatorRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_focus_measure_operators</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">FocusMeasureOperatorRegistry</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_focus_measure_operator</span> <span class="o">=</span> <span class="n">FocusMeasureOperatorRegistry</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">focus_measure_operator</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+        <span class="c1"># Validate subframe after base validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_subframe</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AutofocusConfig.from_dict">
+<a class="viewcode-back" href="../../api/generated/astra.action_configs.html#astra.action_configs.AutofocusConfig.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AutofocusConfig&quot;</span><span class="p">:</span>
+        <span class="n">autofocus_calibration_field</span> <span class="o">=</span> <span class="n">AutofocusCalibrationFieldConfig</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+            <span class="n">config_dict</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+            <span class="n">default_dict</span><span class="o">=</span><span class="n">default_dict</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">merge_config_dicts</span><span class="p">(</span><span class="n">config_dict</span><span class="p">,</span> <span class="n">default_dict</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;calibration_field&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">autofocus_calibration_field</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_exposures&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_steps&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;&#39;n_exposures&#39; length does not match &#39;n_steps&#39; length. &quot;</span>
+                    <span class="s2">&quot;Defaulting to 1 exposure per step.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_exposures&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_steps&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">focus_measure_operator_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;star_find_threshold&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_find_threshold</span><span class="p">,</span>
+            <span class="s2">&quot;fwhm&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fwhm</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">focus_measure_operator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_focus_measure_operator</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_focus_measure_operator</span>
+            <span class="k">else</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="n">ACTION_CONFIGS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">ObjectActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;calibration&quot;</span><span class="p">:</span> <span class="n">CalibrationActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;flats&quot;</span><span class="p">:</span> <span class="n">FlatsActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;calibrate_guiding&quot;</span><span class="p">:</span> <span class="n">CalibrateGuidingActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;autofocus&quot;</span><span class="p">:</span> <span class="n">AutofocusConfig</span><span class="p">,</span>
+    <span class="s2">&quot;pointing_model&quot;</span><span class="p">:</span> <span class="n">PointingModelActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;open&quot;</span><span class="p">:</span> <span class="n">OpenActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;close&quot;</span><span class="p">:</span> <span class="n">CloseActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;cool_camera&quot;</span><span class="p">:</span> <span class="n">CoolCameraActionConfig</span><span class="p">,</span>
+    <span class="s2">&quot;complete_headers&quot;</span><span class="p">:</span> <span class="n">CompleteHeadersActionConfig</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

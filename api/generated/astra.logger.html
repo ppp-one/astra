@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.logger &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.logger';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.main" href="astra.main.html" />
+    <link rel="prev" title="astra.image_handler" href="astra.image_handler.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.logger</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseManagerProtocol"><code class="docutils literal notranslate"><span class="pre">DatabaseManagerProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseManagerProtocol.execute"><code class="docutils literal notranslate"><span class="pre">DatabaseManagerProtocol.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error_source"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error_source</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error_free"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error_free</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.critical"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.critical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.report_device_issue"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.report_device_issue()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler.database_manager"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler.database_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler.emit"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler.emit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler.emit"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler.emit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler.attach"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler.attach()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler"><code class="docutils literal notranslate"><span class="pre">FileHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.FORMAT"><code class="docutils literal notranslate"><span class="pre">FileHandler.FORMAT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.DATEFMT"><code class="docutils literal notranslate"><span class="pre">FileHandler.DATEFMT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.emit"><code class="docutils literal notranslate"><span class="pre">FileHandler.emit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter"><code class="docutils literal notranslate"><span class="pre">CustomFormatter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.grey"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.grey</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.green"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.green</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.yellow"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.yellow</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.red"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.red</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.bold_red"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.bold_red</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.reset"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.reset</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.format"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.format()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.logger">
+<span id="astra-logger"></span><h1>astra.logger<a class="headerlink" href="#module-astra.logger" title="Link to this heading">#</a></h1>
+<p>Custom logging handler for observatory operations with database storage.</p>
+<p>This module provides a specialized logging handler that extends Python’s standard
+logging.Handler to provide dual-output logging: console display and database storage.
+It’s designed specifically for observatory automation systems where logging events
+need to be both immediately visible and persistently stored for analysis.</p>
+<dl>
+<dt>Key features:</dt><dd><ul class="simple">
+<li><p>Dual logging output (console and database)</p></li>
+<li><p>Error state tracking for the parent instance</p></li>
+<li><p>Automatic timestamp formatting with microsecond precision</p></li>
+<li><p>Exception and stack trace capture</p></li>
+<li><p>SQL injection protection through quote escaping</p></li>
+<li><p>UTC timezone standardization</p></li>
+</ul>
+</dd>
+<dt>The handler is particularly useful for long-running observatory operations where:</dt><dd><ul class="simple">
+<li><p>Real-time monitoring of system status is required</p></li>
+<li><p>Historical log analysis is needed for debugging</p></li>
+<li><p>Error states need to be tracked at the instance level</p></li>
+<li><p>Database queries on log data are necessary</p></li>
+</ul>
+</dd>
+<dt>Typical usage:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span><span class="p">,</span> <span class="n">DatabaseLoggingHandler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.database_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observatory_name</span> <span class="o">=</span> <span class="s1">&#39;MyObservatory&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">DatabaseManager</span><span class="p">(</span><span class="n">observatory_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span> <span class="o">=</span> <span class="n">ObservatoryLogger</span><span class="p">(</span><span class="n">observatory_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">DatabaseLoggingHandler</span><span class="p">(</span><span class="n">db_manager</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The handler expects the instance to have ‘error_free’ attribute and ‘cursor’ attribute.</p>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.logger.ConsoleStreamHandler" title="astra.logger.ConsoleStreamHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConsoleStreamHandler</span></code></a>([log_traceback])</p></td>
+<td><p>Initialize the handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.logger.CustomFormatter" title="astra.logger.CustomFormatter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CustomFormatter</span></code></a>([fmt, datefmt])</p></td>
+<td><p>A custom logging formatter that allows customizable formatting and color-coded output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.logger.DatabaseLoggingHandler" title="astra.logger.DatabaseLoggingHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseLoggingHandler</span></code></a>(database_manager)</p></td>
+<td><p>Custom logging handler for dual-output to console and database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.logger.DatabaseManagerProtocol" title="astra.logger.DatabaseManagerProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatabaseManagerProtocol</span></code></a>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.logger.FileHandler" title="astra.logger.FileHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileHandler</span></code></a>(filename[, log_traceback])</p></td>
+<td><p>Open the specified file and use it as the stream for logging.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ObservatoryLogger</span></code></a>(name[, error_source, ...])</p></td>
+<td><p>Custom logger for observatory operations with error tracking.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.DatabaseManagerProtocol">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">DatabaseManagerProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#DatabaseManagerProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.DatabaseManagerProtocol" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.DatabaseManagerProtocol.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#DatabaseManagerProtocol.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.DatabaseManagerProtocol.execute" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">ObservatoryLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_free</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#ObservatoryLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ObservatoryLogger" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Custom logger for observatory operations with error tracking.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger.error_source">
+<span class="sig-name descname"><span class="pre">error_source</span></span><a class="headerlink" href="#astra.logger.ObservatoryLogger.error_source" title="Link to this definition">#</a></dt>
+<dd><p>List to track sources of errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger.error_free">
+<span class="sig-name descname"><span class="pre">error_free</span></span><a class="headerlink" href="#astra.logger.ObservatoryLogger.error_free" title="Link to this definition">#</a></dt>
+<dd><p>Flag indicating if the logger has encountered errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize the logger with a name and an optional level.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#ObservatoryLogger.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ObservatoryLogger.error" title="Link to this definition">#</a></dt>
+<dd><p>Overrides logging.Logger.error to set error_free to False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger.critical">
+<span class="sig-name descname"><span class="pre">critical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#ObservatoryLogger.critical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ObservatoryLogger.critical" title="Link to this definition">#</a></dt>
+<dd><p>Overrides logging.Logger.critical to set error_free to False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.ObservatoryLogger.report_device_issue">
+<span class="sig-name descname"><span class="pre">report_device_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><span class="pre">Exception</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'error'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'warning'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'error'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#ObservatoryLogger.report_device_issue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ObservatoryLogger.report_device_issue" title="Link to this definition">#</a></dt>
+<dd><p>Logs device-specific issues and tracks error sources.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.DatabaseLoggingHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">DatabaseLoggingHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#astra.logger.DatabaseManagerProtocol" title="astra.logger.DatabaseManagerProtocol"><span class="pre">DatabaseManagerProtocol</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#DatabaseLoggingHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.DatabaseLoggingHandler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Handler" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></a></p>
+<p>Custom logging handler for dual-output to console and database.</p>
+<p>Extends Python’s standard logging.Handler to provide specialized logging
+for observatory automation systems. Simultaneously outputs log messages
+to console for real-time monitoring and stores them in database for
+persistent storage and analysis.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.DatabaseLoggingHandler.database_manager">
+<span class="sig-name descname"><span class="pre">database_manager</span></span><a class="headerlink" href="#astra.logger.DatabaseLoggingHandler.database_manager" title="Link to this definition">#</a></dt>
+<dd><p>Instance managing database operations,
+specifically database_manager.execute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.database_manager.html#astra.database_manager.DatabaseManager" title="astra.database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initializes the instance - basically setting the formatter to None
+and the filter list to empty.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.DatabaseLoggingHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.LogRecord" title="(in Python v3.14)"><span class="pre">LogRecord</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#DatabaseLoggingHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.DatabaseLoggingHandler.emit" title="Link to this definition">#</a></dt>
+<dd><p>Process and emit a log record to console and database.</p>
+<p>This method is called automatically by the logging framework when a log
+message is generated. It formats the record for console output, tracks
+error states in the parent instance, and stores the record in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>record</strong> – The log record to be processed and emitted.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the log level is ERROR or higher, sets instance.error_free to False.
+All log records are stored in the ‘log’ database table with timestamp,
+level, module, function, line number, and message.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.ConsoleStreamHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">ConsoleStreamHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_traceback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#ConsoleStreamHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ConsoleStreamHandler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.handlers.html#logging.StreamHandler" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamHandler</span></code></a></p>
+<p>Initialize the handler.</p>
+<p>If stream is not specified, sys.stderr is used.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.ConsoleStreamHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.LogRecord" title="(in Python v3.14)"><span class="pre">LogRecord</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#ConsoleStreamHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ConsoleStreamHandler.emit" title="Link to this definition">#</a></dt>
+<dd><p>Emit a record.</p>
+<p>If a formatter is specified, it is used to format the record.
+The record is then written to the stream with a trailing newline.  If
+exception information is present, it is formatted using
+traceback.print_exception and appended to the stream.  If the stream
+has an ‘encoding’ attribute, it is used to determine how to do the
+output to the stream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.ConsoleStreamHandler.attach">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">attach</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.14)"><span class="pre">Logger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_other_handlers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#ConsoleStreamHandler.attach"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.ConsoleStreamHandler.attach" title="Link to this definition">#</a></dt>
+<dd><p>Ensure a <cite>ConsoleStreamHandler</cite> is attached to <cite>logger</cite>.</p>
+<p>This convenience classmethod ensures that the given <code class="docutils literal notranslate"><span class="pre">logger</span></code> has a
+<cite>ConsoleStreamHandler</cite> attached configured at the requested <code class="docutils literal notranslate"><span class="pre">level</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- logger</strong> – Logger to configure.</p></li>
+<li><p><strong>- level</strong> – Logging level to set on the logger and handler (default
+<code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code>).</p></li>
+<li><p><strong>- propagate</strong> – Whether log records should propagate to ancestor loggers.</p></li>
+<li><p><strong>- remove_other_handlers</strong> – If True, remove non-console handlers from <code class="docutils literal notranslate"><span class="pre">logger</span></code>
+before adding the console handler.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method intentionally does not attach handlers to the root
+logger to avoid interfering with other frameworks (for example,
+Uvicorn’s logging configuration).</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.FileHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">FileHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_traceback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#FileHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.FileHandler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.handlers.html#logging.FileHandler" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileHandler</span></code></a></p>
+<p>Open the specified file and use it as the stream for logging.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.FileHandler.FORMAT">
+<span class="sig-name descname"><span class="pre">FORMAT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'%(levelname)s,%(asctime)s.%(msecs)03d,%(process)d,%(name)s,(%(filename)s:%(lineno)d),%(message)s'</span></span><a class="headerlink" href="#astra.logger.FileHandler.FORMAT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.FileHandler.DATEFMT">
+<span class="sig-name descname"><span class="pre">DATEFMT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></span><a class="headerlink" href="#astra.logger.FileHandler.DATEFMT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.FileHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.LogRecord" title="(in Python v3.14)"><span class="pre">LogRecord</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/logger.html#FileHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.FileHandler.emit" title="Link to this definition">#</a></dt>
+<dd><p>Emit a record.</p>
+<p>If the stream was not opened because ‘delay’ was specified in the
+constructor, open it before calling the superclass’s emit.</p>
+<p>If stream is not open, current mode is ‘w’ and <cite>_closed=True</cite>, record
+will not be emitted (see Issue #42378).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.logger.</span></span><span class="sig-name descname"><span class="pre">CustomFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datefmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#CustomFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.CustomFormatter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Formatter" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formatter</span></code></a></p>
+<p>A custom logging formatter that allows customizable formatting and color-coded output.</p>
+<p>Uses ANSI escape codes to colorize log messages based on their severity level,
+if the console supports it.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>fmt<span class="classifier">str, optional</span></dt><dd><p>The log message format. Defaults to ‘%(asctime)s :: %(levelname)-8s :: %(message)s’.</p>
+</dd>
+<dt>datefmt<span class="classifier">str, optional</span></dt><dd><p>The date format for log timestamps. Defaults to ‘%H:%M:%S’.</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>grey<span class="classifier">str</span></dt><dd><p>ANSI escape code for grey text.</p>
+</dd>
+<dt>green<span class="classifier">str</span></dt><dd><p>ANSI escape code for green text.</p>
+</dd>
+<dt>yellow<span class="classifier">str</span></dt><dd><p>ANSI escape code for yellow text.</p>
+</dd>
+<dt>red<span class="classifier">str</span></dt><dd><p>ANSI escape code for red text.</p>
+</dd>
+<dt>bold_red<span class="classifier">str</span></dt><dd><p>ANSI escape code for bold red text.</p>
+</dd>
+<dt>reset<span class="classifier">str</span></dt><dd><p>ANSI escape code to reset text formatting.</p>
+</dd>
+</dl>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>format(record)</dt><dd><p>Format the log record according to the specified log level’s formatting.</p>
+</dd>
+</dl>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>formatter = CustomFormatter(fmt=’%(asctime)s - %(levelname)s - %(message)s’, datefmt=’%Y-%m-%d %H:%M:%S’)
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+logger.addHandler(handler)</p>
+</section>
+<section id="note">
+<h2>Note<a class="headerlink" href="#note" title="Link to this heading">#</a></h2>
+<p>The ANSI escape codes are used to colorize the output text in supported terminals.</p>
+<p>Initialize the formatter with specified format strings.</p>
+<p>Initialize the formatter either with the specified format string, or a
+default as described above. Allow for specialized date formatting with
+the optional datefmt argument. If datefmt is omitted, you get an
+ISO8601-like (or RFC 3339-like) format.</p>
+<p>Use a style parameter of ‘%’, ‘{’ or ‘$’ to specify that you want to
+use one of %-formatting, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str.format" title="(in Python v3.14)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.format()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">{}</span></code>) formatting or
+<a class="reference external" href="https://docs.python.org/3/library/string.html#string.Template" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">string.Template</span></code></a> formatting in your format string.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.2: </span>Added the <code class="docutils literal notranslate"><span class="pre">style</span></code> parameter.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.grey">
+<span class="sig-name descname"><span class="pre">grey</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[38;20m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.grey" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.green">
+<span class="sig-name descname"><span class="pre">green</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[32;20m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.green" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.yellow">
+<span class="sig-name descname"><span class="pre">yellow</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[33;20m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.yellow" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.red">
+<span class="sig-name descname"><span class="pre">red</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[31;20m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.red" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.bold_red">
+<span class="sig-name descname"><span class="pre">bold_red</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[31;1m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.bold_red" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></span><a class="headerlink" href="#astra.logger.CustomFormatter.reset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.logger.CustomFormatter.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/logger.html#CustomFormatter.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.logger.CustomFormatter.format" title="Link to this definition">#</a></dt>
+<dd><p>Format the log record according to the specified log level’s formatting.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.image_handler.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.image_handler</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.main.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.main</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseManagerProtocol"><code class="docutils literal notranslate"><span class="pre">DatabaseManagerProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseManagerProtocol.execute"><code class="docutils literal notranslate"><span class="pre">DatabaseManagerProtocol.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error_source"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error_source</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error_free"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error_free</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.error"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.error()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.critical"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.critical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ObservatoryLogger.report_device_issue"><code class="docutils literal notranslate"><span class="pre">ObservatoryLogger.report_device_issue()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler.database_manager"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler.database_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.DatabaseLoggingHandler.emit"><code class="docutils literal notranslate"><span class="pre">DatabaseLoggingHandler.emit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler.emit"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler.emit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.ConsoleStreamHandler.attach"><code class="docutils literal notranslate"><span class="pre">ConsoleStreamHandler.attach()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler"><code class="docutils literal notranslate"><span class="pre">FileHandler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.FORMAT"><code class="docutils literal notranslate"><span class="pre">FileHandler.FORMAT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.DATEFMT"><code class="docutils literal notranslate"><span class="pre">FileHandler.DATEFMT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.FileHandler.emit"><code class="docutils literal notranslate"><span class="pre">FileHandler.emit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter"><code class="docutils literal notranslate"><span class="pre">CustomFormatter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.grey"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.grey</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.green"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.green</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.yellow"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.yellow</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.red"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.red</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.bold_red"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.bold_red</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.reset"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.reset</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.logger.CustomFormatter.format"><code class="docutils literal notranslate"><span class="pre">CustomFormatter.format()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

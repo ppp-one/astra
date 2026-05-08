@@ -1,0 +1,1866 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.observatory &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.observatory';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.paired_devices" href="astra.paired_devices.html" />
+    <link rel="prev" title="astra.observatory_loader" href="astra.observatory_loader.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.observatory</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory"><code class="docutils literal notranslate"><span class="pre">Observatory</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.name"><code class="docutils literal notranslate"><span class="pre">Observatory.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.database_manager"><code class="docutils literal notranslate"><span class="pre">Observatory.database_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.logger"><code class="docutils literal notranslate"><span class="pre">Observatory.logger</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory._config"><code class="docutils literal notranslate"><span class="pre">Observatory._config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.fits_config"><code class="docutils literal notranslate"><span class="pre">Observatory.fits_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.thread_manager"><code class="docutils literal notranslate"><span class="pre">Observatory.thread_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.queue"><code class="docutils literal notranslate"><span class="pre">Observatory.queue</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.heartbeat"><code class="docutils literal notranslate"><span class="pre">Observatory.heartbeat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.error_free"><code class="docutils literal notranslate"><span class="pre">Observatory.error_free</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.schedule_running"><code class="docutils literal notranslate"><span class="pre">Observatory.schedule_running</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.robotic_switch"><code class="docutils literal notranslate"><span class="pre">Observatory.robotic_switch</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.guider"><code class="docutils literal notranslate"><span class="pre">Observatory.guider</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.config"><code class="docutils literal notranslate"><span class="pre">Observatory.config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">Observatory.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.devices"><code class="docutils literal notranslate"><span class="pre">Observatory.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.weather_safe"><code class="docutils literal notranslate"><span class="pre">Observatory.weather_safe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.time_to_safe"><code class="docutils literal notranslate"><span class="pre">Observatory.time_to_safe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.image_handler</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.get_image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.get_image_handler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.connect_all_devices"><code class="docutils literal notranslate"><span class="pre">Observatory.connect_all_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.start_watchdog"><code class="docutils literal notranslate"><span class="pre">Observatory.start_watchdog()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.watchdog"><code class="docutils literal notranslate"><span class="pre">Observatory.watchdog()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.update_heartbeat"><code class="docutils literal notranslate"><span class="pre">Observatory.update_heartbeat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.open_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.open_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.close_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.close_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.toggle_robotic_switch"><code class="docutils literal notranslate"><span class="pre">Observatory.toggle_robotic_switch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.start_schedule"><code class="docutils literal notranslate"><span class="pre">Observatory.start_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.run_schedule"><code class="docutils literal notranslate"><span class="pre">Observatory.run_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.run_action"><code class="docutils literal notranslate"><span class="pre">Observatory.run_action()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.cool_camera"><code class="docutils literal notranslate"><span class="pre">Observatory.cool_camera()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pre_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.pre_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.setup_image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.setup_image_handler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.setup_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.setup_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.wait_for_slew"><code class="docutils literal notranslate"><span class="pre">Observatory.wait_for_slew()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.check_conditions"><code class="docutils literal notranslate"><span class="pre">Observatory.check_conditions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.perform_exposure"><code class="docutils literal notranslate"><span class="pre">Observatory.perform_exposure()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.image_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.image_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pointing_model_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.pointing_model_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pointing_correction"><code class="docutils literal notranslate"><span class="pre">Observatory.pointing_correction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.guiding_calibration_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.guiding_calibration_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.autofocus_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.autofocus_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_position"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_exptime"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_exptime()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.execute_and_monitor_device_task"><code class="docutils literal notranslate"><span class="pre">Observatory.execute_and_monitor_device_task()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.observatory">
+<span id="astra-observatory"></span><h1>astra.observatory<a class="headerlink" href="#module-astra.observatory" title="Link to this heading">#</a></h1>
+<p>Core observatory control methods for Astra.</p>
+<p>This module provides the core Observatory class for managing and controlling
+astronomical observatories. It handles device coordination, safety monitoring,
+automated observations, and data acquisition for professional astronomical
+facilities.</p>
+<dl class="simple">
+<dt>The module integrates multiple subsystems including:</dt><dd><ul class="simple">
+<li><p>Alpaca-compatible device drivers for telescopes, cameras, and accessories</p></li>
+<li><p>Real-time safety and weather monitoring systems</p></li>
+<li><p>Automated observation schedule execution</p></li>
+<li><p>Database logging and FITS header management</p></li>
+<li><p>Thread-safe multiprocessing architecture</p></li>
+</ul>
+</dd>
+<dt>Key Components:</dt><dd><ul class="simple">
+<li><p>Observatory: Main control class for observatory operations</p></li>
+<li><p>Device Management: Alpaca protocol device coordination</p></li>
+<li><p>Safety Systems: Weather monitoring and error handling</p></li>
+<li><p>Scheduling: Automated observation execution</p></li>
+<li><p>Calibration: Automated flat, dark, and bias frame acquisition</p></li>
+<li><p>Pointing &amp; Guiding: Telescope pointing correction and guiding</p></li>
+</ul>
+</dd>
+<dt>Usage:</dt><dd><p>This module is typically used as part of the ASTRA observatory automation
+framework. The Observatory class is instantiated with a configuration file
+and then manages all aspects of observatory operation.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This software is designed for professional astronomical observatories.
+Proper configuration of safety systems is essential to prevent equipment
+damage and ensure personnel safety.</p>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.observatory.Observatory" title="astra.observatory.Observatory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Observatory</span></code></a>(config_filename[, ...])</p></td>
+<td><p>Autonomous astronomical observatory control system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.observatory.Observatory">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.observatory.</span></span><span class="sig-name descname"><span class="pre">Observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">logging.INFO</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Autonomous astronomical observatory control system.</p>
+<p>The Observatory class provides comprehensive control and automation for astronomical
+observatories, managing telescopes, cameras, filter wheels, focusers, domes, and
+other equipment. It coordinates complex observation sequences, safety monitoring,
+device management, and data acquisition for autonomous or semi-autonomous operation.</p>
+<dl class="simple">
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p>Multi-device coordination and control via Alpaca protocol</p></li>
+<li><p>Autonomous observation scheduling and execution</p></li>
+<li><p>Real-time safety monitoring and weather assessment</p></li>
+<li><p>Automated calibration sequences (flats, darks, bias frames)</p></li>
+<li><p>Autoguiding and pointing correction capabilities</p></li>
+<li><p>Comprehensive error handling and recovery</p></li>
+<li><p>Database logging of all operations and device states</p></li>
+<li><p>FITS header management and metadata completion</p></li>
+<li><p>Thread-safe multiprocessing architecture</p></li>
+</ul>
+</dd>
+<dt>Observatory Operations:</dt><dd><ul class="simple">
+<li><p>Schedule-driven autonomous observations</p></li>
+<li><p>Real-time device monitoring and polling</p></li>
+<li><p>Safety watchdog with weather integration</p></li>
+<li><p>Automatic dome and telescope control</p></li>
+<li><p>Image acquisition and processing pipelines</p></li>
+<li><p>Pointing model generation and refinement</p></li>
+<li><p>Focus maintenance and autofocus routines</p></li>
+<li><p>Calibration frame acquisition</p></li>
+</ul>
+</dd>
+<dt>Safety Systems:</dt><dd><ul class="simple">
+<li><p>Continuous weather monitoring integration</p></li>
+<li><p>Device health checking and error detection</p></li>
+<li><p>Automatic observatory closure on unsafe conditions</p></li>
+</ul>
+</dd>
+<dt>Architecture:</dt><dd><ul class="simple">
+<li><p>Thread-based concurrent operations</p></li>
+<li><p>Database-backed logging and state persistence</p></li>
+<li><p>Queue-based multiprocessing communication</p></li>
+<li><p>Configuration-driven device management</p></li>
+<li><p>Modular sequence and action execution</p></li>
+</ul>
+</dd>
+<dt>Usage:</dt><dd><p>Typically instantiated with a configuration file that defines the observatory
+layout, device connections, safety parameters, and operational settings.
+The observatory can then be operated manually or through automated scheduling.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class is designed for professional astronomical observatories and
+requires proper configuration of safety systems and device drivers.
+Improper use could result in equipment damage or safety hazards.</p>
+</div>
+<p>Initialize the Observatory object.</p>
+<p>Sets up the observatory configuration, database, logging, device management,
+and scheduling systems. Creates a queue for multiprocessing and initializes
+all necessary attributes for observatory operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_filename</strong> (<em>str</em>) – Path to the configuration file for the observatory.
+The filename is used to derive the observatory name.</p></li>
+<li><p><strong>truncate_factor</strong> (<em>float | None, optional</em>) – If specified, the schedule is truncated by a
+factor and moved to the current time. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#astra.observatory.Observatory.name" title="Link to this definition">#</a></dt>
+<dd><p>Observatory name derived from config filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.database_manager">
+<span class="sig-name descname"><span class="pre">database_manager</span></span><a class="headerlink" href="#astra.observatory.Observatory.database_manager" title="Link to this definition">#</a></dt>
+<dd><p>Manages the observatory database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.database_manager.html#astra.database_manager.DatabaseManager" title="astra.database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#astra.observatory.Observatory.logger" title="Link to this definition">#</a></dt>
+<dd><p>Logger instance for the observatory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger" title="(in Python v3.14)">logging.Logger</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory._config">
+<span class="sig-name descname"><span class="pre">_config</span></span><a class="headerlink" href="#astra.observatory.Observatory._config" title="Link to this definition">#</a></dt>
+<dd><p>Observatory configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig">ObservatoryConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.fits_config">
+<span class="sig-name descname"><span class="pre">fits_config</span></span><a class="headerlink" href="#astra.observatory.Observatory.fits_config" title="Link to this definition">#</a></dt>
+<dd><p>FITS header configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.thread_manager">
+<span class="sig-name descname"><span class="pre">thread_manager</span></span><a class="headerlink" href="#astra.observatory.Observatory.thread_manager" title="Link to this definition">#</a></dt>
+<dd><p>Manages threads for observatory operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.thread_manager.html#astra.thread_manager.ThreadManager" title="astra.thread_manager.ThreadManager">ThreadManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.queue">
+<span class="sig-name descname"><span class="pre">queue</span></span><a class="headerlink" href="#astra.observatory.Observatory.queue" title="Link to this definition">#</a></dt>
+<dd><p>Multiprocessing queue for communication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.heartbeat">
+<span class="sig-name descname"><span class="pre">heartbeat</span></span><a class="headerlink" href="#astra.observatory.Observatory.heartbeat" title="Link to this definition">#</a></dt>
+<dd><p>System status information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.error_free">
+<span class="sig-name descname"><span class="pre">error_free</span></span><a class="headerlink" href="#astra.observatory.Observatory.error_free" title="Link to this definition">#</a></dt>
+<dd><p>Flag indicating error-free operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.schedule_running">
+<span class="sig-name descname"><span class="pre">schedule_running</span></span><a class="headerlink" href="#astra.observatory.Observatory.schedule_running" title="Link to this definition">#</a></dt>
+<dd><p>Flag indicating if schedule is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.robotic_switch">
+<span class="sig-name descname"><span class="pre">robotic_switch</span></span><a class="headerlink" href="#astra.observatory.Observatory.robotic_switch" title="Link to this definition">#</a></dt>
+<dd><p>Flag for robotic operation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.guider">
+<span class="sig-name descname"><span class="pre">guider</span></span><a class="headerlink" href="#astra.observatory.Observatory.guider" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary of guiding objects per telescope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.config">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a></span><a class="headerlink" href="#astra.observatory.Observatory.config" title="Link to this definition">#</a></dt>
+<dd><p>Get the observatory configuration, reloading if the file has been modified.</p>
+<p>This property provides access to the observatory configuration and automatically
+reloads it if the underlying configuration file has been modified since the
+last access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ObservatoryConfig</em> – The current observatory configuration object.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the configuration is reloaded, devices may need to be restarted</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.get_observatory_location">
+<span class="sig-name descname"><span class="pre">get_observatory_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telescope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.get_observatory_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.get_observatory_location" title="Link to this definition">#</a></dt>
+<dd><p>Get observatory location for a telescope, using cache when available.</p>
+<p>This method caches the EarthLocation object to avoid repeated ASCOM calls.
+If telescope_name is not provided, uses the first available telescope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>telescope_name</strong> – Name of the telescope to get location for. If None, uses first telescope.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>EarthLocation object or None if no telescope available or location cannot be retrieved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.devices">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">devices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#astra.observatory.Observatory.devices" title="Link to this definition">#</a></dt>
+<dd><p>Get the dictionary of connected devices.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.weather_safe">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">weather_safe</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#astra.observatory.Observatory.weather_safe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.time_to_safe">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">time_to_safe</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.observatory.Observatory.time_to_safe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.image_handler">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">image_handler</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span><a class="headerlink" href="#astra.observatory.Observatory.image_handler" title="Link to this definition">#</a></dt>
+<dd><p>Get the ImageHandler instance for image processing and FITS header management.</p>
+<p>DEPRECATED for multi-camera observatories. Use get_image_handler(camera_name) instead.</p>
+<p>This property provides backward compatibility but will raise an error if multiple
+ImageHandlers are active (indicating multi-camera use). For new code, use
+get_image_handler(camera_name) to explicitly specify which camera’s ImageHandler
+to retrieve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ImageHandler</em> – The current ImageHandler instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If multiple ImageHandlers are active or if no ImageHandler is initialized.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.get_image_handler">
+<span class="sig-name descname"><span class="pre">get_image_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.get_image_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.get_image_handler" title="Link to this definition">#</a></dt>
+<dd><p>Get the ImageHandler for a specific camera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>camera_name</strong> (<em>str</em>) – The name of the camera device.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ImageHandler</em> – The ImageHandler instance for the specified camera.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If ImageHandler for the specified camera is not initialized.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.connect_all_devices">
+<span class="sig-name descname"><span class="pre">connect_all_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.connect_all_devices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.connect_all_devices" title="Link to this definition">#</a></dt>
+<dd><p>Connect to all loaded devices and start polling for FITS header data.</p>
+<p>Establishes connections to all initialized devices and begins regular polling
+of device properties needed for FITS headers. Different polling intervals
+are used based on device criticality:</p>
+<ul class="simple">
+<li><p>Most devices: 5-second intervals</p></li>
+<li><p>SafetyMonitor: 1-second intervals for safety-critical data</p></li>
+</ul>
+<dl class="simple">
+<dt>The method:</dt><dd><ol class="arabic simple">
+<li><p>Connects to all devices in the devices dictionary</p></li>
+<li><p>Starts polling threads for non-fixed FITS header properties</p></li>
+<li><p>Sets up special high-frequency polling for safety monitors</p></li>
+<li><p>Starts the watchdog process after all connections are established</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – Device connection errors are logged and added to error_source,
+    but do not prevent other devices from being connected.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>SPECULOOS observatories skip focuser connection due to compatibility issues</p></li>
+<li><p>A 1-second delay is added after connections before starting the watchdog
+to ensure devices are ready</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.start_watchdog">
+<span class="sig-name descname"><span class="pre">start_watchdog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.start_watchdog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.start_watchdog" title="Link to this definition">#</a></dt>
+<dd><p>Start the observatory watchdog monitoring thread.</p>
+<p>Initializes and starts a daemon thread that runs the watchdog() method
+to continuously monitor observatory safety, weather conditions, device
+health, and system status. The watchdog is essential for autonomous
+operation and safety.</p>
+<dl class="simple">
+<dt>The method:</dt><dd><ol class="arabic simple">
+<li><p>Checks if watchdog is already running to prevent duplicates</p></li>
+<li><p>Creates a new daemon thread running the watchdog() method</p></li>
+<li><p>Adds the thread to the threads list for tracking</p></li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>If watchdog is already running, logs a warning and returns</p></li>
+<li><p>The watchdog thread is marked as a daemon thread</p></li>
+<li><p>The thread is automatically tracked in the observatory’s thread list</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.watchdog">
+<span class="sig-name descname"><span class="pre">watchdog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.watchdog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.watchdog" title="Link to this definition">#</a></dt>
+<dd><p>Main observatory monitoring loop for safety and operational status.</p>
+<p>Continuously monitors critical observatory systems and takes appropriate
+actions to ensure safe and efficient operation. The watchdog is the
+central control system that coordinates all observatory activities.</p>
+<p>See class docstring for full behavior.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.update_heartbeat">
+<span class="sig-name descname"><span class="pre">update_heartbeat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.update_heartbeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.update_heartbeat" title="Link to this definition">#</a></dt>
+<dd><p>Update the observatory heartbeat with current system status information.</p>
+<p>Creates a comprehensive status snapshot of the observatory including system
+health, device status, resource usage, and operational state. This heartbeat
+information is used for monitoring and debugging observatory operations.</p>
+<dl class="simple">
+<dt>The heartbeat includes:</dt><dd><ul class="simple">
+<li><p>Current timestamp with millisecond precision</p></li>
+<li><p>Error status and error source details</p></li>
+<li><p>Weather safety status</p></li>
+<li><p>Schedule execution status</p></li>
+<li><p>System resource usage (CPU, memory, disk)</p></li>
+<li><p>Active thread information</p></li>
+<li><p>Device polling status for all connected devices</p></li>
+<li><p>Monitor action queue status</p></li>
+</ul>
+</dd>
+<dt>This information is typically used by:</dt><dd><ul class="simple">
+<li><p>External monitoring systems</p></li>
+<li><p>Web interfaces for observatory status</p></li>
+<li><p>Debugging and troubleshooting</p></li>
+<li><p>Health check systems</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Called regularly by the watchdog to maintain current status</p></li>
+<li><p>Provides real-time snapshot of observatory state</p></li>
+<li><p>Essential for remote monitoring of autonomous operations</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.open_observatory">
+<span class="sig-name descname"><span class="pre">open_observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.open_observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.open_observatory" title="Link to this definition">#</a></dt>
+<dd><p>Open the observatory for observations in a safe, controlled sequence.</p>
+<dl class="simple">
+<dt>Performs the complete observatory opening sequence, ensuring safety at each step:</dt><dd><ol class="arabic simple">
+<li><p>Opens dome shutter (if present and weather is safe)</p></li>
+<li><p>Unparks telescope (if present and weather is safe)</p></li>
+<li><p>Handles SPECULOOS-specific error acknowledgment and polling management</p></li>
+</ol>
+</dd>
+</dl>
+<p>The sequence only proceeds if weather conditions are safe and no errors
+are present. For SPECULOOS observatories, special error handling and
+polling management is performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paired_devices</strong> (<em>dict, optional</em>) – Dictionary specifying which specific
+devices to use for the opening sequence. If None, uses all
+available devices of each type. Defaults to None.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Safety Checks:</dt><dd><ul class="simple">
+<li><p>Weather safety verification before each major operation</p></li>
+<li><p>Error-free status confirmation</p></li>
+<li><p>SPECULOOS-specific error acknowledgment and recovery</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>SPECULOOS observatories pause polling during critical operations</p></li>
+<li><p>Opening sequence is aborted if unsafe conditions develop</p></li>
+<li><p>Telescope readiness is verified after unparking for SPECULOOS systems</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.close_observatory">
+<span class="sig-name descname"><span class="pre">close_observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_sensitive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.close_observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.close_observatory" title="Link to this definition">#</a></dt>
+<dd><p>Close the observatory in a safe, controlled sequence.</p>
+<p>Performs the complete observatory shutdown sequence to ensure equipment
+safety and protection from weather. The sequence follows this order:</p>
+<ol class="arabic simple">
+<li><p>Stop any active guiding operations</p></li>
+<li><p>Stop telescope slewing and tracking</p></li>
+<li><p>Park the telescope to safe position</p></li>
+<li><p>Park the dome and close shutter (if dome present)</p></li>
+</ol>
+<p>For SPECULOOS observatories, includes special error handling and polling
+management during the closure sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paired_devices</strong> (<em>dict, optional</em>) – Dictionary specifying which specific
+devices to use for the closing sequence. Format:
+{‘Telescope’: ‘TelescopeName’, ‘Dome’: ‘DomeName’}
+If None, uses all available devices. Defaults to None.</p></li>
+<li><p><strong>error_sensitive</strong> (<em>bool, optional</em>) – If True, the closure process is
+sensitive to system errors. If False, attempts closure even
+with errors present. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – True if the closure sequence completed successfully.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>SPECULOOS observatories pause polling during critical operations</p></li>
+<li><p>Dome errors are acknowledged before attempting closure</p></li>
+<li><p>Critical for protecting equipment during unsafe weather conditions</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.toggle_robotic_switch">
+<span class="sig-name descname"><span class="pre">toggle_robotic_switch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.toggle_robotic_switch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.toggle_robotic_switch" title="Link to this definition">#</a></dt>
+<dd><p>Toggle the observatory’s robotic operation mode on or off.</p>
+<p>Controls the robotic switch that enables or disables autonomous observatory
+operations. When enabled, the observatory can execute schedules automatically.
+When disabled, manual control is required for all operations.</p>
+<dl class="simple">
+<dt>Behavior:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>If robotic switch is currently ON: Turns it OFF and stops any running</dt><dd><p>schedule</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If robotic switch is currently OFF: Turns it ON and starts the schedule</dt><dd><p>(if watchdog is running)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Requires watchdog to be running before enabling robotic mode</p></li>
+<li><p>Automatically stops schedule execution when disabling robotic mode</p></li>
+<li><p>Logs all state changes for monitoring and debugging</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Essential safety feature for autonomous operations</p></li>
+<li><p>Provides manual override capability for emergency situations</p></li>
+<li><p>Schedule execution is dependent on robotic switch being enabled</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.start_schedule">
+<span class="sig-name descname"><span class="pre">start_schedule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.start_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.start_schedule" title="Link to this definition">#</a></dt>
+<dd><p>Start the observatory schedule execution in a new thread.</p>
+<p>Initializes and starts a dedicated daemon thread for executing the loaded
+schedule. Performs various safety and readiness checks before starting
+schedule execution to ensure safe autonomous operation.</p>
+<dl class="simple">
+<dt>Pre-execution Checks:</dt><dd><ul class="simple">
+<li><p>Schedule must be loaded</p></li>
+<li><p>Schedule must not already be running</p></li>
+<li><p>Watchdog must be running for safety monitoring</p></li>
+<li><p>Schedule end time must be in the future</p></li>
+<li><p>No duplicate schedule threads allowed</p></li>
+</ul>
+</dd>
+<dt>Thread Management:</dt><dd><ul class="simple">
+<li><p>Creates a daemon thread running run_schedule()</p></li>
+<li><p>Resets the ‘completed’ flag on all schedule items</p></li>
+<li><p>Adds thread to the observatory’s thread tracking list</p></li>
+<li><p>Thread ID ‘schedule’ for easy identification</p></li>
+</ul>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Multiple validation checks prevent unsafe execution</p></li>
+<li><p>Automatic thread cleanup if conditions not met</p></li>
+<li><p>Logging of all start attempts and failures</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Schedule execution continues until completion or safety conditions fail</p></li>
+<li><p>Essential component of autonomous observatory operations</p></li>
+<li><p>Coordinates with watchdog for continuous safety monitoring</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.run_schedule">
+<span class="sig-name descname"><span class="pre">run_schedule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.run_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.run_schedule" title="Link to this definition">#</a></dt>
+<dd><p>Execute the observatory schedule while monitoring safety and operational conditions.</p>
+<p>Manages the execution of scheduled observatory activities in a continuous loop,
+ensuring safety conditions are met before starting each action. The scheduler
+coordinates multiple concurrent operations while maintaining system safety.</p>
+<dl class="simple">
+<dt>Key features:</dt><dd><ul class="simple">
+<li><p>Waits for weather safety confirmation before starting</p></li>
+<li><p>Iterates through schedule rows checking timing and conditions</p></li>
+<li><p>Starts actions in separate threads for concurrent execution</p></li>
+<li><p>Handles both weather-dependent and weather-independent operations</p></li>
+<li><p>Manages thread lifecycle and cleanup</p></li>
+<li><p>Performs final header completion after schedule ends</p></li>
+</ul>
+</dd>
+<dt>Safety Management:</dt><dd><ul class="simple">
+<li><p>Monitors weather_safe, error_free, and watchdog_running status</p></li>
+<li><p>Aborts operations if unsafe conditions develop</p></li>
+<li><p>Times out if weather safety check takes longer than 2 minutes</p></li>
+</ul>
+</dd>
+<dt>Thread Management:</dt><dd><ul class="simple">
+<li><p>Removes completed threads from tracking list</p></li>
+<li><p>Prevents duplicate actions from starting</p></li>
+<li><p>Ensures proper cleanup on schedule completion</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Schedule must be loaded before calling this method</p></li>
+<li><p>Method runs until schedule completion or safety conditions fail</p></li>
+<li><p>Automatically starts final header completion thread on exit</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.run_action">
+<span class="sig-name descname"><span class="pre">run_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.run_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.run_action" title="Link to this definition">#</a></dt>
+<dd><p>Execute the action specified in the schedule (Action object).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>Action</em>) – The action object to execute.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – Any unexpected error that occurs during execution.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>For ‘object’, ‘calibration’, or ‘flats’ action types, specialized sequences are executed based on the action_type.</p></li>
+<li><p>For ‘open’ action type, the function may turn on camera cooler, set temperature, and open the observatory dome.</p></li>
+<li><p>For ‘close’ action type, the function may close the observatory dome.</p></li>
+<li><p>For other action types, the function assumes it’s an ASCOM command and attempts to execute it on the specified device.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.cool_camera">
+<span class="sig-name descname"><span class="pre">cool_camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.cool_camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.cool_camera" title="Link to this definition">#</a></dt>
+<dd><p>Cool a camera to the specified temperature.</p>
+<p>Activates the camera cooler and sets the target temperature with
+specified tolerance. This is typically done before imaging sequences
+to reduce thermal noise and ensure consistent camera performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_name</strong> (<em>str</em>) – Name of the camera device to be cooled.</p></li>
+<li><p><strong>set_temperature</strong> (<em>float</em>) – Target temperature in degrees Celsius
+for the camera CCD.</p></li>
+<li><p><strong>temperature_tolerance</strong> (<em>float, optional</em>) – Acceptable temperature
+deviation from target in degrees Celsius. Defaults to 1.</p></li>
+<li><p><strong>cooling_timeout</strong> (<em>int, optional</em>) – Time in minutes to wait for cooling
+before raising error. Defaults to 30.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Turns on the camera cooler</p></li>
+<li><p>Sets the target CCD temperature with specified tolerance</p></li>
+<li><p>Waits up to cooling_timeout for temperature stabilization</p></li>
+</ol>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Not weather sensitive (can operate in unsafe weather)</p></li>
+<li><p>Continuous monitoring until target temperature reached</p></li>
+<li><p>Configurable timeout for temperature stabilization</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Essential for scientific imaging to reduce thermal noise</p></li>
+<li><p>Temperature stabilization can take significant time</p></li>
+<li><p>Used in camera cooling sequences and before observations</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.pre_sequence">
+<span class="sig-name descname"><span class="pre">pre_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.pre_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.pre_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Prepare the observatory and metadata for a sequence.</p>
+<p>This method is responsible for preparing the observatory and gathering necessary information
+before running a sequence. Depending on the parameters in the action value in the inputted row,
+it can move the telescope to specificed (ra, dec) coordinates, and the filter wheel to the specified
+filter. It also creates a directory for the sequence images and writes a header with relevant information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – An Action object containing information about the action to be performed.</p></li>
+<li><p><strong>paired_devices</strong> (<em>dict</em>) – A list of paired devices required for the sequence.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.setup_image_handler">
+<span class="sig-name descname"><span class="pre">setup_image_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.setup_image_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.setup_image_handler" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.setup_observatory">
+<span class="sig-name descname"><span class="pre">setup_observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.action_configs.html#astra.action_configs.BaseActionConfig" title="astra.action_configs.BaseActionConfig"><span class="pre">BaseActionConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_list_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.setup_observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.setup_observatory" title="Link to this definition">#</a></dt>
+<dd><p>Prepares the observatory for a sequence by performing necessary setup actions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paired_devices</strong> (<em>dict</em>) – A dictionary specifying paired devices for the sequence.</p></li>
+<li><p><strong>action_value</strong> (<em>dict</em>) – A dictionary containing information about the action to be performed.</p></li>
+<li><p><strong>filter_list_index</strong> (<em>int, optional</em>) – The index of the filter in the filter list (default is 0).</p></li>
+</ul>
+</dd>
+</dl>
+<p>This method prepares the observatory for a sequence by performing the following steps:</p>
+<dl class="simple">
+<dt>If the action value contains ‘ra’ and ‘dec’ keys, it will:</dt><dd><ol class="arabic simple">
+<li><p>open_observatory(paired_devices)</p></li>
+<li><p>Set telescope tracking to true</p></li>
+<li><p>Slew telescope to the specified target coordinates.</p></li>
+</ol>
+</dd>
+<dt>If the action value contains ‘filter’ key, it will:</dt><dd><ol class="arabic simple">
+<li><p>Setting the filter wheel to the specified filter position.</p></li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This method relies on certain conditions like weather safety, error-free operation, and no interruptions.</p></li>
+<li><p>The ‘paired_devices’ dictionary should specify devices required for the sequence.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.wait_for_slew">
+<span class="sig-name descname"><span class="pre">wait_for_slew</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.wait_for_slew"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.wait_for_slew" title="Link to this definition">#</a></dt>
+<dd><p>Wait for telescope slewing operation to complete.</p>
+<p>Monitors the telescope’s slewing status and blocks until the slew
+operation is finished. Includes safety condition checking and
+timeout protection to prevent infinite waiting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing the telescope
+device to monitor for slewing completion.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous condition checking during wait (weather, errors, schedule)</p></li>
+<li><p>Automatic timeout protection (prevents infinite loops)</p></li>
+<li><p>1-second settle time after slew completion</p></li>
+</ul>
+</dd>
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Checks initial slewing status</p></li>
+<li><p>Logs slewing start if telescope is moving</p></li>
+<li><p>Polls slewing status with safety condition checks</p></li>
+<li><p>Waits for slewing to complete</p></li>
+<li><p>Adds settle time for mechanical stabilization</p></li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Critical for ensuring telescope positioning accuracy</p></li>
+<li><p>Safety conditions are checked continuously during wait</p></li>
+<li><p>Settle time allows for mechanical vibrations to dampen</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.check_conditions">
+<span class="sig-name descname"><span class="pre">check_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.check_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.check_conditions" title="Link to this definition">#</a></dt>
+<dd><p>Check if current conditions allow safe execution of observatory operations.</p>
+<p>Evaluates multiple safety and operational conditions to determine if
+an action or sequence can proceed safely. Different action types have
+different condition requirements based on their weather sensitivity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>Action, optional</em>) – The action object containing action_type,
+start_time, and end_time. If None, only base conditions are checked.
+Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>bool</em> –</p>
+<dl class="simple">
+<dt>True if all required conditions are met for the operation,</dt><dd><p>False if any condition fails.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Base Conditions (always checked):</dt><dd><ul class="simple">
+<li><p>error_free: No system errors present</p></li>
+<li><p>schedule_running: Schedule execution is active</p></li>
+<li><p>watchdog_running: Safety monitoring is active</p></li>
+</ul>
+</dd>
+<dt>Action-Specific Conditions:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>Weather-sensitive actions (open, object, flats, autofocus, calibrate_guiding,</dt><dd><p>pointing_model): Also require weather_safe</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Weather-independent actions (calibration, close, cool_camera,</dt><dd><p>complete_headers): Only require base conditions</p>
+</dd>
+</dl>
+</li>
+<li><p>Time-sensitive actions: Must be within scheduled start/end time window</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Used throughout the system for safety checks</p></li>
+<li><p>Different actions have different safety requirements</p></li>
+<li><p>Critical for preventing unsafe operations during bad weather</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.perform_exposure">
+<span class="sig-name descname"><span class="pre">perform_exposure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxadu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_light</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximal_sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_counter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wcs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.perform_exposure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.perform_exposure" title="Link to this definition">#</a></dt>
+<dd><p>Execute a camera exposure and handle image acquisition.</p>
+<p>Performs a complete camera exposure sequence including exposure start,
+monitoring, and image saving. Handles both light and dark frames with
+appropriate header information and file management.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera</strong> (<em>AlpacaDevice</em>) – The camera device to use for exposure.</p></li>
+<li><p><strong>exptime</strong> (<em>float</em>) – Exposure time in seconds.</p></li>
+<li><p><strong>maxadu</strong> (<em>int</em>) – Maximum ADU value for the camera.</p></li>
+<li><p><strong>action</strong> (<em>Action</em>) – The action object containing action_type and device_name.</p></li>
+<li><p><strong>use_light</strong> (<em>bool, optional</em>) – Whether to use light during exposure.
+False for dark frames. Defaults to True.</p></li>
+<li><p><strong>log_option</strong> (<em>str, optional</em>) – Additional text for logging messages.
+Defaults to None.</p></li>
+<li><p><strong>maximal_sleep_time</strong> (<em>float, optional</em>) – Maximum sleep interval during
+image ready polling. Defaults to 0.1 seconds.</p></li>
+<li><p><strong>sequence_counter</strong> (<em>int, optional</em>) – Sequence number for the image
+in a series. Defaults to 0.</p></li>
+<li><p><strong>wcs</strong> (<em>WCS, optional</em>) – World Coordinate System solution for the image.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>bool: True if exposure was successful, False otherwise</p></li>
+<li><p>Path or None: Path to saved image file, None if failed</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Monitors conditions continuously during exposure</p></li>
+<li><p>Handles exposure timing and image readiness polling</p></li>
+<li><p>Automatically saves image with appropriate filename and headers</p></li>
+<li><p>Sets proper IMAGETYP header based on action type and use_light</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.image_sequence">
+<span class="sig-name descname"><span class="pre">image_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.image_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.image_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Execute a sequence of astronomical images with a camera.</p>
+<p>Runs a complete imaging sequence including observatory setup, multiple
+exposures with various exposure times, pointing correction, and optional
+guiding. Handles both object imaging and calibration sequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> (<em>dict</em>) – Schedule row containing sequence information including:
+- device_name: Camera device to use
+- action_type: Type of sequence (‘object’ or ‘calibration’)
+- start_time/end_time: Sequence timing constraints
+- action_value: Sequence parameters (exposure times, filters, etc.)</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing all devices needed
+for the sequence (camera, telescope, filter wheel, etc.)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Sequence Features:</dt><dd><ul class="simple">
+<li><p>Pre-sequence setup (telescope pointing, filter selection)</p></li>
+<li><p>Multiple exposure time support</p></li>
+<li><p>Automatic pointing correction for object sequences</p></li>
+<li><p>Optional autoguiding activation and management</p></li>
+<li><p>Continuous condition monitoring throughout sequence</p></li>
+</ul>
+</dd>
+<dt>Process Flow:</dt><dd><ol class="arabic simple">
+<li><p>Pre-sequence setup (telescope pointing, filters, headers)</p></li>
+<li><p>Iterate through exposure time list</p></li>
+<li><p>Perform pointing correction (object sequences only)</p></li>
+<li><p>Start guiding if configured</p></li>
+<li><p>Execute exposures with safety monitoring</p></li>
+<li><p>Stop guiding and telescope tracking at completion</p></li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Supports both single and multiple exposure times</p></li>
+<li><p>Automatically handles different sequence types</p></li>
+<li><p>Coordinates telescope, camera, and filter wheel operations</p></li>
+<li><p>Essential for all astronomical imaging operations</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.pointing_model_sequence">
+<span class="sig-name descname"><span class="pre">pointing_model_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.pointing_model_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.pointing_model_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Execute a pointing model sequence to improve telescope pointing accuracy.</p>
+<p>Generates a systematic series of sky positions and captures images at each
+location to build or refine a telescope pointing model. The sequence creates
+a spiral pattern of points from zenith down to a specified altitude, avoiding
+positions too close to the Moon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – Schedule action containing sequence information.</p></li>
+<li><p><strong>paired_devices</strong> (<em>dict</em>) – Dictionary of paired devices for the sequence,
+including telescope and camera.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Action Value Parameters (from <code class="docutils literal notranslate"><span class="pre">row['action_value']</span></code>):</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code> (<cite>int</cite>, optional): Number of pointing positions. Defaults to 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exptime</span></code> (<cite>float</cite>, optional): Exposure time in seconds. Defaults to 1.</p></li>
+<li><p>Additional standard action parameters (<code class="docutils literal notranslate"><span class="pre">ra</span></code>, <code class="docutils literal notranslate"><span class="pre">dec</span></code>, etc.)</p></li>
+</ul>
+</dd>
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Creates pointing_model directory for image storage</p></li>
+<li><p>Generates spiral pattern of sky coordinates from zenith</p></li>
+<li><dl class="simple">
+<dt>For each position (if not too close to Moon):</dt><dd><ul class="simple">
+<li><p>Slews telescope to target coordinates</p></li>
+<li><p>Takes exposure with specified parameters</p></li>
+<li><p>Performs pointing correction to measure error</p></li>
+<li><p>Updates FITS header with correction information</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Continues until all positions are captured or conditions change</p></li>
+</ol>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous condition checking during sequence</p></li>
+<li><p>Moon avoidance for accurate measurements</p></li>
+<li><p>Error handling for individual pointing failures</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Critical for maintaining high telescope pointing accuracy</p></li>
+<li><p>Results improve automated observation precision</p></li>
+<li><p>Typically run during commissioning or maintenance periods</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.pointing_correction">
+<span class="sig-name descname"><span class="pre">pointing_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.wcs.WCS.html#astropy.wcs.WCS" title="(in Astropy v7.2)"><span class="pre">WCS</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.pointing_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.pointing_correction" title="Link to this definition">#</a></dt>
+<dd><p>Perform telescope pointing correction based on an acquired image.</p>
+<p>Uses plate solving to determine the actual pointing position from a captured
+image and corrects the telescope pointing if the error exceeds the configured
+threshold. Supports both sync-only and slew corrections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – The action object containing action_type,
+start_time, end_time, and action_value with target coordinates.</p></li>
+<li><p><strong>filepath</strong> (<em>str | Path</em>) – Path to the FITS image file for plate solving.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing telescope and other
+devices for the correction.</p></li>
+<li><p><strong>dark_frame</strong> (<em>str | Path | None, optional</em>) – Path to a dark frame for calibration.
+Defaults to None (no dark subtraction).</p></li>
+<li><p><strong>sync</strong> (<em>bool, optional</em>) – If True, only sync the telescope without slewing.
+Defaults to False.</p></li>
+<li><p><strong>slew</strong> (<em>bool, optional</em>) – If True, allows slewing to correct large errors.
+If False, sets pointing threshold to 0. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>bool: True if pointing correction completed successfully</p></li>
+<li><p>WCS or None: World Coordinate System object if plate solve succeeded,
+None if failed</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Performs plate solving on the provided image</p></li>
+<li><p>Calculates pointing error relative to target coordinates</p></li>
+<li><p>Compares error to configured pointing threshold</p></li>
+<li><p>Executes sync or slew correction based on error magnitude</p></li>
+<li><p>Logs correction details and results</p></li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Uses PointingCorrectionHandler for plate solving and correction calculations</p></li>
+<li><p>Pointing threshold is configurable per telescope in the configuration</p></li>
+<li><p>Falls back gracefully if plate solving fails</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.guiding_calibration_sequence">
+<span class="sig-name descname"><span class="pre">guiding_calibration_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.guiding_calibration_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.guiding_calibration_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Perform autoguiding calibration to establish guide star movements.</p>
+<p>Executes a calibration sequence that maps the relationship between guide
+commands and resulting star movements on the guide camera. This calibration
+is essential for accurate autoguiding performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – Schedule action containing guiding calibration information.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing telescope, guide camera,
+and other devices required for calibration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>bool</em> –</p>
+<dl class="simple">
+<dt>True if calibration completed successfully, False if failed</dt><dd><p>or conditions became unsafe.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Prepares observatory and creates calibration metadata</p></li>
+<li><p>Checks safety conditions before starting</p></li>
+<li><p>Executes guiding calibration using GuidingCalibrator</p></li>
+<li><p>Measures guide star response to directional commands</p></li>
+<li><p>Calculates calibration parameters for future guiding</p></li>
+<li><p>Returns success status</p></li>
+</ol>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous condition checking during calibration</p></li>
+<li><p>Graceful handling of calibration failures</p></li>
+<li><p>Proper error logging and reporting</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Required before autoguiding can be used effectively</p></li>
+<li><p>Calibration parameters are device and mount specific</p></li>
+<li><p>Should be performed when guiding setup changes</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.autofocus_sequence">
+<span class="sig-name descname"><span class="pre">autofocus_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.autofocus_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.autofocus_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Perform autofocus sequence to achieve optimal telescope focus.</p>
+<p>Executes an automated focusing routine that systematically tests different
+focus positions to find the optimal focus setting. Uses star analysis
+to measure focus quality and determine the best focus position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – Schedule action containing autofocus sequence information.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing telescope, camera,
+focuser, and other devices required for autofocus.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>bool</em> –</p>
+<dl class="simple">
+<dt>True if autofocus completed successfully and achieved good focus,</dt><dd><p>False if failed or conditions became unsafe.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Prepares observatory and creates autofocus metadata</p></li>
+<li><p>Checks safety conditions before starting</p></li>
+<li><p>Executes autofocus routine using appropriate algorithm</p></li>
+<li><p>Takes test exposures at different focus positions</p></li>
+<li><p>Analyzes star quality metrics (FWHM, HFD, etc.)</p></li>
+<li><p>Determines and sets optimal focus position</p></li>
+<li><p>Returns success status</p></li>
+</ol>
+</dd>
+<dt>Focus Methods:</dt><dd><ul class="simple">
+<li><p>Uses Autofocuser or Defocuser classes for focus optimization</p></li>
+<li><p>Supports different focus algorithms (curve fitting, star analysis)</p></li>
+<li><p>Handles both coarse and fine focus adjustments</p></li>
+</ul>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous condition checking during focus sequence</p></li>
+<li><p>Graceful handling of focus failures</p></li>
+<li><p>Proper error logging and reporting</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Critical for achieving optimal image quality</p></li>
+<li><p>Should be performed regularly or when focus changes</p></li>
+<li><p>Temperature changes often require refocusing</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.flats_sequence">
+<span class="sig-name descname"><span class="pre">flats_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.flats_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.flats_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Execute a flat field calibration sequence during twilight.</p>
+<p>Captures flat field images during astronomical twilight when the sky
+provides near-uniform illumination. Automatically manages telescope positioning,
+exposure timing, and filter changes to create comprehensive flat field
+libraries for image calibration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> (<em>Action</em>) – Schedule action containing flats sequence information.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing all devices needed
+for the sequence (camera, telescope, filter wheel, etc.)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Monitors sun altitude for optimal flat field conditions</p></li>
+<li><p>Positions telescope for uniform sky illumination</p></li>
+<li><p>Calculates optimal exposure times for target ADU levels</p></li>
+<li><p>Captures flat frames with consistent brightness</p></li>
+<li><p>Iterates through multiple filters if specified</p></li>
+<li><p>Handles exposure time adjustments as sky brightness changes</p></li>
+</ol>
+</dd>
+<dt>Timing Considerations:</dt><dd><ul class="simple">
+<li><p>Only operates during narrow twilight windows</p></li>
+<li><p>Monitors sun elevation for optimal conditions</p></li>
+<li><p>Automatically adjusts for changing sky brightness</p></li>
+<li><p>Stops when conditions become unsuitable</p></li>
+</ul>
+</dd>
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous sky brightness monitoring</p></li>
+<li><p>Automatic exposure time calculation</p></li>
+<li><p>Weather and condition checking</p></li>
+<li><p>Graceful handling of changing conditions</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Critical for high-quality photometric calibration</p></li>
+<li><p>Timing is crucial - operates only during twilight</p></li>
+<li><p>Results improve scientific data quality significantly</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.flats_position">
+<span class="sig-name descname"><span class="pre">flats_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.flats_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.flats_position" title="Link to this definition">#</a></dt>
+<dd><p>Position telescope to optimal sky location for flat field imaging.</p>
+<p>Calculates and moves the telescope to an optimal sky position for capturing
+uniform flat field images. The position is determined based on sun location,
+telescope constraints, and sky brightness uniformity requirements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_location</strong> (<em>EarthLocation</em>) – Observatory geographical location for
+astronomical calculations.</p></li>
+<li><p><strong>paired_devices</strong> (<em>dict</em>) – Dictionary of paired devices including telescope
+and dome for positioning operations.</p></li>
+<li><p><strong>action</strong> (<em>Action</em>) – The action object containing action_type,
+start_time, end_time, and action_value with target coordinates.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Calculates optimal sky position based on current conditions</p></li>
+<li><p>Considers sun position and twilight geometry</p></li>
+<li><p>Ensures position provides uniform illumination</p></li>
+<li><p>Commands telescope to slew to calculated position</p></li>
+<li><p>Updates action_value with target coordinates</p></li>
+</ol>
+</dd>
+<dt>Positioning Strategy:</dt><dd><ul class="simple">
+<li><p>Avoids regions near sun or moon for uniform illumination</p></li>
+<li><p>Selects high altitude positions when possible</p></li>
+<li><p>Considers dome constraints and telescope limits</p></li>
+<li><p>Optimizes for sky brightness uniformity</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Critical for obtaining high-quality flat field calibrations</p></li>
+<li><p>Position affects uniformity and quality of flat frames</p></li>
+<li><p>Coordinates with flats_exptime for complete flat acquisition</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.flats_exptime">
+<span class="sig-name descname"><span class="pre">flats_exptime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_adu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_exptime_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_exptime_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.flats_exptime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.flats_exptime" title="Link to this definition">#</a></dt>
+<dd><p>Set the exposure time for flat field calibration images.</p>
+<p>This function adjusts the exposure time for flat field calibration images captured with a camera device
+to achieve a specific target median ADU (Analog-to-Digital Units) level, considering user-defined limits. It uses 64x64
+pixel subframes to speed up the process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_location</strong> (<em>EarthLocation</em>) – The location of the observatory.</p></li>
+<li><p><strong>paired_devices</strong> (<em>dict</em>) – A dictionary specifying paired devices, including ‘Camera’ for the camera device.</p></li>
+<li><p><strong>action</strong> (<em>Action</em>) – The action object containing action_type, start_time, end_time, and action_value.</p></li>
+<li><p><strong>numx</strong> (<em>int</em>) – The original number of pixels in the X-axis of the camera sensor.  # TODO delete?</p></li>
+<li><p><strong>numy</strong> (<em>int</em>) – The original number of pixels in the Y-axis of the camera sensor.</p></li>
+<li><p><strong>startx</strong> (<em>int</em>) – The original starting pixel position in the X-axis for the camera sensor.</p></li>
+<li><p><strong>starty</strong> (<em>int</em>) – The original starting pixel position in the Y-axis for the camera sensor.</p></li>
+<li><p><strong>target_adu</strong> (<em>list</em>) – A list containing the target ADU level and tolerance as [target_level, tolerance].</p></li>
+<li><p><strong>offset</strong> (<em>float</em>) – The offset ADU level to be considered when adjusting the exposure time.</p></li>
+<li><p><strong>lower_exptime_limit</strong> (<em>float</em>) – The lower limit for the exposure time in seconds.</p></li>
+<li><p><strong>upper_exptime_limit</strong> (<em>float</em>) – The upper limit for the exposure time in seconds.</p></li>
+<li><p><strong>exptime</strong> (<em>float, optional</em>) – The initial exposure time guess. If not provided, it is calculated as the
+midpoint between lower_exptime_limit and upper_exptime_limit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>exptime (float)</em> – The adjusted exposure time in seconds that meets the target ADU level within the specified limits.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.observatory.Observatory.execute_and_monitor_device_task">
+<span class="sig-name descname"><span class="pre">execute_and_monitor_device_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_command_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_sensitive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weather_sensitive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/observatory.html#Observatory.execute_and_monitor_device_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.observatory.Observatory.execute_and_monitor_device_task" title="Link to this definition">#</a></dt>
+<dd><p>Monitor a device property and execute commands to achieve desired conditions.</p>
+<p>Continuously monitors a device property and executes a command if the current
+value doesn’t match the desired condition. Provides robust error handling,
+timeout management, and safety checks during execution.</p>
+<p>This is a fundamental method for observatory automation, handling everything
+from telescope movements to camera settings with appropriate safety checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_type</strong> (<em>str</em>) – Type of device to monitor (e.g., ‘Telescope’, ‘Camera’).</p></li>
+<li><p><strong>monitor_command</strong> (<em>str</em>) – Property to monitor on the device.</p></li>
+<li><p><strong>desired_condition</strong> (<em>any</em>) – Target value or condition to achieve.</p></li>
+<li><p><strong>run_command</strong> (<em>str</em>) – Command to execute if condition not met.</p></li>
+<li><p><strong>device_name</strong> (<em>str</em>) – Specific device name to operate on.</p></li>
+<li><p><strong>run_command_type</strong> (<em>str, optional</em>) – Command type (‘set’ or ‘get’).
+Defaults to empty string for simple commands.</p></li>
+<li><p><strong>abs_tol</strong> (<em>float, optional</em>) – Absolute tolerance for numerical comparisons.
+Defaults to 0 for exact matches.</p></li>
+<li><p><strong>log_message</strong> (<em>str, optional</em>) – Custom message logged when action starts.
+Defaults to empty string.</p></li>
+<li><p><strong>timeout</strong> (<em>float, optional</em>) – Maximum time to wait in seconds.
+Defaults to 120 seconds.</p></li>
+<li><p><strong>error_sensitive</strong> (<em>bool, optional</em>) – Whether to abort on system errors.
+Defaults to True.</p></li>
+<li><p><strong>weather_sensitive</strong> (<em>bool, optional</em>) – Whether to abort on unsafe weather.
+Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Safety Features:</dt><dd><ul class="simple">
+<li><p>Continuous monitoring of weather and error conditions</p></li>
+<li><p>Timeout protection prevents infinite loops</p></li>
+<li><p>Queue management prevents conflicting operations</p></li>
+<li><p>Detailed error logging and reporting</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Uses queue system to prevent overlapping operations on same device</p></li>
+<li><p>Automatically handles different data types and comparison methods</p></li>
+<li><p>Critical for all automated observatory operations</p></li>
+</ul>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.observatory_loader.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.observatory_loader</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.paired_devices.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.paired_devices</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory"><code class="docutils literal notranslate"><span class="pre">Observatory</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.name"><code class="docutils literal notranslate"><span class="pre">Observatory.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.database_manager"><code class="docutils literal notranslate"><span class="pre">Observatory.database_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.logger"><code class="docutils literal notranslate"><span class="pre">Observatory.logger</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory._config"><code class="docutils literal notranslate"><span class="pre">Observatory._config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.fits_config"><code class="docutils literal notranslate"><span class="pre">Observatory.fits_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.thread_manager"><code class="docutils literal notranslate"><span class="pre">Observatory.thread_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.queue"><code class="docutils literal notranslate"><span class="pre">Observatory.queue</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.heartbeat"><code class="docutils literal notranslate"><span class="pre">Observatory.heartbeat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.error_free"><code class="docutils literal notranslate"><span class="pre">Observatory.error_free</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.schedule_running"><code class="docutils literal notranslate"><span class="pre">Observatory.schedule_running</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.robotic_switch"><code class="docutils literal notranslate"><span class="pre">Observatory.robotic_switch</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.guider"><code class="docutils literal notranslate"><span class="pre">Observatory.guider</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.config"><code class="docutils literal notranslate"><span class="pre">Observatory.config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">Observatory.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.devices"><code class="docutils literal notranslate"><span class="pre">Observatory.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.weather_safe"><code class="docutils literal notranslate"><span class="pre">Observatory.weather_safe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.time_to_safe"><code class="docutils literal notranslate"><span class="pre">Observatory.time_to_safe</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.image_handler</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.get_image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.get_image_handler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.connect_all_devices"><code class="docutils literal notranslate"><span class="pre">Observatory.connect_all_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.start_watchdog"><code class="docutils literal notranslate"><span class="pre">Observatory.start_watchdog()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.watchdog"><code class="docutils literal notranslate"><span class="pre">Observatory.watchdog()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.update_heartbeat"><code class="docutils literal notranslate"><span class="pre">Observatory.update_heartbeat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.open_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.open_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.close_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.close_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.toggle_robotic_switch"><code class="docutils literal notranslate"><span class="pre">Observatory.toggle_robotic_switch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.start_schedule"><code class="docutils literal notranslate"><span class="pre">Observatory.start_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.run_schedule"><code class="docutils literal notranslate"><span class="pre">Observatory.run_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.run_action"><code class="docutils literal notranslate"><span class="pre">Observatory.run_action()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.cool_camera"><code class="docutils literal notranslate"><span class="pre">Observatory.cool_camera()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pre_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.pre_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.setup_image_handler"><code class="docutils literal notranslate"><span class="pre">Observatory.setup_image_handler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.setup_observatory"><code class="docutils literal notranslate"><span class="pre">Observatory.setup_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.wait_for_slew"><code class="docutils literal notranslate"><span class="pre">Observatory.wait_for_slew()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.check_conditions"><code class="docutils literal notranslate"><span class="pre">Observatory.check_conditions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.perform_exposure"><code class="docutils literal notranslate"><span class="pre">Observatory.perform_exposure()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.image_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.image_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pointing_model_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.pointing_model_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.pointing_correction"><code class="docutils literal notranslate"><span class="pre">Observatory.pointing_correction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.guiding_calibration_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.guiding_calibration_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.autofocus_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.autofocus_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_sequence"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_sequence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_position"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.flats_exptime"><code class="docutils literal notranslate"><span class="pre">Observatory.flats_exptime()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.observatory.Observatory.execute_and_monitor_device_task"><code class="docutils literal notranslate"><span class="pre">Observatory.execute_and_monitor_device_task()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

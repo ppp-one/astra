@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.utils &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.utils';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="API Endpoints" href="../endpoints.html" />
+    <link rel="prev" title="astra.thread_manager" href="astra.thread_manager.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.utils</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.CustomImageClass"><code class="docutils literal notranslate"><span class="pre">CustomImageClass</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.CustomImageClass.preconstruct_hook"><code class="docutils literal notranslate"><span class="pre">CustomImageClass.preconstruct_hook()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.interpolate_dfs"><code class="docutils literal notranslate"><span class="pre">interpolate_dfs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.to_jd"><code class="docutils literal notranslate"><span class="pre">to_jd()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.getLightTravelTimes"><code class="docutils literal notranslate"><span class="pre">getLightTravelTimes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.time_conversion"><code class="docutils literal notranslate"><span class="pre">time_conversion()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.is_sun_rising"><code class="docutils literal notranslate"><span class="pre">is_sun_rising()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.clean_image"><code class="docutils literal notranslate"><span class="pre">clean_image()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.get_body_coordinates"><code class="docutils literal notranslate"><span class="pre">get_body_coordinates()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.check_astelos_error"><code class="docutils literal notranslate"><span class="pre">check_astelos_error()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ack_astelos_error"><code class="docutils literal notranslate"><span class="pre">ack_astelos_error()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.utils">
+<span id="astra-utils"></span><h1>astra.utils<a class="headerlink" href="#module-astra.utils" title="Link to this heading">#</a></h1>
+<p>Utility functions for astronomical observations and data processing.</p>
+<p>This module provides essential utility functions for the Astra observatory system,
+including time conversions, coordinate transformations, database queries, and
+telescope error handling. Functions support FITS header processing, flat field
+observations, and SPECULOOS telescope operations.</p>
+<dl class="simple">
+<dt>Key capabilities:</dt><dd><ul class="simple">
+<li><p>Julian Day and astronomical time system conversions</p></li>
+<li><p>FITS header time calculations with light travel corrections</p></li>
+<li><p>Solar position analysis for flat field timing</p></li>
+<li><p>Database queries for astronomical catalogs</p></li>
+<li><p>SPECULOOS telescope error checking and acknowledgement</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.ack_astelos_error" title="astra.utils.ack_astelos_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ack_astelos_error</span></code></a>(telescope, valid, ...[, close])</p></td>
+<td><p>Acknowledge acceptable SPECULOOS telescope errors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.check_astelos_error" title="astra.utils.check_astelos_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_astelos_error</span></code></a>(telescope[, close])</p></td>
+<td><p>Check SPECULOOS telescope status for known acceptable errors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.clean_image" title="astra.utils.clean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_image</span></code></a>(data)</p></td>
+<td><p>Clean an image by subtracting the background.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.getLightTravelTimes" title="astra.utils.getLightTravelTimes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getLightTravelTimes</span></code></a>(target, time_to_correct)</p></td>
+<td><p>Calculate light travel times to heliocentric and barycentric frames.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.get_body_coordinates" title="astra.utils.get_body_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_body_coordinates</span></code></a>(body_name, obs_time, ...)</p></td>
+<td><p>Get the position of a celestial body (Solar System or Deep Sky).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.interpolate_dfs" title="astra.utils.interpolate_dfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_dfs</span></code></a>(index, *data)</p></td>
+<td><p>Interpolate multiple pandas DataFrames onto a common index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.is_sun_rising" title="astra.utils.is_sun_rising"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_sun_rising</span></code></a>(obs_location)</p></td>
+<td><p>Determine solar motion and flat field observation readiness.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.time_conversion" title="astra.utils.time_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_conversion</span></code></a>(jd, location, target)</p></td>
+<td><p>Convert time to various astronomical reference frames.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.to_jd" title="astra.utils.to_jd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_jd</span></code></a>(dt[, fmt])</p></td>
+<td><p>Convert datetime object to Julian Day using standard algorithm.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.CustomImageClass" title="astra.utils.CustomImageClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CustomImageClass</span></code></a>(data[, header])</p></td>
+<td><p>Enhanced image processing class with background subtraction and cleaning.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.utils.CustomImageClass">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">CustomImageClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/utils.html#CustomImageClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.CustomImageClass" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></p>
+<p>Enhanced image processing class with background subtraction and cleaning.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.utils.CustomImageClass.preconstruct_hook">
+<span class="sig-name descname"><span class="pre">preconstruct_hook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils.html#CustomImageClass.preconstruct_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.CustomImageClass.preconstruct_hook" title="Link to this definition">#</a></dt>
+<dd><p>Apply image preprocessing before Donuts star detection.</p>
+<p>Performs background subtraction, noise reduction, and systematic
+correction to improve star detection reliability.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.interpolate_dfs">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">interpolate_dfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#interpolate_dfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.interpolate_dfs" title="Link to this definition">#</a></dt>
+<dd><p>Interpolate multiple pandas DataFrames onto a common index.</p>
+<p>Merges and interpolates multiple DataFrames using a specified index array,
+commonly used for wavelength-dependent data processing in spectroscopy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>np.ndarray</em>) – 1D array to interpolate data onto (e.g., wavelength grid).</p></li>
+<li><p><strong>*data</strong> (<em>pd.DataFrame</em>) – Variable number of DataFrames to interpolate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>pd.DataFrame</em> – Combined DataFrame with all data interpolated onto the common index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.to_jd">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">to_jd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'jd'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils.html#to_jd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.to_jd" title="Link to this definition">#</a></dt>
+<dd><p>Convert datetime object to Julian Day using standard algorithm.</p>
+<p>Converts Python datetime to Julian Day format using the algorithm from
+Wikipedia. Supports conversion to various Julian Day formats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> (<em>datetime</em>) – Datetime object to convert.</p></li>
+<li><p><strong>fmt</strong> (<em>str</em>) – Output format (‘jd’, ‘mjd’, ‘rjd’). Defaults to ‘jd’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Julian Day value in specified format.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.getLightTravelTimes">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">getLightTravelTimes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_to_correct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v7.2)"><span class="pre">Time</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v7.2)"><span class="pre">Time</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v7.2)"><span class="pre">Time</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#getLightTravelTimes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.getLightTravelTimes" title="Link to this definition">#</a></dt>
+<dd><p>Calculate light travel times to heliocentric and barycentric frames.</p>
+<p>Computes corrections for light travel time from Earth to the solar system
+barycenter and heliocenter, essential for precise timing in astronomy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>SkyCoord</em>) – Target celestial coordinates.</p></li>
+<li><p><strong>time_to_correct</strong> (<em>Time</em>) – Observation time requiring correction.
+Must be initialized with an EarthLocation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple[Time, Time]</em> – Light travel times as (barycentric, heliocentric).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.time_conversion">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">time_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#time_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.time_conversion" title="Link to this definition">#</a></dt>
+<dd><p>Convert time to various astronomical reference frames.</p>
+<p>Transforms Julian Day to heliocentric and barycentric systems, calculates
+local sidereal time and hour angle for astronomical observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jd</strong> (<em>float</em>) – Julian Day to convert.</p></li>
+<li><p><strong>location</strong> (<em>EarthLocation</em>) – Observer’s geographic location.</p></li>
+<li><p><strong>target</strong> (<em>SkyCoord</em>) – Target celestial coordinates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[float, float, float, str]</em> –</p>
+<dl class="simple">
+<dt>Converted times as</dt><dd><p>(hjd, bjd, lst_seconds, hour_angle_string).</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.is_sun_rising">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">is_sun_rising</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.AltAz.html#astropy.coordinates.AltAz" title="(in Astropy v7.2)"><span class="pre">AltAz</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#is_sun_rising"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.is_sun_rising" title="Link to this definition">#</a></dt>
+<dd><p>Determine solar motion and flat field observation readiness.</p>
+<p>Analyzes sun position and movement to determine if conditions are suitable
+for flat field calibration observations, which require specific twilight conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obs_location</strong> (<em>EarthLocation</em>) – Observer’s geographic location.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[bool, bool, AltAz]</em> –</p>
+<dl class="simple">
+<dt>Solar status as (rising, flat_ready, position):</dt><dd><ul class="simple">
+<li><p>rising: True if sun is rising, False if setting</p></li>
+<li><p>flat_ready: True if optimal for flats (sun altitude -12° to -1°)</p></li>
+<li><p>position: Current sun position in alt-az coordinates</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.clean_image">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">clean_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils.html#clean_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.clean_image" title="Link to this definition">#</a></dt>
+<dd><p>Clean an image by subtracting the background.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>np.ndarray</em>) – The 2D image data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>np.ndarray</em> – The background-subtracted image.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.get_body_coordinates">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">get_body_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v7.2)"><span class="pre">Time</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils.html#get_body_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.get_body_coordinates" title="Link to this definition">#</a></dt>
+<dd><p>Get the position of a celestial body (Solar System or Deep Sky).</p>
+<p>Calculates the apparent celestial coordinates of a specified solar system body
+or resolves the coordinates of a deep sky object by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body_name</strong> (<em>str</em>) – Name of the body (e.g., ‘mars’, ‘jupiter’, ‘M31’, ‘Vega’).</p></li>
+<li><p><strong>obs_time</strong> (<em>Time</em>) – Observation time (used for solar system bodies).</p></li>
+<li><p><strong>obs_location</strong> (<em>EarthLocation</em>) – Observer’s geographic location (used for solar system bodies).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>SkyCoord</em> – Position of the body in the sky.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.check_astelos_error">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">check_astelos_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telescope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">close</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#check_astelos_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.check_astelos_error" title="Link to this definition">#</a></dt>
+<dd><p>Check SPECULOOS telescope status for known acceptable errors.</p>
+<p>Analyzes telescope status messages to identify errors and determines if they
+are in the list of known acceptable errors that can be safely acknowledged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>telescope</strong> (<em>Any</em>) – Telescope object with get() method for status commands.</p></li>
+<li><p><strong>close</strong> (<em>bool</em>) – Whether to include slit closure errors in acceptable list.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[bool, pd.DataFrame, str]</em> –</p>
+<dl class="simple">
+<dt>Error analysis as (valid, errors, messages):</dt><dd><ul class="simple">
+<li><p>valid: True if all errors are acceptable, False otherwise</p></li>
+<li><p>errors: DataFrame with columns [‘error’, ‘detail’, ‘level’, ‘component’]</p></li>
+<li><p>messages: Raw telescope status message string</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ack_astelos_error">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.</span></span><span class="sig-name descname"><span class="pre">ack_astelos_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telescope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">close</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils.html#ack_astelos_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ack_astelos_error" title="Link to this definition">#</a></dt>
+<dd><p>Acknowledge acceptable SPECULOOS telescope errors.</p>
+<p>Attempts to clear acceptable telescope errors by sending appropriate
+acknowledgement commands. Continues until all errors are cleared or
+unacceptable errors are encountered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>telescope</strong> (<em>Any</em>) – Telescope object with get() method for commands.</p></li>
+<li><p><strong>valid</strong> (<em>bool</em>) – Whether errors are acceptable (from check_astelos_error).</p></li>
+<li><p><strong>all_errors</strong> (<em>pd.DataFrame</em>) – Error information with ‘level’ column.</p></li>
+<li><p><strong>messages</strong> (<em>str</em>) – Original telescope status messages.</p></li>
+<li><p><strong>close</strong> (<em>bool</em>) – Whether to include slit closure errors as acceptable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[bool, str]</em> –</p>
+<dl class="simple">
+<dt>Acknowledgement result as (success, final_messages):</dt><dd><ul class="simple">
+<li><p>success: True if all errors cleared, False if unacceptable errors remain</p></li>
+<li><p>final_messages: Updated telescope status messages</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.14)"><strong>TimeoutError</strong></a> – If error clearing takes longer than 2 minutes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.thread_manager.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.thread_manager</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../endpoints.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Endpoints</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.CustomImageClass"><code class="docutils literal notranslate"><span class="pre">CustomImageClass</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.CustomImageClass.preconstruct_hook"><code class="docutils literal notranslate"><span class="pre">CustomImageClass.preconstruct_hook()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.interpolate_dfs"><code class="docutils literal notranslate"><span class="pre">interpolate_dfs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.to_jd"><code class="docutils literal notranslate"><span class="pre">to_jd()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.getLightTravelTimes"><code class="docutils literal notranslate"><span class="pre">getLightTravelTimes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.time_conversion"><code class="docutils literal notranslate"><span class="pre">time_conversion()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.is_sun_rising"><code class="docutils literal notranslate"><span class="pre">is_sun_rising()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.clean_image"><code class="docutils literal notranslate"><span class="pre">clean_image()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.get_body_coordinates"><code class="docutils literal notranslate"><span class="pre">get_body_coordinates()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.check_astelos_error"><code class="docutils literal notranslate"><span class="pre">check_astelos_error()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ack_astelos_error"><code class="docutils literal notranslate"><span class="pre">ack_astelos_error()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

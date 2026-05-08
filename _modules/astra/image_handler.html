@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.image_handler &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/image_handler';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.image_handler</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Astronomical image processing and FITS file management utilities.</span>
+
+<span class="sd">This module provides functions for handling astronomical images captured from</span>
+<span class="sd">observatory cameras. It manages image directory creation, data type conversion,</span>
+<span class="sd">and FITS file saving with proper headers and metadata.</span>
+
+<span class="sd">Key features:</span>
+<span class="sd">    - Automatic directory creation with date-based naming</span>
+<span class="sd">    - Image data type conversion and array reshaping for FITS compatibility</span>
+<span class="sd">    - FITS file saving with comprehensive metadata and WCS support</span>
+<span class="sd">    - Intelligent filename generation based on observation parameters</span>
+
+<span class="sd">The module handles various image types including light frames, bias frames,</span>
+<span class="sd">dark frames, and calibration images, ensuring proper metadata preservation</span>
+<span class="sd">and file organization for astronomical data processing pipelines.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">alpaca.camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageMetadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">EarthLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.wcs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">WCS</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">ObservatoryConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.filename_templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilenameTemplates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.header_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeaderManager</span><span class="p">,</span> <span class="n">ObservatoryHeader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageHandler&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ImageHandler">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class that stores image_directory and header.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        header (fits.Header): FITS header template for images.</span>
+<span class="sd">        last_image_path (Path | None): Path of the last saved image.</span>
+<span class="sd">        last_image_timestamp (datetime | None): Timestamp of the last saved image.</span>
+<span class="sd">        filename_templates (FilenameTemplates): Templates for generating filenames.</span>
+<span class="sd">            Uses Python str.format() syntax by default. For more advanced logic,</span>
+<span class="sd">            use JinjaFilenameTemplates class.</span>
+<span class="sd">        logger (logging.Logger): Logger for logging messages.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from astra.image_handler import ImageHandler</span>
+<span class="sd">        &gt;&gt;&gt; from astra.header_manager import ObservatoryHeader</span>
+<span class="sd">        &gt;&gt;&gt; from pathlib import Path</span>
+<span class="sd">        &gt;&gt;&gt; header = ObservatoryHeader.get_test_header()</span>
+<span class="sd">        &gt;&gt;&gt; header[&#39;FILTER&#39;] = &#39;V&#39;</span>
+<span class="sd">        &gt;&gt;&gt; image_handler = ImageHandler(header=header, image_directory=Path(&quot;images&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; image_handler.image_directory</span>
+<span class="sd">        PosixPath(&#39;images&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; image_handler.header[&#39;FILTER&#39;]</span>
+<span class="sd">        &#39;V&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">header</span><span class="p">:</span> <span class="n">ObservatoryHeader</span><span class="p">,</span>
+        <span class="n">image_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filename_templates</span><span class="p">:</span> <span class="n">FilenameTemplates</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">observing_date</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">image_directory</span><span class="p">)</span> <span class="k">if</span> <span class="n">image_directory</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_image_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_image_timestamp</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">observing_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observing_date</span> <span class="o">=</span> <span class="n">observing_date</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot derive observing_date: header is missing location key </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="s2">&quot;Provide LAT-OBS, LONG-OBS, and ALT-OBS in the header, &quot;</span>
+                    <span class="s2">&quot;or pass observing_date explicitly.&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observing_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_observing_night_date</span><span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">),</span> <span class="n">location</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename_templates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">filename_templates</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename_templates</span><span class="p">,</span> <span class="n">FilenameTemplates</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">FilenameTemplates</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logger</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Directory path to save images. If None, must be set before saving images.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Image directory is not set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span>
+
+    <span class="nd">@image_directory</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">image_directory</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ImageHandler.has_image_directory">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.has_image_directory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_image_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ImageHandler.from_action">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.from_action">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_action</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">observatory_config</span><span class="p">:</span> <span class="n">ObservatoryConfig</span><span class="p">,</span>
+        <span class="n">fits_config</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ImageHandler from an action and observatory.&quot;&quot;&quot;</span>
+        <span class="n">action_value</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">HeaderManager</span><span class="o">.</span><span class="n">get_base_header</span><span class="p">(</span>
+            <span class="n">paired_devices</span><span class="p">,</span> <span class="n">action_value</span><span class="p">,</span> <span class="n">fits_config</span><span class="p">,</span> <span class="n">logger</span>
+        <span class="p">)</span>
+
+        <span class="n">image_directory</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">set_image_dir</span><span class="p">(</span><span class="n">user_specified_dir</span><span class="o">=</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">))</span>
+
+        <span class="n">filename_templates</span> <span class="o">=</span> <span class="n">FilenameTemplates</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+            <span class="n">observatory_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Misc&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename_templates&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot derive observing_date: header is missing location key </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Ensure LAT-OBS, LONG-OBS, and ALT-OBS are present in the FITS &quot;</span>
+                <span class="s2">&quot;header config.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="n">observing_date</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_observing_night_date</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">image_directory</span><span class="o">=</span><span class="n">image_directory</span><span class="p">,</span>
+            <span class="n">filename_templates</span><span class="o">=</span><span class="n">filename_templates</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+            <span class="n">observing_date</span><span class="o">=</span><span class="n">observing_date</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ImageHandler.save_image">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.save_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">image_info</span><span class="p">:</span> <span class="n">ImageMetadata</span><span class="p">,</span>
+        <span class="n">maxadu</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">exposure_start_datetime</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+        <span class="n">sequence_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">header</span><span class="p">:</span> <span class="n">ObservatoryHeader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">wcs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WCS</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save an astronomical image as a FITS file with proper headers and filename.</span>
+
+<span class="sd">        Transforms raw image data, updates FITS headers with observation metadata,</span>
+<span class="sd">        optionally adds WCS information, and saves as a FITS file with an automatically</span>
+<span class="sd">        generated filename based on image properties.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            image (list[int] | np.ndarray): Raw image data to save.</span>
+<span class="sd">            image_info (ImageMetadata): Image metadata for data type determination.</span>
+<span class="sd">            maxadu (int): Maximum ADU value for the image.</span>
+<span class="sd">            device_name (str): Camera/device name for filename generation.</span>
+<span class="sd">            exposure_start_datetime (datetime): UTC datetime when exposure started.</span>
+<span class="sd">            sequence_counter (int): Sequence number for filename generation. Defaults to 0.</span>
+<span class="sd">            header (ObservatoryHeader | None): FITS header to use. Defaults to self.header.</span>
+<span class="sd">            image_directory (str | Path | None): Directory to save the image. Relative paths</span>
+<span class="sd">                are resolved under the configured images root. Defaults to self.image_directory.</span>
+<span class="sd">            wcs (WCS | None): World Coordinate System information. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path: Path to the saved FITS file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image_directory_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_image_directory</span><span class="p">(</span><span class="n">image_directory</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+
+        <span class="n">image_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_image_to_array</span><span class="p">(</span>
+            <span class="n">image</span><span class="p">,</span> <span class="n">maxadu</span><span class="o">=</span><span class="n">maxadu</span><span class="p">,</span> <span class="n">image_info</span><span class="o">=</span><span class="n">image_info</span>
+        <span class="p">)</span>
+
+        <span class="n">date</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">update_fits_header_times</span><span class="p">(</span><span class="n">exposure_start_datetime</span><span class="p">)</span>
+
+        <span class="c1"># add WCS information</span>
+        <span class="k">if</span> <span class="n">wcs</span><span class="p">:</span>
+            <span class="n">header</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wcs</span><span class="o">.</span><span class="n">to_header</span><span class="p">(),</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># create FITS HDU</span>
+        <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">image_array</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span>
+            <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+            <span class="n">sequence_counter</span><span class="o">=</span><span class="n">sequence_counter</span><span class="p">,</span>
+            <span class="n">image_directory</span><span class="o">=</span><span class="n">image_directory_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_unique_filepath</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">)</span>
+
+        <span class="c1"># save FITS file</span>
+        <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s2">&quot;silentfix&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_image_path</span> <span class="o">=</span> <span class="n">filepath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_image_timestamp</span> <span class="o">=</span> <span class="n">date</span>
+
+        <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_unique_filepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the filepath already exists. If not, append a unique timestamp.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">filepath</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">suffix</span>
+        <span class="n">unique_stamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S-</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">unique_stamp</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;File already exists, appending unique timestamp suffix: </span><span class="si">{</span><span class="n">candidate</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">candidate</span>
+
+<div class="viewcode-block" id="ImageHandler.get_file_path">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.get_file_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_path</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">header</span><span class="p">:</span> <span class="n">fits</span><span class="o">.</span><span class="n">Header</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+        <span class="n">sequence_counter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">image_directory</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a file path for saving an image based on metadata and templates.&quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename_templates</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ASTRATYP&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+            <span class="n">imagetype</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IMAGETYP&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)),</span>
+            <span class="n">filter_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FILTER&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">object_name</span><span class="o">=</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OBJECT&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">),</span>
+            <span class="n">exptime</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPTIME&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))),</span>  <span class="c1"># type: ignore</span>
+            <span class="n">sequence_counter</span><span class="o">=</span><span class="n">sequence_counter</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span>
+            <span class="n">datetime_timestamp</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+            <span class="n">action_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observing_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="n">action_datetime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observing_date</span><span class="p">,</span>
+            <span class="n">datetime</span><span class="o">=</span><span class="n">datetime</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">image_directory</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_image_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the image directory path, combining user-specified and default directories.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">image_directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Image directory is not set.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">image_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">image_directory</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">image_directory</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">images</span> <span class="o">/</span> <span class="n">image_directory</span>
+        <span class="k">return</span> <span class="n">image_directory</span>
+
+<div class="viewcode-block" id="ImageHandler.set_image_dir">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.set_image_dir">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_image_dir</span><span class="p">(</span>
+        <span class="n">user_specified_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the directory for storing images.</span>
+
+<span class="sd">        Returns either the user-specified directory (creating it if needed) or</span>
+<span class="sd">        the default images directory from the observatory config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            user_specified_dir (str | None, optional): Custom directory path. If provided,</span>
+<span class="sd">                the directory is created and returned. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path: Path to the image directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_specified_dir</span><span class="p">:</span>
+            <span class="n">image_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">user_specified_dir</span><span class="p">)</span>
+            <span class="n">image_directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image_directory</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">images</span>
+
+        <span class="k">return</span> <span class="n">image_directory</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform_image_to_array</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">maxadu</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">image_info</span><span class="p">:</span> <span class="n">ImageMetadata</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform raw image data to a FITS-compatible numpy array.</span>
+
+<span class="sd">        Converts raw image data to the appropriate data type and shape for FITS files.</span>
+<span class="sd">        Handles data type selection based on image element type and maximum ADU value,</span>
+<span class="sd">        and applies necessary array transpositions for FITS conventions.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            image (list[int] | np.ndarray): Raw image data as list or numpy array.</span>
+<span class="sd">            maxadu (int): Maximum ADU (Analog-to-Digital Unit) value for the image.</span>
+<span class="sd">            image_info (ImageMetadata): Metadata containing ImageElementType (0-3) and</span>
+<span class="sd">                Rank (2 for grayscale, 3 for color).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Properly shaped and typed array ready for FITS file creation.</span>
+<span class="sd">                2D images are transposed, 3D images use transpose(2, 1, 0).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If ImageElementType is not in range 0-3.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            ImageElementType mapping: 0,1→uint16; 2→uint16 (≤65535) or int32 (&gt;65535); 3→float64.</span>
+<span class="sd">            Transpose operations match FITS conventions where first axis = columns, second = rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># Determine the image data type</span>
+        <span class="k">if</span> <span class="n">image_info</span><span class="o">.</span><span class="n">ImageElementType</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">image_info</span><span class="o">.</span><span class="n">ImageElementType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">imgDataType</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span>
+        <span class="k">elif</span> <span class="n">image_info</span><span class="o">.</span><span class="n">ImageElementType</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">maxadu</span> <span class="o">&lt;=</span> <span class="mi">65535</span><span class="p">:</span>
+                <span class="n">imgDataType</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span>  <span class="c1"># Required for BZERO &amp; BSCALE to be written</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">imgDataType</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="k">elif</span> <span class="n">image_info</span><span class="o">.</span><span class="n">ImageElementType</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">imgDataType</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown ImageElementType: </span><span class="si">{</span><span class="n">image_info</span><span class="o">.</span><span class="n">ImageElementType</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make a numpy array of the correct shape for astropy.io.fits</span>
+        <span class="k">if</span> <span class="n">image_info</span><span class="o">.</span><span class="n">Rank</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">image_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">imgDataType</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">imgDataType</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">image_array</span>
+
+<div class="viewcode-block" id="ImageHandler.get_observatory_location">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.get_observatory_location">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_observatory_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ImageHandler.get_observing_night_date">
+<a class="viewcode-back" href="../../api/generated/astra.image_handler.html#astra.image_handler.ImageHandler.get_observing_night_date">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_observing_night_date</span><span class="p">(</span>
+        <span class="n">observation_time</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">EarthLocation</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the observing night date using a local-noon boundary.</span>
+
+<span class="sd">        All times before local noon are assigned to the previous calendar date</span>
+<span class="sd">        (last night), and all times from local noon onward are assigned to the</span>
+<span class="sd">        current calendar date (tonight). This keeps post-midnight and</span>
+<span class="sd">        post-sunrise calibrations in the same nightly folder until noon.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            observation_time (datetime.datetime): The time of observation (UTC).</span>
+<span class="sd">            location (EarthLocation): The location of the observatory.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            datetime.datetime: The observing night date (at midnight).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get local time from longitude</span>
+        <span class="n">longitude</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">deg</span>
+        <span class="n">local_time</span> <span class="o">=</span> <span class="n">observation_time</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">longitude</span> <span class="o">/</span> <span class="mi">15</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">local_time</span><span class="o">.</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="c1"># Morning -&gt; Yesterday</span>
+            <span class="n">obs_date</span> <span class="o">=</span> <span class="n">local_time</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Evening -&gt; Today</span>
+            <span class="n">obs_date</span> <span class="o">=</span> <span class="n">local_time</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">obs_date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">min</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ImageHandler(header=</span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;image_directory=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;last_image_path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">last_image_path</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;last_image_timestamp=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">last_image_timestamp</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;filename_templates=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename_templates</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1003 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.scheduler &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.scheduler';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.thread_manager" href="astra.thread_manager.html" />
+    <link rel="prev" title="astra.safety_monitor" href="astra.safety_monitor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.scheduler</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus"><code class="docutils literal notranslate"><span class="pre">ActionStatus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.PENDING"><code class="docutils literal notranslate"><span class="pre">ActionStatus.PENDING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.RUNNING"><code class="docutils literal notranslate"><span class="pre">ActionStatus.RUNNING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.FINISHED"><code class="docutils literal notranslate"><span class="pre">ActionStatus.FINISHED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.FAILED"><code class="docutils literal notranslate"><span class="pre">ActionStatus.FAILED</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action"><code class="docutils literal notranslate"><span class="pre">Action</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.device_name"><code class="docutils literal notranslate"><span class="pre">Action.device_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.action_type"><code class="docutils literal notranslate"><span class="pre">Action.action_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.action_value"><code class="docutils literal notranslate"><span class="pre">Action.action_value</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.start_time"><code class="docutils literal notranslate"><span class="pre">Action.start_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.end_time"><code class="docutils literal notranslate"><span class="pre">Action.end_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.completed"><code class="docutils literal notranslate"><span class="pre">Action.completed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.status"><code class="docutils literal notranslate"><span class="pre">Action.status</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.get"><code class="docutils literal notranslate"><span class="pre">Action.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.duration"><code class="docutils literal notranslate"><span class="pre">Action.duration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.validate"><code class="docutils literal notranslate"><span class="pre">Action.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.update_times"><code class="docutils literal notranslate"><span class="pre">Action.update_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.summary_string"><code class="docutils literal notranslate"><span class="pre">Action.summary_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.set_status"><code class="docutils literal notranslate"><span class="pre">Action.set_status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.to_dict"><code class="docutils literal notranslate"><span class="pre">Action.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule"><code class="docutils literal notranslate"><span class="pre">Schedule</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.ACTION_CONFIGS"><code class="docutils literal notranslate"><span class="pre">Schedule.ACTION_CONFIGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.from_file"><code class="docutils literal notranslate"><span class="pre">Schedule.from_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Schedule.from_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.update_times"><code class="docutils literal notranslate"><span class="pre">Schedule.update_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.validate"><code class="docutils literal notranslate"><span class="pre">Schedule.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.get_by_device"><code class="docutils literal notranslate"><span class="pre">Schedule.get_by_device()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.sort_by_start_time"><code class="docutils literal notranslate"><span class="pre">Schedule.sort_by_start_time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_dataframe"><code class="docutils literal notranslate"><span class="pre">Schedule.to_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.save_to_csv"><code class="docutils literal notranslate"><span class="pre">Schedule.save_to_csv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.is_completed"><code class="docutils literal notranslate"><span class="pre">Schedule.is_completed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.reset_completion"><code class="docutils literal notranslate"><span class="pre">Schedule.reset_completion()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_jsonl_string"><code class="docutils literal notranslate"><span class="pre">Schedule.to_jsonl_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_one_line_string"><code class="docutils literal notranslate"><span class="pre">Schedule.to_one_line_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.save_to_jsonl"><code class="docutils literal notranslate"><span class="pre">Schedule.save_to_jsonl()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.convert_action_value_string"><code class="docutils literal notranslate"><span class="pre">Schedule.convert_action_value_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager"><code class="docutils literal notranslate"><span class="pre">ScheduleManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_filterwheel_names"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_filterwheel_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_schedule"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.read"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.read()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.reload_if_updated"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.reload_if_updated()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_mtime"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_mtime()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.is_schedule_updated"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.is_schedule_updated()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.stop_schedule"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.stop_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_completion_status"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_completion_status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_completed_percentage"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_completed_percentage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.scheduler">
+<span id="astra-scheduler"></span><h1>astra.scheduler<a class="headerlink" href="#module-astra.scheduler" title="Link to this heading">#</a></h1>
+<p>Scheduler for observatory actions and device management.</p>
+<dl class="simple">
+<dt>Key capabilities:</dt><dd><ul class="simple">
+<li><p>Schedule management for observatory devices</p></li>
+<li><p>Action validation and time updates</p></li>
+<li><p>File reading and writing for schedules</p></li>
+<li><p>Integration with observatory configuration and device management</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.scheduler.Action" title="astra.scheduler.Action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Action</span></code></a>(device_name, action_type, ...[, ...])</p></td>
+<td><p>A scheduled action for a device.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.scheduler.ActionStatus" title="astra.scheduler.ActionStatus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ActionStatus</span></code></a>(value)</p></td>
+<td><p>Status of a scheduled action.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.scheduler.Schedule" title="astra.scheduler.Schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Schedule</span></code></a>(actions)</p></td>
+<td><p>A list of scheduled actions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.scheduler.ScheduleManager" title="astra.scheduler.ScheduleManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScheduleManager</span></code></a>(schedule_path, ...[, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.scheduler.ActionStatus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.scheduler.</span></span><span class="sig-name descname"><span class="pre">ActionStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#ActionStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ActionStatus" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Status of a scheduled action.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.ActionStatus.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pending'</span></span><a class="headerlink" href="#astra.scheduler.ActionStatus.PENDING" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.ActionStatus.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'running'</span></span><a class="headerlink" href="#astra.scheduler.ActionStatus.RUNNING" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.ActionStatus.FINISHED">
+<span class="sig-name descname"><span class="pre">FINISHED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'finished'</span></span><a class="headerlink" href="#astra.scheduler.ActionStatus.FINISHED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.ActionStatus.FAILED">
+<span class="sig-name descname"><span class="pre">FAILED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'failed'</span></span><a class="headerlink" href="#astra.scheduler.ActionStatus.FAILED" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.scheduler.Action">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.scheduler.</span></span><span class="sig-name descname"><span class="pre">Action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.action_configs.html#astra.action_configs.BaseActionConfig" title="astra.action_configs.BaseActionConfig"><span class="pre">BaseActionConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#astra.scheduler.ActionStatus" title="astra.scheduler.ActionStatus"><span class="pre">ActionStatus</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ActionStatus.PENDING</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A scheduled action for a device.</p>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.action_configs</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectActionConfig</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">UTC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;test_camera&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">action_value</span><span class="o">=</span><span class="n">ObjectActionConfig</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="nb">object</span><span class="o">=</span><span class="s2">&quot;M42&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">exptime</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.device_name">
+<span class="sig-name descname"><span class="pre">device_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#astra.scheduler.Action.device_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.action_type">
+<span class="sig-name descname"><span class="pre">action_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#astra.scheduler.Action.action_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.action_value">
+<span class="sig-name descname"><span class="pre">action_value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.action_configs.html#astra.action_configs.BaseActionConfig" title="astra.action_configs.BaseActionConfig"><span class="pre">BaseActionConfig</span></a></span><a class="headerlink" href="#astra.scheduler.Action.action_value" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.start_time">
+<span class="sig-name descname"><span class="pre">start_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#astra.scheduler.Action.start_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.end_time">
+<span class="sig-name descname"><span class="pre">end_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#astra.scheduler.Action.end_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.completed">
+<span class="sig-name descname"><span class="pre">completed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#astra.scheduler.Action.completed" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Action.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#astra.scheduler.ActionStatus" title="astra.scheduler.ActionStatus"><span class="pre">ActionStatus</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pending'</span></span><a class="headerlink" href="#astra.scheduler.Action.status" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.get" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.scheduler.Action.duration">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">duration</span></span><a class="headerlink" href="#astra.scheduler.Action.duration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.validate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.update_times">
+<span class="sig-name descname"><span class="pre">update_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.update_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.update_times" title="Link to this definition">#</a></dt>
+<dd><p>Update the start and end times to present day factored by the time factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.summary_string">
+<span class="sig-name descname"><span class="pre">summary_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.summary_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.summary_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.set_status">
+<span class="sig-name descname"><span class="pre">set_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#astra.scheduler.ActionStatus" title="astra.scheduler.ActionStatus"><span class="pre">ActionStatus</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.set_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.set_status" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Action.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iso</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Action.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Action.to_dict" title="Link to this definition">#</a></dt>
+<dd><p>Return a JSON-serializable dict representation of this Action.</p>
+<dl class="simple">
+<dt>iso: if True, format datetimes as ISO strings (for JSONL); otherwise</dt><dd><p>keep datetime objects (for DataFrame).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.scheduler.</span></span><span class="sig-name descname"><span class="pre">Schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#astra.scheduler.Action" title="astra.scheduler.Action"><code class="xref py py-class docutils literal notranslate"><span class="pre">Action</span></code></a>]</p>
+<p>A list of scheduled actions.</p>
+<section id="id1">
+<h2>Examples<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Schedule</span><span class="p">,</span> <span class="n">Action</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.action_configs</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectActionConfig</span><span class="p">,</span> <span class="n">OpenActionConfig</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">UTC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="n">Action</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;test_camera&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;open&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">action_value</span><span class="o">=</span><span class="n">OpenActionConfig</span><span class="p">(),</span>
+<span class="gp">... </span>        <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">Action</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;test_camera&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">action_type</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">action_value</span><span class="o">=</span><span class="n">ObjectActionConfig</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="nb">object</span><span class="o">=</span><span class="s2">&quot;M42&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">exptime</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">),</span>
+<span class="gp">... </span>        <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schedule</span> <span class="o">=</span> <span class="n">Schedule</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schedule</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.ACTION_CONFIGS">
+<span class="sig-name descname"><span class="pre">ACTION_CONFIGS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.14)"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="astra.action_configs.html#astra.action_configs.BaseActionConfig" title="astra.action_configs.BaseActionConfig"><span class="pre">BaseActionConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'autofocus':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.AutofocusConfig'&gt;,</span> <span class="pre">'calibrate_guiding':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.CalibrateGuidingActionConfig'&gt;,</span> <span class="pre">'calibration':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.CalibrationActionConfig'&gt;,</span> <span class="pre">'close':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.CloseActionConfig'&gt;,</span> <span class="pre">'complete_headers':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.CompleteHeadersActionConfig'&gt;,</span> <span class="pre">'cool_camera':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.CoolCameraActionConfig'&gt;,</span> <span class="pre">'flats':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.FlatsActionConfig'&gt;,</span> <span class="pre">'object':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.ObjectActionConfig'&gt;,</span> <span class="pre">'open':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.OpenActionConfig'&gt;,</span> <span class="pre">'pointing_model':</span> <span class="pre">&lt;class</span> <span class="pre">'astra.action_configs.PointingModelActionConfig'&gt;}</span></span><a class="headerlink" href="#astra.scheduler.Schedule.ACTION_CONFIGS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.from_file">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.scheduler.Schedule" title="astra.scheduler.Schedule"><span class="pre">Schedule</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.from_file" title="Link to this definition">#</a></dt>
+<dd><p>Read a schedule file and return a Schedule instance with parsed schedule data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – Path to the schedule file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.from_dataframe">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.action_configs.html#astra.action_configs.ObjectActionConfig.object" title="astra.action_configs.ObjectActionConfig.object"><span class="pre">object</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.scheduler.Schedule" title="astra.scheduler.Schedule"><span class="pre">Schedule</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.from_dataframe" title="Link to this definition">#</a></dt>
+<dd><p>Construct a Schedule instance from a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – DataFrame with schedule data</p></li>
+<li><p><strong>observatory_config</strong> – Optional observatory configuration</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.update_times">
+<span class="sig-name descname"><span class="pre">update_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.update_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.update_times" title="Link to this definition">#</a></dt>
+<dd><p>Update the start and end times of all actions in this Schedule to present day,
+factored by the time factor. Modifies the schedule in-place.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filterwheel_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_altitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.validate" title="Link to this definition">#</a></dt>
+<dd><p>Validate the schedule actions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filterwheel_names</strong> – Optional dict mapping filterwheel names to their filter lists
+for validation. e.g., {“fw1”: [“Clear”, “Red”, “Green”]}</p></li>
+<li><p><strong>observatory_location</strong> – Optional EarthLocation for visibility checks</p></li>
+<li><p><strong>min_altitude</strong> – Minimum altitude in degrees for visibility checks (default: 0°)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If any action fails validation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.get_by_device">
+<span class="sig-name descname"><span class="pre">get_by_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.get_by_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.get_by_device" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.sort_by_start_time">
+<span class="sig-name descname"><span class="pre">sort_by_start_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.sort_by_start_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.sort_by_start_time" title="Link to this definition">#</a></dt>
+<dd><p>Return a new Schedule sorted by start_time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.to_dataframe">
+<span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.to_dataframe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.save_to_csv">
+<span class="sig-name descname"><span class="pre">save_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.save_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.save_to_csv" title="Link to this definition">#</a></dt>
+<dd><p>Write the schedule to a CSV file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.is_completed">
+<span class="sig-name descname"><span class="pre">is_completed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.is_completed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.is_completed" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.reset_completion">
+<span class="sig-name descname"><span class="pre">reset_completion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.reset_completion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.reset_completion" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.to_jsonl_string">
+<span class="sig-name descname"><span class="pre">to_jsonl_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.to_jsonl_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.to_jsonl_string" title="Link to this definition">#</a></dt>
+<dd><p>Convert the schedule to a JSONL string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.to_one_line_string">
+<span class="sig-name descname"><span class="pre">to_one_line_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.to_one_line_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.to_one_line_string" title="Link to this definition">#</a></dt>
+<dd><p>Convert the schedule to a single line string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.save_to_jsonl">
+<span class="sig-name descname"><span class="pre">save_to_jsonl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.save_to_jsonl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.save_to_jsonl" title="Link to this definition">#</a></dt>
+<dd><p>Write the schedule to a JSONL file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.Schedule.convert_action_value_string">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">convert_action_value_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_value_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#Schedule.convert_action_value_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.Schedule.convert_action_value_string" title="Link to this definition">#</a></dt>
+<dd><p>Read an old schedule CSV file and convert it to a Schedule instance.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.scheduler.</span></span><span class="sig-name descname"><span class="pre">ScheduleManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schedule_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><span class="pre">ObservatoryLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_filterwheel_names">
+<span class="sig-name descname"><span class="pre">get_filterwheel_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_filterwheel_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_filterwheel_names" title="Link to this definition">#</a></dt>
+<dd><p>Get available filter names from all filterwheels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict mapping filterwheel device names to their filter lists.
+Empty dict if device_manager is not available or no filterwheels exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_observatory_location">
+<span class="sig-name descname"><span class="pre">get_observatory_location</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_observatory_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_observatory_location" title="Link to this definition">#</a></dt>
+<dd><p>Get observatory location from telescope device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>EarthLocation object if telescope device is available, None otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_schedule">
+<span class="sig-name descname"><span class="pre">get_schedule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.scheduler.Schedule" title="astra.scheduler.Schedule"><span class="pre">Schedule</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_schedule" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.scheduler.Schedule" title="astra.scheduler.Schedule"><span class="pre">Schedule</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.read" title="Link to this definition">#</a></dt>
+<dd><p>Read and process the observatory schedule from CSV file.</p>
+<p>Loads the schedule CSV file and converts it to a pandas DataFrame with
+proper datetime parsing. Automatically reloads the schedule if the file
+has been modified since the last read. Supports schedule truncation for
+development and testing purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>pd.DataFrame or None</em> –</p>
+<dl class="simple">
+<dt>A DataFrame containing the schedule data with</dt><dd><p>properly parsed ‘start_time’ and ‘end_time’ columns, or None if
+an error occurs during reading.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p>Features:</p>
+<ul class="simple">
+<li><p>Automatic file modification detection and reload</p></li>
+<li><p>Datetime parsing for start_time and end_time columns</p></li>
+<li><p>Optional schedule truncation for development (via truncate_factor)</p></li>
+<li><p>Error handling with logging and error source tracking</p></li>
+</ul>
+<p>File Format:</p>
+<ul class="simple">
+<li><p>CSV file with columns including start_time, end_time, device_name,
+action_type, and action_value</p></li>
+<li><p>Datetime columns should be in ISO format compatible with pandas</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Schedule is sorted by start_time after loading</p></li>
+<li><p>Truncation moves schedule to current time for testing</p></li>
+<li><p>File modification time is tracked to enable automatic reloading</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.reload_if_updated">
+<span class="sig-name descname"><span class="pre">reload_if_updated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.reload_if_updated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.reload_if_updated" title="Link to this definition">#</a></dt>
+<dd><p>Reload the schedule if the schedule file has been modified.</p>
+<p>Checks if the schedule file has been updated since it was last read.
+If the file has been modified, it reloads the schedule and updates
+the internal state accordingly.</p>
+<dl class="simple">
+<dt>Process:</dt><dd><p>1. Checks if the schedule file modification time is greater than
+the last recorded modification time.
+2. If updated, calls the read() method to reload the schedule.
+3. Updates the internal schedule state.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Does not interrupt a currently running schedule.</p></li>
+<li><p>Logs a warning if attempting to update while running.</p></li>
+<li><p>Useful for dynamic schedule updates during operation.</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_mtime">
+<span class="sig-name descname"><span class="pre">get_mtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_mtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_mtime" title="Link to this definition">#</a></dt>
+<dd><p>Get the modification timestamp of the schedule file.</p>
+<p>Retrieves the last modification time of the schedule CSV file to enable
+automatic detection of schedule updates. Returns 0 if the file doesn’t
+exist, which can be used to detect when no schedule is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>The Unix timestamp of the schedule file’s last modification</dt><dd><p>time, or 0.0 if the file does not exist.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Used by read_schedule() to detect file changes</p></li>
+<li><p>Enables automatic schedule reloading during operation</p></li>
+<li><p>Returns 0 for non-existent files to simplify logic</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.is_schedule_updated">
+<span class="sig-name descname"><span class="pre">is_schedule_updated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.is_schedule_updated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.is_schedule_updated" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the schedule file has been modified since last read.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.stop_schedule">
+<span class="sig-name descname"><span class="pre">stop_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_manager</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.stop_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.stop_schedule" title="Link to this definition">#</a></dt>
+<dd><p>Stop the currently running schedule execution thread.</p>
+<p>Safely stops the schedule execution by setting the schedule_running flag
+to False and waiting for the schedule thread to complete. This ensures
+that any ongoing actions can finish cleanly before the schedule stops.</p>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Sets schedule_running flag to False (signals thread to stop)</p></li>
+<li><p>Finds the schedule thread in the threads list</p></li>
+<li><p>Waits for the thread to complete using join()</p></li>
+<li><p>Logs the stopping action</p></li>
+</ol>
+</dd>
+<dt>Thread Safety:</dt><dd><ul class="simple">
+<li><p>Uses thread.join() to ensure clean shutdown</p></li>
+<li><p>Schedule thread checks schedule_running flag regularly</p></li>
+<li><p>Ongoing actions are allowed to complete before stopping</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>If no schedule is running, logs a warning and returns</p></li>
+<li><p>Essential for emergency stops and robotic switch operations</p></li>
+<li><p>Used when weather becomes unsafe or errors occur</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_completion_status">
+<span class="sig-name descname"><span class="pre">get_completion_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_completion_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_completion_status" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.scheduler.ScheduleManager.get_completed_percentage">
+<span class="sig-name descname"><span class="pre">get_completed_percentage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/scheduler.html#ScheduleManager.get_completed_percentage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.scheduler.ScheduleManager.get_completed_percentage" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.safety_monitor.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.safety_monitor</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.thread_manager.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.thread_manager</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus"><code class="docutils literal notranslate"><span class="pre">ActionStatus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.PENDING"><code class="docutils literal notranslate"><span class="pre">ActionStatus.PENDING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.RUNNING"><code class="docutils literal notranslate"><span class="pre">ActionStatus.RUNNING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.FINISHED"><code class="docutils literal notranslate"><span class="pre">ActionStatus.FINISHED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ActionStatus.FAILED"><code class="docutils literal notranslate"><span class="pre">ActionStatus.FAILED</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action"><code class="docutils literal notranslate"><span class="pre">Action</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.device_name"><code class="docutils literal notranslate"><span class="pre">Action.device_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.action_type"><code class="docutils literal notranslate"><span class="pre">Action.action_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.action_value"><code class="docutils literal notranslate"><span class="pre">Action.action_value</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.start_time"><code class="docutils literal notranslate"><span class="pre">Action.start_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.end_time"><code class="docutils literal notranslate"><span class="pre">Action.end_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.completed"><code class="docutils literal notranslate"><span class="pre">Action.completed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.status"><code class="docutils literal notranslate"><span class="pre">Action.status</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.get"><code class="docutils literal notranslate"><span class="pre">Action.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.duration"><code class="docutils literal notranslate"><span class="pre">Action.duration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.validate"><code class="docutils literal notranslate"><span class="pre">Action.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.update_times"><code class="docutils literal notranslate"><span class="pre">Action.update_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.summary_string"><code class="docutils literal notranslate"><span class="pre">Action.summary_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.set_status"><code class="docutils literal notranslate"><span class="pre">Action.set_status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Action.to_dict"><code class="docutils literal notranslate"><span class="pre">Action.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule"><code class="docutils literal notranslate"><span class="pre">Schedule</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.ACTION_CONFIGS"><code class="docutils literal notranslate"><span class="pre">Schedule.ACTION_CONFIGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.from_file"><code class="docutils literal notranslate"><span class="pre">Schedule.from_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Schedule.from_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.update_times"><code class="docutils literal notranslate"><span class="pre">Schedule.update_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.validate"><code class="docutils literal notranslate"><span class="pre">Schedule.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.get_by_device"><code class="docutils literal notranslate"><span class="pre">Schedule.get_by_device()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.sort_by_start_time"><code class="docutils literal notranslate"><span class="pre">Schedule.sort_by_start_time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_dataframe"><code class="docutils literal notranslate"><span class="pre">Schedule.to_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.save_to_csv"><code class="docutils literal notranslate"><span class="pre">Schedule.save_to_csv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.is_completed"><code class="docutils literal notranslate"><span class="pre">Schedule.is_completed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.reset_completion"><code class="docutils literal notranslate"><span class="pre">Schedule.reset_completion()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_jsonl_string"><code class="docutils literal notranslate"><span class="pre">Schedule.to_jsonl_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.to_one_line_string"><code class="docutils literal notranslate"><span class="pre">Schedule.to_one_line_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.save_to_jsonl"><code class="docutils literal notranslate"><span class="pre">Schedule.save_to_jsonl()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.Schedule.convert_action_value_string"><code class="docutils literal notranslate"><span class="pre">Schedule.convert_action_value_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager"><code class="docutils literal notranslate"><span class="pre">ScheduleManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_filterwheel_names"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_filterwheel_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_schedule"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.read"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.read()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.reload_if_updated"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.reload_if_updated()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_mtime"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_mtime()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.is_schedule_updated"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.is_schedule_updated()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.stop_schedule"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.stop_schedule()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_completion_status"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_completion_status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.scheduler.ScheduleManager.get_completed_percentage"><code class="docutils literal notranslate"><span class="pre">ScheduleManager.get_completed_percentage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

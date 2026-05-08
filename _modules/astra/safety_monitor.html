@@ -1,0 +1,705 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.safety_monitor &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/safety_monitor';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.safety_monitor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Safety monitoring for observatory weather conditions.</span>
+
+<span class="sd">Key capabilities:</span>
+<span class="sd">    - Monitor external safety monitor device status</span>
+<span class="sd">    - Evaluate internal weather conditions against safety limits</span>
+<span class="sd">    - Determine overall weather safety status for observatory operations</span>
+<span class="sd">    - Provide time estimates until conditions become safe again</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.database_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.device_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryLogger</span>
+
+
+<div class="viewcode-block" id="SafetyMonitor">
+<a class="viewcode-back" href="../../api/generated/astra.safety_monitor.html#astra.safety_monitor.SafetyMonitor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SafetyMonitor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory_config</span><span class="p">:</span> <span class="n">ObservatoryConfig</span><span class="p">,</span>
+        <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManager</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">ObservatoryLogger</span><span class="p">,</span>
+        <span class="n">device_manager</span><span class="p">:</span> <span class="n">DeviceManager</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">observatory_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span> <span class="o">=</span> <span class="n">device_manager</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_to_safe</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># last known status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_external_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_internal_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_update</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Load configuration</span>
+        <span class="k">if</span> <span class="s2">&quot;SafetyMonitor&quot;</span> <span class="ow">in</span> <span class="n">observatory_config</span><span class="p">:</span>
+            <span class="n">cfg</span> <span class="o">=</span> <span class="n">observatory_config</span><span class="p">[</span><span class="s2">&quot;SafetyMonitor&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_safe_duration&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;max_safe_duration&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;No max_safe_duration in user config, defaulting to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span><span class="si">}</span><span class="s2"> minutes.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="s2">&quot;SafetyMonitor&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No safety monitor found&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">weather_safe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Latest evaluated weather safety status.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">time_to_safe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minutes until conditions become safe again.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_to_safe</span>
+
+<div class="viewcode-block" id="SafetyMonitor.check_safety_monitor">
+<a class="viewcode-back" href="../../api/generated/astra.safety_monitor.html#astra.safety_monitor.SafetyMonitor.check_safety_monitor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_safety_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_safe_duration</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Polls the external SafetyMonitor and database history</span>
+<span class="sd">        to determine if weather is currently safe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sm_poll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">poll_latest</span><span class="p">()</span>
+
+        <span class="c1"># Handle case where poll data is unavailable (e.g., during blocking operations)</span>
+        <span class="k">if</span> <span class="n">sm_poll</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">&quot;IsSafe&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sm_poll</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Safety monitor poll data unavailable&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1"># treat as unsafe when data unavailable</span>
+
+        <span class="c1"># staleness check</span>
+        <span class="n">last_update</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span> <span class="o">-</span> <span class="n">sm_poll</span><span class="p">[</span><span class="s2">&quot;IsSafe&quot;</span><span class="p">][</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="k">if</span> <span class="mi">3</span> <span class="o">&lt;</span> <span class="n">last_update</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Safety monitor </span><span class="si">{</span><span class="n">last_update</span><span class="si">}</span><span class="s2">s stale&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">last_update</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;SafetyMonitor&quot;</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Stale data </span><span class="si">{</span><span class="n">last_update</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1"># treat as unsafe</span>
+
+        <span class="k">if</span> <span class="n">sm_poll</span><span class="p">[</span><span class="s2">&quot;IsSafe&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Weather unsafe from SafetyMonitor&quot;</span><span class="p">)</span>
+
+        <span class="c1"># query unsafe history</span>
+        <span class="n">weather_unsafe_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute_select</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;SELECT COUNT(*), MAX(datetime) FROM polling WHERE &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;device_type = &#39;SafetyMonitor&#39; AND device_value = &#39;False&#39; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;AND datetime &gt; datetime(&#39;now&#39;, &#39;-</span><span class="si">{</span><span class="n">max_safe_duration</span><span class="si">}</span><span class="s2"> minutes&#39;)&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">weather_unsafe_stats</span></div>
+
+
+<div class="viewcode-block" id="SafetyMonitor.check_internal_conditions">
+<a class="viewcode-back" href="../../api/generated/astra.safety_monitor.html#astra.safety_monitor.SafetyMonitor.check_internal_conditions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_internal_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Monitor internal safety systems and weather conditions.</span>
+
+<span class="sd">        Evaluates weather conditions against configured safety limits and determines</span>
+<span class="sd">        if operations can continue safely. Checks observing conditions parameters</span>
+<span class="sd">        against their defined closing limits and calculates time to safe operation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing:</span>
+<span class="sd">                - bool: True if weather conditions are safe for operation</span>
+<span class="sd">                - float: Time in seconds until conditions become safe (0 if already safe)</span>
+<span class="sd">                - float: Maximum safe duration in seconds for current conditions</span>
+
+<span class="sd">        The method examines each parameter in the closing_limits configuration:</span>
+<span class="sd">            - Compares current values against upper and lower thresholds</span>
+<span class="sd">            - Calculates time until conditions improve if currently unsafe</span>
+<span class="sd">            - Determines maximum safe operating duration under current conditions</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Returns (True, 0, 0) if no ObservingConditions devices are configured</span>
+<span class="sd">            - Used by the watchdog to make decisions about observatory operations</span>
+<span class="sd">            - Critical for autonomous safety management</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">longest_time_to_safe</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">longest_max_safe_duration</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ObservingConditions&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="s2">&quot;closing_limits&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;ObservingConditions&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="n">closing_limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;ObservingConditions&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;closing_limits&quot;</span><span class="p">]</span>
+
+        <span class="c1"># find largest max_safe_duration</span>
+        <span class="n">max_safe_duration</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">limit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_safe_duration&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">limits</span> <span class="ow">in</span> <span class="n">closing_limits</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">limit</span> <span class="ow">in</span> <span class="n">limits</span>
+        <span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;SELECT * FROM polling WHERE device_type = &#39;ObservingConditions&#39; </span>
+<span class="s2">            AND datetime &gt; datetime(&#39;now&#39;, &#39;-</span><span class="si">{</span><span class="n">max_safe_duration</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">1.1</span><span class="si">}</span><span class="s2"> minutes&#39;)&quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute_select_to_df</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s2">&quot;polling&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No data found for internal safety weather monitor&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="c1"># Pivot: datetime as index, device_command as columns</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;datetime&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;device_command&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;device_value&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Ensure datetime index and numeric values</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+
+        <span class="c1"># interpolate</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;SkyTemperature&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;Temperature&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;RelativeSkyTemp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;SkyTemperature&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Temperature&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Check each parameter and its limits</span>
+        <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">limits</span> <span class="ow">in</span> <span class="n">closing_limits</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&#39; not found in DataFrame&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">limit</span> <span class="ow">in</span> <span class="n">limits</span><span class="p">:</span>
+                <span class="n">max_safe_duration</span> <span class="o">=</span> <span class="n">limit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_safe_duration&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">lower_limit</span> <span class="o">=</span> <span class="n">limit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+                <span class="n">upper_limit</span> <span class="o">=</span> <span class="n">limit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;upper&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">lower_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">upper_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lower_limit</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span>
+                        <span class="n">df</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">upper_limit</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">lower_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lower_limit</span>
+                <span class="k">elif</span> <span class="n">upper_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">upper_limit</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>  <span class="c1"># no limits defined</span>
+
+                <span class="c1"># Apply the condition to the DataFrame</span>
+                <span class="n">_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+                    <span class="n">condition</span>
+                    <span class="o">&amp;</span> <span class="p">(</span>
+                        <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+                        <span class="o">&gt;</span> <span class="p">(</span>
+                            <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="s2">&quot;UTC&quot;</span><span class="p">)</span>
+                            <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">max_safe_duration</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+
+                <span class="n">count</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">max_datetime</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+                    <span class="n">time_since_last_unsafe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+                        <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">max_datetime</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                    <span class="n">current_time_to_safe</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">max_safe_duration</span> <span class="o">-</span> <span class="n">time_since_last_unsafe</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">current_time_to_safe</span> <span class="o">&gt;</span> <span class="n">longest_time_to_safe</span><span class="p">:</span>
+                        <span class="n">longest_time_to_safe</span> <span class="o">=</span> <span class="n">current_time_to_safe</span>
+
+                    <span class="k">if</span> <span class="n">max_safe_duration</span> <span class="o">&gt;</span> <span class="n">longest_max_safe_duration</span><span class="p">:</span>
+                        <span class="n">longest_max_safe_duration</span> <span class="o">=</span> <span class="n">max_safe_duration</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">longest_time_to_safe</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">longest_time_to_safe</span><span class="p">,</span>
+            <span class="n">longest_max_safe_duration</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SafetyMonitor.insert_weather_safe_poll">
+<a class="viewcode-back" href="../../api/generated/astra.safety_monitor.html#astra.safety_monitor.SafetyMonitor.insert_weather_safe_poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_weather_safe_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert a poll record for the current weather safety status.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">insert_poll</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;WeatherSafe&quot;</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="s2">&quot;WeatherSafe&quot;</span><span class="p">,</span>
+                <span class="n">device_command</span><span class="o">=</span><span class="s2">&quot;WeatherSafe&quot;</span><span class="p">,</span>
+                <span class="n">device_value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SafetyMonitor.update_status">
+<a class="viewcode-back" href="../../api/generated/astra.safety_monitor.html#astra.safety_monitor.SafetyMonitor.update_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run external + internal checks and update weather_safe + time_to_safe.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No safety monitor device found&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># External safety history</span>
+        <span class="n">weather_unsafe_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_safety_monitor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span><span class="p">)</span>
+
+        <span class="c1"># Internal safety checks</span>
+        <span class="p">(</span>
+            <span class="n">internal_safety</span><span class="p">,</span>
+            <span class="n">internal_time_to_safe</span><span class="p">,</span>
+            <span class="n">internal_max_safe_duration</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_internal_conditions</span><span class="p">()</span>
+
+        <span class="c1"># if internal safety monitor is False, act on it</span>
+        <span class="k">if</span> <span class="n">internal_safety</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># log message saying weather unsafe</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Weather unsafe from internal safety monitor&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Decide time_to_safe</span>
+        <span class="k">if</span> <span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">internal_time_to_safe</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">time_since_last_unsafe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+                    <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+                <span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time_since_last_unsafe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">current_time_to_safe</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span> <span class="o">-</span> <span class="n">time_since_last_unsafe</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">60</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_to_safe</span> <span class="o">=</span> <span class="n">internal_time_to_safe</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_to_safe</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">current_time_to_safe</span><span class="p">,</span> <span class="n">internal_time_to_safe</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_to_safe</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;SafetyMonitor: </span><span class="si">{</span><span class="n">weather_unsafe_stats</span><span class="si">}</span><span class="s2"> instances of weather unsafe &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;found in last </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span><span class="p">,</span><span class="w"> </span><span class="n">internal_max_safe_duration</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Decide weather_safe flag</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">internal_safety</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Weather safe for the last &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_safe_duration</span><span class="p">,</span><span class="w"> </span><span class="n">internal_max_safe_duration</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">weather_unsafe_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">internal_safety</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Weather unsafe from SafetyMonitor IsSafe history, &quot;</span>
+                    <span class="s2">&quot;internal safety monitor is True. Are the internal &quot;</span>
+                    <span class="s2">&quot;safety monitor limits higher than SafetyMonitor values?&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weather_log_warning</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Insert poll record for current weather safety status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_weather_safe_poll</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weather_safe</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

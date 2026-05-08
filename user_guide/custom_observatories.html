@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Customising Observatories by Subclassing &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/custom_observatories';</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="prev" title="Core Logic" href="core_logic.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_logic.html">Core Logic</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Customising Observatories by Subclassing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-speculoos">Example SPECULOOS</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="customising-observatories-by-subclassing">
+<h1>Customising Observatories by Subclassing<a class="headerlink" href="#customising-observatories-by-subclassing" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/custom_observatories-banner.svg" />
+<p>You can create custom <code class="docutils literal notranslate"><span class="pre">Observatory</span></code> subclasses to adapt <em>Astra</em> to site-specific requirements without modifying the source code:</p>
+<ul class="simple">
+<li><p>Add observatory-specific shutdown/opening sequences</p></li>
+<li><p>Override polling or error-acknowledgement for non-standard devices</p></li>
+<li><p>Encapsulate organization-specific safeguards and logging</p></li>
+</ul>
+<section id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h2>
+<p><em>Astra</em> uses an <code class="docutils literal notranslate"><span class="pre">ObservatoryLoader</span></code> that searches your <code class="docutils literal notranslate"><span class="pre">custom_observatories</span></code> directory for Python files containing <code class="docutils literal notranslate"><span class="pre">Observatory</span></code> subclasses. When you use the <code class="docutils literal notranslate"><span class="pre">--observatory</span></code> flag, the loader searches for a matching subclass (case-insensitive, including <code class="docutils literal notranslate"><span class="pre">OBSERVATORY_ALIASES</span></code> class attribute). If no match is found, the default <code class="docutils literal notranslate"><span class="pre">Observatory</span></code> class is used.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load SPECULOOS custom subclass (if it exists)</span>
+astra<span class="w"> </span>--observatory<span class="w"> </span>SPECULOOS
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--observatory</span></code> flag is optional and only needed if you’ve created custom subclasses. It selects which Python subclass to use. Not to be mistaken with which observatory configuration to run – that’s determined by <code class="docutils literal notranslate"><span class="pre">observatory_name</span></code> in your base configuration file (<code class="docutils literal notranslate"><span class="pre">~/.astra/astra_config.yml</span></code>).</p>
+</div>
+<p>For background on subclassing and inheritance in Python, see e.g.
+<a class="reference external" href="https://docs.python.org/3/tutorial/classes.html#inheritance">Python inheritance tutorial</a>
+in the official documentation.</p>
+</section>
+<section id="example-speculoos">
+<h2>Example SPECULOOS<a class="headerlink" href="#example-speculoos" title="Link to this heading">#</a></h2>
+<p>Being ASTELCO made observatories, SPECULOOS telescopes are subject to certain
+quirks that require special handling. Specifically, they need custom error
+handling and some of its ASCOM methods not conforming asynchronous standards.</p>
+<p>In the following you can have a look at the subclass used by the SPECULOOS observatories.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astra.utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.observatory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observatory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SPECULOOS</span><span class="p">(</span><span class="n">Observatory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom Observatory class for SPECULOOS observatories.</span>
+
+<span class="sd">    Being ASTELCO made observatories, SPECULOOS telescopes are subject to certain</span>
+<span class="sd">    quirks that require special handling. Specifically, they need custom error</span>
+<span class="sd">    handling and some of its ASCOM methods not conforming asynchronous standards.</span>
+
+<span class="sd">    By implementing this subclass, we can ensure that these observatories operate</span>
+<span class="sd">    safely and effectively within the Astra framework.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">OBSERVATORY_ALIASES</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ganymede&quot;</span><span class="p">,</span> <span class="s2">&quot;europa&quot;</span><span class="p">,</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="s2">&quot;callisto&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_observatory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">error_sensitive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the observatory in a safe, controlled sequence.</span>
+
+<span class="sd">        Performs the complete observatory shutdown sequence to ensure equipment</span>
+<span class="sd">        safety and protection from weather. The sequence follows this order:</span>
+<span class="sd">        1. Stop any active guiding operations</span>
+<span class="sd">        2. Stop telescope slewing and tracking</span>
+<span class="sd">        3. Park the telescope to safe position</span>
+<span class="sd">        4. Park the dome and close shutter (if dome present)</span>
+
+<span class="sd">        For SPECULOOS observatories, includes special error handling and polling</span>
+<span class="sd">        management during the closure sequence.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            paired_devices (dict, optional): Dictionary specifying which specific</span>
+<span class="sd">                devices to use for the closing sequence. Format:</span>
+<span class="sd">                {&#39;Telescope&#39;: &#39;TelescopeName&#39;, &#39;Dome&#39;: &#39;DomeName&#39;}</span>
+<span class="sd">                If None, uses all available devices. Defaults to None.</span>
+<span class="sd">            error_sensitive (bool, optional): If True, the closure process is</span>
+<span class="sd">                sensitive to system errors. If False, attempts closure even</span>
+<span class="sd">                with errors present. Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the closure sequence completed successfully.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - SPECULOOS observatories pause polling during critical operations</span>
+<span class="sd">            - Dome errors are acknowledged before attempting closure</span>
+<span class="sd">            - Critical for protecting equipment during unsafe weather conditions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">pause_polls</span><span class="p">([</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="s2">&quot;Focuser&quot;</span><span class="p">])</span>
+
+        <span class="c1"># acknowledge errors if dome not closed, if any</span>
+        <span class="n">dome_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">list_device_names</span><span class="p">(</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dome_name</span> <span class="ow">in</span> <span class="n">dome_names</span><span class="p">:</span>
+            <span class="n">dome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Dome&quot;</span><span class="p">][</span><span class="n">dome_name</span><span class="p">]</span>
+            <span class="n">ShutterStatus</span> <span class="o">=</span> <span class="n">dome</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ShutterStatus&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ShutterStatus</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># not closed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speculoos_check_and_ack_error</span><span class="p">(</span><span class="n">close</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">all_telescopes_parked</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close_observatory</span><span class="p">(</span>
+            <span class="n">paired_devices</span><span class="o">=</span><span class="n">paired_devices</span><span class="p">,</span> <span class="n">error_sensitive</span><span class="o">=</span><span class="n">error_sensitive</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">resume_polls</span><span class="p">([</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="s2">&quot;Focuser&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">all_telescopes_parked</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_observatory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the observatory for observations in a safe, controlled sequence.</span>
+
+<span class="sd">        Performs the complete observatory opening sequence, ensuring safety at each step:</span>
+<span class="sd">        1. Opens dome shutter (if present and weather is safe)</span>
+<span class="sd">        2. Unparks telescope (if present and weather is safe)</span>
+<span class="sd">        3. Handles SPECULOOS-specific error acknowledgment and polling management</span>
+
+<span class="sd">        The sequence only proceeds if weather conditions are safe and no errors</span>
+<span class="sd">        are present. For SPECULOOS observatories, special error handling and</span>
+<span class="sd">        polling management is performed.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            paired_devices (dict, optional): Dictionary specifying which specific</span>
+<span class="sd">                devices to use for the opening sequence. If None, uses all</span>
+<span class="sd">                available devices of each type. Defaults to None.</span>
+
+<span class="sd">        Safety Checks:</span>
+<span class="sd">            - Weather safety verification before each major operation</span>
+<span class="sd">            - Error-free status confirmation</span>
+<span class="sd">            - SPECULOOS-specific error acknowledgment and recovery</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - SPECULOOS observatories pause polling during critical operations</span>
+<span class="sd">            - Opening sequence is aborted if unsafe conditions develop</span>
+<span class="sd">            - Telescope readiness is verified after unparking for SPECULOOS systems</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">pause_polls</span><span class="p">([</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="s2">&quot;Focuser&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speculoos_check_and_ack_error</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Dome&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_open_dome_shutters</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speculoos_check_and_ack_error</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unpark_telescopes</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">speculoos_check_and_ack_error</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_manager</span><span class="o">.</span><span class="n">resume_polls</span><span class="p">([</span><span class="s2">&quot;Dome&quot;</span><span class="p">,</span> <span class="s2">&quot;Telescope&quot;</span><span class="p">,</span> <span class="s2">&quot;Focuser&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_telescopes_ready</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_close_domes_on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">dome_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;Dome&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dome_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;close_dome_on_telescope_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">speculoos_check_and_ack_error</span><span class="p">(</span><span class="n">close</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">device_name</span> <span class="o">=</span> <span class="n">dome_config</span><span class="p">[</span><span class="s2">&quot;device_name&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Closing Dome </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2"> due to errors.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute_and_monitor_device_task</span><span class="p">(</span>
+                <span class="s2">&quot;Dome&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ShutterStatus&quot;</span><span class="p">,</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;CloseShutter&quot;</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+                <span class="n">log_message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Closing Dome shutter of </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">weather_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">error_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">speculoos_check_and_ack_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for and acknowledge SPECULOOS AsTelOS telescope errors.</span>
+
+<span class="sd">        SPECULOOS-specific method that monitors telescope error states and</span>
+<span class="sd">        automatically acknowledges errors that can be safely cleared. This is</span>
+<span class="sd">        essential for the autonomous operation of SPECULOOS telescopes which use</span>
+<span class="sd">        the AsTelOS control system.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            close (bool, optional): If True, checks for errors related to</span>
+<span class="sd">                observatory closure operations. If False, checks for general</span>
+<span class="sd">                operational errors. Defaults to False.</span>
+
+<span class="sd">        The method:</span>
+<span class="sd">        1. Iterates through all telescope devices</span>
+<span class="sd">        2. Checks for AsTelOS-specific error conditions</span>
+<span class="sd">        3. Attempts to acknowledge clearable errors automatically</span>
+<span class="sd">        4. Logs error status and acknowledgment results</span>
+
+<span class="sd">        Error Handling:</span>
+<span class="sd">        - Only acknowledges errors that are safe to clear</span>
+<span class="sd">        - Maintains error state for serious issues requiring manual intervention</span>
+<span class="sd">        - Logs all error checking and acknowledgment activities</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - Only used with SPECULOOS observatories</span>
+<span class="sd">            - Critical for autonomous error recovery</span>
+<span class="sd">            - Should be called before and after critical telescope operations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">telescope_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">]:</span>
+                <span class="n">telescope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Telescope&quot;</span><span class="p">][</span><span class="n">telescope_name</span><span class="p">]</span>
+
+                <span class="c1"># check telescope status</span>
+                <span class="n">valid</span><span class="p">,</span> <span class="n">all_errors</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">check_astelos_error</span><span class="p">(</span>
+                    <span class="n">telescope</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="n">close</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">valid</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Attempting to acknowledge AsTelOS errors for </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">messages</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">ack</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ack_astelos_error</span><span class="p">(</span>
+                        <span class="n">telescope</span><span class="p">,</span> <span class="n">valid</span><span class="p">,</span> <span class="n">all_errors</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="n">close</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">ack</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;AsTelOS errors successfully acknowledged for </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">messages</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                            <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Telescope&quot;</span><span class="p">,</span>
+                            <span class="n">device_name</span><span class="o">=</span><span class="n">telescope_name</span><span class="p">,</span>
+                            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;AsTelOS errors not successfully acknowledged for&quot;</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">messages</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="s2">&quot;Telescope&quot;</span><span class="p">,</span>
+                        <span class="n">device_name</span><span class="o">=</span><span class="n">telescope_name</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;AsTelOS errors invalid for </span><span class="si">{</span><span class="n">telescope_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">messages</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="core_logic.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Core Logic</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../contributing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-speculoos">Example SPECULOOS</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

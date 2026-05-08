@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.paired_devices &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.paired_devices';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.pointer" href="astra.pointer.html" />
+    <link rel="prev" title="astra.observatory" href="astra.observatory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.paired_devices</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-usage">Typical Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices"><code class="docutils literal notranslate"><span class="pre">PairedDevices</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.observatory_config"><code class="docutils literal notranslate"><span class="pre">PairedDevices.observatory_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.devices"><code class="docutils literal notranslate"><span class="pre">PairedDevices.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.DEVICE_TYPES"><code class="docutils literal notranslate"><span class="pre">PairedDevices.DEVICE_TYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.from_camera_name"><code class="docutils literal notranslate"><span class="pre">PairedDevices.from_camera_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.from_observatory"><code class="docutils literal notranslate"><span class="pre">PairedDevices.from_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.get_device_config"><code class="docutils literal notranslate"><span class="pre">PairedDevices.get_device_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.get_device"><code class="docutils literal notranslate"><span class="pre">PairedDevices.get_device()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.camera_name"><code class="docutils literal notranslate"><span class="pre">PairedDevices.camera_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.camera"><code class="docutils literal notranslate"><span class="pre">PairedDevices.camera</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.dome"><code class="docutils literal notranslate"><span class="pre">PairedDevices.dome</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.focuser"><code class="docutils literal notranslate"><span class="pre">PairedDevices.focuser</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.telescope"><code class="docutils literal notranslate"><span class="pre">PairedDevices.telescope</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.guider"><code class="docutils literal notranslate"><span class="pre">PairedDevices.guider</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.filter_wheel"><code class="docutils literal notranslate"><span class="pre">PairedDevices.filter_wheel</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.rotator"><code class="docutils literal notranslate"><span class="pre">PairedDevices.rotator</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.__getitem__"><code class="docutils literal notranslate"><span class="pre">PairedDevices.__getitem__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.__repr__"><code class="docutils literal notranslate"><span class="pre">PairedDevices.__repr__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.paired_devices">
+<span id="astra-paired-devices"></span><h1>astra.paired_devices<a class="headerlink" href="#module-astra.paired_devices" title="Link to this heading">#</a></h1>
+<p>Observatory device pairing management for coordinated astronomical operations.</p>
+<p>This module provides the PairedDevices class for managing relationships between
+observatory devices that need to work together. In astronomical observatories,
+devices like cameras, telescopes, domes, focusers, and filter wheels are often
+paired to ensure coordinated operation during observations.</p>
+<dl class="simple">
+<dt>The module handles:</dt><dd><ul class="simple">
+<li><p>Device pairing configuration from observatory settings</p></li>
+<li><p>Device discovery and mapping from camera names</p></li>
+<li><p>Property-based access to paired devices</p></li>
+<li><p>Configuration retrieval for paired devices</p></li>
+<li><p>Validation of device relationships</p></li>
+</ul>
+</dd>
+<dt>Device pairing is essential for:</dt><dd><ul class="simple">
+<li><p>Ensuring telescope and camera work together</p></li>
+<li><p>Coordinating dome movement with telescope pointing</p></li>
+<li><p>Managing filter wheel operations with camera exposures</p></li>
+<li><p>Synchronizing focuser adjustments with observations</p></li>
+</ul>
+</dd>
+</dl>
+<section id="typical-usage">
+<h2>Typical Usage<a class="headerlink" href="#typical-usage" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create paired devices from camera name</span>
+<span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="s2">&quot;main_camera&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access paired devices</span>
+<span class="n">telescope</span> <span class="o">=</span> <span class="n">paired</span><span class="o">.</span><span class="n">telescope</span>
+<span class="n">dome</span> <span class="o">=</span> <span class="n">paired</span><span class="o">.</span><span class="n">dome</span>
+
+<span class="c1"># Check if device is paired</span>
+<span class="k">if</span> <span class="s2">&quot;FilterWheel&quot;</span> <span class="ow">in</span> <span class="n">paired</span><span class="p">:</span>
+    <span class="n">filter_wheel</span> <span class="o">=</span> <span class="n">paired</span><span class="o">.</span><span class="n">filter_wheel</span>
+</pre></div>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.observatory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observatory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">paired_devices</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="n">camera_name</span><span class="o">=</span><span class="s2">&quot;camera_observatoryname&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Camera: </span><span class="si">{</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">camera_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="n">paired_devices</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">telescope</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+</pre></div>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PairedDevices</span></code></a>(paired_device_names[, ...])</p></td>
+<td><p>A class to manage paired devices with a camera in an observatory setup.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.paired_devices.</span></span><span class="sig-name descname"><span class="pre">PairedDevices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_device_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+<p>A class to manage paired devices with a camera in an observatory setup.</p>
+<p>Extends dict to store device type to device name mappings for devices that
+are configured to work together in an observatory. Provides convenient access
+to paired devices and their configurations, ensuring that operations can be
+coordinated across multiple observatory components.</p>
+<p>The class maintains relationships between devices based on observatory
+configuration and provides property-based access to common device types.
+It also handles device validation and configuration retrieval.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.observatory_config">
+<span class="sig-name descname"><span class="pre">observatory_config</span></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.observatory_config" title="Link to this definition">#</a></dt>
+<dd><p>Configuration for the observatory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig">ObservatoryConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.devices">
+<span class="sig-name descname"><span class="pre">devices</span></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.devices" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary of all available devices by type and name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="simple">
+<dt>Properties:</dt><dd><p>camera_name: Name of the paired camera
+camera: AlpacaDevice instance for the paired camera
+dome: AlpacaDevice instance for the paired dome
+focuser: AlpacaDevice instance for the paired focuser
+telescope: AlpacaDevice instance for the paired telescope
+guider: AlpacaDevice instance for the guider (paired to telescope)
+filter_wheel: AlpacaDevice instance for the paired filter wheel
+rotator: AlpacaDevice instance for the paired rotator</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.observatory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observatory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">paired_devices</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="n">camera_name</span><span class="o">=</span><span class="s2">&quot;camera_observatoryname&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Camera: </span><span class="si">{</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">camera_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="s2">&quot;Telescope&quot;</span> <span class="ow">in</span> <span class="n">paired_devices</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">telescope</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paired telescope: </span><span class="si">{</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initialize PairedDevices with device mappings and configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paired_device_names</strong> (<em>dict[str, str]</em>) – Mapping of device types to device names.
+For example: {“Camera”: “main_camera”, “Telescope”: “main_telescope”}</p></li>
+<li><p><strong>devices</strong> (<em>dict[str, dict[str, AlpacaDevice]], optional</em>) – Nested dictionary of
+available devices organized by type then name. Defaults to empty dict.</p></li>
+<li><p><strong>observatory_config</strong> (<em>ObservatoryConfig | None, optional</em>) – Observatory configuration
+object. If None, loads from default config. Defaults to None.</p></li>
+<li><p><strong>camera_name</strong> (<em>str | None, optional</em>) – Name of the camera to add to pairing.
+If provided, adds Camera entry to paired_device_names. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.DEVICE_TYPES">
+<span class="sig-name descname"><span class="pre">DEVICE_TYPES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Camera',</span> <span class="pre">'Dome',</span> <span class="pre">'FilterWheel',</span> <span class="pre">'Focuser',</span> <span class="pre">'Rotator',</span> <span class="pre">'Telescope']</span></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.DEVICE_TYPES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.from_camera_name">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_camera_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.from_camera_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.from_camera_name" title="Link to this definition">#</a></dt>
+<dd><p>Create a PairedDevices instance from a camera name using observatory configuration.</p>
+<p>Looks up the camera in the observatory configuration and retrieves its
+paired device mappings. This is the most common way to create PairedDevices
+instances when you know the camera name but need to discover its paired devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera_name</strong> (<em>str</em>) – Name of the camera to find paired devices for.</p></li>
+<li><p><strong>devices</strong> (<em>dict[str, dict[str, AlpacaDevice]], optional</em>) – Available device
+instances organized by type and name. Defaults to empty dict.</p></li>
+<li><p><strong>observatory_config</strong> (<em>ObservatoryConfig | None, optional</em>) – Observatory
+configuration to use. If None, loads from default config. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PairedDevices</em> – Instance configured with devices paired to the specified camera.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the camera name is not found in the observatory configuration.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="s2">&quot;main_camera&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Devices paired to </span><span class="si">{</span><span class="n">paired</span><span class="o">.</span><span class="n">camera_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">paired</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.from_observatory">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.observatory.html#astra.observatory.Observatory" title="astra.observatory.Observatory"><span class="pre">Observatory</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_device_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.from_observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.from_observatory" title="Link to this definition">#</a></dt>
+<dd><p>Create a PairedDevices instance from an existing Observatory object.</p>
+<p>Provides two ways to create paired devices: either by specifying a camera name
+to look up its paired devices, or by directly providing the device name mappings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observatory</strong> (<em>astra.observatory.Observatory</em>) – Observatory instance containing
+device configurations and instances.</p></li>
+<li><p><strong>camera_name</strong> (<em>str | None, optional</em>) – Name of camera to find paired devices for.
+Must be provided if paired_device_names is None. Defaults to None.</p></li>
+<li><p><strong>paired_device_names</strong> (<em>dict[str, str] | None, optional</em>) – Direct mapping of
+device types to names. Must be provided if camera_name is None. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>PairedDevices</em> – Instance configured with the specified device pairing.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If neither camera_name nor paired_device_names is provided.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.observatory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observatory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">Observatory</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Method 1: From camera name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_observatory</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">camera_name</span><span class="o">=</span><span class="s2">&quot;main_camera&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Method 2: Direct device mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">device_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Camera&quot;</span><span class="p">:</span> <span class="s2">&quot;cam1&quot;</span><span class="p">,</span> <span class="s2">&quot;Telescope&quot;</span><span class="p">:</span> <span class="s2">&quot;scope1&quot;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_observatory</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">paired_device_names</span><span class="o">=</span><span class="n">device_map</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.get_device_config">
+<span class="sig-name descname"><span class="pre">get_device_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.get_device_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.get_device_config" title="Link to this definition">#</a></dt>
+<dd><p>Get the observatory configuration for a paired device type.</p>
+<p>Retrieves the full configuration dictionary for the specified device type
+if it is paired with the current camera. The configuration contains all
+settings and parameters needed to operate the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_type</strong> (<em>str</em>) – Type of device to get configuration for (e.g., “Telescope”,
+“Dome”, “FilterWheel”). Must be one of the supported device types.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>Configuration dictionary for the device. Returns empty dict if the</dt><dd><p>device is paired but no configuration is found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the device type is not found in the observatory configuration.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="s2">&quot;main_camera&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">telescope_config</span> <span class="o">=</span> <span class="n">paired</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="s2">&quot;Telescope&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telescope model: </span><span class="si">{</span><span class="n">telescope_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Unknown&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.get_device">
+<span class="sig-name descname"><span class="pre">get_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.get_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.get_device" title="Link to this definition">#</a></dt>
+<dd><p>Get the device instance for a paired device type.</p>
+<p>Retrieves the actual AlpacaDevice instance for the specified device type
+if it is paired with the current camera and available in the devices dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_type</strong> (<em>str</em>) – Type of device to retrieve (e.g., “Telescope”, “Dome”).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>AlpacaDevice | None</em> –</p>
+<dl class="simple">
+<dt>The device instance if available, None if the device</dt><dd><p>type is not paired or the device instance is not found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">paired</span> <span class="o">=</span> <span class="n">PairedDevices</span><span class="o">.</span><span class="n">from_camera_name</span><span class="p">(</span><span class="s2">&quot;main_camera&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">telescope</span> <span class="o">=</span> <span class="n">paired</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;Telescope&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">telescope</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telescope connected: </span><span class="si">{</span><span class="n">telescope</span><span class="o">.</span><span class="n">connected</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.camera_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">camera_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.camera_name" title="Link to this definition">#</a></dt>
+<dd><p>Get the name of the paired camera.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em> – Name of the camera device. Returns “Unknown Camera” if no camera is paired.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.camera">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">camera</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.camera" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired camera device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The camera device instance.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no camera is paired with this device set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.dome">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dome</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.dome" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired dome device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The dome device instance for controlling observatory enclosure.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no dome is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.focuser">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">focuser</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.focuser" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired focuser device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The focuser device instance for controlling telescope focus.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no focuser is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.telescope">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">telescope</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.telescope" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired telescope device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The telescope device instance for controlling telescope movement.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no telescope is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.guider">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guider</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.guider" title="Link to this definition">#</a></dt>
+<dd><p>Get the guider device paired to the telescope.</p>
+<p>Note: The guider uses the same name as the paired telescope since they
+are typically associated together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The guider device instance for autoguiding operations.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no telescope (and thus no guider) is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.filter_wheel">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">filter_wheel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.filter_wheel" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired filter wheel device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The filter wheel device instance for controlling optical filters.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no filter wheel is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.rotator">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rotator</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.alpaca_device_process.html#astra.alpaca_device_process.AlpacaDevice" title="astra.alpaca_device_process.AlpacaDevice"><span class="pre">AlpacaDevice</span></a></span><a class="headerlink" href="#astra.paired_devices.PairedDevices.rotator" title="Link to this definition">#</a></dt>
+<dd><p>Get the paired rotator device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>AlpacaDevice</em> – The rotator device instance for controlling field rotation.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no rotator is paired with this camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.__getitem__" title="Link to this definition">#</a></dt>
+<dd><p>Get the device name for a paired device type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_type</strong> (<em>str</em>) – Type of device to get the name for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Name of the device of the specified type.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><strong>KeyError</strong></a> – If the device type is not paired with the current camera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.paired_devices.PairedDevices.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/astra/paired_devices.html#PairedDevices.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.paired_devices.PairedDevices.__repr__" title="Link to this definition">#</a></dt>
+<dd><p>Return a string representation of the PairedDevices instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em> – String representation showing the device name mappings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.observatory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.observatory</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.pointer.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.pointer</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-usage">Typical Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices"><code class="docutils literal notranslate"><span class="pre">PairedDevices</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.observatory_config"><code class="docutils literal notranslate"><span class="pre">PairedDevices.observatory_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.devices"><code class="docutils literal notranslate"><span class="pre">PairedDevices.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.DEVICE_TYPES"><code class="docutils literal notranslate"><span class="pre">PairedDevices.DEVICE_TYPES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.from_camera_name"><code class="docutils literal notranslate"><span class="pre">PairedDevices.from_camera_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.from_observatory"><code class="docutils literal notranslate"><span class="pre">PairedDevices.from_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.get_device_config"><code class="docutils literal notranslate"><span class="pre">PairedDevices.get_device_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.get_device"><code class="docutils literal notranslate"><span class="pre">PairedDevices.get_device()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.camera_name"><code class="docutils literal notranslate"><span class="pre">PairedDevices.camera_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.camera"><code class="docutils literal notranslate"><span class="pre">PairedDevices.camera</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.dome"><code class="docutils literal notranslate"><span class="pre">PairedDevices.dome</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.focuser"><code class="docutils literal notranslate"><span class="pre">PairedDevices.focuser</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.telescope"><code class="docutils literal notranslate"><span class="pre">PairedDevices.telescope</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.guider"><code class="docutils literal notranslate"><span class="pre">PairedDevices.guider</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.filter_wheel"><code class="docutils literal notranslate"><span class="pre">PairedDevices.filter_wheel</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.rotator"><code class="docutils literal notranslate"><span class="pre">PairedDevices.rotator</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.__getitem__"><code class="docutils literal notranslate"><span class="pre">PairedDevices.__getitem__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.paired_devices.PairedDevices.__repr__"><code class="docutils literal notranslate"><span class="pre">PairedDevices.__repr__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

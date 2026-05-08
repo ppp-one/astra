@@ -1,0 +1,903 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.utils &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/utils';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for astronomical observations and data processing.</span>
+
+<span class="sd">This module provides essential utility functions for the Astra observatory system,</span>
+<span class="sd">including time conversions, coordinate transformations, database queries, and</span>
+<span class="sd">telescope error handling. Functions support FITS header processing, flat field</span>
+<span class="sd">observations, and SPECULOOS telescope operations.</span>
+
+<span class="sd">Key capabilities:</span>
+<span class="sd">    - Julian Day and astronomical time system conversions</span>
+<span class="sd">    - FITS header time calculations with light travel corrections</span>
+<span class="sd">    - Solar position analysis for flat field timing</span>
+<span class="sd">    - Database queries for astronomical catalogs</span>
+<span class="sd">    - SPECULOOS telescope error checking and acknowledgement</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">AltAz</span><span class="p">,</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">,</span> <span class="n">get_sun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">SigmaClip</span><span class="p">,</span> <span class="n">sigma_clipped_stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">donuts.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">photutils.background</span><span class="w"> </span><span class="kn">import</span> <span class="n">Background2D</span><span class="p">,</span> <span class="n">MedianBackground</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
+
+
+<div class="viewcode-block" id="CustomImageClass">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.CustomImageClass">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomImageClass</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced image processing class with background subtraction and cleaning.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CustomImageClass.preconstruct_hook">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.CustomImageClass.preconstruct_hook">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preconstruct_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply image preprocessing before Donuts star detection.</span>
+
+<span class="sd">        Performs background subtraction, noise reduction, and systematic</span>
+<span class="sd">        correction to improve star detection reliability.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if greater than 2Kx2K, crop to 2Kx2K for speed</span>
+        <span class="n">shapex</span><span class="p">,</span> <span class="n">shapey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">shapex</span> <span class="o">&gt;</span> <span class="mi">2048</span> <span class="ow">and</span> <span class="n">shapey</span> <span class="o">&gt;</span> <span class="mi">2048</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span><span class="p">[</span>
+                <span class="n">shapex</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1024</span> <span class="p">:</span> <span class="n">shapex</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1024</span><span class="p">,</span>
+                <span class="n">shapey</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1024</span> <span class="p">:</span> <span class="n">shapey</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1024</span><span class="p">,</span>
+            <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span> <span class="o">=</span> <span class="n">clean_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span><span class="p">)</span>
+        <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+
+        <span class="c1"># remove noise floor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span> <span class="o">-=</span> <span class="n">median</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_image</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+</div>
+
+
+
+<span class="c1">## for final fits header</span>
+<div class="viewcode-block" id="interpolate_dfs">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.interpolate_dfs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_dfs</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate multiple pandas DataFrames onto a common index.</span>
+
+<span class="sd">    Merges and interpolates multiple DataFrames using a specified index array,</span>
+<span class="sd">    commonly used for wavelength-dependent data processing in spectroscopy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        index (np.ndarray): 1D array to interpolate data onto (e.g., wavelength grid).</span>
+<span class="sd">        *data (pd.DataFrame): Variable number of DataFrames to interpolate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: Combined DataFrame with all data interpolated onto the common index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;tmp&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="o">~</span><span class="n">dat</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">dat</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="s2">&quot;tmp&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__to_format</span><span class="p">(</span><span class="n">jd</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Julian Day to specified time format.</span>
+
+<span class="sd">    Internal function for converting Julian Day values to different astronomical</span>
+<span class="sd">    time formats like Modified Julian Day or Reduced Julian Day.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        jd (float): Julian Day value to convert.</span>
+<span class="sd">        fmt (str): Target format (&#39;jd&#39;, &#39;mjd&#39;, &#39;rjd&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Converted time value in specified format.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If format string is not recognized.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;jd&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jd</span>
+    <span class="k">elif</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mjd&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jd</span> <span class="o">-</span> <span class="mf">2400000.5</span>
+    <span class="k">elif</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;rjd&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jd</span> <span class="o">-</span> <span class="mi">2400000</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Format&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="to_jd">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.to_jd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_jd</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;jd&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime object to Julian Day using standard algorithm.</span>
+
+<span class="sd">    Converts Python datetime to Julian Day format using the algorithm from</span>
+<span class="sd">    Wikipedia. Supports conversion to various Julian Day formats.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (datetime): Datetime object to convert.</span>
+<span class="sd">        fmt (str): Output format (&#39;jd&#39;, &#39;mjd&#39;, &#39;rjd&#39;). Defaults to &#39;jd&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Julian Day value in specified format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="mi">14</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="mi">4800</span> <span class="o">-</span> <span class="n">a</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">a</span> <span class="o">-</span> <span class="mi">3</span>
+
+    <span class="n">jdn</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dt</span><span class="o">.</span><span class="n">day</span>
+        <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="mi">153</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mi">365</span> <span class="o">*</span> <span class="n">y</span>
+        <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="o">-</span> <span class="mi">32045</span>
+    <span class="p">)</span>
+
+    <span class="n">jd</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">jdn</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">-</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span>
+        <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">minute</span> <span class="o">/</span> <span class="mi">1440</span>
+        <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">second</span> <span class="o">/</span> <span class="mi">86400</span>
+        <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">/</span> <span class="mi">86400000000</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">__to_format</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="getLightTravelTimes">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.getLightTravelTimes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getLightTravelTimes</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">SkyCoord</span><span class="p">,</span> <span class="n">time_to_correct</span><span class="p">:</span> <span class="n">Time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Time</span><span class="p">,</span> <span class="n">Time</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate light travel times to heliocentric and barycentric frames.</span>
+
+<span class="sd">    Computes corrections for light travel time from Earth to the solar system</span>
+<span class="sd">    barycenter and heliocenter, essential for precise timing in astronomy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (SkyCoord): Target celestial coordinates.</span>
+<span class="sd">        time_to_correct (Time): Observation time requiring correction.</span>
+<span class="sd">            Must be initialized with an EarthLocation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[Time, Time]: Light travel times as (barycentric, heliocentric).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ltt_bary</span> <span class="o">=</span> <span class="n">time_to_correct</span><span class="o">.</span><span class="n">light_travel_time</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">ltt_helio</span> <span class="o">=</span> <span class="n">time_to_correct</span><span class="o">.</span><span class="n">light_travel_time</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s2">&quot;heliocentric&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ltt_bary</span><span class="p">,</span> <span class="n">ltt_helio</span></div>
+
+
+
+<div class="viewcode-block" id="time_conversion">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.time_conversion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">time_conversion</span><span class="p">(</span>
+    <span class="n">jd</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">SkyCoord</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert time to various astronomical reference frames.</span>
+
+<span class="sd">    Transforms Julian Day to heliocentric and barycentric systems, calculates</span>
+<span class="sd">    local sidereal time and hour angle for astronomical observations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        jd (float): Julian Day to convert.</span>
+<span class="sd">        location (EarthLocation): Observer&#39;s geographic location.</span>
+<span class="sd">        target (SkyCoord): Target celestial coordinates.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[float, float, float, str]: Converted times as</span>
+<span class="sd">            (hjd, bjd, lst_seconds, hour_angle_string).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">time_inp</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jd&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+
+    <span class="n">ltt_bary</span><span class="p">,</span> <span class="n">ltt_helio</span> <span class="o">=</span> <span class="n">getLightTravelTimes</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">time_inp</span><span class="p">)</span>
+
+    <span class="n">hjd</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_inp</span> <span class="o">+</span> <span class="n">ltt_helio</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">bjd</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_inp</span><span class="o">.</span><span class="n">tdb</span> <span class="o">+</span> <span class="n">ltt_bary</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">time_inp</span><span class="o">.</span><span class="n">sidereal_time</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+    <span class="n">lstsec</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">hour</span> <span class="o">*</span> <span class="mi">3600</span>
+    <span class="n">ha</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(((((</span><span class="n">lst</span> <span class="o">-</span> <span class="n">target</span><span class="o">.</span><span class="n">ra</span><span class="p">)</span><span class="o">.</span><span class="n">hour</span> <span class="o">+</span> <span class="mi">12</span><span class="p">)</span> <span class="o">%</span> <span class="mi">24</span><span class="p">)</span> <span class="o">-</span> <span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">hourangle</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span>
+        <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">hourangle</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">hjd</span><span class="p">,</span> <span class="n">bjd</span><span class="p">,</span> <span class="n">lstsec</span><span class="p">,</span> <span class="n">ha</span></div>
+
+
+
+<span class="c1">## for flat fielding</span>
+<div class="viewcode-block" id="is_sun_rising">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.is_sun_rising">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_sun_rising</span><span class="p">(</span><span class="n">obs_location</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">AltAz</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine solar motion and flat field observation readiness.</span>
+
+<span class="sd">    Analyzes sun position and movement to determine if conditions are suitable</span>
+<span class="sd">    for flat field calibration observations, which require specific twilight conditions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obs_location (EarthLocation): Observer&#39;s geographic location.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, bool, AltAz]: Solar status as (rising, flat_ready, position):</span>
+<span class="sd">            - rising: True if sun is rising, False if setting</span>
+<span class="sd">            - flat_ready: True if optimal for flats (sun altitude -12° to -1°)</span>
+<span class="sd">            - position: Current sun position in alt-az coordinates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># sun&#39;s position now</span>
+    <span class="n">obs_time0</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">sun_position0</span> <span class="o">=</span> <span class="n">get_sun</span><span class="p">(</span><span class="n">obs_time0</span><span class="p">)</span>
+    <span class="n">sun_altaz0</span> <span class="o">=</span> <span class="n">sun_position0</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span>
+        <span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">obs_time0</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">obs_location</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># sun&#39;s position in 5 minutes</span>
+    <span class="n">obs_time1</span> <span class="o">=</span> <span class="n">obs_time0</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">minute</span>
+    <span class="n">sun_position1</span> <span class="o">=</span> <span class="n">get_sun</span><span class="p">(</span><span class="n">obs_time1</span><span class="p">)</span>
+    <span class="n">sun_altaz1</span> <span class="o">=</span> <span class="n">sun_position1</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span>
+        <span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">obs_time1</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">obs_location</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># determine if sun is moving up or down by looking at gradient</span>
+    <span class="n">sun_altaz_grad</span> <span class="o">=</span> <span class="p">(</span><span class="n">sun_altaz1</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">degree</span> <span class="o">-</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">obs_time1</span> <span class="o">-</span> <span class="n">obs_time0</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">sec</span>
+
+    <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">sun_altaz_grad</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">flat_ready</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">deg</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">12</span> <span class="ow">and</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">deg</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">flat_ready</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">sun_rising</span><span class="p">,</span> <span class="n">flat_ready</span><span class="p">,</span> <span class="n">sun_altaz0</span></div>
+
+
+
+<div class="viewcode-block" id="clean_image">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.clean_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_image</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean an image by subtracting the background.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data (np.ndarray): The 2D image data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The background-subtracted image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sigma_clip</span> <span class="o">=</span> <span class="n">SigmaClip</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">bkg_estimator</span> <span class="o">=</span> <span class="n">MedianBackground</span><span class="p">()</span>
+
+    <span class="c1"># Convert to float32, handling both regular and masked arrays</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="n">bkg</span> <span class="o">=</span> <span class="n">Background2D</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+        <span class="n">filter_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">sigma_clip</span><span class="o">=</span><span class="n">sigma_clip</span><span class="p">,</span>
+        <span class="n">bkg_estimator</span><span class="o">=</span><span class="n">bkg_estimator</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="p">)</span>
+
+    <span class="n">bkg_clean</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">bkg</span><span class="o">.</span><span class="n">background</span>
+
+    <span class="n">med_clean</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">median_filter</span><span class="p">(</span>
+        <span class="n">bkg_clean</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mirror&quot;</span>
+    <span class="p">)</span>  <span class="c1"># slow but needed</span>
+
+    <span class="c1"># add minimum back to avoid negative values</span>
+    <span class="n">med_clean</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">med_clean</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">med_clean</span></div>
+
+
+
+<span class="c1">## planet or SIMBAD positions</span>
+<div class="viewcode-block" id="get_body_coordinates">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.get_body_coordinates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_body_coordinates</span><span class="p">(</span><span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obs_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the position of a celestial body (Solar System or Deep Sky).</span>
+
+<span class="sd">    Calculates the apparent celestial coordinates of a specified solar system body</span>
+<span class="sd">    or resolves the coordinates of a deep sky object by name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        body_name (str): Name of the body (e.g., &#39;mars&#39;, &#39;jupiter&#39;, &#39;M31&#39;, &#39;Vega&#39;).</span>
+<span class="sd">        obs_time (Time): Observation time (used for solar system bodies).</span>
+<span class="sd">        obs_location (EarthLocation): Observer&#39;s geographic location (used for solar system bodies).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SkyCoord: Position of the body in the sky.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span><span class="p">,</span> <span class="n">get_body</span><span class="p">,</span> <span class="n">solar_system_ephemeris</span>
+
+    <span class="c1"># Check if the body is in the solar system ephemeris (case-insensitive)</span>
+    <span class="c1"># solar_system_ephemeris.bodies normally contains lowercase strings</span>
+    <span class="k">if</span> <span class="n">body_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">solar_system_ephemeris</span><span class="o">.</span><span class="n">bodies</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_body</span><span class="p">(</span><span class="n">body_name</span><span class="p">,</span> <span class="n">obs_time</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">)</span>
+
+    <span class="c1"># Otherwise, try to resolve as a deep sky object (ICRS)</span>
+    <span class="k">return</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="n">body_name</span><span class="p">)</span></div>
+
+
+
+<span class="c1">## SPECULOOS EDIT</span>
+<div class="viewcode-block" id="check_astelos_error">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.check_astelos_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_astelos_error</span><span class="p">(</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">close</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check SPECULOOS telescope status for known acceptable errors.</span>
+
+<span class="sd">    Analyzes telescope status messages to identify errors and determines if they</span>
+<span class="sd">    are in the list of known acceptable errors that can be safely acknowledged.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        telescope (Any): Telescope object with get() method for status commands.</span>
+<span class="sd">        close (bool): Whether to include slit closure errors in acceptable list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, pd.DataFrame, str]: Error analysis as (valid, errors, messages):</span>
+<span class="sd">            - valid: True if all errors are acceptable, False otherwise</span>
+<span class="sd">            - errors: DataFrame with columns [&#39;error&#39;, &#39;detail&#39;, &#39;level&#39;, &#39;component&#39;]</span>
+<span class="sd">            - messages: Raw telescope status message string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">allowed_err</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis (0) unexpectedly changed to powered on state&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DOME[0]&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis (0) unexpectedly changed to powered on state&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DOME[1]&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis (1) unexpectedly changed to powered on state&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DOME[0]&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis (1) unexpectedly changed to powered on state&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DOME[1]&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis #0</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;HA&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis #0</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DEC&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis #1</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;HA&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;axis #1</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DEC&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_RunDevError&quot;</span><span class="p">,</span> <span class="s2">&quot;Working pressure suddenly lost&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;HA&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_RunDevError&quot;</span><span class="p">,</span> <span class="s2">&quot;Working pressure suddenly lost&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;DEC&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_DeviceWarn&quot;</span><span class="p">,</span> <span class="s2">&quot;Malformed telegram from GPS&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;LOCAL&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span> <span class="s2">&quot;axis (1)</span><span class="se">\\</span><span class="s2">| BOTH LIMITS (code=128)&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;DOME[0]&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span> <span class="s2">&quot;axis (1)</span><span class="se">\\</span><span class="s2">| BOTH LIMITS (code=128)&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;DOME[1]&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span> <span class="s2">&quot;axis (1)</span><span class="se">\\</span><span class="s2">| EXTERN (code=32)&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;DOME[0]&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;ERR_DeviceError&quot;</span><span class="p">,</span> <span class="s2">&quot;axis (1)</span><span class="se">\\</span><span class="s2">| EXTERN (code=32)&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;DOME[1]&quot;</span><span class="p">],</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">close</span><span class="p">:</span>
+        <span class="n">slit_error</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">allowed_err</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">slit_error</span><span class="p">)</span>
+
+    <span class="n">df_allowed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">allowed_err</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">,</span> <span class="s2">&quot;level&quot;</span><span class="p">,</span> <span class="s2">&quot;component&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">,</span> <span class="s2">&quot;level&quot;</span><span class="p">,</span> <span class="s2">&quot;component&quot;</span><span class="p">])</span>
+
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CommandString&quot;</span><span class="p">,</span> <span class="n">Command</span><span class="o">=</span><span class="s2">&quot;TELESCOPE.STATUS.LIST&quot;</span><span class="p">,</span> <span class="n">Raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># structure = &quot;&lt;group&gt;|&lt;level&gt;[:&lt;component&gt;|&lt;level&gt;[;&lt;component&gt;...]][:&lt;error&gt;|&lt;detail&gt;|&lt;level&gt;|&lt;component&gt;[;&lt;error&gt;...]][,&lt;group&gt;...]&quot;</span>
+
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+
+        <span class="c1"># only look parts after &quot;&lt;group&gt;|&lt;level&gt;&quot;</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                <span class="n">error_detail</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">|&quot;</span><span class="p">,</span> <span class="s2">&quot;[ESCAPED_PIPE]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+                <span class="n">error_detail</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[ESCAPED_PIPE]&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">|&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">error_detail</span>
+                <span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_detail</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">detail</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">error_level</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">component</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+                        <span class="n">df_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">df_list</span><span class="p">,</span>
+                                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">error</span><span class="p">],</span>
+                                        <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">detail</span><span class="p">],</span>
+                                        <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">error_level</span><span class="p">],</span>
+                                        <span class="s2">&quot;component&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">component</span><span class="p">],</span>
+                                    <span class="p">}</span>
+                                <span class="p">),</span>
+                            <span class="p">],</span>
+                            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+    <span class="c1"># check all rows of df_list are in df_allowed</span>
+    <span class="n">compare_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">df_allowed</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="s2">&quot;exists&quot;</span><span class="p">)</span>
+    <span class="n">exists</span> <span class="o">=</span> <span class="n">compare_df</span><span class="p">[</span><span class="s2">&quot;exists&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span>
+
+    <span class="c1"># if all of exists is True</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">df_list</span><span class="p">,</span> <span class="n">messages</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">df_list</span><span class="p">,</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="ack_astelos_error">
+<a class="viewcode-back" href="../../api/generated/astra.utils.html#astra.utils.ack_astelos_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ack_astelos_error</span><span class="p">(</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">valid</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">all_errors</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">close</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acknowledge acceptable SPECULOOS telescope errors.</span>
+
+<span class="sd">    Attempts to clear acceptable telescope errors by sending appropriate</span>
+<span class="sd">    acknowledgement commands. Continues until all errors are cleared or</span>
+<span class="sd">    unacceptable errors are encountered.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        telescope (Any): Telescope object with get() method for commands.</span>
+<span class="sd">        valid (bool): Whether errors are acceptable (from check_astelos_error).</span>
+<span class="sd">        all_errors (pd.DataFrame): Error information with &#39;level&#39; column.</span>
+<span class="sd">        messages (str): Original telescope status messages.</span>
+<span class="sd">        close (bool): Whether to include slit closure errors as acceptable.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, str]: Acknowledgement result as (success, final_messages):</span>
+<span class="sd">            - success: True if all errors cleared, False if unacceptable errors remain</span>
+<span class="sd">            - final_messages: Updated telescope status messages</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TimeoutError: If error clearing takes longer than 2 minutes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="n">valid</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># derive system eror level</span>
+        <span class="n">sys_level</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_errors</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)))))</span>
+
+        <span class="c1"># clear errors</span>
+        <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;CommandBlind&quot;</span><span class="p">,</span>
+            <span class="n">Command</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;TELESCOPE.STATUS.CLEAR_ERROR=</span><span class="si">{</span><span class="n">sys_level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">Raw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># check telescope status</span>
+        <span class="n">valid</span><span class="p">,</span> <span class="n">all_errors</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">check_astelos_error</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="n">close</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">:</span>  <span class="c1"># 2 minutes hardcoded limit</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;Astelos error acknowledgement timed out&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">messages</span>
+
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">messages</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Observatory Configuration &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/observatory_configuration';</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FITS Header Configuration" href="fits_header_configuration.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Observatory Configuration</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#device-types-and-configuration">Device Types and Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-device-parameters">Common Device Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#telescope-configuration">Telescope Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focuser-configuration">Focuser Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#camera-configuration">Camera Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dome-configuration">Dome Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observingconditions-configuration">ObservingConditions Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safetymonitor-configuration">SafetyMonitor Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#misc-options">Misc Options</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="observatory-configuration">
+<h1>Observatory Configuration<a class="headerlink" href="#observatory-configuration" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/observatory_configuration-banner.svg" />
+<p><em>Astra</em> requires an observatory configuration file in YAML format that defines all devices, their settings, safety limits, and how they interact with each other.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Each <em>Astra</em> instance runs exactly one observatory at a time, specified by the <code class="docutils literal notranslate"><span class="pre">observatory_name</span></code> field in your base configuration file (<code class="docutils literal notranslate"><span class="pre">~/.astra/astra_config.yml</span></code>).</p>
+<p>This name determines which configuration files are loaded: <code class="docutils literal notranslate"><span class="pre">{observatory_name}_config.yml</span></code> and <code class="docutils literal notranslate"><span class="pre">{observatory_name}_fits_header_config.csv</span></code>.</p>
+</div>
+<p>You’ll need to configure two files for your observatory:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">{observatory_name}_config.yml</span></code></strong> (this page) - Device definitions, safety limits, and settings</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">{observatory_name}_fits_header_config.csv</span></code></strong> (<a class="reference internal" href="fits_header_configuration.html"><span class="doc std std-doc">FITS Header Configuration</span></a>) - FITS header keyword mappings</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example Observatory Configuration Template</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="scrollable-code highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Telescope</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">telescope_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">pointing_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w"> </span><span class="c1"># arcmins</span>
+<span class="w">    </span><span class="nt">settle_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w"> </span><span class="c1"># exposure multiplier for calculated settle time after pointing (for SPIRIT like cameras)</span>
+<span class="w">    </span><span class="nt">meridian_flip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># enable automated meridian flips</span>
+<span class="w">    </span><span class="nt">meridian_flip_min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span><span class="c1"># minutes past meridian to trigger flip</span>
+<span class="w">    </span><span class="nt">guider</span><span class="p">:</span><span class="w"> </span><span class="c1"># populated using calibrate_guiding sequence</span>
+<span class="w">      </span><span class="nt">PIX2TIME</span><span class="p">:</span><span class="w"> </span><span class="c1"># ms/pixel for camera used for guiding</span>
+<span class="w">        </span><span class="nt">+x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">71.62908053771561</span>
+<span class="w">        </span><span class="nt">-x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">71.62926906533114</span>
+<span class="w">        </span><span class="nt">+y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">71.62775367838461</span>
+<span class="w">        </span><span class="nt">-y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">71.62771750106279</span>
+<span class="w">      </span><span class="nt">RA_AXIS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;x&quot;</span>
+<span class="w">      </span><span class="nt">DIRECTIONS</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">+x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">East</span>
+<span class="w">        </span><span class="nt">-x</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">West</span>
+<span class="w">        </span><span class="nt">+y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">North</span>
+<span class="w">        </span><span class="nt">-y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">South</span>
+<span class="w">      </span><span class="nt">PID_COEFFS</span><span class="p">:</span><span class="w"> </span><span class="c1"># defaults</span>
+<span class="w">        </span><span class="s">&quot;x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="s">&quot;p&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.70</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.02</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.0</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">        </span><span class="s">&quot;y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="s">&quot;p&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;i&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.02</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">0.0</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">        </span><span class="s">&quot;set_x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">        </span><span class="s">&quot;set_y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">MIN_GUIDE_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"> </span><span class="c1"># seconds</span>
+<span class="nt">Focuser</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">focuser_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">focus_position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">    </span><span class="nt">focus_tolerance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"> </span><span class="c1"># steps; skip move if already within this many steps of target</span>
+<span class="w">    </span><span class="nt">settle_time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"> </span><span class="c1"># seconds</span>
+<span class="w">    </span><span class="nt">connectable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># optional, default: true</span>
+<span class="nt">Camera</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">camera_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-20</span><span class="w"> </span><span class="c1"># degrees Celsius</span>
+<span class="w">    </span><span class="nt">temperature_tolerance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span><span class="c1"># degrees Celsius</span>
+<span class="w">    </span><span class="nt">cooling_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1"># minutes</span>
+<span class="w">    </span><span class="nt">flats</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">target_adu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">31500</span><span class="w"> </span><span class="c1"># ADU</span>
+<span class="w">      </span><span class="nt">target_adu_tolerance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10500</span><span class="w"> </span><span class="c1"># ADU</span>
+<span class="w">      </span><span class="nt">bias_offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span><span class="w"> </span><span class="c1"># ADU</span>
+<span class="w">      </span><span class="nt">lower_exptime_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span><span class="c1"># seconds</span>
+<span class="w">      </span><span class="nt">upper_exptime_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"> </span><span class="c1"># seconds</span>
+<span class="w">    </span><span class="nt">paired_devices</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Telescope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">telescope_observatoryname</span>
+<span class="w">      </span><span class="nt">Focuser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">focuser_observatoryname</span>
+<span class="w">      </span><span class="nt">Dome</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dome_observatoryname</span>
+<span class="w">      </span><span class="nt">FilterWheel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fw_observatoryname</span>
+<span class="w">      </span><span class="nt">ObservingConditions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weather_observatoryname</span>
+<span class="w">      </span><span class="nt">SafetyMonitor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety_observatoryname</span>
+<span class="w">      </span><span class="nt">Camera</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">camera_observatoryname</span>
+<span class="nt">Dome</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dome_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">close_dome_on_telescope_error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">telescopes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">telescope_observatoryname</span>
+<span class="nt">FilterWheel</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fw_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="nt">ObservingConditions</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weather_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">polling_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span><span class="c1"># seconds</span>
+<span class="w">    </span><span class="nt">closing_limits</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Humidity</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">150</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">      </span><span class="nt">Temperature</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">lower</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">WindSpeed</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">SkyTemperature</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-30</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">RelativeSkyTemp</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">upper</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-40</span>
+<span class="w">          </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="nt">SafetyMonitor</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety_observatoryname</span>
+<span class="w">    </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:11111</span>
+<span class="w">    </span><span class="nt">device_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">max_safe_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span><span class="w"> </span><span class="c1"># minutes</span>
+
+<span class="nt">Misc</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">backup_time</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12:00&quot;</span><span class="w"> </span><span class="c1"># UTC back up time of polled data (e.g. CCDTemperature) and logs</span>
+
+
+<span class="w">  </span><span class="c1"># Webcam: http://localhost:8888/inside</span>
+<span class="w">  </span><span class="c1">## Multiple webcams:</span>
+<span class="w">  </span><span class="c1"># Webcam:</span>
+<span class="w">  </span><span class="c1">#   - name: Inside View</span>
+<span class="w">  </span><span class="c1">#     url: http://localhost:8888/inside</span>
+<span class="w">  </span><span class="c1">#   - name: Outside View</span>
+<span class="w">  </span><span class="c1">#     url: http://localhost:8888/outside</span>
+
+<span class="w">  </span><span class="c1"># AllSky: /path/to/allsky.jpg</span>
+<span class="w">  </span><span class="c1">## Multiple all-sky cameras:</span>
+<span class="w">  </span><span class="c1"># AllSky:</span>
+<span class="w">  </span><span class="c1">#   - name: East Sky</span>
+<span class="w">  </span><span class="c1">#     path: /path/to/allsky_east.jpg</span>
+<span class="w">  </span><span class="c1">#   - name: West Sky</span>
+<span class="w">  </span><span class="c1">#     path: /path/to/allsky_west.jpg</span>
+
+<span class="w">  </span><span class="c1"># filename_templates:</span>
+<span class="w">  </span><span class="c1">#   object: &quot;{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   calibration: &quot;{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   flats: &quot;{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   autofocus: &quot;autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   calibrate_guiding: &quot;calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   pointing_model: &quot;pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+<span class="w">  </span><span class="c1">#   default: &quot;{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>This example configuration shows all supported device types and their parameters. You can customize this template for your specific observatory setup.</p>
+<section id="device-types-and-configuration">
+<h2>Device Types and Configuration<a class="headerlink" href="#device-types-and-configuration" title="Link to this heading">#</a></h2>
+<p><em>Astra</em> supports the following device types, all conforming to the ASCOM Alpaca standard:</p>
+<ul class="simple">
+<li><p><strong>Telescope</strong></p></li>
+<li><p><strong>Focuser</strong></p></li>
+<li><p><strong>Camera</strong></p></li>
+<li><p><strong>Dome</strong></p></li>
+<li><p><strong>FilterWheel</strong></p></li>
+<li><p><strong>ObservingConditions</strong></p></li>
+<li><p><strong>SafetyMonitor</strong></p></li>
+<li><p><strong>CoverCalibrator</strong></p></li>
+<li><p><strong>Rotator</strong></p></li>
+<li><p><strong>Switch</strong></p></li>
+</ul>
+<p>Each device type has specific configuration parameters detailed below.</p>
+</section>
+<section id="common-device-parameters">
+<h2>Common Device Parameters<a class="headerlink" href="#common-device-parameters" title="Link to this heading">#</a></h2>
+<p>All devices share these required parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device_name</span></code>: Unique identifier for the device (string, e.g., “camera_main”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ip</span></code>: Network address of the Alpaca device (string, format: “hostname:port”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">device_number</span></code>: ASCOM Alpaca device number (integer)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">polling_interval</span></code>: How often to poll ASCOM properties (set by <a class="reference internal" href="fits_header_configuration.html"><span class="doc std std-doc">FITS header configuration</span></a>), in seconds (integer, optional, default: 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectable</span></code>: Whether to attempt connection at startup (boolean, optional, default: true)</p></li>
+</ul>
+</section>
+<section id="telescope-configuration">
+<h2>Telescope Configuration<a class="headerlink" href="#telescope-configuration" title="Link to this heading">#</a></h2>
+<p>Additional parameters for telescope mounts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pointing_threshold</span></code>: Maximum acceptable pointing error in arcminutes before pointing correction is applied (float, default: 0.1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settle_factor</span></code>: Exposure multiplier for calculated settle time after pointing - useful for continuous acquisition type cameras (float, default: 0.0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">meridian_flip</span></code>: Enable automated meridian flips (boolean, default: false)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">meridian_flip_min</span></code>: Buffer time in minutes past meridian to trigger flip (float, default: 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">guider</span></code>: Autoguider calibration settings (dict, populated automatically by the <a class="reference internal" href="scheduling.html#calibrate-guiding-action"><span class="std std-ref">calibrate_guiding</span></a> sequence)</p></li>
+</ul>
+</section>
+<section id="focuser-configuration">
+<h2>Focuser Configuration<a class="headerlink" href="#focuser-configuration" title="Link to this heading">#</a></h2>
+<p>Focuser-specific parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">focus_position</span></code>: Best known absolute focus position (integer)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">focus_tolerance</span></code>: Maximum deviation in steps from the target position before a focuser move is issued (integer, default: 0). Moves are skipped when the current position is within this many steps of the target, avoiding unnecessary mechanical motion when thermal drift is small.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settle_time</span></code>: Time in seconds to wait after focus position move (integer)</p></li>
+</ul>
+</section>
+<section id="camera-configuration">
+<h2>Camera Configuration<a class="headerlink" href="#camera-configuration" title="Link to this heading">#</a></h2>
+<p>Camera-specific parameters for cooling and imaging:</p>
+<p><strong>Cooling Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code>: Target cooling temperature in Celsius (float)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature_tolerance</span></code>: Acceptable temperature tolerance from target in Celsius (float)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cooling_timeout</span></code>: Time in minutes to wait to reach target temperature before timing out (int, default: 30)</p></li>
+</ul>
+<p><strong>Sky Flat Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">flats</span></code>: Configuration for automated flat field acquisition (dict)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_adu</span></code>: Target median ADU value for sky flat frame (int)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_adu_tolerance</span></code>: Acceptable tolerance around target ADU (int)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bias_offset</span></code>: Median bias level offset in ADU for exposure time calculations (int)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lower_exptime_limit</span></code>: Minimum allowed exposure time in seconds (int)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">upper_exptime_limit</span></code>: Maximum allowed exposure time in seconds (int)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Device Associations:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">paired_devices</span></code>: Links to other devices for FITS headers and sequence coordination (dict)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">{device_type}</span></code>: <code class="docutils literal notranslate"><span class="pre">{device_name}</span></code> which must match the name used in device configuration (string)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="dome-configuration">
+<h2>Dome Configuration<a class="headerlink" href="#dome-configuration" title="Link to this heading">#</a></h2>
+<p>Dome-specific parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">close_dome_on_telescope_error</span></code>: Flag to close the dome in case of a telescope error. (boolean, default: false)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">telescopes</span></code>: List of associated telescope(s) within the dome (list)</p></li>
+</ul>
+</section>
+<section id="observingconditions-configuration">
+<h2>ObservingConditions Configuration<a class="headerlink" href="#observingconditions-configuration" title="Link to this heading">#</a></h2>
+<p>Weather monitoring and safety parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">closing_limits</span></code>: Weather safety thresholds that trigger observatory closure (dict)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">{parameter}</span></code>: Weather parameter name (e.g., <code class="docutils literal notranslate"><span class="pre">Humidity</span></code>, <code class="docutils literal notranslate"><span class="pre">WindSpeed</span></code>, <code class="docutils literal notranslate"><span class="pre">Temperature</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{parameter}[i].upper/lower</span></code>: Threshold value - <code class="docutils literal notranslate"><span class="pre">upper</span></code> for maximum safe value, <code class="docutils literal notranslate"><span class="pre">lower</span></code> for minimum (float)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{parameter}[i].max_safe_duration</span></code>: Time in minutes the parameter must stay within safe limits before <code class="docutils literal notranslate"><span class="pre">weather_safe</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> (int)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Supported Parameters:</strong></p>
+<ul class="simple">
+<li><p>Standard ASCOM: <code class="docutils literal notranslate"><span class="pre">CloudCover</span></code>, <code class="docutils literal notranslate"><span class="pre">DewPoint</span></code>, <code class="docutils literal notranslate"><span class="pre">Humidity</span></code>, <code class="docutils literal notranslate"><span class="pre">Pressure</span></code>, <code class="docutils literal notranslate"><span class="pre">RainRate</span></code>, <code class="docutils literal notranslate"><span class="pre">SkyBrightness</span></code>, <code class="docutils literal notranslate"><span class="pre">SkyQuality</span></code>, <code class="docutils literal notranslate"><span class="pre">SkyTemperature</span></code>, <code class="docutils literal notranslate"><span class="pre">StarFWHM</span></code>, <code class="docutils literal notranslate"><span class="pre">Temperature</span></code>, <code class="docutils literal notranslate"><span class="pre">WindDirection</span></code>, <code class="docutils literal notranslate"><span class="pre">WindGust</span></code>, <code class="docutils literal notranslate"><span class="pre">WindSpeed</span></code></p></li>
+<li><p>Custom: <code class="docutils literal notranslate"><span class="pre">RelativeSkyTemp</span></code> (sky temperature minus ambient temperature; requires both <code class="docutils literal notranslate"><span class="pre">SkyTemperature</span></code> and <code class="docutils literal notranslate"><span class="pre">Temperature</span></code> to be available from your weather station via its ASCOM Alpaca ObservingConditions driver)</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A weather parameter is only used for safety evaluation when <strong>both</strong> conditions are met:</p>
+<ol class="arabic simple">
+<li><p>It is exposed by your ASCOM Alpaca <strong>ObservingConditions</strong> driver.</p></li>
+<li><p>It is defined in your <a class="reference internal" href="fits_header_configuration.html"><span class="doc std std-doc">FITS header configuration</span></a> such that <em>Astra</em> can retrieve historical values from the local SQLite database for safety monitoring its <code class="docutils literal notranslate"><span class="pre">max_safe_duration</span></code>.</p></li>
+</ol>
+</div>
+</section>
+<section id="safetymonitor-configuration">
+<h2>SafetyMonitor Configuration<a class="headerlink" href="#safetymonitor-configuration" title="Link to this heading">#</a></h2>
+<p>Safety system monitoring parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">max_safe_duration</span></code>: Time in minutes the <code class="docutils literal notranslate"><span class="pre">IsSafe</span></code> property must remain <code class="docutils literal notranslate"><span class="pre">True</span></code> continuously before the observatory is considered <code class="docutils literal notranslate"><span class="pre">weather_safe</span></code> (int)</p></li>
+</ul>
+</section>
+<section id="misc-options">
+<h2>Misc Options<a class="headerlink" href="#misc-options" title="Link to this heading">#</a></h2>
+<p>Optional observatory-wide settings:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">backup_time</span></code>: UTC time of day to perform automatic daily backups of polled data and logs on the SQLite database (string, format: “HH:MM”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Webcam</span></code>: Webcam feed configuration. The URL is embedded in an iframe element in the frontend. Can be:</p>
+<ul>
+<li><p>Single URL string for one webcam (e.g., <code class="docutils literal notranslate"><span class="pre">Webcam:</span> <span class="pre">http://localhost:8888/inside</span></code>)</p></li>
+<li><p>Array of objects for multiple webcams, each with <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">url</span></code> properties</p></li>
+<li><p>Any iframe-compatible video source (e.g., <a class="reference external" href="https://github.com/bluenviron/mediamtx">mediamtx</a>)</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AllSky</span></code>: All-sky camera configuration. Images are fetched via <code class="docutils literal notranslate"><span class="pre">/api/allsky/latest</span></code> endpoint and automatically refreshed every 60 seconds. Can be:</p>
+<ul>
+<li><p>Single path string for one camera (e.g., <code class="docutils literal notranslate"><span class="pre">AllSky:</span> <span class="pre">/path/to/allsky.jpg</span></code>)</p></li>
+<li><p>Array of objects for multiple cameras, each with <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">path</span></code> properties</p></li>
+<li><p>Supports JPEG and PNG formats</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filename_templates</span></code>: Customize how FITS files are named and organized (dict). See <a class="reference internal" href="../api/generated/astra.filename_templates.html#module-astra.filename_templates" title="astra.filename_templates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">astra.filename_templates</span></code></a> for more details.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="overview.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Overview</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="fits_header_configuration.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">FITS Header Configuration</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#device-types-and-configuration">Device Types and Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-device-parameters">Common Device Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#telescope-configuration">Telescope Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focuser-configuration">Focuser Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#camera-configuration">Camera Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dome-configuration">Dome Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#observingconditions-configuration">ObservingConditions Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safetymonitor-configuration">SafetyMonitor Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#misc-options">Misc Options</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

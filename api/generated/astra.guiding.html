@@ -1,0 +1,914 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.guiding &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.guiding';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.header_manager" href="astra.header_manager.html" />
+    <link rel="prev" title="astra.filename_templates" href="astra.filename_templates.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.guiding</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager"><code class="docutils literal notranslate"><span class="pre">GuiderManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.from_observatory"><code class="docutils literal notranslate"><span class="pre">GuiderManager.from_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.refresh_telescope_from_config"><code class="docutils literal notranslate"><span class="pre">GuiderManager.refresh_telescope_from_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.start_guider"><code class="docutils literal notranslate"><span class="pre">GuiderManager.start_guider()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.stop_guider"><code class="docutils literal notranslate"><span class="pre">GuiderManager.stop_guider()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider"><code class="docutils literal notranslate"><span class="pre">Guider</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.telescope"><code class="docutils literal notranslate"><span class="pre">Guider.telescope</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.observatory"><code class="docutils literal notranslate"><span class="pre">Guider.observatory</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.PIX2TIME"><code class="docutils literal notranslate"><span class="pre">Guider.PIX2TIME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.DIRECTIONS"><code class="docutils literal notranslate"><span class="pre">Guider.DIRECTIONS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.RA_AXIS"><code class="docutils literal notranslate"><span class="pre">Guider.RA_AXIS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.PID_COEFFS"><code class="docutils literal notranslate"><span class="pre">Guider.PID_COEFFS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.running"><code class="docutils literal notranslate"><span class="pre">Guider.running</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.create_tables"><code class="docutils literal notranslate"><span class="pre">Guider.create_tables()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.logShiftsToDb"><code class="docutils literal notranslate"><span class="pre">Guider.logShiftsToDb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.logMessageToDb"><code class="docutils literal notranslate"><span class="pre">Guider.logMessageToDb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.guide"><code class="docutils literal notranslate"><span class="pre">Guider.guide()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.getReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.getReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.clearReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.clearReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.setReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.setReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.waitForImage"><code class="docutils literal notranslate"><span class="pre">Guider.waitForImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.guider_loop"><code class="docutils literal notranslate"><span class="pre">Guider.guider_loop()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID"><code class="docutils literal notranslate"><span class="pre">PID</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.update"><code class="docutils literal notranslate"><span class="pre">PID.update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.initialize_set_point"><code class="docutils literal notranslate"><span class="pre">PID.initialize_set_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.from_config_dict"><code class="docutils literal notranslate"><span class="pre">PID.from_config_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.guiding">
+<span id="astra-guiding"></span><h1>astra.guiding<a class="headerlink" href="#module-astra.guiding" title="Link to this heading">#</a></h1>
+<p>Astronomical telescope autoguiding system with PID control.</p>
+<p>This module provides automated guiding functionality for astronomical telescopes
+using image-based tracking with PID control loops. It implements the complete
+guiding workflow from image acquisition to telescope correction commands.</p>
+<dl class="simple">
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p>Real-time star tracking using the Donuts image registration library</p></li>
+<li><p>PID control loops for precise telescope corrections</p></li>
+<li><p>Database logging of guiding performance and corrections</p></li>
+<li><p>Support for German Equatorial Mount (GEM) pier side changes</p></li>
+<li><p>Outlier rejection and statistical analysis of guiding errors</p></li>
+<li><p>Automatic reference image management per field/filter combination</p></li>
+<li><p>Background subtraction and image cleaning for robust star detection</p></li>
+</ul>
+</dd>
+</dl>
+<p>The system continuously monitors incoming images, compares them to reference
+images, calculates pointing errors, and applies corrective pulse guide commands
+to keep the telescope accurately tracking celestial objects.</p>
+<dl class="simple">
+<dt>Components:</dt><dd><p>CustomImageClass: Image preprocessing for robust star detection
+Guider: Main autoguiding class with PID control
+PID: Discrete PID controller implementation</p>
+</dd>
+</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.guiding.Guider" title="astra.guiding.Guider"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Guider</span></code></a>(telescope, logger, database_manager, ...)</p></td>
+<td><p>Automated telescope guiding system with PID control and statistical analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.guiding.GuiderManager" title="astra.guiding.GuiderManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GuiderManager</span></code></a>(guider_dict, logger, ...)</p></td>
+<td><p>guider_dict: dict[str, Guider] - mapping telescope names to Guider instances logger: logging.Logger or ObservatoryLogger database_manager: DatabaseManager</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.guiding.PID" title="astra.guiding.PID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PID</span></code></a>([kp, ki, kd, derivator, integrator, ...])</p></td>
+<td><p>Discrete PID controller for autoguiding corrections.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.guiding.GuiderManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.guiding.</span></span><span class="sig-name descname"><span class="pre">GuiderManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guider_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/guiding.html#GuiderManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.GuiderManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>guider_dict: dict[str, Guider] - mapping telescope names to Guider instances
+logger: logging.Logger or ObservatoryLogger
+database_manager: DatabaseManager</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.GuiderManager.from_observatory">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_observatory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observatory</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.guiding.GuiderManager" title="astra.guiding.GuiderManager"><span class="pre">GuiderManager</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#GuiderManager.from_observatory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.GuiderManager.from_observatory" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.GuiderManager.refresh_telescope_from_config">
+<span class="sig-name descname"><span class="pre">refresh_telescope_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">telescope_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#GuiderManager.refresh_telescope_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.GuiderManager.refresh_telescope_from_config" title="Link to this definition">#</a></dt>
+<dd><p>Reload guider parameters for a single telescope from observatory config.</p>
+<p>This is intended for post-guiding-calibration updates where the telescope’s
+<code class="docutils literal notranslate"><span class="pre">guider</span></code> block has been modified and persisted to observatory config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observatory</strong> – Observatory instance providing devices/config/logger/database.</p></li>
+<li><p><strong>telescope_name</strong> (<em>str</em>) – Telescope device name to refresh guider for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – True if guider was created/refreshed, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.GuiderManager.start_guider">
+<span class="sig-name descname"><span class="pre">start_guider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.thread_manager.html#astra.thread_manager.ThreadManager" title="astra.thread_manager.ThreadManager"><span class="pre">ThreadManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_guiding_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#GuiderManager.start_guider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.GuiderManager.start_guider" title="Link to this definition">#</a></dt>
+<dd><p>Start the autoguiding system for telescope tracking.</p>
+<p>Initializes and starts the guiding system to maintain accurate telescope
+tracking during long exposures. Creates a separate thread for guiding
+operations to run concurrently with image acquisition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_handler</strong> (<em>ImageHandler</em>) – Image handler for managing image files.</p></li>
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing telescope and guide
+camera devices for the guiding system.</p></li>
+<li><p><strong>thread_manager</strong> (<em>ThreadManager</em>) – Thread manager for tracking guiding thread.</p></li>
+<li><p><strong>reset_guiding_reference</strong> (<em>bool, optional</em>) – If True, clears existing reference
+image from database before starting guiding, forcing creation of a new
+reference. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – True if guider was started successfully, False otherwise.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Process:</dt><dd><ol class="arabic simple">
+<li><p>Logs guiding start for the specified telescope</p></li>
+<li><p>Optionally clears existing reference image if reset flag is set</p></li>
+<li><p>Creates guider thread with appropriate parameters</p></li>
+<li><p>Starts the guiding thread in background</p></li>
+<li><p>Adds thread to observatory’s thread tracking list</p></li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Guiding runs in a separate thread to avoid blocking main operations</p></li>
+<li><p>Thread is tracked in self.threads for proper cleanup</p></li>
+<li><p>Filter name formatting removes single quotes for compatibility</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.GuiderManager.stop_guider">
+<span class="sig-name descname"><span class="pre">stop_guider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telescope_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/guiding.html#GuiderManager.stop_guider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.GuiderManager.stop_guider" title="Link to this definition">#</a></dt>
+<dd><p>Stop guiding for a given telescope.</p>
+<p>This function finds the correct guider thread using the telescope’s
+device name, sets its running flag to False, and then waits for the
+thread to terminate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>telescope_name</strong> (<em>str</em>) – The name of the telescope whose guider
+should be stopped.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – True if the guider was stopped successfully, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.guiding.Guider">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.guiding.</span></span><span class="sig-name descname"><span class="pre">Guider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telescope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><span class="pre">ObservatoryLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.database_manager.html#astra.database_manager.DatabaseManager" title="astra.database_manager.DatabaseManager"><span class="pre">DatabaseManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Automated telescope guiding system with PID control and statistical analysis.</p>
+<p>Implements a complete autoguiding solution that continuously monitors telescope
+pointing accuracy and applies corrective pulse guide commands. Features include
+PID control loops, outlier rejection, database logging, and support for German
+Equatorial Mounts with pier side changes.</p>
+<p>The guider maintains statistical buffers for error analysis, handles field
+stabilization periods, and manages reference images per field/filter combination.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.telescope">
+<span class="sig-name descname"><span class="pre">telescope</span></span><a class="headerlink" href="#astra.guiding.Guider.telescope" title="Link to this definition">#</a></dt>
+<dd><p>Alpaca telescope device for pulse guiding commands</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.observatory">
+<span class="sig-name descname"><span class="pre">observatory</span></span><a class="headerlink" href="#astra.guiding.Guider.observatory" title="Link to this definition">#</a></dt>
+<dd><p>Astra observatory instance for logging and database access</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.PIX2TIME">
+<span class="sig-name descname"><span class="pre">PIX2TIME</span></span><a class="headerlink" href="#astra.guiding.Guider.PIX2TIME" title="Link to this definition">#</a></dt>
+<dd><p>Pixel-to-millisecond conversion factors for guide pulses</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.DIRECTIONS">
+<span class="sig-name descname"><span class="pre">DIRECTIONS</span></span><a class="headerlink" href="#astra.guiding.Guider.DIRECTIONS" title="Link to this definition">#</a></dt>
+<dd><p>Mapping of guide directions to Alpaca constants</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.RA_AXIS">
+<span class="sig-name descname"><span class="pre">RA_AXIS</span></span><a class="headerlink" href="#astra.guiding.Guider.RA_AXIS" title="Link to this definition">#</a></dt>
+<dd><p>Which axis (x/y) corresponds to Right Ascension</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.PID_COEFFS">
+<span class="sig-name descname"><span class="pre">PID_COEFFS</span></span><a class="headerlink" href="#astra.guiding.Guider.PID_COEFFS" title="Link to this definition">#</a></dt>
+<dd><p>PID controller coefficients for x and y axes</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.guiding.Guider.running">
+<span class="sig-name descname"><span class="pre">running</span></span><a class="headerlink" href="#astra.guiding.Guider.running" title="Link to this definition">#</a></dt>
+<dd><p>Flag to control guiding loop execution</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">guider</span> <span class="o">=</span> <span class="n">Guider</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">astra_instance</span><span class="p">,</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;PIX2TIME&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;+x&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-x&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;+y&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;DIRECTIONS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;+x&quot;</span><span class="p">:</span> <span class="s2">&quot;East&quot;</span><span class="p">,</span> <span class="s2">&quot;-x&quot;</span><span class="p">:</span> <span class="s2">&quot;West&quot;</span><span class="p">,</span> <span class="s2">&quot;+y&quot;</span><span class="p">:</span> <span class="s2">&quot;North&quot;</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">:</span> <span class="s2">&quot;South&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;RA_AXIS&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;PID_COEFFS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="o">...</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">guider</span><span class="o">.</span><span class="n">guider_loop</span><span class="p">(</span><span class="s2">&quot;camera1&quot;</span><span class="p">,</span> <span class="s2">&quot;/data/*.fits&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initialize the autoguider with telescope, logging, and PID parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>telescope</strong> – Alpaca telescope device for sending pulse guide commands.</p></li>
+<li><p><strong>logger</strong> – Astra observatory logger for logging messages.</p></li>
+<li><p><strong>database_manager</strong> – Astra database manager for logging guiding data.</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – Configuration dictionary containing:
+- PIX2TIME: Pixel to millisecond conversion factors
+- DIRECTIONS: Guide direction mappings
+- RA_AXIS: Which axis corresponds to RA (“x” or “y”)
+- PID_COEFFS: PID controller coefficients for both axes</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.create_tables">
+<span class="sig-name descname"><span class="pre">create_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.create_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.create_tables" title="Link to this definition">#</a></dt>
+<dd><p>Create database tables for autoguider reference images and logging.</p>
+<dl class="simple">
+<dt>Creates three tables:</dt><dd><ul class="simple">
+<li><p>autoguider_ref: Reference image metadata and validity periods</p></li>
+<li><p>autoguider_log: Detailed guiding corrections and statistics</p></li>
+<li><p>autoguider_info_log: General status and info messages</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.logShiftsToDb">
+<span class="sig-name descname"><span class="pre">logShiftsToDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qry_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.logShiftsToDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.logShiftsToDb" title="Link to this definition">#</a></dt>
+<dd><p>Log autoguiding corrections and statistics to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qry_args</strong> (<em>tuple</em>) – Tuple containing guiding data in order:
+night, reference, comparison, stabilised, shift_x, shift_y,
+pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,
+std_buff_y, culled_max_shift_x, culled_max_shift_y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.logMessageToDb">
+<span class="sig-name descname"><span class="pre">logMessageToDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.logMessageToDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.logMessageToDb" title="Link to this definition">#</a></dt>
+<dd><p>Log status messages to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera_name</strong> (<em>str</em>) – Name of the camera being autoguided.</p></li>
+<li><p><strong>message</strong> (<em>str</em>) – Status or info message to log.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.guide">
+<span class="sig-name descname"><span class="pre">guide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">images_to_stabilise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">binning</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.guide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.guide" title="Link to this definition">#</a></dt>
+<dd><p>Apply telescope guiding corrections using PID control with outlier rejection.</p>
+<p>Processes measured pointing errors through PID controllers, applies outlier
+rejection during stable operation, and sends pulse guide commands to the telescope.
+Handles declination scaling for RA corrections and German Equatorial Mount
+pier side changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – Guide correction needed in X direction (pixels).</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Guide correction needed in Y direction (pixels).</p></li>
+<li><p><strong>images_to_stabilise</strong> (<em>int</em>) – Images remaining in stabilization period.
+Negative values indicate stable operation.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em>) – Name of the camera for logging.</p></li>
+<li><p><strong>binning</strong> (<em>int, optional</em>) – Image binning factor. Defaults to 1.</p></li>
+<li><p><strong>gem</strong> (<em>bool, optional</em>) – Whether telescope is German Equatorial Mount. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>(success, pidx, pidy, sigma_x, sigma_y) where:</dt><dd><ul class="simple">
+<li><p>success (bool): Whether correction was applied</p></li>
+<li><p>pidx, pidy (float): Actual corrections sent to mount</p></li>
+<li><p>sigma_x, sigma_y (float): Buffer standard deviations</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.getReferenceImage">
+<span class="sig-name descname"><span class="pre">getReferenceImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pierside</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.getReferenceImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.getReferenceImage" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve the current reference image path for given observation parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>) – Target field name.</p></li>
+<li><p><strong>filt</strong> (<em>str</em>) – Filter name.</p></li>
+<li><p><strong>exptime</strong> (<em>str</em>) – Exposure time.</p></li>
+<li><p><strong>camera</strong> (<em>str</em>) – Camera name.</p></li>
+<li><p><strong>pierside</strong> (<em>int</em>) – Telescope pier side (1=West, 0=East, -1=Unknown).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str | None</em> – Path to reference image, or None if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.clearReferenceImage">
+<span class="sig-name descname"><span class="pre">clearReferenceImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pierside</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.clearReferenceImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.clearReferenceImage" title="Link to this definition">#</a></dt>
+<dd><p>Clear reference image from the database for given observation parameters.</p>
+<p>Sets valid_until to current time for matching reference images, effectively
+invalidating them so a new reference will be created on next guiding run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>) – Target field name.</p></li>
+<li><p><strong>filt</strong> (<em>str</em>) – Filter name.</p></li>
+<li><p><strong>exptime</strong> (<em>str</em>) – Exposure time.</p></li>
+<li><p><strong>camera</strong> (<em>str</em>) – Camera name.</p></li>
+<li><p><strong>pierside</strong> (<em>int</em>) – Telescope pier side (1=West, 0=East, -1=Unknown).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.setReferenceImage">
+<span class="sig-name descname"><span class="pre">setReferenceImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pierside</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.setReferenceImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.setReferenceImage" title="Link to this definition">#</a></dt>
+<dd><p>Set a new reference image in the database and copy to reference directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>) – Target field name.</p></li>
+<li><p><strong>filt</strong> (<em>str</em>) – Filter name.</p></li>
+<li><p><strong>exptime</strong> (<em>str</em>) – Exposure time.</p></li>
+<li><p><strong>ref_image</strong> (<em>str</em>) – Path to image file to use as reference.</p></li>
+<li><p><strong>camera</strong> (<em>str</em>) – Camera name.</p></li>
+<li><p><strong>pierside</strong> (<em>int</em>) – Telescope pier side (1=West, 0=East, -1=Unknown).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.waitForImage">
+<span class="sig-name descname"><span class="pre">waitForImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.waitForImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.waitForImage" title="Link to this definition">#</a></dt>
+<dd><p>Wait for new images to appear in the monitoring directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera_name</strong> (<em>str</em>) – Camera name for logging.</p></li>
+<li><p><strong>image_handler</strong> (<em>ImageHandler</em>) – Image handler instance to monitor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>tuple</em> –</p>
+<dl class="simple">
+<dt>(newest_image, newest_field, newest_filter, newest_exptime)</dt><dd><p>Returns (None, None, None, None) if self.running becomes False.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.Guider.guider_loop">
+<span class="sig-name descname"><span class="pre">guider_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">binning</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#Guider.guider_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.Guider.guider_loop" title="Link to this definition">#</a></dt>
+<dd><p>Main autoguiding loop using image_handler for new images.
+Continuously monitors image_handler.last_image_path and last_image_timestamp,
+processes new images, updates reference images, measures shifts, and applies guiding corrections.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.guiding.PID">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.guiding.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/guiding.html#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.PID" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Discrete PID controller for autoguiding corrections.</p>
+<p>Implements a digital PID control loop with configurable proportional, integral,
+and derivative gains. Includes integrator clamping to prevent windup.</p>
+<p>Based on: <a class="reference external" href="http://code.activestate.com/recipes/577231-discrete-pid-controller/">http://code.activestate.com/recipes/577231-discrete-pid-controller/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kp</strong> (<em>float, optional</em>) – Proportional gain. Defaults to 0.5.</p></li>
+<li><p><strong>ki</strong> (<em>float, optional</em>) – Integral gain. Defaults to 0.25.</p></li>
+<li><p><strong>kd</strong> (<em>float, optional</em>) – Derivative gain. Defaults to 0.0.</p></li>
+<li><p><strong>derivator</strong> (<em>float, optional</em>) – Initial derivative term. Defaults to 0.</p></li>
+<li><p><strong>integrator</strong> (<em>float, optional</em>) – Initial integrator value. Defaults to 0.</p></li>
+<li><p><strong>integrator_max</strong> (<em>float, optional</em>) – Maximum integrator value. Defaults to 500.</p></li>
+<li><p><strong>integrator_min</strong> (<em>float, optional</em>) – Minimum integrator value. Defaults to -500.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.PID.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#PID.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.PID.update" title="Link to this definition">#</a></dt>
+<dd><p>Calculate PID output for given input and feedback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>current_value</strong> (<em>float</em>) – Current process value (feedback).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – PID controller output.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.PID.initialize_set_point">
+<span class="sig-name descname"><span class="pre">initialize_set_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#PID.initialize_set_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.PID.initialize_set_point" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the PID setpoint and reset integrator/derivator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>set_point</strong> (<em>float</em>) – Desired target value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.guiding.PID.from_config_dict">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_config_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.guiding.PID" title="astra.guiding.PID"><span class="pre">PID</span></a></span></span><a class="reference internal" href="../../_modules/astra/guiding.html#PID.from_config_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.guiding.PID.from_config_dict" title="Link to this definition">#</a></dt>
+<dd><p>Create a PID instance from a configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – Configuration with keys ‘p’, ‘i’, ‘d’</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.filename_templates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.filename_templates</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.header_manager.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.header_manager</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager"><code class="docutils literal notranslate"><span class="pre">GuiderManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.from_observatory"><code class="docutils literal notranslate"><span class="pre">GuiderManager.from_observatory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.refresh_telescope_from_config"><code class="docutils literal notranslate"><span class="pre">GuiderManager.refresh_telescope_from_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.start_guider"><code class="docutils literal notranslate"><span class="pre">GuiderManager.start_guider()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.GuiderManager.stop_guider"><code class="docutils literal notranslate"><span class="pre">GuiderManager.stop_guider()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider"><code class="docutils literal notranslate"><span class="pre">Guider</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.telescope"><code class="docutils literal notranslate"><span class="pre">Guider.telescope</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.observatory"><code class="docutils literal notranslate"><span class="pre">Guider.observatory</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.PIX2TIME"><code class="docutils literal notranslate"><span class="pre">Guider.PIX2TIME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.DIRECTIONS"><code class="docutils literal notranslate"><span class="pre">Guider.DIRECTIONS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.RA_AXIS"><code class="docutils literal notranslate"><span class="pre">Guider.RA_AXIS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.PID_COEFFS"><code class="docutils literal notranslate"><span class="pre">Guider.PID_COEFFS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.running"><code class="docutils literal notranslate"><span class="pre">Guider.running</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.create_tables"><code class="docutils literal notranslate"><span class="pre">Guider.create_tables()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.logShiftsToDb"><code class="docutils literal notranslate"><span class="pre">Guider.logShiftsToDb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.logMessageToDb"><code class="docutils literal notranslate"><span class="pre">Guider.logMessageToDb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.guide"><code class="docutils literal notranslate"><span class="pre">Guider.guide()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.getReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.getReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.clearReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.clearReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.setReferenceImage"><code class="docutils literal notranslate"><span class="pre">Guider.setReferenceImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.waitForImage"><code class="docutils literal notranslate"><span class="pre">Guider.waitForImage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.Guider.guider_loop"><code class="docutils literal notranslate"><span class="pre">Guider.guider_loop()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID"><code class="docutils literal notranslate"><span class="pre">PID</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.update"><code class="docutils literal notranslate"><span class="pre">PID.update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.initialize_set_point"><code class="docutils literal notranslate"><span class="pre">PID.initialize_set_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.guiding.PID.from_config_dict"><code class="docutils literal notranslate"><span class="pre">PID.from_config_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

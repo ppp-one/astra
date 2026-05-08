@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.device_manager &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.device_manager';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.filename_templates" href="astra.filename_templates.html" />
+    <link rel="prev" title="astra.database_manager" href="astra.database_manager.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.device_manager</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager"><code class="docutils literal notranslate"><span class="pre">DeviceManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.logger"><code class="docutils literal notranslate"><span class="pre">DeviceManager.logger</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.queue_manager"><code class="docutils literal notranslate"><span class="pre">DeviceManager.queue_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.thread_manager"><code class="docutils literal notranslate"><span class="pre">DeviceManager.thread_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.device_task_monitor_queue"><code class="docutils literal notranslate"><span class="pre">DeviceManager.device_task_monitor_queue</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.observatory_config"><code class="docutils literal notranslate"><span class="pre">DeviceManager.observatory_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.load_devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.load_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.connect_all"><code class="docutils literal notranslate"><span class="pre">DeviceManager.connect_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.pause_polls"><code class="docutils literal notranslate"><span class="pre">DeviceManager.pause_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.resume_polls"><code class="docutils literal notranslate"><span class="pre">DeviceManager.resume_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.stop_all_devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.stop_all_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.check_devices_alive"><code class="docutils literal notranslate"><span class="pre">DeviceManager.check_devices_alive()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.force_poll_observing_conditions"><code class="docutils literal notranslate"><span class="pre">DeviceManager.force_poll_observing_conditions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.list_device_names"><code class="docutils literal notranslate"><span class="pre">DeviceManager.list_device_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.check_telescopes_in_domes"><code class="docutils literal notranslate"><span class="pre">DeviceManager.check_telescopes_in_domes()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.device_manager">
+<span id="astra-device-manager"></span><h1>astra.device_manager<a class="headerlink" href="#module-astra.device_manager" title="Link to this heading">#</a></h1>
+<p>Device management for Alpaca devices within the Astra framework.</p>
+<dl class="simple">
+<dt>Key capabilities:</dt><dd><ul class="simple">
+<li><p>Load and initialize Alpaca devices based on observatory configuration</p></li>
+<li><p>Connect to devices and start polling for FITS header data</p></li>
+<li><p>Pause and resume polling during critical operations</p></li>
+<li><p>Monitor device responsiveness for watchdog functionality</p></li>
+<li><p>Force immediate polling for specific device types</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.device_manager.DeviceManager" title="astra.device_manager.DeviceManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeviceManager</span></code></a>(observatory_config, logger, ...)</p></td>
+<td><p>Manages loading, connecting, polling, pausing/resuming, and monitoring all Alpaca devices for an observatory.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.device_manager.</span></span><span class="sig-name descname"><span class="pre">DeviceManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observatory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><span class="pre">ObservatoryLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.queue_manager.html#astra.queue_manager.QueueManager" title="astra.queue_manager.QueueManager"><span class="pre">QueueManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.thread_manager.html#astra.thread_manager.ThreadManager" title="astra.thread_manager.ThreadManager"><span class="pre">ThreadManager</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manages loading, connecting, polling, pausing/resuming,
+and monitoring all Alpaca devices for an observatory.</p>
+<p>This class handles the lifecycle of devices including:</p>
+<ul class="simple">
+<li><p>Loading device configurations</p></li>
+<li><p>Establishing connections</p></li>
+<li><p>Starting/stopping polling for FITS header data</p></li>
+<li><p>Pausing/resuming polls during critical operations</p></li>
+<li><p>Checking device responsiveness for watchdog monitoring</p></li>
+<li><p>Forcing immediate polls for specific device types</p></li>
+</ul>
+<p>It interacts with the ObservatoryConfig for device settings,
+uses the ObservatoryLogger for logging, and relies on
+QueueManager and ThreadManager for asynchronous operations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#astra.device_manager.DeviceManager.logger" title="Link to this definition">#</a></dt>
+<dd><p>Logger for logging messages and errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger">ObservatoryLogger</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.queue_manager">
+<span class="sig-name descname"><span class="pre">queue_manager</span></span><a class="headerlink" href="#astra.device_manager.DeviceManager.queue_manager" title="Link to this definition">#</a></dt>
+<dd><p>Manages the queue for inter-thread communication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.queue_manager.html#astra.queue_manager.QueueManager" title="astra.queue_manager.QueueManager">QueueManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.thread_manager">
+<span class="sig-name descname"><span class="pre">thread_manager</span></span><a class="headerlink" href="#astra.device_manager.DeviceManager.thread_manager" title="Link to this definition">#</a></dt>
+<dd><p>Manages threads for concurrent operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="astra.thread_manager.html#astra.thread_manager.ThreadManager" title="astra.thread_manager.ThreadManager">ThreadManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.devices">
+<span class="sig-name descname"><span class="pre">devices</span></span><a class="headerlink" href="#astra.device_manager.DeviceManager.devices" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary of loaded devices organized by type and name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.device_task_monitor_queue">
+<span class="sig-name descname"><span class="pre">device_task_monitor_queue</span></span><a class="headerlink" href="#astra.device_manager.DeviceManager.device_task_monitor_queue" title="Link to this definition">#</a></dt>
+<dd><p>Tracks tasks for monitoring device status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.observatory_config">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">observatory_config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a></span><a class="headerlink" href="#astra.device_manager.DeviceManager.observatory_config" title="Link to this definition">#</a></dt>
+<dd><p>Get the observatory configuration, reloading if the file has been modified.</p>
+<p>This property provides access to the observatory configuration and automatically
+reloads it if the underlying configuration file has been modified since the
+last access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ObservatoryConfig</em> – The current observatory configuration object.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the configuration is reloaded, devices may need to be restarted
+(TODO: implement automatic device restart).</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.load_devices">
+<span class="sig-name descname"><span class="pre">load_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.load_devices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.load_devices" title="Link to this definition">#</a></dt>
+<dd><p>Load and initialize Alpaca devices based on the observatory configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.connect_all">
+<span class="sig-name descname"><span class="pre">connect_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.connect_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.connect_all" title="Link to this definition">#</a></dt>
+<dd><p>Connect to all loaded devices and start polling for FITS header data.</p>
+<p>Establishes connections to all initialized devices and begins regular polling
+of device properties needed for FITS headers. Different polling intervals
+are used based on device criticality:</p>
+<ul class="simple">
+<li><p><strong>Most devices</strong>: 5-second intervals</p></li>
+<li><p><strong>SafetyMonitor</strong>: 1-second intervals for safety-critical data</p></li>
+</ul>
+<dl class="simple">
+<dt>The method:</dt><dd><ol class="arabic simple">
+<li><p>Connects to all devices in the devices dictionary</p></li>
+<li><p>Starts polling threads for non-fixed FITS header properties</p></li>
+<li><p>Sets up special high-frequency polling for safety monitors</p></li>
+<li><p>Starts the watchdog process after all connections are established</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – Device connection errors are logged and added to error_source,
+    but do not prevent other devices from being connected.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>SPECULOOS observatories skip focuser connection due to compatibility issues</p></li>
+<li><p>A 1-second delay is added after connections before starting the watchdog
+to ensure devices are ready</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.pause_polls">
+<span class="sig-name descname"><span class="pre">pause_polls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.pause_polls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.pause_polls" title="Link to this definition">#</a></dt>
+<dd><p>Pause polling for specified device types or all devices.</p>
+<p>Temporarily stops the regular polling of device properties. This is useful
+during critical operations where device communication needs to be minimized
+or when devices need to be accessed exclusively by other processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_types</strong> (<em>list, optional</em>) – A list of device type strings to pause
+polling for (e.g., [‘Telescope’, ‘Camera’]). If None, pauses
+polling for all device types. Defaults to None.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Only device types that exist in the devices dictionary will be affected</p></li>
+<li><p>Polling can be resumed using the resume_polls() method</p></li>
+<li><p>This is commonly used in SPECULOOS operations before critical commands</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.resume_polls">
+<span class="sig-name descname"><span class="pre">resume_polls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.resume_polls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.resume_polls" title="Link to this definition">#</a></dt>
+<dd><p>Resume polling for specified device types or all devices.</p>
+<p>Restarts the regular polling of device properties that was previously
+paused using pause_polls(). This restores normal device monitoring
+and data collection for FITS headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device_types</strong> (<em>list, optional</em>) – A list of device type strings to resume
+polling for (e.g., [‘Telescope’, ‘Camera’]). If None, resumes
+polling for all device types. Defaults to None.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Only device types that exist in the devices dictionary will be affected</p></li>
+<li><p>This should be called after pause_polls() to restore normal operation</p></li>
+<li><p>Errors during resume are logged but don’t prevent other devices from resuming</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.stop_all_devices">
+<span class="sig-name descname"><span class="pre">stop_all_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.stop_all_devices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.stop_all_devices" title="Link to this definition">#</a></dt>
+<dd><p>Stop all devices and their associated processes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.check_devices_alive">
+<span class="sig-name descname"><span class="pre">check_devices_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.check_devices_alive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.check_devices_alive" title="Link to this definition">#</a></dt>
+<dd><p>Check if all connected devices are responsive and alive.</p>
+<p>Iterates through all loaded devices and tests their responsiveness by
+calling the is_alive() method. This helps detect communication failures,
+device crashes, or network issues that could affect observatory operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>bool</em> –</p>
+<dl class="simple">
+<dt>True if all devices are responsive, False if any device fails</dt><dd><p>to respond or encounters an error.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Side Effects:</dt><dd><ul class="simple">
+<li><p>Adds unresponsive devices to error_source list for monitoring</p></li>
+<li><p>Logs error messages for each unresponsive device</p></li>
+<li><p>Returns False immediately if any device fails</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Called regularly by the watchdog for continuous health monitoring</p></li>
+<li><p>Critical for detecting device failures before they affect observations</p></li>
+<li><p>Used to trigger error handling and recovery procedures</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.force_poll_observing_conditions">
+<span class="sig-name descname"><span class="pre">force_poll_observing_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.force_poll_observing_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.force_poll_observing_conditions" title="Link to this definition">#</a></dt>
+<dd><p>Force an immediate poll of all ObservingConditions devices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.list_device_names">
+<span class="sig-name descname"><span class="pre">list_device_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.list_device_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.list_device_names" title="Link to this definition">#</a></dt>
+<dd><p>List device names of a given type, optionally filtered by paired devices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.device_manager.DeviceManager.check_telescopes_in_domes">
+<span class="sig-name descname"><span class="pre">check_telescopes_in_domes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/device_manager.html#DeviceManager.check_telescopes_in_domes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.device_manager.DeviceManager.check_telescopes_in_domes" title="Link to this definition">#</a></dt>
+<dd><p>Check telescope assignments in domes.</p>
+<dl class="simple">
+<dt>Warn if:</dt><dd><ul class="simple">
+<li><p>There are telescopes not assigned to any dome</p></li>
+<li><p>There are domes assigned to telescopes that are not connected</p></li>
+</ul>
+</dd>
+<dt>Raise error if:</dt><dd><ul class="simple">
+<li><p>Dome configuration is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.database_manager.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.database_manager</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.filename_templates.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.filename_templates</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager"><code class="docutils literal notranslate"><span class="pre">DeviceManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.logger"><code class="docutils literal notranslate"><span class="pre">DeviceManager.logger</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.queue_manager"><code class="docutils literal notranslate"><span class="pre">DeviceManager.queue_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.thread_manager"><code class="docutils literal notranslate"><span class="pre">DeviceManager.thread_manager</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.device_task_monitor_queue"><code class="docutils literal notranslate"><span class="pre">DeviceManager.device_task_monitor_queue</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.observatory_config"><code class="docutils literal notranslate"><span class="pre">DeviceManager.observatory_config</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.load_devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.load_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.connect_all"><code class="docutils literal notranslate"><span class="pre">DeviceManager.connect_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.pause_polls"><code class="docutils literal notranslate"><span class="pre">DeviceManager.pause_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.resume_polls"><code class="docutils literal notranslate"><span class="pre">DeviceManager.resume_polls()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.stop_all_devices"><code class="docutils literal notranslate"><span class="pre">DeviceManager.stop_all_devices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.check_devices_alive"><code class="docutils literal notranslate"><span class="pre">DeviceManager.check_devices_alive()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.force_poll_observing_conditions"><code class="docutils literal notranslate"><span class="pre">DeviceManager.force_poll_observing_conditions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.list_device_names"><code class="docutils literal notranslate"><span class="pre">DeviceManager.list_device_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.device_manager.DeviceManager.check_telescopes_in_domes"><code class="docutils literal notranslate"><span class="pre">DeviceManager.check_telescopes_in_domes()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

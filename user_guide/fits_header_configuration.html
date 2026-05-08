@@ -1,0 +1,1173 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>FITS Header Configuration &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/fits_header_configuration';</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scheduling Syntax" href="scheduling.html" />
+    <link rel="prev" title="Observatory Configuration" href="observatory_configuration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>FITS Header Configuration</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-file-format">Configuration File Format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configuration">Example Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-fits-headers-are-created">How FITS Headers Are Created</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-headers-at-the-beginning-of-an-imaging-sequence">1. Base Headers (at the beginning of an imaging sequence)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-headers-after-schedule-ends">2. Final Headers (after schedule ends)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#customizing-fits-headers">Customizing FITS Headers</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="fits-header-configuration">
+<h1>FITS Header Configuration<a class="headerlink" href="#fits-header-configuration" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/fits_header_configuration-banner.svg" />
+<p><em>Astra</em> automatically generates comprehensive FITS headers for all captured images using
+metadata from your observatory devices.
+This system ensures every image contains the scientific metadata required for analysis.</p>
+<p>The FITS header system uses a CSV configuration file that maps device properties and observatory parameters to standard FITS keywords. This approach provides flexibility while maintaining consistency across observations.</p>
+<section id="configuration-file-format">
+<h2>Configuration File Format<a class="headerlink" href="#configuration-file-format" title="Link to this heading">#</a></h2>
+<p>The CSV configuration file defines how FITS headers are constructed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">header</span></code>: FITS header keyword</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dtype</span></code>: Data type (string, integer, float, boolean)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: Whether the value is set at the beginning of an imaging sequence (<code class="docutils literal notranslate"><span class="pre">true</span></code>) or filled later from polled device properties stored in the SQLite database (<code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">device_type</span></code>: Source (<a class="reference external" href="https://ascom-standards.org/alpyca/alpacaclasses.html">ASCOM Alpaca device</a>, <code class="docutils literal notranslate"><span class="pre">static</span></code> for unchanging values, <code class="docutils literal notranslate"><span class="pre">astra</span></code> for <em>Astra</em> calculated/derived values, <code class="docutils literal notranslate"><span class="pre">astropy_default</span></code> for standard headers filled by Astropy)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">device_command</span></code>: ASCOM device property, a static value, or empty.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comment</span></code>: Description of the header keyword</p></li>
+</ul>
+</section>
+<section id="example-configuration">
+<h2>Example Configuration<a class="headerlink" href="#example-configuration" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="scrollable-table table" id="id1">
+<caption><span class="caption-text">Example FITS Header Configuration</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>header</p></th>
+<th class="head"><p>dtype</p></th>
+<th class="head"><p>fixed</p></th>
+<th class="head"><p>device_type</p></th>
+<th class="head"><p>device_command</p></th>
+<th class="head"><p>comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SIMPLE</p></td>
+<td><p>bool</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p>conforms to FITS standard</p></td>
+</tr>
+<tr class="row-odd"><td><p>BITPIX</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p>array data type</p></td>
+</tr>
+<tr class="row-even"><td><p>NAXIS</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p>number of array dimensions</p></td>
+</tr>
+<tr class="row-odd"><td><p>NAXIS1</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p class="rubric" id="of-pixels-row">of pixels/row</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>NAXIS2</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p class="rubric" id="of-rows-also-of-scan-lines">of rows (also # of scan lines)</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>EXTEND</p></td>
+<td><p>bool</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>1</p></td>
+<td><p>Extensions may be present</p></td>
+</tr>
+<tr class="row-even"><td><p>BZERO</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p>value = fits-value*BSCALE+BZERO</p></td>
+</tr>
+<tr class="row-odd"><td><p>BSCALE</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astropy_default</p></td>
+<td></td>
+<td><p>value = fits-value*BSCALE+BZERO</p></td>
+</tr>
+<tr class="row-even"><td><p>BUNIT</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>ADU</p></td>
+<td><p>Physical unit of array values</p></td>
+</tr>
+<tr class="row-odd"><td><p>BLANK</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>-32768</p></td>
+<td><p>Value used for NULL pixels</p></td>
+</tr>
+<tr class="row-even"><td><p>ORIGIN</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>ORIGIN</p></td>
+<td><p>Observatory</p></td>
+</tr>
+<tr class="row-odd"><td><p>TELESCOP</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>TELESCOPE</p></td>
+<td><p>Telescope Name</p></td>
+</tr>
+<tr class="row-even"><td><p>INSTRUME</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>INSTRUMENT</p></td>
+<td><p>Instrument used</p></td>
+</tr>
+<tr class="row-odd"><td><p>PI-COI</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>PI-COI</p></td>
+<td><p>Name of the PI/Co-I</p></td>
+</tr>
+<tr class="row-even"><td><p>OBSERVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>Astra</p></td>
+<td><p>Name of the observer</p></td>
+</tr>
+<tr class="row-odd"><td><p>OBJECT</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Target as given by the user</p></td>
+</tr>
+<tr class="row-even"><td><p>RADESYS</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>FK5</p></td>
+<td><p>Reference system</p></td>
+</tr>
+<tr class="row-odd"><td><p>EQUINOX</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>2000</p></td>
+<td><p>Catalog equinox of the object coords</p></td>
+</tr>
+<tr class="row-even"><td><p>DATE</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>UTC datetime file written</p></td>
+</tr>
+<tr class="row-odd"><td><p>MJD-OBS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Modified Julian Date at start of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>DATE-OBS</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>UTC datetime start of exposure</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIMESYS</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>static</p></td>
+<td><p>UTC</p></td>
+<td><p>Time system used</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPTIME</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>[s] Exposure time</p></td>
+</tr>
+<tr class="row-odd"><td><p>LST</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>[s] Local Sidereal Time at start of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>HA</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>[hms] Hour Angle</p></td>
+</tr>
+<tr class="row-odd"><td><p>CHECKSUM</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>HDU checksum</p></td>
+</tr>
+<tr class="row-even"><td><p>DATASUM</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Data unit checksum</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>XBINNING</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>BinX</p></td>
+<td><p>Binning level along the X-axis</p></td>
+</tr>
+<tr class="row-odd"><td><p>YBINNING</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>BinY</p></td>
+<td><p>Binning level along the Y-axis</p></td>
+</tr>
+<tr class="row-even"><td><p>XPIXSZ</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Pixel Width in microns (after binning)</p></td>
+</tr>
+<tr class="row-odd"><td><p>YPIXSZ</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Pixel Height in microns (after binning)</p></td>
+</tr>
+<tr class="row-even"><td><p>XORGSUBF</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>StartX</p></td>
+<td><p>Subframe X position in binned pixels</p></td>
+</tr>
+<tr class="row-odd"><td><p>YORGSUBF</p></td>
+<td><p>int</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>StartY</p></td>
+<td><p>Subframe Y position in binned pixels</p></td>
+</tr>
+<tr class="row-even"><td><p>CAM-SNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>SensorName</p></td>
+<td><p>Camera sensor name</p></td>
+</tr>
+<tr class="row-odd"><td><p>CAM-STYP</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>SensorType</p></td>
+<td><p>Camera sensor type</p></td>
+</tr>
+<tr class="row-even"><td><p>CAM-DNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>Name</p></td>
+<td><p>Name of Camera driver</p></td>
+</tr>
+<tr class="row-odd"><td><p>CAM-DVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>DriverVersion</p></td>
+<td><p>Camera driver version</p></td>
+</tr>
+<tr class="row-even"><td><p>SET-TEMP</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>Camera</p></td>
+<td><p>SetCCDTemperature</p></td>
+<td><p>[Celsius] CCD temperature setpoint</p></td>
+</tr>
+<tr class="row-odd"><td><p>CCD-TEMP</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Camera</p></td>
+<td><p>CCDTemperature</p></td>
+<td><p>[Celsius] CCD temperature at start of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>CAM-STAT</p></td>
+<td><p>int</p></td>
+<td><p>false</p></td>
+<td><p>Camera</p></td>
+<td><p>CameraState</p></td>
+<td><p>Camera status</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>FILTER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Filter name</p></td>
+</tr>
+<tr class="row-odd"><td><p>FW-POS</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>FilterWheel</p></td>
+<td><p>Position</p></td>
+<td><p>FilterWheel position</p></td>
+</tr>
+<tr class="row-even"><td><p>FW-NAME</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>FilterWheel</p></td>
+<td><p>Name</p></td>
+<td><p>FilterWheel name</p></td>
+</tr>
+<tr class="row-odd"><td><p>FW-DVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>FilterWheel</p></td>
+<td><p>DriverVersion</p></td>
+<td><p>FilterWheel driver version</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>FOCUSPOS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Focuser</p></td>
+<td><p>Position</p></td>
+<td><p>[steps] Focuser position</p></td>
+</tr>
+<tr class="row-even"><td><p>FOCUSSSZ</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>Focuser</p></td>
+<td><p>StepSize</p></td>
+<td><p>[micron] Focuser step size</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOCUSTEM</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Focuser</p></td>
+<td><p>Temperature</p></td>
+<td><p>[Celsius] Focuser temperature</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>RA</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>RightAscension</p></td>
+<td><p>[deg] Target Right Ascension</p></td>
+</tr>
+<tr class="row-even"><td><p>DEC</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>Declination</p></td>
+<td><p>[deg] Target Declination</p></td>
+</tr>
+<tr class="row-odd"><td><p>APTAREA</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td><p>ApertureArea</p></td>
+<td><p>[m^2] Aperture area of telescope</p></td>
+</tr>
+<tr class="row-even"><td><p>APTDIA</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td><p>ApertureDiameter</p></td>
+<td><p>[m] Aperture diameter of telescope</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOCALLEN</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td><p>FocalLength</p></td>
+<td><p>[m] Focal length of telescope</p></td>
+</tr>
+<tr class="row-even"><td><p>ALT-OBS</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>Telescope</p></td>
+<td><p>SiteElevation</p></td>
+<td><p>[m] Altitude above mean sea level</p></td>
+</tr>
+<tr class="row-odd"><td><p>LAT-OBS</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>Telescope</p></td>
+<td><p>SiteLatitude</p></td>
+<td><p>[deg +N WGS84] Geodetic latitude</p></td>
+</tr>
+<tr class="row-even"><td><p>LONG-OBS</p></td>
+<td><p>float</p></td>
+<td><p>true</p></td>
+<td><p>Telescope</p></td>
+<td><p>SiteLongitude</p></td>
+<td><p>[deg +E WGS84] Geodetic longitude</p></td>
+</tr>
+<tr class="row-odd"><td><p>ALTITUDE</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>Altitude</p></td>
+<td><p>[deg] Telescope altitude</p></td>
+</tr>
+<tr class="row-even"><td><p>AZIMUTH</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>Azimuth</p></td>
+<td><p>[deg] Telescope azimuth</p></td>
+</tr>
+<tr class="row-odd"><td><p>AIRMASS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Averaged airmass</p></td>
+</tr>
+<tr class="row-even"><td><p>TEL-DNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Telescope</p></td>
+<td><p>Name</p></td>
+<td><p>Name of Telescope driver</p></td>
+</tr>
+<tr class="row-odd"><td><p>TEL-DVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Telescope</p></td>
+<td><p>DriverVersion</p></td>
+<td><p>Telescope driver version</p></td>
+</tr>
+<tr class="row-even"><td><p>TRACKING</p></td>
+<td><p>bool</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>Tracking</p></td>
+<td><p>Tracking</p></td>
+</tr>
+<tr class="row-odd"><td><p>SLEWING</p></td>
+<td><p>bool</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>Slewing</p></td>
+<td><p>Slewing</p></td>
+</tr>
+<tr class="row-even"><td><p>TELPARK</p></td>
+<td><p>bool</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>AtPark</p></td>
+<td><p>Telescope at park</p></td>
+</tr>
+<tr class="row-odd"><td><p>PIERSIDE</p></td>
+<td><p>bool</p></td>
+<td><p>false</p></td>
+<td><p>Telescope</p></td>
+<td><p>SideOfPier</p></td>
+<td><p>Telescope side of pier (1 = West 0 = East)</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>DOMEAZ</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>Dome</p></td>
+<td><p>Azimuth</p></td>
+<td><p>[deg] Dome azimuth</p></td>
+</tr>
+<tr class="row-even"><td><p>DOMESTAT</p></td>
+<td><p>int</p></td>
+<td><p>false</p></td>
+<td><p>Dome</p></td>
+<td><p>ShutterStatus</p></td>
+<td><p>Dome shutter status</p></td>
+</tr>
+<tr class="row-odd"><td><p>DOM-DNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>Dome</p></td>
+<td><p>Name</p></td>
+<td><p>Name of Dome driver</p></td>
+</tr>
+<tr class="row-even"><td><p>DOMPARK</p></td>
+<td><p>bool</p></td>
+<td><p>false</p></td>
+<td><p>Dome</p></td>
+<td><p>AtPark</p></td>
+<td><p>Dome at park</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>IMAGETYP</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Type of image</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>DEWPOINT</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>DewPoint</p></td>
+<td><p>[Celsius] Dew point</p></td>
+</tr>
+<tr class="row-odd"><td><p>HUMIDITY</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>Humidity</p></td>
+<td><p>[%] Ambient atmospheric humidity</p></td>
+</tr>
+<tr class="row-even"><td><p>AMBTEMP</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>Temperature</p></td>
+<td><p>[Celsius] Ambient temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p>WINDSPD</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>WindSpeed</p></td>
+<td><p>[m/s] Wind speed</p></td>
+</tr>
+<tr class="row-even"><td><p>SKYTEMP</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>SkyTemperature</p></td>
+<td><p>[Celsius] Sky temperature</p></td>
+</tr>
+<tr class="row-odd"><td><p>OBC-DNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>Name</p></td>
+<td><p>Name of ObservingConditions driver</p></td>
+</tr>
+<tr class="row-even"><td><p>OBC-DVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>ObservingConditions</p></td>
+<td><p>DriverVersion</p></td>
+<td><p>ObservingConditions driver version</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>SAF-DNAM</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>SafetyMonitor</p></td>
+<td><p>Name</p></td>
+<td><p>Name of SafetyMonitor driver</p></td>
+</tr>
+<tr class="row-odd"><td><p>SAF-DVER</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>SafetyMonitor</p></td>
+<td><p>DriverVersion</p></td>
+<td><p>SafetyMonitor driver version</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>JD-OBS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Julian Date at start of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>HJD-OBS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Heliocentric Julian Date at start of exposure</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJD-OBS</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Barycentric Julian Date at start of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>JD-END</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Julian Date at end of exposure</p></td>
+</tr>
+<tr class="row-odd"><td><p>MJD-END</p></td>
+<td><p>float</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Modified Julian Date at end of exposure</p></td>
+</tr>
+<tr class="row-even"><td><p>DATE-END</p></td>
+<td><p>str</p></td>
+<td><p>false</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>UTC datetime at end of exposure</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>ASTRA</p></td>
+<td><p>str</p></td>
+<td><p>true</p></td>
+<td><p>astra</p></td>
+<td></td>
+<td><p>Version of Astra</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="how-fits-headers-are-created">
+<h2>How FITS Headers Are Created<a class="headerlink" href="#how-fits-headers-are-created" title="Link to this heading">#</a></h2>
+<p><em>Astra</em> creates FITS headers in two stages to ensure complete and accurate metadata:</p>
+<section id="base-headers-at-the-beginning-of-an-imaging-sequence">
+<h3>1. Base Headers (at the beginning of an imaging sequence)<a class="headerlink" href="#base-headers-at-the-beginning-of-an-imaging-sequence" title="Link to this heading">#</a></h3>
+<p>When an imaging sequence begins, <em>Astra</em> immediately creates an initial FITS header containing (if <code class="docutils literal notranslate"><span class="pre">fixed=true</span></code> in the FITS configuration), such as:</p>
+<ul class="simple">
+<li><p><strong>Observatory information:</strong> Site name, coordinates</p></li>
+<li><p><strong>Telescope properties:</strong> Aperture diameter, area, focal length</p></li>
+<li><p><strong>Observation metadata:</strong> Object name, exposure time, image type placeholders</p></li>
+<li><p><strong>Software information:</strong> <em>Astra</em> version number</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">IMAGETYP</span></code> changes dynamically based on the imaging sequence (e.g., ‘Light Frame’, ‘Dark Frame’, ‘Bias Frame’, ‘Flat Frame’).</p>
+</section>
+<section id="final-headers-after-schedule-ends">
+<h3>2. Final Headers (after schedule ends)<a class="headerlink" href="#final-headers-after-schedule-ends" title="Link to this heading">#</a></h3>
+<p>After an imaging sequence, <em>Astra</em> completes any missing header values:</p>
+<ul class="simple">
+<li><p>Identifies images with incomplete headers</p></li>
+<li><p>Retrieves device polling data from ±10 seconds around each exposure time (stored in the local SQLite database)</p></li>
+<li><p>Interpolates device readings (e.g. ambient temperature, focus position, etc.) to match exposure timestamps</p></li>
+<li><p>Updates FITS files in place while preserving original header structure</p></li>
+<li><p>Adds calculated values such as:</p>
+<ul>
+<li><p>Various time scales and reference frames</p></li>
+<li><p>Derived parameters like airmass</p></li>
+<li><p>Checksum and datasum values</p></li>
+</ul>
+</li>
+</ul>
+<p>This two-stage approach ensures headers contain accurate, time-synchronized metadata, while minimising time loss between exposures.</p>
+</section>
+</section>
+<section id="customizing-fits-headers">
+<h2>Customizing FITS Headers<a class="headerlink" href="#customizing-fits-headers" title="Link to this heading">#</a></h2>
+<p>You can customize the FITS headers by modifying the CSV configuration file:</p>
+<ul class="simple">
+<li><p><strong>Adding headers:</strong> Add new rows to include additional metadata</p></li>
+<li><p><strong>Removing headers:</strong> Delete rows to exclude certain keywords</p></li>
+<li><p><strong>Timing control:</strong> Set <code class="docutils literal notranslate"><span class="pre">fixed=True</span></code> for immediate values, <code class="docutils literal notranslate"><span class="pre">fixed=False</span></code> for post-exposure interpolated values</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="observatory_configuration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Observatory Configuration</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="scheduling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Scheduling Syntax</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-file-format">Configuration File Format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-configuration">Example Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-fits-headers-are-created">How FITS Headers Are Created</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-headers-at-the-beginning-of-an-imaging-sequence">1. Base Headers (at the beginning of an imaging sequence)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-headers-after-schedule-ends">2. Final Headers (after schedule ends)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#customizing-fits-headers">Customizing FITS Headers</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,803 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.logger &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/logger';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.logger</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Custom logging handler for observatory operations with database storage.</span>
+
+<span class="sd">This module provides a specialized logging handler that extends Python&#39;s standard</span>
+<span class="sd">logging.Handler to provide dual-output logging: console display and database storage.</span>
+<span class="sd">It&#39;s designed specifically for observatory automation systems where logging events</span>
+<span class="sd">need to be both immediately visible and persistently stored for analysis.</span>
+
+<span class="sd">Key features:</span>
+<span class="sd">    - Dual logging output (console and database)</span>
+<span class="sd">    - Error state tracking for the parent instance</span>
+<span class="sd">    - Automatic timestamp formatting with microsecond precision</span>
+<span class="sd">    - Exception and stack trace capture</span>
+<span class="sd">    - SQL injection protection through quote escaping</span>
+<span class="sd">    - UTC timezone standardization</span>
+
+<span class="sd">The handler is particularly useful for long-running observatory operations where:</span>
+<span class="sd">    - Real-time monitoring of system status is required</span>
+<span class="sd">    - Historical log analysis is needed for debugging</span>
+<span class="sd">    - Error states need to be tracked at the instance level</span>
+<span class="sd">    - Database queries on log data are necessary</span>
+
+<span class="sd">Typical usage:</span>
+<span class="sd">    &gt;&gt;&gt; from astra.logger import ObservatoryLogger, DatabaseLoggingHandler</span>
+<span class="sd">    &gt;&gt;&gt; from astra.database_manager import DatabaseManager</span>
+<span class="sd">    &gt;&gt;&gt; observatory_name = &#39;MyObservatory&#39;</span>
+<span class="sd">    &gt;&gt;&gt; db_manager = DatabaseManager(observatory_name)</span>
+<span class="sd">    &gt;&gt;&gt; logger = ObservatoryLogger(observatory_name)</span>
+<span class="sd">    &gt;&gt;&gt; logger.addHandler(DatabaseLoggingHandler(db_manager))</span>
+
+
+<span class="sd">Note:</span>
+<span class="sd">    The handler expects the instance to have &#39;error_free&#39; attribute and &#39;cursor&#39; attribute.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Protocol</span>
+
+
+<div class="viewcode-block" id="DatabaseManagerProtocol">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.DatabaseManagerProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseManagerProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<div class="viewcode-block" id="DatabaseManagerProtocol.execute">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.DatabaseManagerProtocol.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ObservatoryLogger">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ObservatoryLogger">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ObservatoryLogger</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom logger for observatory operations with error tracking.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        error_source (list): List to track sources of errors.</span>
+<span class="sd">        error_free (bool): Flag indicating if the logger has encountered errors.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_source</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">error_free</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_source</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">error_source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">error_source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_free</span> <span class="o">=</span> <span class="n">error_free</span>
+
+<div class="viewcode-block" id="ObservatoryLogger.error">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ObservatoryLogger.error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Overrides logging.Logger.error to set error_free to False.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_free</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryLogger.critical">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ObservatoryLogger.critical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Overrides logging.Logger.critical to set error_free to False.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_free</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryLogger.report_device_issue">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ObservatoryLogger.report_device_issue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report_device_issue</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exc_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Logs device-specific issues and tracks error sources.&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">device_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;. Exception: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_source</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;device_type&quot;</span><span class="p">:</span> <span class="n">device_type</span><span class="p">,</span> <span class="s2">&quot;device_name&quot;</span><span class="p">:</span> <span class="n">device_name</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc_info</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DatabaseLoggingHandler">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.DatabaseLoggingHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseLoggingHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom logging handler for dual-output to console and database.</span>
+
+<span class="sd">    Extends Python&#39;s standard logging.Handler to provide specialized logging</span>
+<span class="sd">    for observatory automation systems. Simultaneously outputs log messages</span>
+<span class="sd">    to console for real-time monitoring and stores them in database for</span>
+<span class="sd">    persistent storage and analysis.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        database_manager (DatabaseManager): Instance managing database operations,</span>
+<span class="sd">            specifically database_manager.execute.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_manager</span><span class="p">:</span> <span class="n">DatabaseManagerProtocol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span> <span class="o">=</span> <span class="n">database_manager</span>
+
+<div class="viewcode-block" id="DatabaseLoggingHandler.emit">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.DatabaseLoggingHandler.emit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process and emit a log record to console and database.</span>
+
+<span class="sd">        This method is called automatically by the logging framework when a log</span>
+<span class="sd">        message is generated. It formats the record for console output, tracks</span>
+<span class="sd">        error states in the parent instance, and stores the record in the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record: The log record to be processed and emitted.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If the log level is ERROR or higher, sets instance.error_free to False.</span>
+<span class="sd">            All log records are stored in the &#39;log&#39; database table with timestamp,</span>
+<span class="sd">            level, module, function, line number, and message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt_str</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">stack_info</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">record</span><span class="o">.</span><span class="n">stack_info</span>
+
+        <span class="c1"># make message safe for sql</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;INSERT INTO log VALUES (&#39;</span><span class="si">{</span><span class="n">dt_str</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to log to database: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConsoleStreamHandler">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ConsoleStreamHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConsoleStreamHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_traceback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">CustomFormatter</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_traceback</span> <span class="o">=</span> <span class="n">log_traceback</span>
+
+<div class="viewcode-block" id="ConsoleStreamHandler.emit">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ConsoleStreamHandler.emit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminator</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stream closed. Log: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handleError</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleStreamHandler.attach">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.ConsoleStreamHandler.attach">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attach</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="n">propagate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">remove_other_handlers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure a `ConsoleStreamHandler` is attached to `logger`.</span>
+
+<span class="sd">        This convenience classmethod ensures that the given ``logger`` has a</span>
+<span class="sd">        `ConsoleStreamHandler` attached configured at the requested ``level``.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            - logger: Logger to configure.</span>
+<span class="sd">            - level: Logging level to set on the logger and handler (default</span>
+<span class="sd">                ``logging.INFO``).</span>
+<span class="sd">            - propagate: Whether log records should propagate to ancestor loggers.</span>
+<span class="sd">            - remove_other_handlers: If True, remove non-console handlers from ``logger``</span>
+<span class="sd">                before adding the console handler.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            This method intentionally does not attach handlers to the root</span>
+<span class="sd">            logger to avoid interfering with other frameworks (for example,</span>
+<span class="sd">            Uvicorn&#39;s logging configuration).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">remove_other_handlers</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">ConsoleStreamHandler</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">ConsoleStreamHandler</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+            <span class="n">console_handler</span> <span class="o">=</span> <span class="n">ConsoleStreamHandler</span><span class="p">()</span>
+            <span class="n">console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="n">propagate</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FileHandler">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.FileHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2">,</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2">,</span><span class="si">%(process)d</span><span class="s2">,</span><span class="si">%(name)s</span><span class="s2">,(</span><span class="si">%(filename)s</span><span class="s2">:</span><span class="si">%(lineno)d</span><span class="s2">),</span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+    <span class="n">DATEFMT</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">log_traceback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_traceback</span> <span class="o">=</span> <span class="n">log_traceback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATEFMT</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileHandler.emit">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.FileHandler.emit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminator</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stream closed. Log: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handleError</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CustomFormatter">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.CustomFormatter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A custom logging formatter that allows customizable formatting and color-coded output.</span>
+
+<span class="sd">    Uses ANSI escape codes to colorize log messages based on their severity level,</span>
+<span class="sd">    if the console supports it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fmt : str, optional</span>
+<span class="sd">        The log message format. Defaults to &#39;%(asctime)s :: %(levelname)-8s :: %(message)s&#39;.</span>
+<span class="sd">    datefmt : str, optional</span>
+<span class="sd">        The date format for log timestamps. Defaults to &#39;%H:%M:%S&#39;.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grey : str</span>
+<span class="sd">        ANSI escape code for grey text.</span>
+<span class="sd">    green : str</span>
+<span class="sd">        ANSI escape code for green text.</span>
+<span class="sd">    yellow : str</span>
+<span class="sd">        ANSI escape code for yellow text.</span>
+<span class="sd">    red : str</span>
+<span class="sd">        ANSI escape code for red text.</span>
+<span class="sd">    bold_red : str</span>
+<span class="sd">        ANSI escape code for bold red text.</span>
+<span class="sd">    reset : str</span>
+<span class="sd">        ANSI escape code to reset text formatting.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    format(record)</span>
+<span class="sd">        Format the log record according to the specified log level&#39;s formatting.</span>
+
+<span class="sd">    Usage</span>
+<span class="sd">    -----</span>
+<span class="sd">    formatter = CustomFormatter(fmt=&#39;%(asctime)s - %(levelname)s - %(message)s&#39;, datefmt=&#39;%Y-%m-%d %H:%M:%S&#39;)</span>
+<span class="sd">    handler = logging.StreamHandler()</span>
+<span class="sd">    handler.setFormatter(formatter)</span>
+<span class="sd">    logger.addHandler(handler)</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The ANSI escape codes are used to colorize the output text in supported terminals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">grey</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[38;20m&quot;</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[32;20m&quot;</span>
+    <span class="n">yellow</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[33;20m&quot;</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[31;20m&quot;</span>
+    <span class="n">bold_red</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[31;1m&quot;</span>
+    <span class="n">reset</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[0m&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_console_supports_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_all_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">color</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_type_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">color</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(levelname)-8s</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span> <span class="o">+</span> <span class="s2">&quot;:: </span><span class="si">%(asctime)s</span><span class="s2"> :: </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_type_and_message_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">color</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(levelname)-8s</span><span class="s2"> &quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span>
+            <span class="o">+</span> <span class="s2">&quot;:: </span><span class="si">%(asctime)s</span><span class="s2"> :: &quot;</span>
+            <span class="o">+</span> <span class="n">color</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">datefmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(levelname)-8s</span><span class="s2"> :: </span><span class="si">%(asctime)s</span><span class="s2"> :: </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">datefmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span> <span class="o">=</span> <span class="n">fmt</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_console_supports_colors</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grey</span><span class="p">),</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">green</span><span class="p">),</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_and_message_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yellow</span><span class="p">),</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type_and_message_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">red</span><span class="p">),</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bold_red</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span><span class="p">,</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_format</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">datefmt</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomFormatter.format">
+<a class="viewcode-back" href="../../api/generated/astra.logger.html#astra.logger.CustomFormatter.format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the log record according to the specified log level&#39;s formatting.&quot;&quot;&quot;</span>
+        <span class="n">log_fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FORMATS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">levelno</span><span class="p">)</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">log_fmt</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datefmt</span><span class="p">)</span>
+
+        <span class="c1"># Temporarily hide exc_info so base Formatter does not append it automatically</span>
+        <span class="n">exc_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">&quot;exc_info&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">exc_text</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">&quot;exc_text&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">exc_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">exc_text</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">exc_info</span> <span class="o">=</span> <span class="n">exc_info</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">exc_text</span> <span class="o">=</span> <span class="n">exc_text</span>
+
+        <span class="c1"># If error or critical, append traceback if present</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">exc_info</span>
+            <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">levelno</span> <span class="o">&gt;=</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc_info</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">exc_info</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg_contains_tb</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tb_marker</span> <span class="o">=</span> <span class="s2">&quot;Traceback (most recent call last):&quot;</span>
+            <span class="c1"># inspect both the already-formatted string and the original message</span>
+            <span class="k">if</span> <span class="n">tb_marker</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tb_marker</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span>
+            <span class="p">):</span>
+                <span class="n">msg_contains_tb</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># also detect common library prefixes (requests/urllib3)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">msg_contains_tb</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;requests.exceptions&quot;</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span> <span class="ow">or</span> <span class="s2">&quot;urllib3&quot;</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">msg_contains_tb</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msg_contains_tb</span><span class="p">:</span>
+                <span class="n">traceback_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">35</span>
+                    <span class="o">+</span> <span class="s2">&quot;TRACEBACK&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">36</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="o">*</span><span class="n">exc_info</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_console_supports_colors</span><span class="p">():</span>
+                    <span class="n">traceback_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">red</span> <span class="o">+</span> <span class="n">traceback_msg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">traceback_msg</span> <span class="k">if</span> <span class="n">exc_info</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">msg_contains_tb</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">s</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

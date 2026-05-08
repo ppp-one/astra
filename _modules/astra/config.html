@@ -1,0 +1,1311 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.config &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/config';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Configuration management for the Astra observatory automation system.</span>
+
+<span class="sd">This module provides configuration classes for managing Astra settings,</span>
+<span class="sd">observatory configurations, and asset paths. It handles YAML configuration</span>
+<span class="sd">files, directory initialization, and exposes a singleton `Config` for</span>
+<span class="sd">global configuration access.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">filecmp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ruamel.yaml</span><span class="w"> </span><span class="kn">import</span> <span class="n">YAML</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Colors</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ANSI color codes for CLI output.&quot;&quot;&quot;</span>
+
+    <span class="n">BLUE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span>
+    <span class="n">CYAN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span>
+    <span class="n">GREEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span>
+    <span class="n">YELLOW</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span>
+    <span class="n">RED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span>
+    <span class="n">BOLD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1m&quot;</span>
+    <span class="n">RESET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">colorize</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply color to text if output device is a terminal.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="n">_Colors</span><span class="o">.</span><span class="n">RESET</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.Config">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Singleton class for managing Astra&#39;s configuration settings.</span>
+
+<span class="sd">    This class loads configuration settings from a YAML file and provides</span>
+<span class="sd">    methods to access and modify these settings. It ensures that only one</span>
+<span class="sd">    instance of the configuration is created throughout the application.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        observatory_name (str): The name of the observatory.</span>
+<span class="sd">        folder_assets (Path): The path to the folder containing assets.</span>
+<span class="sd">        gaia_db (Path): The path to the Gaia database</span>
+<span class="sd">        paths (AssetPaths): An instance of AssetPaths containing paths to asset</span>
+<span class="sd">            folders and log file.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        If no configuration file is found, the user is prompted to provide</span>
+<span class="sd">        the necessary information during initialization of the Config object.</span>
+<span class="sd">        The configuration file is saved and the necessary files and folders</span>
+<span class="sd">        are created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The path to the configuration YAML file.&quot;&quot;&quot;</span>
+    <span class="n">CONFIG_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.astra&quot;</span> <span class="o">/</span> <span class="s2">&quot;astra_config.yml&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The path to the directory containing template files.&quot;&quot;&quot;</span>
+    <span class="n">TEMPLATE_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;config&quot;</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The format used for datetime strings.&quot;&quot;&quot;</span>
+    <span class="n">TIME_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+    <span class="n">_instance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Config.__new__">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.Config.__new__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Config&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure singleton pattern - only one Config instance exists.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">folder_assets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gaia_db</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">propagate_observatory_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">reset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the configuration settings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            observatory_name (str): The name of the observatory.</span>
+<span class="sd">            folder_assets (Path | str): The path to the folder containing assets.</span>
+<span class="sd">            gaia_db (Path | str): The path to the Gaia database.</span>
+<span class="sd">            allow_default (bool): Whether to raise a SystemExit</span>
+<span class="sd">                if observatory configuration files were left unchanged.</span>
+<span class="sd">            propagate_observatory_name (bool): Whether to automatically modify</span>
+<span class="sd">                the observatory config files by substituting the observatory name.</span>
+<span class="sd">                Mainly useful for testing.</span>
+<span class="sd">            reset (bool): If True, resets the configuration by deleting the config</span>
+<span class="sd">                file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># Fast-path check without lock</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">observatory_name</span><span class="p">,</span> <span class="n">folder_assets</span><span class="p">,</span> <span class="n">gaia_db</span><span class="p">)</span>
+
+            <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_file</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;observatory_name&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;folder_assets&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gaia_db</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;gaia_db&quot;</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">AssetPaths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">,</span> <span class="n">AssetPaths</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected AssetPaths, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_observatory_files</span><span class="p">(</span>
+                <span class="n">allow_default</span><span class="o">=</span><span class="n">allow_default</span><span class="p">,</span>
+                <span class="n">propagate_observatory_name</span><span class="o">=</span><span class="n">propagate_observatory_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observatory_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ObservatoryConfig&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the observatory configuration.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ObservatoryConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Config.reset">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.Config.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove_assets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset configuration by removing config file and optionally assets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            remove_assets: If True, also removes the assets folder after confirmation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">remove_assets</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Are you sure you want to remove </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="si">}</span><span class="s2">? [y/n]: &quot;</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">prompt</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="o">.</span><span class="n">rmdir</span><span class="p">()</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_success</span><span class="p">(</span><span class="s2">&quot;Removed assets folder.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+            <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_success</span><span class="p">(</span><span class="s2">&quot;Removed config file.&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s2">&quot;Astra base config has been reset.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reset_singleton</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset of the Config singleton.</span>
+
+<span class="sd">        For testing only.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Config.save">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.Config.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save current configuration settings to YAML file.&quot;&quot;&quot;</span>
+
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_validate_paths</span><span class="p">(</span>
+            <span class="n">folder_assets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="p">,</span> <span class="n">gaia_db</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gaia_db</span>
+        <span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;folder_assets&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="p">),</span>
+            <span class="s2">&quot;gaia_db&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gaia_db</span><span class="p">),</span>
+            <span class="s2">&quot;observatory_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Config.as_datetime">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.Config.as_datetime">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert string to datetime using configured format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            date_string: Date string to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            datetime: Parsed datetime object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TIME_FORMAT</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load configuration from YAML file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Configuration data from file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">config</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_observatory_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">allow_default</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">propagate_observatory_name</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize observatory configuration files from templates.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE_DIR</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Template directory </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE_DIR</span><span class="si">}</span><span class="s2"> not found.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">unchanged_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">allowed_suffixes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;.py&quot;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">template_file</span> <span class="ow">in</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE_DIR</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">template_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">template_file</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_suffixes</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">target_file</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">custom_observatories</span> <span class="o">/</span> <span class="n">template_file</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">template_file</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.py&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">observatory_config</span>
+                <span class="o">/</span> <span class="n">template_file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;observatory&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">target_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">target_file</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">template_file</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">target_file</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">propagate_observatory_name</span>
+                <span class="ow">and</span> <span class="n">target_file</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="n">unchanged_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">propagate_observatory_name</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modify_observatory_config_files</span><span class="p">(</span>
+                    <span class="n">target_file</span><span class="p">,</span>
+                    <span class="p">[</span><span class="s2">&quot;observatoryname&quot;</span><span class="p">,</span> <span class="s2">&quot;ORIGIN&quot;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">],</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">unchanged_files</span><span class="p">:</span>
+            <span class="n">message_1</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Warning: Observatory config files have not been modified &quot;</span>
+                <span class="s2">&quot;from default templates.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">allow_default</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">message_1</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message_2</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Please update your observatory configuration files located in:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">observatory_config</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unchanged files: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unchanged_files</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">exit_message</span> <span class="o">=</span> <span class="s2">&quot;Exiting until observatory configuration is updated.&quot;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">message_1</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">message_2</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">exit_message</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">RED</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_modify_observatory_config_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">old_strings</span><span class="o">=</span><span class="p">[],</span> <span class="n">new_strings</span><span class="o">=</span><span class="p">[]</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify default template files by substituting specified strings.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">old_string</span><span class="p">,</span> <span class="n">new_string</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">old_strings</span><span class="p">,</span> <span class="n">new_strings</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?&lt;!\n)&quot;</span> <span class="o">+</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">old_string</span><span class="p">),</span> <span class="n">new_string</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Config(</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  folder_assets=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_assets</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  gaia_db=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gaia_db</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  observatory_name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  paths=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;)&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AssetPaths">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.AssetPaths">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AssetPaths</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for asset directory paths and log file used by Astra.</span>
+
+<span class="sd">    Manages the creation and organization of Astra&#39;s asset directories</span>
+<span class="sd">    including configuration, schedules, images, and logs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_assets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create AssetPaths and ensure on-disk folders and log file exist.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            folder_assets (Path | str): Base path for Astra assets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">folder_assets</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assets</span> <span class="o">=</span> <span class="n">folder_assets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_observatories</span> <span class="o">=</span> <span class="n">folder_assets</span> <span class="o">/</span> <span class="s2">&quot;custom_observatories&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span> <span class="o">=</span> <span class="n">folder_assets</span> <span class="o">/</span> <span class="s2">&quot;observatory_config&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span> <span class="o">=</span> <span class="n">folder_assets</span> <span class="o">/</span> <span class="s2">&quot;schedules&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">folder_assets</span> <span class="o">/</span> <span class="s2">&quot;images&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">=</span> <span class="n">folder_assets</span> <span class="o">/</span> <span class="s2">&quot;logs&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">/</span> <span class="s2">&quot;astra.log&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_folders_and_log_file</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AssetPaths.archive_log_file">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.AssetPaths.archive_log_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">archive_log_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Archive the current log file with a timestamp.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">first_line</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d</span><span class="si">{4}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2">-\d</span><span class="si">{2}</span><span class="s2"> \d</span><span class="si">{2}</span><span class="s2">:\d</span><span class="si">{2}</span><span class="s2">:\d</span><span class="si">{2}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">first_line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+
+        <span class="n">archive_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">/</span> <span class="s2">&quot;archive&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">_astra.log&quot;</span>
+        <span class="n">archive_file_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">archive_file_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_folders_and_log_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create necessary folders and the log file if they do not exist.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">custom_observatories</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created folder </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">GREEN</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AssetPaths(assets=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;AssetPaths(</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  assets=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  custom_observatories=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_observatories</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  observatory_config=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_config</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  schedules=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">schedules</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  logs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  images=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  log_file=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;)&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ConfigInitialiser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class for initial configuration setup through user prompts.</span>
+
+<span class="sd">    Handles the first-time setup process including directory creation,</span>
+<span class="sd">    user input validation, and initial configuration file generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">DEFAULT_ASSETS_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;Documents&quot;</span> <span class="o">/</span> <span class="s2">&quot;Astra&quot;</span>
+
+    <span class="c1"># Gaia database options with magnitude cuts</span>
+    <span class="n">GAIA_DB_OPTIONS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;144&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;766.0 kB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;650&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;766.0 kB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;2K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;766.0 kB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;6K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;766.0 kB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;5&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;18K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;6&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;58K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;4.5 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;7&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;160K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;10.8 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;8&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;426K&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;26.8 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;9&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;1M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;67.2 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;3M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;172.3 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;11&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;7M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;425.2 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;12&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;16M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;987.6 MB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;13&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;36M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2 GB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;14&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;79M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;4.8 GB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;15&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;161M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;9.8 GB&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;16&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;records&quot;</span><span class="p">:</span> <span class="s2">&quot;297M&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;18.1 GB&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+    <span class="n">GAIA_ZENODO_RECORD</span> <span class="o">=</span> <span class="s2">&quot;18214672&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_header</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">BLUE</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">title</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">60</span><span class="p">),</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">BOLD</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">BLUE</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_success</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">GREEN</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_error</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">RED</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cinput</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">input</span><span class="p">(</span><span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">CYAN</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+        <span class="n">observatory_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">folder_assets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span>
+        <span class="n">gaia_db</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create initial configuration through user prompts.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            observatory_name: Name of the observatory.</span>
+<span class="sd">            folder_assets: Path to assets folder.</span>
+<span class="sd">            gaia_db: Path to Gaia database file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s2">&quot;Welcome to Astra Configuration&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">observatory_name</span><span class="p">,</span> <span class="n">folder_assets</span><span class="p">,</span> <span class="n">gaia_db</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Please provide the following information to set up your observatory.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_validate_paths</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">,</span> <span class="n">gaia_db</span><span class="p">)</span>
+        <span class="n">Config</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">folder_assets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">folder_assets</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_prompt_assets_path</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">gaia_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gaia_db</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_prompt_gaia_db_path</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">observatory_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">observatory_name</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                <span class="s2">&quot;Please enter the name of the observatory: &quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;folder_assets&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">),</span>
+            <span class="s2">&quot;gaia_db&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gaia_db</span><span class="p">),</span>
+            <span class="s2">&quot;observatory_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">observatory_name</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_success</span><span class="p">(</span><span class="s2">&quot;Configuration file created successfully.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompt_assets_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prompt user for assets folder location.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path: Validated path to assets folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">use_default</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Use default assets path (</span><span class="si">{</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">DEFAULT_ASSETS_PATH</span><span class="si">}</span><span class="s2">)? [y/n]: &quot;</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">use_default</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">DEFAULT_ASSETS_PATH</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">use_default</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+                <span class="n">custom_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+                    <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                        <span class="s2">&quot;Please enter the desired path: &quot;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">custom_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="n">custom_path</span>
+                <span class="n">create_path</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                        <span class="s2">&quot;Path does not exist. Do you want to create it? [y/n]: &quot;</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">create_path</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                    <span class="n">custom_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">custom_path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_error</span><span class="p">(</span><span class="s2">&quot;Please enter &#39;y&#39; or &#39;n&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompt_gaia_db_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prompt user for Gaia database location with download option.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str or None: Path to Gaia database file or None if not using local DB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s2">&quot;Gaia Database Configuration&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Gaia-2MASS catalog enables offline plate solving and&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;autofocus field selection. Choose a magnitude cut based on&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;your needs (higher = more stars, larger file).</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">use_gaia</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span><span class="s2">&quot;Use Gaia database? [y/n]: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">use_gaia</span> <span class="o">!=</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Check common locations for existing database</span>
+        <span class="n">search_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">(),</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;Downloads&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()]</span>
+        <span class="n">common_paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">search_dirs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">common_paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;gaia_tmass_*_jm_cut.db&quot;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">common_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_success</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Found existing Gaia database at: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">use_existing</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span><span class="s2">&quot;Use this database? [y/n]: &quot;</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">use_existing</span> <span class="o">!=</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Offer download or manual path</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Options:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  1. Download Gaia database now (choose magnitude cut)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  2. I already have it (enter path)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  3. Skip for now (can add later in config)&quot;</span><span class="p">)</span>
+
+        <span class="n">choice</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Select option [1/2/3]: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_download_gaia_db</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                    <span class="s2">&quot;Enter path to Gaia database: &quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="k">return</span> <span class="n">path</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Skipping Gaia database setup.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You can download it later from:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://zenodo.org/records/</span><span class="si">{</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_ZENODO_RECORD</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_download_gaia_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download Gaia database from Zenodo with user-selected magnitude cut.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Path to downloaded database file, or empty string if failed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s2">&quot;Select Gaia Database Magnitude Cut&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Magnitude Cut | Stars       | File Size&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">mag_cut</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_DB_OPTIONS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;      </span><span class="si">{</span><span class="n">mag_cut</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2">      | </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;13</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Recommendation: Magnitude 16 for most coverage&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;                Magnitude 10-15 for most small-medium setups&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;                Magnitude 1-9 for testing</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">choice</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                <span class="s2">&quot;Select magnitude cut [1-16] or &#39;c&#39; to cancel: &quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="k">if</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_DB_OPTIONS</span><span class="p">:</span>
+                <span class="n">mag_cut</span> <span class="o">=</span> <span class="n">choice</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_error</span><span class="p">(</span>
+                    <span class="s2">&quot;Invalid choice. Please enter a number between 1-16.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Construct download URL and filename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;gaia_tmass_</span><span class="si">{</span><span class="n">mag_cut</span><span class="si">}</span><span class="s2">_jm_cut.db&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://zenodo.org/records/</span><span class="si">{</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_ZENODO_RECORD</span><span class="si">}</span><span class="s2">/files/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">?download=1&quot;</span>
+
+        <span class="c1"># Determine download path</span>
+        <span class="n">default_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">path_input</span> <span class="o">=</span> <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Download filepath [</span><span class="si">{</span><span class="n">default_path</span><span class="si">}</span><span class="s2">]: &quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">path_input</span> <span class="k">else</span> <span class="n">default_path</span>
+
+        <span class="c1"># Check if file already exists</span>
+        <span class="k">if</span> <span class="n">download_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">overwrite</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_cinput</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">File exists at </span><span class="si">{</span><span class="n">download_path</span><span class="si">}</span><span class="s2">. Overwrite? [y/n]: &quot;</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">overwrite</span> <span class="o">!=</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+
+        <span class="c1"># Perform download</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Downloading magnitude </span><span class="si">{</span><span class="n">mag_cut</span><span class="si">}</span><span class="s2"> database (</span><span class="si">{</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_DB_OPTIONS</span><span class="p">[</span><span class="n">mag_cut</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)...&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Destination: </span><span class="si">{</span><span class="n">download_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">_progress_hook</span><span class="p">(</span><span class="n">block_num</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="n">total_size</span><span class="p">):</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Display download progress.&quot;&quot;&quot;</span>
+                <span class="n">downloaded</span> <span class="o">=</span> <span class="n">block_num</span> <span class="o">*</span> <span class="n">block_size</span>
+                <span class="k">if</span> <span class="n">total_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">percent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="n">downloaded</span> <span class="o">/</span> <span class="n">total_size</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+                    <span class="n">bar_length</span> <span class="o">=</span> <span class="mi">40</span>
+                    <span class="n">filled</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bar_length</span> <span class="o">*</span> <span class="n">downloaded</span> <span class="o">/</span> <span class="n">total_size</span><span class="p">)</span>
+                    <span class="n">bar</span> <span class="o">=</span> <span class="s2">&quot;█&quot;</span> <span class="o">*</span> <span class="n">filled</span> <span class="o">+</span> <span class="s2">&quot;░&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">bar_length</span> <span class="o">-</span> <span class="n">filled</span><span class="p">)</span>
+
+                    <span class="c1"># Convert bytes to human readable</span>
+                    <span class="k">def</span><span class="w"> </span><span class="nf">human_size</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">,</span> <span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="nb">bytes</span> <span class="o">&lt;</span> <span class="mi">1024</span><span class="p">:</span>
+                                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">bytes</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="nb">bytes</span> <span class="o">/=</span> <span class="mi">1024</span>
+                        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">bytes</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> TB&quot;</span>
+
+                    <span class="c1"># Colorize progress bar</span>
+                    <span class="n">colored_bar</span> <span class="o">=</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">_Colors</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">[</span><span class="si">{</span><span class="n">colored_bar</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">percent</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% (</span><span class="si">{</span><span class="n">human_size</span><span class="p">(</span><span class="n">downloaded</span><span class="p">)</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">human_size</span><span class="p">(</span><span class="n">total_size</span><span class="p">)</span><span class="si">}</span><span class="s2">)   &quot;</span><span class="p">,</span>
+                        <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Create parent directory if needed</span>
+            <span class="n">download_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Download with progress</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">download_path</span><span class="p">,</span> <span class="n">reporthook</span><span class="o">=</span><span class="n">_progress_hook</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>  <span class="c1"># New line after progress bar</span>
+
+            <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Download complete: </span><span class="si">{</span><span class="n">download_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">_print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Download failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">You can download manually from:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://zenodo.org/records/</span><span class="si">{</span><span class="n">_ConfigInitialiser</span><span class="o">.</span><span class="n">GAIA_ZENODO_RECORD</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_paths</span><span class="p">(</span>
+        <span class="n">folder_assets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span> <span class="n">gaia_db</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate user-provided path arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            folder_assets: Path to assets folder.</span>
+<span class="sd">            gaia_db: Path to Gaia database file.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If paths are not str or Path types.</span>
+<span class="sd">            FileNotFoundError: If gaia_db path doesn&#39;t exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">folder_assets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected str or Path, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">folder_assets</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gaia_db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gaia_db</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected str or Path, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">gaia_db</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gaia_db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">gaia_db</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">gaia_db</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ObservatoryConfig">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ObservatoryConfig</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observatory-specific configuration management with YAML persistence.</span>
+
+<span class="sd">    Extends dict to provide configuration loading, saving, backup creation,</span>
+<span class="sd">    and automatic reload detection for observatory configuration files.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from astra.config import ObservatoryConfig</span>
+<span class="sd">        &gt;&gt;&gt; observatory_config = ObservatoryConfig.from_config()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">observatory_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">config_path</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">observatory_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config_last_modified</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Store CommentedMap to preserve comments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get path to the observatory configuration YAML file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="si">}</span><span class="s2">_config.yml&quot;</span>
+
+<div class="viewcode-block" id="ObservatoryConfig.load">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.load">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load observatory configuration from YAML file.</span>
+
+<span class="sd">        Uses ruamel.yaml to preserve comments and structure for later saving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">yaml_reader</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+        <span class="n">yaml_reader</span><span class="o">.</span><span class="n">preserve_quotes</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">yaml_reader</span><span class="o">.</span><span class="n">map_indent</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">yaml_reader</span><span class="o">.</span><span class="n">sequence_indent</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span> <span class="o">=</span> <span class="n">yaml_reader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="c1"># Update dict contents with the loaded data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config_last_modified</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.reload">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.reload">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ObservatoryConfig&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reload configuration if file has been modified.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ObservatoryConfig: Self for method chaining.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_outdated</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.save">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save configuration to YAML file with automatic backup.</span>
+
+<span class="sd">        Uses ruamel.yaml to preserve comments, structure, and formatting</span>
+<span class="sd">        from the original file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Optional custom save path, defaults to original file path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="k">if</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">file_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_backup</span><span class="p">()</span>
+
+        <span class="n">yaml_writer</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">preserve_quotes</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">default_flow_style</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">map_indent</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">sequence_indent</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">sequence_dash_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">yaml_writer</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">4096</span>
+
+        <span class="c1"># If we have the original CommentedMap, update it to preserve comments</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deep_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">data_to_save</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fallback if no CommentedMap (shouldn&#39;t happen in normal use)</span>
+            <span class="n">data_to_save</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">yaml_writer</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_to_save</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.save_backup">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.save_backup">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create timestamped backup of current configuration file.&quot;&quot;&quot;</span>
+        <span class="n">backup_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backup_file_path</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_deep_update</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deep update target dict with source dict values.</span>
+
+<span class="sd">        Preserves ruamel.yaml CommentedMap structure and comments while updating values.</span>
+<span class="sd">        Only updates existing keys or adds new ones; doesn&#39;t remove keys from target.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target: Dictionary to update (modified in place, preserves CommentedMap).</span>
+<span class="sd">            source: Dictionary with new values to merge in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">target</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="c1"># Recursively update nested dictionaries</span>
+                <span class="n">ObservatoryConfig</span><span class="o">.</span><span class="n">_deep_update</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Update or add the value</span>
+                <span class="n">target</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="ObservatoryConfig.backup_file_path">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.backup_file_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backup_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datetime_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get backup file path with timestamp.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            datetime_str: Optional custom datetime string, defaults to current time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path: Full path to backup file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">datetime_str</span><span class="p">:</span>
+            <span class="n">datetime_str</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+        <span class="n">backup_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_path</span> <span class="o">/</span> <span class="s2">&quot;backups&quot;</span>
+        <span class="n">backup_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">backup_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="si">}</span><span class="s2">_config_backup.yml&quot;</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.is_outdated">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.is_outdated">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_outdated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if configuration file has been modified since last load.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if file has been modified externally.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_mod_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_last_modified</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">current_mod_time</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_last_modified</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.from_config">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.from_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Config</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ObservatoryConfig&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ObservatoryConfig from main Config instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: Main Config instance, creates new one if None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ObservatoryConfig: Configured instance for the observatory.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If config is not a Config instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">Config</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">Config</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected Config, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">observatory_config</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">observatory_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.load_fits_config">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.load_fits_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_fits_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the FITS header configuration for this observatory.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: DataFrame containing FITS header configuration</span>
+<span class="sd">            indexed by the ``header`` column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fits_config_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory_name</span><span class="si">}</span><span class="s2">_fits_header_config.csv&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fits_config_path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;header&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ObservatoryConfig.get_device_config">
+<a class="viewcode-back" href="../../api/generated/astra.config.html#astra.config.ObservatoryConfig.get_device_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_device_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return configuration dict for a specific device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device_type: Type of the device (e.g., &#39;Telescope&#39;, &#39;Camera&#39;).</span>
+<span class="sd">            device_name: Name of the specific device.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Configuration dictionary for the specified device, or {}</span>
+<span class="sd">                  if not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_type</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected list of devices, got dict for </span><span class="si">{</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">device_config</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">device_name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">device_config</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

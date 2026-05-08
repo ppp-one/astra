@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.calibrate_guiding &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.calibrate_guiding';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.config" href="astra.config.html" />
+    <link rel="prev" title="astra.autofocus" href="astra.autofocus.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.calibrate_guiding</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.astra_observatory"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.astra_observatory</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.action"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.action</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.paired_devices"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.paired_devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.hdr"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.hdr</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.save_path"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.save_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.pulse_time"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.pulse_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.exptime"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.exptime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.settle_time"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.settle_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.number_of_cycles"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.number_of_cycles</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.run"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.perform_calibration_cycles"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.perform_calibration_cycles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.complete_calibration_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.complete_calibration_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.save_calibration_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.save_calibration_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.update_observatory_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.update_observatory_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.calibrate_guiding">
+<span id="astra-calibrate-guiding"></span><h1>astra.calibrate_guiding<a class="headerlink" href="#module-astra.calibrate_guiding" title="Link to this heading">#</a></h1>
+<p>Guiding calibration system for telescope autoguiding setup.</p>
+<p>This module provides automated calibration of telescope guiding systems by
+measuring pixel-to-time scales and determining camera orientation relative
+to telescope mount axes. It performs systematic nudges in cardinal directions
+and analyzes the resulting star field shifts to create calibration parameters.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><p>CustomImageClass: Enhanced image processing with background subtraction
+GuidingCalibrator: Main calibration orchestrator for guiding systems</p>
+</dd>
+</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.calibrate_guiding.GuidingCalibrator" title="astra.calibrate_guiding.GuidingCalibrator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GuidingCalibrator</span></code></a>(astra_observatory, action, ...)</p></td>
+<td><p>Automated telescope guiding calibration system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.calibrate_guiding.</span></span><span class="sig-name descname"><span class="pre">GuidingCalibrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">astra_observatory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.observatory.html#astra.observatory.Observatory" title="astra.observatory.Observatory"><span class="pre">Observatory</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.image_handler.html#astra.image_handler.ImageHandler" title="astra.image_handler.ImageHandler"><span class="pre">ImageHandler</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulse_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exptime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settle_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_cycles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Automated telescope guiding calibration system.</p>
+<p>Orchestrates the complete guiding calibration process by systematically
+pulsing the telescope mount in cardinal directions and measuring the
+resulting star field shifts to determine pixel-to-time scales and
+camera orientation relative to mount axes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.astra_observatory">
+<span class="sig-name descname"><span class="pre">astra_observatory</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.astra_observatory" title="Link to this definition">#</a></dt>
+<dd><p>Observatory instance for device control.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.action">
+<span class="sig-name descname"><span class="pre">action</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.action" title="Link to this definition">#</a></dt>
+<dd><p>Action instance containing calibration information.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.paired_devices">
+<span class="sig-name descname"><span class="pre">paired_devices</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.paired_devices" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary of paired device names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.hdr">
+<span class="sig-name descname"><span class="pre">hdr</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.hdr" title="Link to this definition">#</a></dt>
+<dd><p>FITS header data for images.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.save_path">
+<span class="sig-name descname"><span class="pre">save_path</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.save_path" title="Link to this definition">#</a></dt>
+<dd><p>Directory for saving calibration data and images.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.pulse_time">
+<span class="sig-name descname"><span class="pre">pulse_time</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.pulse_time" title="Link to this definition">#</a></dt>
+<dd><p>Duration of guide pulses in milliseconds.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.exptime">
+<span class="sig-name descname"><span class="pre">exptime</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.exptime" title="Link to this definition">#</a></dt>
+<dd><p>Exposure time for calibration images.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.settle_time">
+<span class="sig-name descname"><span class="pre">settle_time</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.settle_time" title="Link to this definition">#</a></dt>
+<dd><p>Wait time after pulses before exposing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.number_of_cycles">
+<span class="sig-name descname"><span class="pre">number_of_cycles</span></span><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.number_of_cycles" title="Link to this definition">#</a></dt>
+<dd><p>Number of calibration cycles to perform.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.run" title="Link to this definition">#</a></dt>
+<dd><p>Execute complete guiding calibration sequence.</p>
+<p>Performs telescope slewing, calibration cycles, configuration
+completion, and saves results to observatory configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian">
+<span class="sig-name descname"><span class="pre">slew_telescope_one_hour_east_of_sidereal_meridian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian" title="Link to this definition">#</a></dt>
+<dd><p>Position telescope one hour east of meridian for calibration.</p>
+<p>Slews telescope to RA = LST - 1 hour, Dec = 0 degrees to provide
+optimal conditions for guiding calibration with good star tracking
+and minimal atmospheric effects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If telescope slewing fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.perform_calibration_cycles">
+<span class="sig-name descname"><span class="pre">perform_calibration_cycles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.perform_calibration_cycles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.perform_calibration_cycles" title="Link to this definition">#</a></dt>
+<dd><p>Execute systematic guiding calibration cycles.</p>
+<p>Performs multiple cycles of telescope nudges in North, South, East,
+and West directions, measuring star field shifts to determine pixel
+scales and camera orientation. Each cycle improves measurement accuracy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.complete_calibration_config">
+<span class="sig-name descname"><span class="pre">complete_calibration_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.complete_calibration_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.complete_calibration_config" title="Link to this definition">#</a></dt>
+<dd><p>Generate final calibration configuration from measurements.</p>
+<p>Processes collected direction and scale measurements to create
+PIX2TIME conversion factors, determine RA axis orientation,
+and validate measurement consistency across cycles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If direction measurements are inconsistent across cycles.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.save_calibration_config">
+<span class="sig-name descname"><span class="pre">save_calibration_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.save_calibration_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.save_calibration_config" title="Link to this definition">#</a></dt>
+<dd><p>Save calibration configuration to YAML file with nice formatting.</p>
+<p>Uses ruamel.yaml to create readable output with proper indentation,
+preserved structure, and better formatting for nested dictionaries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.calibrate_guiding.GuidingCalibrator.update_observatory_config">
+<span class="sig-name descname"><span class="pre">update_observatory_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/calibrate_guiding.html#GuidingCalibrator.update_observatory_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.calibrate_guiding.GuidingCalibrator.update_observatory_config" title="Link to this definition">#</a></dt>
+<dd><p>Update observatory configuration with calibration results.</p>
+<p>Integrates the calculated calibration parameters into the observatory
+configuration file for the specific camera being calibrated.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.autofocus.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.autofocus</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.config.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.config</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.astra_observatory"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.astra_observatory</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.action"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.action</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.paired_devices"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.paired_devices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.hdr"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.hdr</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.save_path"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.save_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.pulse_time"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.pulse_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.exptime"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.exptime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.settle_time"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.settle_time</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.number_of_cycles"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.number_of_cycles</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.run"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.slew_telescope_one_hour_east_of_sidereal_meridian()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.perform_calibration_cycles"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.perform_calibration_cycles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.complete_calibration_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.complete_calibration_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.save_calibration_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.save_calibration_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.calibrate_guiding.GuidingCalibrator.update_observatory_config"><code class="docutils literal notranslate"><span class="pre">GuidingCalibrator.update_observatory_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

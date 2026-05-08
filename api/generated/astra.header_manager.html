@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.header_manager &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.header_manager';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.image_handler" href="astra.image_handler.html" />
+    <link rel="prev" title="astra.guiding" href="astra.guiding.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.header_manager</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager"><code class="docutils literal notranslate"><span class="pre">HeaderManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager.get_base_header"><code class="docutils literal notranslate"><span class="pre">HeaderManager.get_base_header()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager.final_headers"><code class="docutils literal notranslate"><span class="pre">HeaderManager.final_headers()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.REQUIRED_KEYS"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.REQUIRED_KEYS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.ra"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.dec"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.airmass"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.airmass</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.validate"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_target_sky_coordinates"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_target_sky_coordinates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_test_header"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_test_header()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.update_fits_header_times"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.update_fits_header_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.set_imagetype"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.set_imagetype()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.set_action_type"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.set_action_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.add_times"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.add_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.add_airmass"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.add_airmass()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.header_manager">
+<span id="astra-header-manager"></span><h1>astra.header_manager<a class="headerlink" href="#module-astra.header_manager" title="Link to this heading">#</a></h1>
+<p>FITS header management utilities.</p>
+<p>This module provides functions for handling astronomical images captured from
+observatory cameras. It manages image directory creation, data type conversion,
+and FITS file saving with proper headers and metadata.</p>
+<dl class="simple">
+<dt>Key features:</dt><dd><ul class="simple">
+<li><p>Automatic directory creation with date-based naming</p></li>
+<li><p>Image data type conversion and array reshaping for FITS compatibility</p></li>
+<li><p>FITS file saving with comprehensive metadata and WCS support</p></li>
+<li><p>Intelligent filename generation based on observation parameters</p></li>
+</ul>
+</dd>
+</dl>
+<p>The module handles various image types including light frames, bias frames,
+dark frames, and calibration images, ensuring proper metadata preservation
+and file organization for astronomical data processing pipelines.</p>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.header_manager.HeaderManager" title="astra.header_manager.HeaderManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeaderManager</span></code></a>()</p></td>
+<td><p>Manages the creation and updating of FITS headers for astronomical images.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.header_manager.ObservatoryHeader" title="astra.header_manager.ObservatoryHeader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ObservatoryHeader</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A FITS header subclass with observatory-specific properties and methods.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.header_manager.HeaderManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.header_manager.</span></span><span class="sig-name descname"><span class="pre">HeaderManager</span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#HeaderManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.HeaderManager" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manages the creation and updating of FITS headers for astronomical images.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.HeaderManager.get_base_header">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_base_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paired_devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.paired_devices.html#astra.paired_devices.PairedDevices" title="astra.paired_devices.PairedDevices"><span class="pre">PairedDevices</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.action_configs.html#astra.action_configs.BaseActionConfig" title="astra.action_configs.BaseActionConfig"><span class="pre">BaseActionConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><span class="pre">ObservatoryLogger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.header_manager.ObservatoryHeader" title="astra.header_manager.ObservatoryHeader"><span class="pre">ObservatoryHeader</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#HeaderManager.get_base_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.HeaderManager.get_base_header" title="Link to this definition">#</a></dt>
+<dd><p>Create a base FITS header with observatory and observation information.</p>
+<p>Constructs a comprehensive FITS header containing fixed observatory parameters,
+current device status, astronomical coordinates, and observation metadata.
+The header is built from the FITS configuration file and current system state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paired_devices</strong> (<em>PairedDevices</em>) – Object containing the devices being used
+for the current observation sequence.</p></li>
+<li><p><strong>action_value</strong> (<em>dict</em>) – Dictionary containing observation parameters from
+the schedule, including target coordinates, filters, and settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>fits.Header</em> –</p>
+<dl class="simple">
+<dt>A complete FITS header object containing:</dt><dd><ul class="simple">
+<li><p>Fixed observatory information (location, instrument details)</p></li>
+<li><p>Current astronomical conditions (coordinates, time)</p></li>
+<li><p>Device-specific parameters (telescope pointing, filter position)</p></li>
+<li><p>Observation metadata (object name, exposure settings)</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Header Categories:</dt><dd><ul class="simple">
+<li><p>astra: Observatory and software version information</p></li>
+<li><p>astropy_default: Standard astronomical coordinate systems</p></li>
+<li><p>Device-specific: Current status from telescopes, cameras, etc.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Some header values are populated from real-time device polling</p></li>
+<li><p>Coordinate transformations are performed for various reference frames</p></li>
+<li><p>Observatory location and timing information is automatically included</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.HeaderManager.final_headers">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">final_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.database_manager.html#astra.database_manager.DatabaseManager" title="astra.database_manager.DatabaseManager"><span class="pre">DatabaseManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.logger.html#astra.logger.ObservatoryLogger" title="astra.logger.ObservatoryLogger"><span class="pre">ObservatoryLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.config.html#astra.config.ObservatoryConfig" title="astra.config.ObservatoryConfig"><span class="pre">ObservatoryConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#HeaderManager.final_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.HeaderManager.final_headers" title="Link to this definition">#</a></dt>
+<dd><p>Complete FITS headers with interpolated device data.</p>
+<p>Post-processes captured images by adding dynamic header information that
+wasn’t available at exposure time. Uses polled device data to interpolate
+accurate values for each image timestamp, ensuring complete and accurate
+FITS headers for scientific analysis.</p>
+<dl class="simple">
+<dt>The process:</dt><dd><ol class="arabic simple">
+<li><p>Retrieves incomplete images from the database</p></li>
+<li><p>Groups images by camera for efficient processing</p></li>
+<li><p>Queries polled device data around image timestamps</p></li>
+<li><p>Interpolates device values to exact exposure times</p></li>
+<li><p>Updates FITS files with complete headers</p></li>
+<li><p>Marks images as header-complete in database</p></li>
+</ol>
+</dd>
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p>Time-interpolated device values for precise timestamps</p></li>
+<li><p>Handles multiple cameras and device types simultaneously</p></li>
+<li><p>Preserves original headers while adding missing information</p></li>
+<li><p>Robust error handling with detailed logging</p></li>
+</ul>
+</dd>
+<dt>Data Sources:</dt><dd><ul class="simple">
+<li><p>Device polling data from database</p></li>
+<li><p>FITS configuration file for header mapping</p></li>
+<li><p>Original image FITS headers for timing information</p></li>
+</ul>
+</dd>
+<dt>Error Handling:</dt><dd><ul class="simple">
+<li><p>Individual image failures don’t stop batch processing</p></li>
+<li><p>All errors are logged and added to error_source</p></li>
+<li><p>Database consistency maintained even with partial failures</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Typically run after observation sequences complete</p></li>
+<li><p>Critical for ensuring complete scientific metadata</p></li>
+<li><p>May take significant time for large image sets</p></li>
+</ul>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.header_manager.</span></span><span class="sig-name descname"><span class="pre">ObservatoryHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/headers.html#astropy.io.fits.Header" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a></p>
+<p>A FITS header subclass with observatory-specific properties and methods.</p>
+<dl class="simple">
+<dt>Properties:</dt><dd><p>ra (float): Right Ascension in hours.
+dec (float): Declination in degrees.
+airmass (float): Airmass value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.image_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObservatoryHeader</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">header</span> <span class="o">=</span> <span class="n">ObservatoryHeader</span><span class="o">.</span><span class="n">get_test_header</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Construct a <cite>Header</cite> from an iterable and/or text file.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<dl>
+<dt>cards<span class="classifier">list of <cite>Card</cite>, optional</span></dt><dd><p>The cards to initialize the header with. Also allowed are other
+<cite>Header</cite> (or <cite>dict</cite>-like) objects.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.2: </span>Allowed <code class="docutils literal notranslate"><span class="pre">cards</span></code> to be a <cite>dict</cite>-like object.</p>
+</div>
+</dd>
+</dl>
+<p>copy : bool, optional</p>
+<blockquote>
+<div><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> copies the <code class="docutils literal notranslate"><span class="pre">cards</span></code> if they were another <cite>Header</cite>
+instance.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.3.</span></p>
+</div>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.REQUIRED_KEYS">
+<span class="sig-name descname"><span class="pre">REQUIRED_KEYS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['LONG-OBS',</span> <span class="pre">'LAT-OBS',</span> <span class="pre">'RA',</span> <span class="pre">'DEC',</span> <span class="pre">'EXPTIME',</span> <span class="pre">'DATE-OBS']</span></span><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.REQUIRED_KEYS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.ra">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ra</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.ra" title="Link to this definition">#</a></dt>
+<dd><p>Right Ascension</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.dec">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dec</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.dec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.airmass">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">airmass</span></span><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.airmass" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.validate" title="Link to this definition">#</a></dt>
+<dd><p>Validate that all required keys are present in the header.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.get_target_sky_coordinates">
+<span class="sig-name descname"><span class="pre">get_target_sky_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.get_target_sky_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.get_target_sky_coordinates" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.get_observatory_location">
+<span class="sig-name descname"><span class="pre">get_observatory_location</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.get_observatory_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.get_observatory_location" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.get_test_header">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_test_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#astra.header_manager.ObservatoryHeader" title="astra.header_manager.ObservatoryHeader"><span class="pre">ObservatoryHeader</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.get_test_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.get_test_header" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.update_fits_header_times">
+<span class="sig-name descname"><span class="pre">update_fits_header_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exposure_start_datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.update_fits_header_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.update_fits_header_times" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.set_imagetype">
+<span class="sig-name descname"><span class="pre">set_imagetype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_light</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.set_imagetype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.set_imagetype" title="Link to this definition">#</a></dt>
+<dd><p>Set the IMAGETYP header based on action type.
+Returns True if the image is a light frame, False otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.set_action_type">
+<span class="sig-name descname"><span class="pre">set_action_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="astra.scheduler.html#astra.scheduler.Action" title="astra.scheduler.Action"><span class="pre">Action</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.set_action_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.set_action_type" title="Link to this definition">#</a></dt>
+<dd><p>Set the action type related headers based on the Action object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.add_times">
+<span class="sig-name descname"><span class="pre">add_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v7.2)"><span class="pre">EarthLocation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.add_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.add_times" title="Link to this definition">#</a></dt>
+<dd><p>Add comprehensive time information to FITS header.</p>
+<p>Calculates and adds various time formats to FITS header including
+Julian Day variants, Modified Julian Day, and astronomical time corrections.
+Also computes airmass from altitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>dict</em>) – FITS header dictionary to modify in-place.</p></li>
+<li><p><strong>fits_config</strong> (<em>pd.DataFrame</em>) – Configuration with header specifications.</p></li>
+<li><p><strong>location</strong> (<em>EarthLocation</em>) – Observer’s geographic location.</p></li>
+<li><p><strong>target</strong> (<em>SkyCoord</em>) – Target celestial coordinates.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.header_manager.ObservatoryHeader.add_airmass">
+<span class="sig-name descname"><span class="pre">add_airmass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fits_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/astra/header_manager.html#ObservatoryHeader.add_airmass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.header_manager.ObservatoryHeader.add_airmass" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.guiding.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.guiding</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.image_handler.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.image_handler</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager"><code class="docutils literal notranslate"><span class="pre">HeaderManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager.get_base_header"><code class="docutils literal notranslate"><span class="pre">HeaderManager.get_base_header()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.HeaderManager.final_headers"><code class="docutils literal notranslate"><span class="pre">HeaderManager.final_headers()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.REQUIRED_KEYS"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.REQUIRED_KEYS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.ra"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.dec"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.airmass"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.airmass</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.validate"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_target_sky_coordinates"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_target_sky_coordinates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_observatory_location"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_observatory_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.get_test_header"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.get_test_header()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.update_fits_header_times"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.update_fits_header_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.set_imagetype"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.set_imagetype()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.set_action_type"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.set_action_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.add_times"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.add_times()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.header_manager.ObservatoryHeader.add_airmass"><code class="docutils literal notranslate"><span class="pre">ObservatoryHeader.add_airmass()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

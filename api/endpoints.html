@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Endpoints &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/endpoints';</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="astra.utils" href="generated/astra.utils.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>API Endpoints</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-api-endpoints">REST API Endpoints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-allsky-latest"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/allsky/latest</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-close"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/close</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-complete_headers"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/complete_headers</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-cool_camera-device_name"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/cool_camera/{device_name}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-db-guiding"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-db-polling-device_type"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/polling/{device_type}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-editschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/editschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-heartbeat"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/heartbeat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-latest_image_preview"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/latest_image_preview</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-log"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/log</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-roboticswitch"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/roboticswitch</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-schedule"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/schedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-sky_data"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/sky_data</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-startschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-startwatchdog"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startwatchdog</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-stopschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-stopwatchdog"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopwatchdog</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-uploadschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/uploadschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-download-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/download/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-hdu_list-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/hdu_list/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-header-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/header/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-list-"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/list/</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-preview-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/preview/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-schedule"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/schedule</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-endpoints">WebSocket Endpoints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-ws-log"><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws/log</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-ws"><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-endpoints">
+<h1>API Endpoints<a class="headerlink" href="#api-endpoints" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/endpoints-banner.svg" />
+<p>This page documents all HTTP endpoints exposed by the _Astra_ FastAPI application.</p>
+<p>The API provides programmatic access to observatory control, monitoring, and data retrieval functions.</p>
+<section id="rest-api-endpoints">
+<h2>REST API Endpoints<a class="headerlink" href="#rest-api-endpoints" title="Link to this heading">#</a></h2>
+<p>The following REST API endpoints are available for interacting with the Astra observatory system.</p>
+<section id="get-api-allsky-latest">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/allsky/latest</span></code><a class="headerlink" href="#get-api-allsky-latest" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Serve the latest All-Sky camera image.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> (str, optional) – Name of the specific all-sky camera. If not provided, returns the first camera.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>FileResponse: The image file with no-store cache headers.</p>
+</div>
+</section>
+<section id="post-api-close">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/close</span></code><a class="headerlink" href="#post-api-close" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Close observatory and stop all operations safely.</p>
+<p>Stops running schedule if active and closes the observatory.
+Logs all actions for audit trail.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-complete_headers">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/complete_headers</span></code><a class="headerlink" href="#post-api-complete_headers" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Complete FITS header processing for observatory images.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-cool_camera-device_name">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/cool_camera/{device_name}</span></code><a class="headerlink" href="#post-api-cool_camera-device_name" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Initiate camera cooling to configured target temperature.</p>
+<p>Gets camera configuration and starts cooling process to the
+specified set temperature with defined tolerance.</p>
+</div>
+<p><strong>Path Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device_name</span></code> (str) – Camera device name to cool.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status and cooling details.</p>
+</div>
+</section>
+<section id="get-api-db-guiding">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/guiding</span></code><a class="headerlink" href="#get-api-db-guiding" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get autoguider log data for plotting guiding performance.</p>
+<p>Retrieves guiding corrections (post_pid_x, post_pid_y) from the
+autoguider_log table for visualization.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">day</span></code> (float) – Number of days back to retrieve data. Defaults to 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">since</span></code> (str) – Optional timestamp to get only newer records.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">telescope</span></code> (str) – Optional telescope name to filter data.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<dl class="simple">
+<dt>dict: JSON response with guiding data including datetime,</dt><dd><p>telescope_name, post_pid_x, and post_pid_y values.</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="get-api-db-polling-device_type">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/polling/{device_type}</span></code><a class="headerlink" href="#get-api-db-polling-device_type" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get device polling data from observatory database.</p>
+<p>Uses an append-only in-memory cache keyed by <em>device_type</em>:</p>
+<ul class="simple">
+<li><p><strong>First request</strong> performs a full DB query (up to <code class="docutils literal notranslate"><span class="pre">day</span></code> days) and
+stores the result.</p></li>
+<li><p><strong>Subsequent requests</strong> fetch only the rows newer than
+<code class="docutils literal notranslate"><span class="pre">last_cached_timestamp</span> <span class="pre">-</span> <span class="pre">2</span> <span class="pre">min</span></code>, reprocess that overlap window to
+ensure the most-recent 60 s bucket is complete, merge into the cache,
+and prune rows older than the requested <code class="docutils literal notranslate"><span class="pre">day</span></code> window.</p></li>
+<li><p>Concurrent requests share a single <code class="docutils literal notranslate"><span class="pre">asyncio.Lock</span></code> so only one DB
+fetch runs at a time; any waiter re-uses the freshly-updated cache.</p></li>
+</ul>
+</div>
+<p><strong>Path Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device_type</span></code> (str) – Type of device (e.g. ``’ObservingConditions’``).</p></li>
+</ul>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">day</span></code> (float) – Days of history to include in the response. Defaults to 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">since</span></code> (str) – Optional ISO-format UTC timestamp; if supplied the response payload is filtered to rows newer than this value (the cache itself always holds the full window).</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: Processed polling data with safety limits and latest values.</p>
+</div>
+</section>
+<section id="post-api-editschedule">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/editschedule</span></code><a class="headerlink" href="#post-api-editschedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Update observatory schedule from web editor.</p>
+<p>Parses JSONL schedule data and saves to observatory schedule file.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">schedule_data</span></code> (str) – JSONL formatted schedule data.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: Status response with success/error information.</p>
+</div>
+</section>
+<section id="get-api-heartbeat">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/heartbeat</span></code><a class="headerlink" href="#get-api-heartbeat" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get observatory heartbeat status for health monitoring.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with heartbeat status data.</p>
+</div>
+</section>
+<section id="get-api-latest_image_preview">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/latest_image_preview</span></code><a class="headerlink" href="#get-api-latest_image_preview" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Serve the latest FITS image as a JPEG preview.</p>
+<p>Returns the most recent observatory image converted to JPEG format,
+generated in-memory without disk I/O.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>StreamingResponse: JPEG image data with appropriate headers.</p>
+</div>
+</section>
+<section id="get-api-log">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/log</span></code><a class="headerlink" href="#get-api-log" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get observatory log entries before specified datetime.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">datetime</span></code> (str) – Upper limit datetime for log entries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">limit</span></code> (int) – Maximum number of log entries to return. Defaults to 100.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>list: Log entries as dictionary records.</p>
+</div>
+</section>
+<section id="post-api-roboticswitch">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/roboticswitch</span></code><a class="headerlink" href="#post-api-roboticswitch" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Toggle observatory robotic operation mode.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with current robotic switch state.</p>
+</div>
+</section>
+<section id="get-api-schedule">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/schedule</span></code><a class="headerlink" href="#get-api-schedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get current observatory schedule with formatted times.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<dl class="simple">
+<dt>list: Schedule items with start/end times formatted as HH:MM:SS,</dt><dd><p>or empty list if no schedule exists.</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="get-api-sky_data">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/sky_data</span></code><a class="headerlink" href="#get-api-sky_data" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Get celestial body positions for all-sky projection.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with observatory location, time, and celestial body positions</p>
+</div>
+</section>
+<section id="post-api-startschedule">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startschedule</span></code><a class="headerlink" href="#post-api-startschedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Start executing the observatory’s observation schedule.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-startwatchdog">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startwatchdog</span></code><a class="headerlink" href="#post-api-startwatchdog" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Start observatory watchdog monitoring system.</p>
+<p>Resets error states and starts the watchdog process for
+continuous observatory health monitoring.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-stopschedule">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopschedule</span></code><a class="headerlink" href="#post-api-stopschedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Stop executing the observatory’s observation schedule.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-stopwatchdog">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopwatchdog</span></code><a class="headerlink" href="#post-api-stopwatchdog" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Stop observatory watchdog monitoring system.</p>
+</div>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: JSON response with operation status.</p>
+</div>
+</section>
+<section id="post-api-uploadschedule">
+<h3><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/uploadschedule</span></code><a class="headerlink" href="#post-api-uploadschedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Upload schedule file to replace current observatory schedule.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file</span></code> (UploadFile) – Uploaded schedule file in JSONL format.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>dict: Upload status response with success/error information.</p>
+</div>
+</section>
+<section id="get-fits_explorer-">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/</span></code><a class="headerlink" href="#get-fits_explorer-" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Serve the static index HTML but inject a &lt;base&gt; tag so relative
+asset URLs (like <cite>static/…</cite>) resolve correctly when the router is
+included under a prefix (for example <cite>/fits_explorer</cite>). This lets the
+explorer work both standalone and embedded without requiring the host
+app to mount the same static paths.</p>
+</div>
+</section>
+<section id="get-fits_explorer-download-filename:path">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/download/{filename:path}</span></code><a class="headerlink" href="#get-fits_explorer-download-filename:path" title="Link to this heading">#</a></h3>
+</section>
+<section id="get-fits_explorer-hdu_list-filename:path">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/hdu_list/{filename:path}</span></code><a class="headerlink" href="#get-fits_explorer-hdu_list-filename:path" title="Link to this heading">#</a></h3>
+</section>
+<section id="get-fits_explorer-header-filename:path">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/header/{filename:path}</span></code><a class="headerlink" href="#get-fits_explorer-header-filename:path" title="Link to this heading">#</a></h3>
+</section>
+<section id="get-fits_explorer-list-">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/list/</span></code><a class="headerlink" href="#get-fits_explorer-list-" title="Link to this heading">#</a></h3>
+</section>
+<section id="get-fits_explorer-preview-filename:path">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/preview/{filename:path}</span></code><a class="headerlink" href="#get-fits_explorer-preview-filename:path" title="Link to this heading">#</a></h3>
+</section>
+<section id="get-schedule">
+<h3><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/schedule</span></code><a class="headerlink" href="#get-schedule" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Serve schedule editor page with current schedule data.</p>
+<p>Loads raw JSONL schedule file preserving original datetime
+format for the web-based schedule editor interface.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">request</span></code> (Request) – FastAPI request object.</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<div class="docutils container">
+<p>TemplateResponse: HTML template with schedule editor and data.</p>
+</div>
+</section>
+</section>
+<section id="websocket-endpoints">
+<h2>WebSocket Endpoints<a class="headerlink" href="#websocket-endpoints" title="Link to this heading">#</a></h2>
+<p>WebSocket endpoints provide real-time bidirectional communication.</p>
+<section id="websocket-ws-log">
+<h3><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws/log</span></code><a class="headerlink" href="#websocket-ws-log" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>WebSocket endpoint for real-time log streaming.</p>
+<p>Provides initial log history and streams new log entries as they
+are added to the database. Also includes schedule modification time.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">websocket</span></code> (WebSocket) – WebSocket connection object.</p></li>
+</ul>
+</section>
+<section id="websocket-ws">
+<h3><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws</span></code><a class="headerlink" href="#websocket-ws" title="Link to this heading">#</a></h3>
+<div class="docutils container">
+<p>Main WebSocket endpoint for real-time observatory status updates.</p>
+<p>Streams comprehensive observatory status including device polling data,
+system health, operational status, and latest images. Handles FITS to
+JPEG conversion for image display.</p>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">websocket</span></code> (WebSocket) – WebSocket connection object.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="generated/astra.utils.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.utils</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-api-endpoints">REST API Endpoints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-allsky-latest"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/allsky/latest</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-close"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/close</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-complete_headers"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/complete_headers</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-cool_camera-device_name"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/cool_camera/{device_name}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-db-guiding"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-db-polling-device_type"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/db/polling/{device_type}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-editschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/editschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-heartbeat"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/heartbeat</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-latest_image_preview"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/latest_image_preview</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-log"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/log</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-roboticswitch"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/roboticswitch</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-schedule"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/schedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-api-sky_data"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/sky_data</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-startschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-startwatchdog"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/startwatchdog</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-stopschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-stopwatchdog"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/stopwatchdog</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-api-uploadschedule"><span class="http-method http-post">POST</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/api/uploadschedule</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-download-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/download/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-hdu_list-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/hdu_list/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-header-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/header/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-list-"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/list/</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-fits_explorer-preview-filename:path"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/fits_explorer/preview/{filename:path}</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-schedule"><span class="http-method http-get">GET</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/schedule</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-endpoints">WebSocket Endpoints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-ws-log"><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws/log</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#websocket-ws"><span class="http-method http-websocket">WebSocket</span> <code class="endpoint-path docutils literal notranslate"><span class="pre">/ws</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

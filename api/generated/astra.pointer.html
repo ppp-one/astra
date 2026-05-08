@@ -1,0 +1,1008 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.pointer &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.pointer';</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.queue_manager" href="astra.queue_manager.html" />
+    <link rel="prev" title="astra.paired_devices" href="astra.paired_devices.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.1.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.utils.html">astra.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.pointer</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.calculate_pointing_correction_from_fits"><code class="docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_fits()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.calculate_pointing_correction_from_image"><code class="docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_image()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.find_stars"><code class="docutils literal notranslate"><span class="pre">find_stars()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection"><code class="docutils literal notranslate"><span class="pre">PointingCorrection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.target_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.target_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.target_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.target_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.plating_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.plating_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.plating_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.plating_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.offset_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.offset_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.offset_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.offset_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.angular_separation"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.angular_separation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.proxy_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.proxy_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.proxy_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.proxy_dec</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.wcs"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.wcs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.stars_in_image"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.stars_in_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.gaia_stars_in_image"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.gaia_stars_in_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.from_gaia_coordinates"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.from_gaia_coordinates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.get_plating_center"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.get_plating_center()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.skycoord_to_pixels"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.skycoord_to_pixels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.pixels_to_skycoord"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.pixels_to_skycoord()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.find_gaia_match"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.find_gaia_match()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.number_of_matched_stars"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.number_of_matched_stars()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.plot"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.local_gaia_db_query"><code class="docutils literal notranslate"><span class="pre">local_gaia_db_query()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.local_db_query"><code class="docutils literal notranslate"><span class="pre">local_db_query()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.pointer">
+<span id="astra-pointer"></span><h1>astra.pointer<a class="headerlink" href="#module-astra.pointer" title="Link to this heading">#</a></h1>
+<p>Astronomical pointing correction and plate solving utilities.</p>
+<p>This module provides comprehensive tools for correcting telescope pointing errors
+by analyzing astronomical images and comparing detected stars with catalog data.
+The primary workflow involves star detection, world coordinate system (WCS)
+computation, and pointing offset calculation.</p>
+<dl class="simple">
+<dt>Key Features:</dt><dd><ul class="simple">
+<li><p>Multi-scale star detection algorithms for robust identification in noisy images</p></li>
+<li><p>Gaia star catalog integration for precise astrometric reference</p></li>
+<li><p>World Coordinate System (WCS) computation using the twirl library</p></li>
+<li><p>Automatic pointing correction calculation and validation</p></li>
+<li><p>Support for FITS file processing with metadata extraction</p></li>
+<li><p>Background subtraction and image cleaning utilities</p></li>
+</ul>
+</dd>
+<dt>The module supports two main use cases:</dt><dd><ol class="arabic simple">
+<li><p>Real-time pointing correction during observations</p></li>
+<li><p>Post-processing analysis of astronomical images</p></li>
+</ol>
+</dd>
+<dt>Typical Workflow:</dt><dd><ol class="arabic simple">
+<li><p>Load or generate an astronomical image</p></li>
+<li><p>Detect stars using multi-scale algorithms</p></li>
+<li><p>Query Gaia catalog for reference stars in the field</p></li>
+<li><p>Compute WCS transformation between image and sky coordinates</p></li>
+<li><p>Calculate pointing correction based on target vs actual position</p></li>
+<li><p>Apply corrections to telescope pointing</p></li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process a FITS file for pointing correction</span>
+<span class="l l-Scalar l-Scalar-Plain">pointing_correction, image_star_mapping, num_stars = (</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">calculate_pointing_correction_from_fits(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">&quot;observation.fits&quot;,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">target_ra=150.25,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">target_dec=2.18</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
+<span class="l l-Scalar l-Scalar-Plain">)</span>
+
+<span class="l l-Scalar l-Scalar-Plain"># Get the pointing offset</span>
+<span class="l l-Scalar l-Scalar-Plain">ra_offset = pointing_correction.offset_ra</span>
+<span class="l l-Scalar l-Scalar-Plain">dec_offset = pointing_correction.offset_dec</span>
+
+<span class="l l-Scalar l-Scalar-Plain">print(f&quot;Pointing error</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RA={ra_offset:.3f}°, Dec={dec_offset:.3f}°&quot;)</span>
+</pre></div>
+</div>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.pointer.calculate_pointing_correction_from_fits" title="astra.pointer.calculate_pointing_correction_from_fits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_fits</span></code></a>(filepath)</p></td>
+<td><p>Calculate pointing correction from a FITS file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.pointer.calculate_pointing_correction_from_image" title="astra.pointer.calculate_pointing_correction_from_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_image</span></code></a>(...)</p></td>
+<td><p>Calculate pointing correction from an image array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.pointer.find_stars" title="astra.pointer.find_stars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_stars</span></code></a>(data[, threshold, fwhm])</p></td>
+<td><p>Find stars using DAOStarFinder algorithm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.pointer.local_db_query" title="astra.pointer.local_db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_db_query</span></code></a>(db, min_dec, max_dec, min_ra, ...)</p></td>
+<td><p>Query astronomical database for objects within coordinate bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.pointer.local_gaia_db_query" title="astra.pointer.local_gaia_db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_gaia_db_query</span></code></a>(center, fov[, limit, ...])</p></td>
+<td><p>Query local Gaia database to retrieve RA-DEC coordinates of stars within a given field-of-view.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.pointer.ImageStarMapping" title="astra.pointer.ImageStarMapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageStarMapping</span></code></a>(wcs, stars_in_image, ...)</p></td>
+<td><p>A class to handle the mapping of stars detected in an image to their corresponding Gaia star coordinates using World Coordinate System (WCS) transformations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.pointer.PointingCorrection" title="astra.pointer.PointingCorrection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointingCorrection</span></code></a>(target_ra, target_dec, ...)</p></td>
+<td><p>Class to store the pointing correction between the desired target center and the plating center.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.pointer.calculate_pointing_correction_from_fits">
+<span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">calculate_pointing_correction_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_of_stars_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.70</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">or_min_number_of_stars_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_local_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#calculate_pointing_correction_from_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.calculate_pointing_correction_from_fits" title="Link to this definition">#</a></dt>
+<dd><p>Calculate pointing correction from a FITS file.</p>
+<p>Performs the complete plate solving workflow from a FITS file, including
+metadata extraction, image cleaning, star detection, and pointing correction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str or Path</em>) – Path to the FITS file.</p></li>
+<li><p><strong>dark_frame</strong> (<em>str or Path, optional</em>) – Path to a dark frame for subtraction.
+Defaults to None.</p></li>
+<li><p><strong>target_ra</strong> (<em>float, optional</em>) – Target right ascension in degrees. If not
+provided, it’s read from FITS header. Defaults to None.</p></li>
+<li><p><strong>target_dec</strong> (<em>float, optional</em>) – Target declination in degrees. If not
+provided, it’s read from FITS header. Defaults to None.</p></li>
+<li><p><strong>filter_band</strong> (<em>str, optional</em>) – Filter band used for observation. Defaults to None.</p></li>
+<li><p><strong>fraction_of_stars_to_match</strong> (<em>float, optional</em>) – Fraction of detected stars
+required to be matched for a valid plate solve. Defaults to 0.70.</p></li>
+<li><p><strong>or_min_number_of_stars_to_match</strong> (<em>int, optional</em>) – Minimum number of stars
+required to be matched for a valid plate solve. Defaults to 8.</p></li>
+<li><p><strong>use_local_db</strong> (<em>bool, optional</em>) – Whether to use the local Gaia database. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[PointingCorrection, ImageStarMapping, int]</em> –</p>
+<dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>PointingCorrection: Object with computed pointing correction</p></li>
+<li><p>ImageStarMapping: Mapping of image stars to Gaia stars</p></li>
+<li><p>int: Number of stars used from the image for plate solving</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – If insufficient stars are detected for plate solving,
+    if the offset is larger than the field of view, or if too few
+    stars are matched.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.pointer.calculate_pointing_correction_from_image">
+<span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">calculate_pointing_correction_from_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dateobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plate_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_of_stars_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.70</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">or_min_number_of_stars_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_local_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#calculate_pointing_correction_from_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.calculate_pointing_correction_from_image" title="Link to this definition">#</a></dt>
+<dd><p>Calculate pointing correction from an image array.</p>
+<p>Performs the complete plate solving workflow: image cleaning, star detection,
+Gaia catalog matching, WCS computation, and pointing correction calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>np.ndarray</em>) – The 2D astronomical image data.</p></li>
+<li><p><strong>target_ra</strong> (<em>float</em>) – Target right ascension in degrees.</p></li>
+<li><p><strong>target_dec</strong> (<em>float</em>) – Target declination in degrees.</p></li>
+<li><p><strong>dateobs</strong> (<em>datetime</em>) – Observation date for proper motion corrections.</p></li>
+<li><p><strong>plate_scale</strong> (<em>float</em>) – Image plate scale in degrees per pixel.</p></li>
+<li><p><strong>filter_band</strong> (<em>str, optional</em>) – Filter band used for observation.</p></li>
+<li><p><strong>fraction_of_stars_to_match</strong> (<em>float, optional</em>) – Fraction of detected stars
+required to be matched for a valid plate solve. Defaults to 0.70.</p></li>
+<li><p><strong>or_min_number_of_stars_to_match</strong> (<em>int, optional</em>) – Minimum number of stars
+required to be matched for a valid plate solve. Defaults to 8.</p></li>
+<li><p><strong>use_local_db</strong> (<em>bool, optional</em>) – Whether to use the local Gaia database. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[PointingCorrection, ImageStarMapping, int]</em> –</p>
+<dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>PointingCorrection: Object with computed pointing correction</p></li>
+<li><p>ImageStarMapping: Mapping of image stars to Gaia stars</p></li>
+<li><p>int: Number of stars used from the image for plate solving</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><strong>Exception</strong></a> – If insufficient stars are detected for plate solving,
+    if the offset is larger than the field of view, or if too few
+    stars are matched.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.pointer.find_stars">
+<span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">find_stars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/astra/pointer.html#find_stars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.find_stars" title="Link to this definition">#</a></dt>
+<dd><p>Find stars using DAOStarFinder algorithm.</p>
+<p>Uses the photutils DAOStarFinder algorithm to detect point sources in
+astronomical images. The function performs background subtraction and
+returns star coordinates sorted by brightness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The 2D image data array.</p></li>
+<li><p><strong>threshold</strong> (<em>float, optional</em>) – Detection threshold in units of background
+standard deviation. Higher values detect fewer, brighter stars.
+Defaults to 5.0.</p></li>
+<li><p><strong>fwhm</strong> (<em>float, optional</em>) – Expected Full Width at Half Maximum of stars
+in pixels. Should match the typical seeing conditions. Defaults to 3.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>np.ndarray</em> –</p>
+<dl class="simple">
+<dt>Array of detected star coordinates sorted by brightness.</dt><dd><p>Shape is (N, 2) where N is the number of stars, and each row is (x, y).
+Returns an empty array if no stars are found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">PointingCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plating_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plating_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#PointingCorrection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.PointingCorrection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class to store the pointing correction between the desired target center and the plating center.</p>
+<p>Stores target and actual telescope pointing coordinates and provides methods
+to calculate offsets, angular separations, and proxy coordinates for correction.
+The proxy coordinates represent where the telescope should point to achieve
+the desired target position.</p>
+<dl class="simple">
+<dt>Properties:</dt><dd><p>offset_ra: RA offset (plating - target) in degrees :no-index:
+offset_dec: Dec offset (plating - target) in degrees :no-index:
+angular_separation: Angular distance between target and actual position :no-index:
+proxy_ra: RA coordinate to point telescope to reach target :no-index:
+proxy_dec: Dec coordinate to point telescope to reach target :no-index:</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astra.pointer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointingCorrection</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pointing_correction</span> <span class="o">=</span> <span class="n">PointingCorrection</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">target_ra</span><span class="o">=</span><span class="mf">10.685</span><span class="p">,</span> <span class="n">target_dec</span><span class="o">=</span><span class="mf">41.269</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">plating_ra</span><span class="o">=</span><span class="mf">10.68471</span><span class="p">,</span> <span class="n">plating_dec</span><span class="o">=</span><span class="mf">41.26917</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RA offset: </span><span class="si">{</span><span class="n">pointing_correction</span><span class="o">.</span><span class="n">offset_ra</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> degrees&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.target_ra">
+<span class="sig-name descname"><span class="pre">target_ra</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.pointer.PointingCorrection.target_ra" title="Link to this definition">#</a></dt>
+<dd><p>The declination of the target center in degrees.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.target_dec">
+<span class="sig-name descname"><span class="pre">target_dec</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.pointer.PointingCorrection.target_dec" title="Link to this definition">#</a></dt>
+<dd><p>The right ascension of the plating center in degrees.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.plating_ra">
+<span class="sig-name descname"><span class="pre">plating_ra</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.pointer.PointingCorrection.plating_ra" title="Link to this definition">#</a></dt>
+<dd><p>The declination of the plating center in degrees.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.plating_dec">
+<span class="sig-name descname"><span class="pre">plating_dec</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.pointer.PointingCorrection.plating_dec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.offset_ra">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">offset_ra</span></span><a class="headerlink" href="#astra.pointer.PointingCorrection.offset_ra" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the RA offset between plating and target coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>RA offset (plating_ra - target_ra) in degrees. Positive values</dt><dd><p>indicate the telescope pointed east of the target.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.offset_dec">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">offset_dec</span></span><a class="headerlink" href="#astra.pointer.PointingCorrection.offset_dec" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the Dec offset between plating and target coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>Dec offset (plating_dec - target_dec) in degrees. Positive values</dt><dd><p>indicate the telescope pointed north of the target.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.angular_separation">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angular_separation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#astra.pointer.PointingCorrection.angular_separation" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the angular separation between target and plating coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>Angular distance between target and actual position in degrees.</dt><dd><p>Always positive, represents the magnitude of the pointing error.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.proxy_ra">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">proxy_ra</span></span><a class="headerlink" href="#astra.pointer.PointingCorrection.proxy_ra" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the RA coordinate to point the telescope to reach the target RA.</p>
+<p>This assumes that the offset is independent of the telescope’s position in the sky.
+The proxy coordinate compensates for the systematic pointing error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>RA coordinate in degrees where the telescope should point to</dt><dd><p>effectively arrive at the target RA.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>ConstantDistorter: Verify sign convention of correction.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="astra.pointer.PointingCorrection.proxy_dec">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">proxy_dec</span></span><a class="headerlink" href="#astra.pointer.PointingCorrection.proxy_dec" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the Dec coordinate to point the telescope to reach the target Dec.</p>
+<p>This assumes that the offset is independent of the telescope’s position in the sky.
+The proxy coordinate compensates for the systematic pointing error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>float</em> –</p>
+<dl class="simple">
+<dt>Dec coordinate in degrees where the telescope should point to</dt><dd><p>effectively arrive at the target Dec.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>ConstantDistorter: Verify sign convention of correction.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">ImageStarMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.wcs.WCS.html#astropy.wcs.WCS" title="(in Astropy v7.2)"><span class="pre">WCS</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stars_in_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gaia_stars_in_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class to handle the mapping of stars detected in an image to their corresponding
+Gaia star coordinates using World Coordinate System (WCS) transformations.</p>
+<p>Manages the relationship between pixel coordinates of detected stars and their
+celestial coordinates from the Gaia catalog. Provides methods for coordinate
+transformations, star matching, and validation of the plate solving process.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.wcs">
+<span class="sig-name descname"><span class="pre">wcs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.wcs.WCS.html#astropy.wcs.WCS" title="(in Astropy v7.2)"><span class="pre">WCS</span></a></span><a class="headerlink" href="#astra.pointer.ImageStarMapping.wcs" title="Link to this definition">#</a></dt>
+<dd><p>An array of detected star coordinates in the image, represented in pixel format (x, y).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.stars_in_image">
+<span class="sig-name descname"><span class="pre">stars_in_image</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#astra.pointer.ImageStarMapping.stars_in_image" title="Link to this definition">#</a></dt>
+<dd><p>An array of Gaia star coordinates projected into the image’s pixel space using the WCS transformation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.gaia_stars_in_image">
+<span class="sig-name descname"><span class="pre">gaia_stars_in_image</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#astra.pointer.ImageStarMapping.gaia_stars_in_image" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.from_gaia_coordinates">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_gaia_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stars_in_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gaia_stars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.from_gaia_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.from_gaia_coordinates" title="Link to this definition">#</a></dt>
+<dd><p>Create an ImageStarMapping instance from detected stars and Gaia coordinates.</p>
+<p>Computes the World Coordinate System (WCS) transformation using the twirl
+library to map between pixel and sky coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stars_in_image</strong> (<em>np.ndarray</em>) – Array of detected star coordinates in pixels (x, y).</p></li>
+<li><p><strong>gaia_stars</strong> (<em>np.ndarray</em>) – Array of Gaia star coordinates in degrees (ra, dec).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ImageStarMapping</em> – New instance with computed WCS and transformed coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.get_plating_center">
+<span class="sig-name descname"><span class="pre">get_plating_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.get_plating_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.get_plating_center" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the sky coordinates of the image center (plating center).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>image_shape</strong> (<em>Tuple[int, int]</em>) – Shape of the image as (height, width).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple[float, float]</em> – RA and Dec coordinates of the image center in degrees.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.skycoord_to_pixels">
+<span class="sig-name descname"><span class="pre">skycoord_to_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.skycoord_to_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.skycoord_to_pixels" title="Link to this definition">#</a></dt>
+<dd><p>Convert sky coordinates to pixel coordinates using the WCS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ra</strong> (<em>float</em>) – Right ascension in degrees.</p></li>
+<li><p><strong>dec</strong> (<em>float</em>) – Declination in degrees.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tuple[float, float]</em> – Pixel coordinates (x, y) in the image.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.pixels_to_skycoord">
+<span class="sig-name descname"><span class="pre">pixels_to_skycoord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.pixels_to_skycoord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.pixels_to_skycoord" title="Link to this definition">#</a></dt>
+<dd><p>Convert pixel coordinates to sky coordinates using the WCS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pixels</strong> (<em>np.ndarray</em>) – Array of pixel coordinates.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of sky coordinates corresponding to the input pixels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.find_gaia_match">
+<span class="sig-name descname"><span class="pre">find_gaia_match</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.find_gaia_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.find_gaia_match" title="Link to this definition">#</a></dt>
+<dd><p>Find the closest Gaia star match for each detected star in the image.</p>
+<p>Calculates the distance between each detected star and all Gaia stars
+in pixel space, then returns the closest match and distance for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple[np.ndarray, np.ndarray]</em> –     - Matched Gaia star positions in pixel coordinates
+- Distances to the closest matches in pixels</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.number_of_matched_stars">
+<span class="sig-name descname"><span class="pre">number_of_matched_stars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixel_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.number_of_matched_stars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.number_of_matched_stars" title="Link to this definition">#</a></dt>
+<dd><p>Count the number of stars matched within a pixel threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pixel_threshold</strong> (<em>int, optional</em>) – Maximum distance in pixels to consider
+a match valid. Defaults to 10.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em> – Number of detected stars that have a Gaia match within the threshold.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astra.pointer.ImageStarMapping.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/astra/pointer.html#ImageStarMapping.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.ImageStarMapping.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot detected stars and their Gaia matches for visualization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to plot on. If None, creates new figure.</p></li>
+<li><p><strong>transpose</strong> (<em>bool, optional</em>) – If True, transpose x and y coordinates for plotting.
+Defaults to False.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments passed to scatter plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.pointer.local_gaia_db_query">
+<span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">local_gaia_db_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.2)"><span class="pre">SkyCoord</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fov</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dateobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/astra/pointer.html#local_gaia_db_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.local_gaia_db_query" title="Link to this definition">#</a></dt>
+<dd><p>Query local Gaia database to retrieve RA-DEC coordinates of stars within a given field-of-view.</p>
+<p>Retrieves star positions from a local Gaia database within a rectangular region
+centered on the specified coordinates. Optionally applies proper motion corrections
+for a specific observation date and sorts by magnitude (Gaia G-band or 2MASS J-band).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>center</strong> (<em>tuple or SkyCoord</em>) – The sky coordinates of the center of the FOV.
+If a tuple is given, it should contain the RA and DEC in degrees.</p></li>
+<li><p><strong>fov</strong> (<em>float or Quantity</em>) – The field-of-view size in degrees. If a float is given,
+it is assumed to be in degrees. Can be a single value (square FOV) or
+tuple (RA_fov, Dec_fov).</p></li>
+<li><p><strong>limit</strong> (<em>int, optional</em>) – The maximum number of sources to retrieve from the
+database. Defaults to 1000.</p></li>
+<li><p><strong>tmass</strong> (<em>bool, optional</em>) – Whether to sort by 2MASS J magnitudes instead of
+Gaia G magnitudes. Defaults to False.</p></li>
+<li><p><strong>dateobs</strong> (<em>datetime, optional</em>) – The date of the observation. If given, the
+proper motions of the sources will be applied to update positions
+from J2015.5 to the observation date. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>np.ndarray</em> –</p>
+<dl class="simple">
+<dt>An array of shape (n, 2) containing the RA-DEC coordinates</dt><dd><p>of the retrieved sources in degrees, sorted by magnitude (brightest first).</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.pointer.local_db_query">
+<span class="sig-prename descclassname"><span class="pre">astra.pointer.</span></span><span class="sig-name descname"><span class="pre">local_db_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">crosses_zero</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/astra/pointer.html#local_db_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.pointer.local_db_query" title="Link to this definition">#</a></dt>
+<dd><p>Query astronomical database for objects within coordinate bounds.</p>
+<p>Performs federated query across sharded SQLite database tables to retrieve
+astronomical catalog data within specified declination and right ascension ranges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Union[str, Path]</em>) – Path to the SQLite database file.</p></li>
+<li><p><strong>min_dec</strong> (<em>float</em>) – Minimum declination in degrees.</p></li>
+<li><p><strong>max_dec</strong> (<em>float</em>) – Maximum declination in degrees.</p></li>
+<li><p><strong>min_ra</strong> (<em>float</em>) – Minimum right ascension in degrees.</p></li>
+<li><p><strong>max_ra</strong> (<em>float</em>) – Maximum right ascension in degrees.</p></li>
+<li><p><strong>crosses_zero</strong> (<em>bool, optional</em>) – Whether the RA range crosses the 0-degree line.
+Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>pd.DataFrame</em> – Combined results from all relevant database shards.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.paired_devices.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.paired_devices</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.queue_manager.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.queue_manager</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.calculate_pointing_correction_from_fits"><code class="docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_fits()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.calculate_pointing_correction_from_image"><code class="docutils literal notranslate"><span class="pre">calculate_pointing_correction_from_image()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.find_stars"><code class="docutils literal notranslate"><span class="pre">find_stars()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection"><code class="docutils literal notranslate"><span class="pre">PointingCorrection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.target_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.target_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.target_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.target_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.plating_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.plating_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.plating_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.plating_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.offset_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.offset_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.offset_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.offset_dec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.angular_separation"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.angular_separation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.proxy_ra"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.proxy_ra</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.PointingCorrection.proxy_dec"><code class="docutils literal notranslate"><span class="pre">PointingCorrection.proxy_dec</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.wcs"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.wcs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.stars_in_image"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.stars_in_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.gaia_stars_in_image"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.gaia_stars_in_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.from_gaia_coordinates"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.from_gaia_coordinates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.get_plating_center"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.get_plating_center()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.skycoord_to_pixels"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.skycoord_to_pixels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.pixels_to_skycoord"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.pixels_to_skycoord()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.find_gaia_match"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.find_gaia_match()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.number_of_matched_stars"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.number_of_matched_stars()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.ImageStarMapping.plot"><code class="docutils literal notranslate"><span class="pre">ImageStarMapping.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.local_gaia_db_query"><code class="docutils literal notranslate"><span class="pre">local_gaia_db_query()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.pointer.local_db_query"><code class="docutils literal notranslate"><span class="pre">local_db_query()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
