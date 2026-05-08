@@ -445,6 +445,8 @@ class Defocuser:
             action=action,
         )
         self.best_focus_position = self.load_best_focus_position_from_config()
+        focuser_config = self.paired_devices.get_device_config("Focuser")
+        self.focus_tolerance: int = focuser_config.get("focus_tolerance", 0)
 
     @property
     def focuser_name(self) -> str:
@@ -496,9 +498,10 @@ class Defocuser:
         Args:
             position (int): Target defocus position.
         """
-        if position == self.current_position:
+        if abs(position - self.current_position) <= self.focus_tolerance:
             self.observatory.logger.debug(
-                f"Focuser {self.focuser_name} already at position "
+                f"Focuser {self.focuser_name} within focus tolerance "
+                f"({self.focus_tolerance} steps) of target position "
                 f"{position}. No change of focus needed."
             )
             return
@@ -518,10 +521,14 @@ class Defocuser:
         Moves the focuser back to the stored best focus position
         after defocusing operations.
         """
-        if self.current_position == self.best_focus_position:
+        if (
+            abs(self.current_position - self.best_focus_position)
+            <= self.focus_tolerance
+        ):
             self.observatory.logger.debug(
-                f"Focuser {self.focuser_name} already at best "
-                f"focus position {self.best_focus_position}. No refocusing needed."
+                f"Focuser {self.focuser_name} within focus tolerance "
+                f"({self.focus_tolerance} steps) of best focus position "
+                f"{self.best_focus_position}. No refocusing needed."
             )
             return
         self.observatory.logger.info(

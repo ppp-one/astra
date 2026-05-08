@@ -69,6 +69,7 @@ Additional parameters for telescope mounts:
 Focuser-specific parameters:
 
 - `focus_position`: Best known absolute focus position (integer)
+- `focus_tolerance`: Maximum deviation in steps from the target position before a focuser move is issued (integer, default: 0). Moves are skipped when the current position is within this many steps of the target, avoiding unnecessary mechanical motion when thermal drift is small.
 - `settle_time`: Time in seconds to wait after focus position move (integer)
 
 ## Camera Configuration

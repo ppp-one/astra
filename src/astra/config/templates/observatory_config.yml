@@ -29,6 +29,7 @@ Focuser:
     ip: localhost:11111
     device_number: 0
     focus_position: 10000
+    focus_tolerance: 0 # steps; skip move if already within this many steps of target
     settle_time: 3 # seconds
     connectable: true # optional, default: true
 Camera:
