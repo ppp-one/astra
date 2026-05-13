@@ -183,6 +183,8 @@ class Observatory:
         # log start up
         self.logger.debug("Database and DatabaseLoggingHandler initialized")
         self.logger.info(f"Starting observatory {self.name}")
+        if type(self) is not Observatory:
+            self.logger.info(f"Using observatory subclass: {type(self).__name__}")
 
         # warn if debug mode
         if self.logger.getEffectiveLevel() == logging.DEBUG:
@@ -2859,11 +2861,17 @@ class Observatory:
             if not self.check_conditions(action=action):
                 return False
 
-            autofocuser = Autofocuser(
-                observatory=self,
-                action=action,
-                paired_devices=paired_devices,
-            )
+            try:
+                autofocuser = Autofocuser(
+                    observatory=self,
+                    action=action,
+                    paired_devices=paired_devices,
+                )
+            except Exception as e:
+                self.logger.warning(
+                    f"Autofocuser initialization failed for {action.device_name}: {e}"
+                )
+                return False
             autofocuser.determine_autofocus_calibration_field()
             autofocuser.slew_to_calibration_field()
             autofocuser.setup()

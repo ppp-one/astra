@@ -39,7 +39,7 @@ classifiers = [
   "Programming Language :: Python :: 3"
 ]
 dependencies = [
-  "astrafocus>=0.1.1",
+  "astrafocus>=0.1.3",
   "astropy",
   "photutils",
   "scipy",
