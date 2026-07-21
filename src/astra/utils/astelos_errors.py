@@ -1,4 +1,4 @@
-"""SPECULOOS telescope error checking and acknowledgement."""
+"""AsTelOS telescope error checking and acknowledgement."""
 
 import time
 from typing import Any, Tuple
@@ -7,11 +7,8 @@ import numpy as np
 import pandas as pd
 
 
-## SPECULOOS EDIT
-def check_astelos_error(
-    telescope: Any, close: bool = False
-) -> Tuple[bool, pd.DataFrame, str]:
-    """Check SPECULOOS telescope status for known acceptable errors.
+def check_error(telescope: Any, close: bool = False) -> Tuple[bool, pd.DataFrame, str]:
+    """Check AsTelOS telescope status for known acceptable errors.
 
     Analyzes telescope status messages to identify errors and determines if they
     are in the list of known acceptable errors that can be safely acknowledged.
@@ -142,14 +139,14 @@ def check_astelos_error(
         return False, df_list, messages
 
 
-def ack_astelos_error(
+def ack_error(
     telescope: Any,
     valid: bool,
     all_errors: pd.DataFrame,
     messages: str,
     close: bool = False,
 ) -> Tuple[bool, str]:
-    """Acknowledge acceptable SPECULOOS telescope errors.
+    """Acknowledge acceptable AsTelOS telescope errors.
 
     Attempts to clear acceptable telescope errors by sending appropriate
     acknowledgement commands. Continues until all errors are cleared or
@@ -157,7 +154,7 @@ def ack_astelos_error(
 
     Args:
         telescope (Any): Telescope object with get() method for commands.
-        valid (bool): Whether errors are acceptable (from check_astelos_error).
+        valid (bool): Whether errors are acceptable (from check_error).
         all_errors (pd.DataFrame): Error information with 'level' column.
         messages (str): Original telescope status messages.
         close (bool): Whether to include slit closure errors as acceptable.
@@ -186,7 +183,7 @@ def ack_astelos_error(
         time.sleep(2)
 
         # check telescope status
-        valid, all_errors, messages = check_astelos_error(telescope, close=close)
+        valid, all_errors, messages = check_error(telescope, close=close)
 
         if time.time() - start_time > 120:  # 2 minutes hardcoded limit
             raise TimeoutError("Astelos error acknowledgement timed out")
