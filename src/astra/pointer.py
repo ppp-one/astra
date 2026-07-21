@@ -66,7 +66,7 @@ from matplotlib import pyplot as plt
 from photutils.detection import DAOStarFinder
 
 from astra.config import Config
-from astra.utils import clean_image
+from astra.utils.image import clean_image
 
 logger = logging.getLogger(__name__)
 

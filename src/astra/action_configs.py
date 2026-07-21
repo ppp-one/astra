@@ -624,7 +624,7 @@ class ObjectActionConfig(BaseActionConfig):
         # Try to resolve coordinates if RA/Dec are not explicitly provided
         if ra is None or dec is None:
             if self.lookup_name is not None:
-                from astra.utils import get_body_coordinates
+                from astra.utils.ephemeris import get_body_coordinates
 
                 # Resolve body position at start time
                 target_coord = get_body_coordinates(

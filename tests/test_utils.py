@@ -8,12 +8,11 @@ import pytest
 from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time, TimeDelta
 
-from astra.utils import (
+from astra.utils.ephemeris import get_body_coordinates, is_sun_rising
+from astra.utils.time import (
     __to_format,
-    get_body_coordinates,
     getLightTravelTimes,
     interpolate_dfs,
-    is_sun_rising,
     time_conversion,
     to_jd,
 )
@@ -210,7 +209,7 @@ def test_flat_ready_condition(location, monkeypatch):
     def fake_get_sun(time):
         return type("Dummy", (), {"transform_to": lambda self, frame: DummyAltAz()})()
 
-    monkeypatch.setattr("astra.utils.get_sun", fake_get_sun)
+    monkeypatch.setattr("astra.utils.ephemeris.get_sun", fake_get_sun)
 
     rising, flat_ready, position = is_sun_rising(location)
     assert flat_ready is True
@@ -228,7 +227,7 @@ def test_not_flat_ready_outside_range(location, monkeypatch):
     def fake_get_sun(time):
         return type("Dummy", (), {"transform_to": lambda self, frame: DummyAltAz()})()
 
-    monkeypatch.setattr("astra.utils.get_sun", fake_get_sun)
+    monkeypatch.setattr("astra.utils.ephemeris.get_sun", fake_get_sun)
 
     rising, flat_ready, position = is_sun_rising(location)
     assert flat_ready is False
@@ -252,7 +251,7 @@ def test_rising_detection(location, monkeypatch):
             "Dummy", (), {"transform_to": lambda self, frame: DummyAltAz(next(values))}
         )()
 
-    monkeypatch.setattr("astra.utils.get_sun", fake_get_sun)
+    monkeypatch.setattr("astra.utils.ephemeris.get_sun", fake_get_sun)
 
     rising, _, _ = is_sun_rising(location)
     assert rising is True
@@ -276,7 +275,7 @@ def test_setting_detection(location, monkeypatch):
             "Dummy", (), {"transform_to": lambda self, frame: DummyAltAz(next(values))}
         )()
 
-    monkeypatch.setattr("astra.utils.get_sun", fake_get_sun)
+    monkeypatch.setattr("astra.utils.ephemeris.get_sun", fake_get_sun)
 
     rising, _, _ = is_sun_rising(location)
     assert rising is False

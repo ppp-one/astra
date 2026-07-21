@@ -25,7 +25,7 @@ from astra.config import Config
 from astra.image_handler import ImageHandler
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
-from astra.utils import CustomImageClass
+from astra.utils.image import CustomImageClass
 
 
 class GuidingCalibrator:

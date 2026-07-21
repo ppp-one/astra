@@ -227,9 +227,9 @@ def test_visibility_resolution_from_lookup_name(
     from astropy.coordinates import SkyCoord
 
     # The method-under-test imports get_body_coordinates internally:
-    #     from astra.utils import get_body_coordinates
-    # To intercept this, we must ensure 'astra.utils' is loaded in sys.modules
-    # and patch the function on the module object itself.
+    #     from astra.utils.ephemeris import get_body_coordinates
+    # To intercept this, we must ensure 'astra.utils.ephemeris' is loaded in
+    # sys.modules and patch the function on the module object itself.
 
     # 1. Define coordinates that are guaranteed to be known:
     # Start with a Visible target near Zenith (Alt=85 degrees)
@@ -240,10 +240,10 @@ def test_visibility_resolution_from_lookup_name(
 
     mock_get_body = MagicMock(return_value=zenith_radec)
 
-    import astra.utils
+    import astra.utils.ephemeris
 
-    original_func = astra.utils.get_body_coordinates
-    astra.utils.get_body_coordinates = mock_get_body
+    original_func = astra.utils.ephemeris.get_body_coordinates
+    astra.utils.ephemeris.get_body_coordinates = mock_get_body
 
     try:
         config = ObjectActionConfig(
@@ -286,4 +286,4 @@ def test_visibility_resolution_from_lookup_name(
 
     finally:
         # Restore the original function to avoid side effects on other tests
-        astra.utils.get_body_coordinates = original_func
+        astra.utils.ephemeris.get_body_coordinates = original_func

@@ -1,6 +1,6 @@
 from typing import List
 
-import astra.utils as utils
+import astra.utils.speculoos as utils
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
 

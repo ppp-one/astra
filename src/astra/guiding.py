@@ -42,7 +42,7 @@ from astra.image_handler import ImageHandler
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.thread_manager import ThreadManager
-from astra.utils import CustomImageClass
+from astra.utils.image import CustomImageClass
 
 # rejection buffer length
 GUIDE_BUFFER_LENGTH = 20
