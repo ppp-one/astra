@@ -230,6 +230,9 @@ class AstraFocuser(FocuserInterface):
         while self.alpaca_device_focuser.get("IsMoving"):
             if time.time() - start_time > hard_timeout:
                 raise TimeoutError("Slew timeout")
+            if not self.observatory.check_conditions(action=self.action):
+                break
+
             time.sleep(0.1)
 
         time.sleep(self.settle_time)
@@ -980,6 +983,29 @@ class Autofocuser:
         save_dir.mkdir(parents=True, exist_ok=True)
         return save_dir / f"autofocus_{self.run_timestamp}_{suffix}.{ext}"
 
+    def _determine_save_dir(self) -> Path | None:
+        """Resolve the directory to write autofocus output files to.
+
+        Prefers the configured save_path; falls back to the directory of the
+        last image saved by this camera, or None if neither is available.
+        """
+        if self.config.save_path is not None:
+            return Path(self.config.save_path)
+
+        try:
+            image_handler = self.observatory.get_image_handler(self.action.device_name)
+            last_image_path = getattr(image_handler, "last_image_path", None)
+        except Exception as e:
+            self.observatory.logger.warning(
+                f"Unable to determine last image path from image handler: {str(e)}"
+            )
+            last_image_path = None
+
+        if last_image_path is None:
+            return None
+
+        return last_image_path.parent
+
     def make_summary_plot(self) -> None:
         """Create visualization plot of autofocus results.
 
@@ -991,35 +1017,13 @@ class Autofocuser:
             if self.success is False:
                 return
 
-            # Determine directory to write the summary to. Prefer configured save_path;
-            # if not provided, fall back to the directory containing the last saved
-            # autofocus image for this camera (if available).
-            save_dir: Path | None = None
-            if self.config.save_path is not None:
-                save_dir = Path(self.config.save_path)
-
+            save_dir = self._determine_save_dir()
             if save_dir is None:
-                # try to find last image saved by this camera
-                try:
-                    image_handler = self.observatory.get_image_handler(
-                        self.action.device_name
-                    )
-                    last_image_path = getattr(image_handler, "last_image_path", None)
-                except Exception:
-                    self.observatory.logger.warning(
-                        "Unable to determine last image path from image handler. "
-                        "No summary plot will be saved."
-                    )
-                    last_image_path = None
-
-                if last_image_path is None:
-                    self.observatory.logger.warning(
-                        "Skipping creation of autofocus summary plot: "
-                        "unable to determine save directory."
-                    )
-                    return
-
-                save_dir = last_image_path.parent
+                self.observatory.logger.warning(
+                    "Skipping creation of autofocus summary plot: "
+                    "unable to determine save directory."
+                )
+                return
 
             if (
                 hasattr(self, "autofocuser")
@@ -1059,7 +1063,6 @@ class Autofocuser:
             )
             ax.legend()
 
-            assert save_dir is not None
             plt.savefig(self._output_path(save_dir, "summary", "png"))
             plt.close()
 
@@ -1076,32 +1079,14 @@ class Autofocuser:
         """
         if self.success is False:
             return
-        save_dir: Path | None = None
-        if self.config.save_path is not None:
-            save_dir = Path(self.config.save_path)
-
+        save_dir = self._determine_save_dir()
         if save_dir is None:
-            try:
-                image_handler = self.observatory.get_image_handler(
-                    self.action.device_name
-                )
-                last_image_path = getattr(image_handler, "last_image_path", None)
-            except Exception as e:
-                self.observatory.logger.error(
-                    f"Error occurred while fetching last image path: {str(e)}"
-                )
-                last_image_path = None
+            self.observatory.logger.error(
+                "Skipping creation of result file: "
+                "no save_path configured and no last image available."
+            )
+            return
 
-            if last_image_path is None:
-                self.observatory.logger.error(
-                    "Skipping creation of result file: "
-                    "no save_path configured and no last image available."
-                )
-                return
-
-            save_dir = last_image_path.parent
-
-        assert save_dir is not None
         result_file_path = self._output_path(save_dir, "result", "txt")
         try:
             with open(result_file_path, "w") as result_file:
