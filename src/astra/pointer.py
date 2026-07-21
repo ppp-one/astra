@@ -288,7 +288,9 @@ def find_stars(
     dao_sources = dao_sources[dao_sources["peak"] > mean + threshold * std]
 
     # Convert to (x, y) coordinates
-    coordinates = np.column_stack([dao_sources["xcentroid"], dao_sources["ycentroid"]])
+    coordinates = np.column_stack(
+        [dao_sources["x_centroid"], dao_sources["y_centroid"]]
+    )
 
     return coordinates
 
@@ -687,7 +689,7 @@ def _get_gaia_star_coordinates(
             table = cabaret.GaiaQuery.query(
                 center=(ra, dec),
                 radius=np.max(fov) / 2,
-                filter_band=gaia_tmass_filter,
+                filter_bands=gaia_tmass_filter,
                 limit=limit,
                 timeout=60,
             )
