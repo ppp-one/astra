@@ -1062,7 +1062,7 @@ class AutofocusConfig(BaseActionConfig):
     n_exposures: List[int] | int = field(default_factory=lambda: [1, 1])
     decrease_search_range: bool = True
     star_find_threshold: float | int = 5.0
-    fwhm: int = 8
+    fwhm: Optional[int] = None
     percent_to_cut: int = 60
     focus_measure_operator: str = "HFR"
     save: bool = True
@@ -1101,7 +1101,10 @@ class AutofocusConfig(BaseActionConfig):
         ),
         "decrease_search_range": "Reduce the search range after each sweep.",
         "star_find_threshold": "DAOStarFinder threshold for star detection.",
-        "fwhm": "DAOStarFinder FWHM of the Gaussian kernel in pixels.",
+        "fwhm": (
+            "DAOStarFinder FWHM of the Gaussian kernel in pixels. If not set, derived "
+            'from the camera/telescope plate scale assuming ~2" seeing.'
+        ),
         "percent_to_cut": "Percentage of worst-performing focus samples to drop when shrinking the range.",
         "focus_measure_operator": "Focus metric to optimize (e.g., hfr, gauss, tenengrad, fft, normalized_variance).",
         "focus_measure_operator_note": (

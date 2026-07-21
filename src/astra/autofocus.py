@@ -582,6 +582,9 @@ class Autofocuser:
             self.config.calibration_field.fov_width = fov_width
             self.config.calibration_field.fov_height = fov_height
 
+        if self.config.fwhm is None:
+            self.config.fwhm = self.determine_default_fwhm(paired_devices)
+
         self._initialise_logging()
         self.observatory.logger.info(f"Loaded action values {self.action_value}")
         self.observatory.logger.info(f"Autofocus configuration: {self.config}.")
@@ -1194,40 +1197,9 @@ class Autofocuser:
         )
         return extremum_estimator
 
-    def calculate_field_of_view(self, paired_devices):
-        """
-        Calculate the field of view of the camera-telescope system.
-        """
-        try:
-            camera = paired_devices.camera
-            telescope = paired_devices.telescope
-
-            # Convert microns to meters
-            pixel_size = 1e-6 * np.array(
-                [camera.get("PixelSizeX"), camera.get("PixelSizeY")]
-            )
-            number_of_pixels = np.array([camera.get("NumX"), camera.get("NumY")])
-
-            focal_length = telescope.get("FocalLength")  # meters
-            # plate_scale = np.arctan(pixel_size / focal_length)
-
-            # field_of_view = plate_scale * number_of_pixels
-            sensor_size = pixel_size * number_of_pixels  # [sx, sy]
-
-            fov = 2.0 * np.arctan(sensor_size / (2.0 * focal_length)) * (180.0 / np.pi)
-            return fov
-
-        except Exception as e:
-            field_of_view = np.array([np.nan, np.nan])
-            self.observatory.logger.error(
-                f"Error calculating field of view from paired devices. Exception: {e}"
-            )
-
-        return field_of_view
-
     def determine_default_field_of_view(self, paired_devices):
         try:
-            field_of_view = self.calculate_field_of_view(paired_devices)
+            field_of_view = paired_devices.calculate_field_of_view()
             fov_width = float(field_of_view[0])
             fov_height = float(field_of_view[1])
 
@@ -1238,4 +1210,16 @@ class Autofocuser:
         except Exception as e:
             raise ValueError(
                 f"Error determining default field of view from paired devices: {str(e)}"
+            )
+
+    def determine_default_fwhm(self, paired_devices) -> int:
+        try:
+            fwhm = paired_devices.calculate_fwhm(seeing_arcsec=3)
+            self.observatory.logger.info(
+                f"Determined default fwhm={fwhm} px from plate scale."
+            )
+            return fwhm
+        except Exception as e:
+            raise ValueError(
+                f"Error determining default fwhm from paired devices: {str(e)}"
             )
