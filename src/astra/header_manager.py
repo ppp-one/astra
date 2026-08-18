@@ -315,7 +315,7 @@ class HeaderManager:
 
             elif (
                 fits_row["device_type"]
-                not in ["astropy_default", "astra", "static", ""]
+                not in ["astropy_default", "astra", "static", "action_metadata", ""]
             ) and fits_row["fixed"] is True:
                 # direct ascom command headers
                 device_type = fits_row["device_type"]
@@ -329,7 +329,40 @@ class HeaderManager:
                     val = device.get(fits_row["device_command"])
 
                     hdr[row_header] = (val, fits_row["comment"])
-
+            elif (
+                fits_row["device_type"] == "action_metadata"
+                and fits_row["fixed"] is True
+            ):
+                # user-defined metadata carried through from the schedule's
+                # action_value.metadata dict (see ObjectActionConfig/CalibrationActionConfig)
+                metadata = action_value.get("metadata", {}) or {}
+                key = fits_row["device_command"]
+                if key not in metadata:
+                    logger.warning(
+                        f"action_metadata key '{key}' not found in this action's "
+                        f"metadata for header '{row_header}'; leaving unset."
+                    )
+                else:
+                    raw_val = metadata[key]
+                    try:
+                        if fits_row["dtype"] == "float":
+                            val = float(raw_val)
+                        elif fits_row["dtype"] == "int":
+                            val = int(raw_val)
+                        elif fits_row["dtype"] == "str":
+                            val = str(raw_val)
+                        elif fits_row["dtype"] == "bool":
+                            val = bool(raw_val)
+                        else:
+                            val = raw_val
+                        hdr[row_header] = (val, fits_row["comment"])
+                    except (TypeError, ValueError) as e:
+                        logger.report_device_issue(
+                            device_type="Headers",
+                            device_name="",
+                            message=f"Invalid value for action_metadata key '{key}': {fits_row}",
+                            exception=e,
+                        )
             elif fits_row["device_type"] == "static":
                 # fixed headers, ensure datatype
                 try:
