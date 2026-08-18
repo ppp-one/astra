@@ -19,7 +19,7 @@ The CSV configuration file defines how FITS headers are constructed:
 - `header`: FITS header keyword
 - `dtype`: Data type (string, integer, float, boolean)
 - `fixed`: Whether the value is set at the beginning of an imaging sequence (`true`) or filled later from polled device properties stored in the SQLite database (`false`)
-- `device_type`: Source ([ASCOM Alpaca device](https://ascom-standards.org/alpyca/alpacaclasses.html), `static` for unchanging values, `astra` for _Astra_ calculated/derived values, `astropy_default` for standard headers filled by Astropy)
+- `device_type`: Source ([ASCOM Alpaca device](https://ascom-standards.org/alpyca/alpacaclasses.html), `static` for unchanging values, `astra` for _Astra_ calculated/derived values, `astropy_default` for standard headers filled by Astropy, `action_metadata` for arbitrary user key/value pairs that should be written to the FITS header)
 - `device_command`: ASCOM device property, a static value, or empty.
 - `comment`: Description of the header keyword
 

@@ -94,3 +94,5 @@ MJD-END,float,false,astra,,Modified Julian Date at end of exposure
 DATE-END,str,false,astra,,UTC datetime at end of exposure
 ,,,,,
 ASTRA,str,true,astra,,Version of Astra
+,,,,,
+"ID","int","true","action_metadata","ID","Source plan ID"
