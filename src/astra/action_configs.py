@@ -179,7 +179,9 @@ class BaseActionConfig:
             if not isinstance(val, dict):
                 return self.format_type_error(f, dict, type(val))
             key_type, value_type = args if len(args) == 2 else (None, None)
-            if key_type:
+            # 'typing.Any' accepts anything and cannot be used with isinstance(),
+            # so key/values typed as Any (e.g. dict[str, Any]) skip the check.
+            if key_type and key_type is not Any:
                 key_origin = typing.get_origin(key_type)
                 for k in val.keys():
                     if key_origin:
@@ -191,7 +193,7 @@ class BaseActionConfig:
                         return self.format_type_error(
                             f, key_type, type(k), specifier="keys"
                         )
-            if value_type:
+            if value_type and value_type is not Any:
                 value_origin = typing.get_origin(value_type)
                 for v in val.values():
                     if value_origin:
@@ -510,6 +512,7 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -534,6 +537,11 @@ class ObjectActionConfig(BaseActionConfig):
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal location of the subframe center (0=left, 1=right).",
         "subframe_center_y": "Vertical location of the subframe center (0=top, 1=bottom).",
+        "metadata": (
+            "Arbitrary user-defined key/value pairs that are not otherwise interpreted by Astra."
+            "Values ca be written to the FITS header via a `device_type=action_metadata` row in the FITS "
+            "header configuration CSV, where `device_command` names the metadata key."
+        ),
     }
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
@@ -548,6 +556,7 @@ class ObjectActionConfig(BaseActionConfig):
             "n": 3,
             "guiding": True,
             "pointing": True,
+            "metadata": {"id": "47026", "requested_by_user": "user@mail.com"},
         },
         "start_time": "2025-01-01 00:00:00.000",
         "end_time": "2025-02-01 00:00:00.000",
@@ -706,6 +715,7 @@ class CalibrationActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "exptime": "Exposure times (seconds) to iterate.",
@@ -718,6 +728,10 @@ class CalibrationActionConfig(BaseActionConfig):
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
         "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+        "metadata": (
+            "Arbitrary user-defined key/value pairs, exposed to FITS headers via "
+            "`device_type=action_metadata` rows in the FITS header configuration CSV."
+        ),
     }
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
@@ -784,6 +798,10 @@ class FlatsActionConfig(BaseActionConfig):
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
         "subframe_center_y": "Vertical subframe center (0=top, 1=bottom).",
+        "metadata": (
+            "Arbitrary user-defined key/value pairs, exposed to FITS headers via "
+            "`device_type=action_metadata` rows in the FITS header configuration CSV."
+        ),
     }
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
