@@ -352,7 +352,17 @@ class HeaderManager:
                         elif fits_row["dtype"] == "str":
                             val = str(raw_val)
                         elif fits_row["dtype"] == "bool":
-                            val = bool(raw_val)
+                            val = raw_val
+                            if isinstance(val, str):
+                                val_lower = val.lower()
+                                if val_lower in ["true", "1"]:
+                                    val = True
+                                elif val_lower in ["false", "0"]:
+                                    val = False
+                                else:
+                                    raise ValueError(f"Invalid boolean string: {val}")
+                            elif isinstance(val, (int, float)):
+                                val = bool(val)
                         else:
                             val = raw_val
                         hdr[row_header] = (val, fits_row["comment"])
