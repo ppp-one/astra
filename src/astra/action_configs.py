@@ -512,7 +512,7 @@ class ObjectActionConfig(BaseActionConfig):
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
-    metadata: dict[str,Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "object": "Target name.",
@@ -537,7 +537,7 @@ class ObjectActionConfig(BaseActionConfig):
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal location of the subframe center (0=left, 1=right).",
         "subframe_center_y": "Vertical location of the subframe center (0=top, 1=bottom).",
-        "metadata":(
+        "metadata": (
             "Arbitrary user-defined key/value pairs that are not otherwise interpreted by Astra."
             "Values ca be written to the FITS header via a `device_type=action_metadata` row in the FITS "
             "header configuration CSV, where `device_command` names the metadata key."
@@ -556,7 +556,7 @@ class ObjectActionConfig(BaseActionConfig):
             "n": 3,
             "guiding": True,
             "pointing": True,
-            "metadata":{"id":"47026", "requested_by_user":"user@mail.com"},
+            "metadata": {"id": "47026", "requested_by_user": "user@mail.com"},
         },
         "start_time": "2025-01-01 00:00:00.000",
         "end_time": "2025-02-01 00:00:00.000",
