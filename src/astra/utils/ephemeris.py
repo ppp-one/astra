@@ -32,6 +32,37 @@ logger = logging.getLogger(__name__)
 _SOLAR_SYSTEM_BODIES: frozenset[str] = frozenset(solar_system_ephemeris.bodies)
 _SOLAR_TO_SIDEREAL = u.Quantity(1, "day").to("sday").value
 
+# The Horizons columns Astra reads: 1 is astrometric RA and Dec, 3 is the rates.
+# The full set is 81 columns, and asking for all of them doubles the time the
+# query takes, which delays the schedule load. The debug dump written under
+# _save_and_log_horizons_output therefore holds these columns rather than all.
+_HORIZONS_QUANTITIES = "1,3"
+
+# Ephemeris sampling. The interval is chosen from the target's own sky motion
+# unless the caller asks for a specific one. A planet crosses a fraction of an
+# arcsecond in a minute, so the default is ample for it, while the ISS crosses
+# 30 degrees and its interpolated position lands 8 degrees from the truth.
+_DEFAULT_INTERVAL_MINUTES = 1.0
+_MIN_INTERVAL_SECONDS = 1.0
+# Largest arc a target may cross between two samples. Cubic interpolation over a
+# 2 degree arc is accurate to about an arcsecond.
+_MAX_ARC_PER_SAMPLE_DEG = 2.0
+# Ceiling on the sample count, so a fast target over a long window cannot turn
+# into an enormous Horizons query.
+_MAX_SAMPLES = 5000
+# A coarse grid under-reads the peak rate of a satellite pass, so the interval is
+# chosen again on the finer grid it produces. Three passes is enough to settle.
+_MAX_INTERVAL_REFINEMENTS = 3
+# Where the automatic search starts for a satellite. A TLE always describes an
+# Earth satellite, and one in low orbit crosses about 1 degree a second when it
+# passes overhead, which is as fast as a satellite gets. Starting here costs one
+# query instead of two, which keeps the schedule load quick enough for a sequence
+# that starts seconds later.
+_TLE_INITIAL_INTERVAL_SECONDS = 2.0
+# The search goes back to a coarser grid only when the interval is much shorter
+# than the target needs. A small difference is not worth another query.
+_INTERVAL_COARSEN_FACTOR = 4.0
+
 
 class NotMovingBodyError(ValueError):
     """Raised when a lookup_name cannot be resolved as a solar system or minor body."""
@@ -214,66 +245,33 @@ def is_solar_system_body(body_name: str) -> bool:
     return body_name.lower() in _SOLAR_SYSTEM_BODIES
 
 
-def precompute_ephemeris(
+def _sample_body(
     body_name: str,
     start_time: Time,
     duration_hours: float,
     obs_location: EarthLocation,
-    interval_minutes: float = 1.0,
-    tle_data: str | None = None,
-    return_rates: bool = False,
-) -> (
-    tuple["interp1d", "interp1d"]
-    | tuple["interp1d", "interp1d", "interp1d", "interp1d"]
-):
-    """Pre-compute a moving body's sky positions over a time window.
-
-    Samples the body's position once over the whole window and returns cubic
-    interpolation functions keyed on seconds since start_time. Planets, the Moon
-    and the Sun come from one vectorised astropy get_body() call. Minor bodies and
-    TLE-defined satellites come from one JPL Horizons query. Reading the
-    interpolators at runtime is much faster than repeated position lookups.
+    interval_minutes: float,
+    tle_data: str | None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None, np.ndarray | None]:
+    """Sample a moving body's position over a window at one sampling interval.
 
     Args:
-        body_name: Name of the body (e.g. 'mars', 'moon'). Must be present in
-            astropy's built-in solar system ephemeris, resolvable by JPL Horizons,
-            or 'TLE' if tle_data is provided.
-        start_time: Start of the observation window.
+        body_name: Name of the body, or 'TLE' when tle_data is given.
+        start_time: Start of the window.
         duration_hours: Length of the window in hours.
         obs_location: Observer EarthLocation.
-        interval_minutes: Ephemeris sampling interval (default 1 min).
-        tle_data: Two-line element (TLE) data as a string with two lines separated
-            by newline. Required when body_name is 'TLE'. Example format:
-            "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927\\n
-             2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
+        interval_minutes: Sampling interval in minutes.
+        tle_data: Two element lines separated by a newline, for a satellite.
 
     Returns:
-        If return_rates is False (default):
-            (ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.
-            RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.
-
-        If return_rates is True:
-            (ra_interp, dec_interp, ra_rate_interp, dec_rate_interp), where
-            ra_rate_interp and dec_rate_interp map elapsed seconds to ASCOM tracking
-            units (RightAscensionRate in seconds of RA per sidereal second and
-            DeclinationRate in arcseconds per SI second).
+        (seconds, ra_deg, dec_deg, ra_rate, dec_rate). Seconds are measured from
+        start_time and RA is unwrapped, so it is continuous across 0/360. The two
+        rates are the Horizons columns in arcseconds per hour, or None for a body
+        taken from astropy's built-in ephemeris.
 
     Raises:
-        NotMovingBodyError: If body cannot be resolved as a solar system body,
-            minor body, or TLE.
-        ValueError: If body_name is 'TLE' but tle_data is not provided.
-
-    Example usage:
-    --------
-    Get the position of Mars as observed from Greenwich at the current time:
-        from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris
-        from astropy.time import Time
-        location = EarthLocation.of_site('greenwich')
-        ra_interp, dec_interp = precompute_ephemeris('mars', Time.now(), 4, location)
-
-    Get position of ISS using TLE data:
-        tle = "1 25544U 98067A   23001.00000000  .00016717  00000-0  29641-3 0  9991\n2 25544  51.6416 339.8014 0002571  235.7582  1.5976 15.54178122381131"
-        ra_interp, dec_interp = precompute_ephemeris('TLE', start_time, 4, location, tle_data=tle)
+        NotMovingBodyError: If Horizons cannot resolve the name.
+        requests.exceptions.RequestException: On a network failure.
     """
     n_points = int(duration_hours * 60 / interval_minutes) + 1
     minutes = np.linspace(0, duration_hours * 60, n_points)
@@ -314,13 +312,22 @@ def precompute_ephemeris(
                     "location": location,
                     "epochs": epochs,
                     "optional_settings": {"TLE": tle_data},
+                    "quantities": _HORIZONS_QUANTITIES,
                 }
                 obj = Horizons(id="TLE", location=location, epochs=epochs)
-                eph = obj.ephemerides(optional_settings={"TLE": tle_data})
+                eph = obj.ephemerides(
+                    optional_settings={"TLE": tle_data},
+                    quantities=_HORIZONS_QUANTITIES,
+                )
             else:
-                call_input = {"id": body_name, "location": location, "epochs": epochs}
+                call_input = {
+                    "id": body_name,
+                    "location": location,
+                    "epochs": epochs,
+                    "quantities": _HORIZONS_QUANTITIES,
+                }
                 obj = Horizons(id=body_name, location=location, epochs=epochs)
-                eph = obj.ephemerides()
+                eph = obj.ephemerides(quantities=_HORIZONS_QUANTITIES)
             _save_and_log_horizons_output(
                 body_name, "precompute_ephemeris", eph, call_input
             )
@@ -342,6 +349,233 @@ def precompute_ephemeris(
 
     ra_coords = np.unwrap(bodies.ra.rad) * (180.0 / np.pi)
     dec_coords = bodies.dec.deg
+    return seconds, ra_coords, dec_coords, ra_rate_as_per_hour, dec_rate_as_per_hour
+
+
+def _max_sky_rate_deg_per_s(
+    seconds: np.ndarray,
+    ra_coords: np.ndarray,
+    dec_coords: np.ndarray,
+    ra_rate_as_per_hour: np.ndarray | None,
+    dec_rate_as_per_hour: np.ndarray | None,
+) -> float:
+    """Return the fastest apparent sky motion in the sampled window, in deg/s.
+
+    Horizons reports the rate at each sample, which is exact even where the
+    samples themselves are too far apart to describe the path. Positions from
+    astropy are differentiated instead, which is accurate because every body in
+    the built-in ephemeris moves slowly.
+    """
+    if ra_rate_as_per_hour is not None and dec_rate_as_per_hour is not None:
+        # Both columns are arcseconds per hour, and Horizons already projects the
+        # RA rate onto the sky by the cos(Dec) factor.
+        rates = np.hypot(ra_rate_as_per_hour, dec_rate_as_per_hour) / 3600.0**2
+    else:
+        if len(seconds) < 2:
+            return 0.0
+        cos_dec = np.cos(np.radians(dec_coords))
+        rates = np.hypot(
+            np.gradient(ra_coords, seconds) * cos_dec,
+            np.gradient(dec_coords, seconds),
+        )
+    return float(np.nanmax(np.abs(rates)))
+
+
+def _interval_floor_seconds(duration_hours: float) -> float:
+    """Return the shortest sampling interval allowed over a window of this length.
+
+    One second, or longer where that many samples would exceed the ceiling.
+    """
+    return max(
+        _MIN_INTERVAL_SECONDS, duration_hours * 3600.0 / max(_MAX_SAMPLES - 1, 1)
+    )
+
+
+def _interval_for_sky_rate(rate_deg_per_s: float, duration_hours: float) -> float:
+    """Choose a sampling interval in minutes for a target moving at this rate.
+
+    The interval keeps the arc between two samples short enough for the cubic
+    interpolation to stay accurate. It is never longer than the default, never
+    shorter than one second, and never fine enough to exceed the sample ceiling.
+    """
+    if rate_deg_per_s <= 0.0:
+        wanted_s = _DEFAULT_INTERVAL_MINUTES * 60.0
+    else:
+        wanted_s = _MAX_ARC_PER_SAMPLE_DEG / rate_deg_per_s
+
+    wanted_s = min(
+        max(wanted_s, _interval_floor_seconds(duration_hours)),
+        _DEFAULT_INTERVAL_MINUTES * 60.0,
+    )
+    return wanted_s / 60.0
+
+
+def _initial_interval_minutes(
+    body_name: str, tle_data: str | None, duration_hours: float
+) -> float:
+    """Return the interval the automatic search starts from.
+
+    A TLE always describes an Earth satellite, so the search starts at an interval
+    that suits a low orbit. Every other target starts at the default, which already
+    suits a planet, a comet or an asteroid. Each start is the value the search
+    settles on for the usual target of its kind, so one query is normally enough.
+    """
+    is_tle = body_name.upper() == "TLE" or tle_data is not None
+    start_s = (
+        _TLE_INITIAL_INTERVAL_SECONDS if is_tle else _DEFAULT_INTERVAL_MINUTES * 60.0
+    )
+    return max(start_s, _interval_floor_seconds(duration_hours)) / 60.0
+
+
+def _sample_automatically(
+    body_name: str,
+    start_time: Time,
+    duration_hours: float,
+    obs_location: EarthLocation,
+    tle_data: str | None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None, np.ndarray | None]:
+    """Sample a body at an interval that suits how quickly it moves.
+
+    The search starts from the interval that the kind of target usually needs, and
+    each sampled grid says whether that interval was correct. A grid that is too
+    coarse for a satellite is also aliased, and the rate read from it is too low.
+    So the interval is chosen again from each finer grid, which reads a higher peak
+    rate, until the choice settles.
+    """
+    interval = _initial_interval_minutes(body_name, tle_data, duration_hours)
+    sample = _sample_body(
+        body_name, start_time, duration_hours, obs_location, interval, tle_data
+    )
+
+    for _ in range(_MAX_INTERVAL_REFINEMENTS):
+        rate = _max_sky_rate_deg_per_s(*sample)
+        wanted = _interval_for_sky_rate(rate, duration_hours)
+        too_coarse = wanted < interval * 0.9
+        # Much finer than the target needs, which costs query time and memory for
+        # no accuracy. A small difference is left alone.
+        too_fine = wanted > interval * _INTERVAL_COARSEN_FACTOR
+        if not (too_coarse or too_fine):
+            break
+        logger.info(
+            "'%s' moves at up to %.4f deg/s. Sampling its ephemeris every %.1f s "
+            "rather than %.1f s.",
+            body_name,
+            rate,
+            wanted * 60.0,
+            interval * 60.0,
+        )
+        interval = wanted
+        sample = _sample_body(
+            body_name, start_time, duration_hours, obs_location, interval, tle_data
+        )
+
+    rate = _max_sky_rate_deg_per_s(*sample)
+    if rate > 0.0 and _MAX_ARC_PER_SAMPLE_DEG / rate < _interval_floor_seconds(
+        duration_hours
+    ):
+        logger.warning(
+            "'%s' moves at up to %.4f deg/s, which needs an ephemeris sample every "
+            "%.2f s. That many samples over this %.1f hour window exceeds the "
+            "ceiling of %d, so the interval is held at %.1f s and positions between "
+            "samples are less accurate. Shorten the window for a target this fast.",
+            body_name,
+            rate,
+            _MAX_ARC_PER_SAMPLE_DEG / rate,
+            duration_hours,
+            _MAX_SAMPLES,
+            interval * 60.0,
+        )
+    return sample
+
+
+def precompute_ephemeris(
+    body_name: str,
+    start_time: Time,
+    duration_hours: float,
+    obs_location: EarthLocation,
+    interval_minutes: float | None = 1.0,
+    tle_data: str | None = None,
+    return_rates: bool = False,
+) -> (
+    tuple["interp1d", "interp1d"]
+    | tuple["interp1d", "interp1d", "interp1d", "interp1d"]
+):
+    """Pre-compute a moving body's sky positions over a time window.
+
+    Samples the body's position over the whole window and returns cubic
+    interpolation functions keyed on seconds since start_time. Planets, the Moon
+    and the Sun come from vectorised astropy get_body() calls. Minor bodies and
+    TLE-defined satellites come from JPL Horizons, in one query, or two where the
+    interval is chosen automatically and the target moves fast enough to need a
+    finer grid. Reading the interpolators at runtime is much faster than repeated
+    position lookups.
+
+    Args:
+        body_name: Name of the body (e.g. 'mars', 'moon'). Must be present in
+            astropy's built-in solar system ephemeris, resolvable by JPL Horizons,
+            or 'TLE' if tle_data is provided.
+        start_time: Start of the observation window.
+        duration_hours: Length of the window in hours.
+        obs_location: Observer EarthLocation.
+        interval_minutes: Ephemeris sampling interval in minutes. Pass None to
+            choose it from the target's own sky motion, which a fast target needs:
+            sampled once a minute, the ISS lands 8 degrees from its true position
+            between samples, because cubic interpolation cannot describe an arc it
+            never sampled. The search starts at a few seconds for a TLE and at one
+            minute for everything else, so one query is normally enough, and then
+            checks that against the sampled rates. The interval is held between one
+            second and one minute, and never fine enough to exceed the sample
+            ceiling.
+        tle_data: Two-line element (TLE) data as a string with two lines separated
+            by newline. Required when body_name is 'TLE'. Example format:
+            "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927\\n
+             2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
+
+    Returns:
+        If return_rates is False (default):
+            (ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.
+            RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.
+
+        If return_rates is True:
+            (ra_interp, dec_interp, ra_rate_interp, dec_rate_interp), where
+            ra_rate_interp and dec_rate_interp map elapsed seconds to ASCOM tracking
+            units (RightAscensionRate in seconds of RA per sidereal second and
+            DeclinationRate in arcseconds per SI second).
+
+    Raises:
+        NotMovingBodyError: If body cannot be resolved as a solar system body,
+            minor body, or TLE.
+        ValueError: If body_name is 'TLE' but tle_data is not provided.
+
+    Example usage:
+    --------
+    Get the position of Mars as observed from Greenwich at the current time:
+        from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris
+        from astropy.time import Time
+        location = EarthLocation.of_site('greenwich')
+        ra_interp, dec_interp = precompute_ephemeris('mars', Time.now(), 4, location)
+
+    Get position of ISS using TLE data:
+        tle = "1 25544U 98067A   23001.00000000  .00016717  00000-0  29641-3 0  9991\n2 25544  51.6416 339.8014 0002571  235.7582  1.5976 15.54178122381131"
+        ra_interp, dec_interp = precompute_ephemeris('TLE', start_time, 4, location, tle_data=tle)
+    """
+    if interval_minutes is None:
+        seconds, ra_coords, dec_coords, ra_rate_as_per_hour, dec_rate_as_per_hour = (
+            _sample_automatically(
+                body_name, start_time, duration_hours, obs_location, tle_data
+            )
+        )
+    else:
+        seconds, ra_coords, dec_coords, ra_rate_as_per_hour, dec_rate_as_per_hour = (
+            _sample_body(
+                body_name,
+                start_time,
+                duration_hours,
+                obs_location,
+                interval_minutes,
+                tle_data,
+            )
+        )
 
     ra_interp = interp1d(seconds, ra_coords, kind="cubic", fill_value="extrapolate")
     dec_interp = interp1d(seconds, dec_coords, kind="cubic", fill_value="extrapolate")

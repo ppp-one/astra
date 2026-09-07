@@ -4,11 +4,12 @@ import unittest.mock
 from datetime import UTC, datetime, timedelta
 
 import astropy.units as u
+import numpy as np
 import pytest
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 
-from astra.action_configs import ObjectActionConfig
+from astra.action_configs import ObjectActionConfig, ephemeris_window_hours
 from astra.utils.ephemeris import NotMovingBodyError
 
 
@@ -409,3 +410,238 @@ class TestNonsiderealCapabilityGate:
 
         precompute.assert_called_once()
         assert config._nonsidereal is True
+
+
+class TestAltitudeSampling:
+    """The altitude check samples the whole window, not only three moments.
+
+    A target whose altitude changes monotonically is described by its start,
+    middle and end. A satellite is not: it rises and sets several times in a long
+    window, so it can be above the horizon at those three moments and below it for
+    most of the sequence.
+    """
+
+    @staticmethod
+    def _ephemeris_for(alt_profile, start_time, observatory_location):
+        """Return RA and Dec interpolators tracing a chosen altitude profile.
+
+        Args:
+            alt_profile: Callable mapping elapsed seconds to altitude in degrees.
+            start_time: Epoch the interpolators are keyed to.
+            observatory_location: Observer location.
+
+        Returns:
+            (ra_interp, dec_interp), each taking elapsed seconds and returning
+            degrees, as the real ephemeris interpolators do.
+        """
+
+        def coords(elapsed):
+            scalar = np.ndim(elapsed) == 0
+            elapsed = np.atleast_1d(np.asarray(elapsed, dtype=float))
+            times = start_time + elapsed * u.s
+            radec = SkyCoord(
+                alt=u.Quantity(alt_profile(elapsed), u.deg),
+                az=u.Quantity(np.full(elapsed.shape, 180.0), u.deg),
+                frame=AltAz(obstime=times, location=observatory_location),
+            ).transform_to("icrs")
+            return radec, scalar
+
+        def ra_interp(elapsed):
+            radec, scalar = coords(elapsed)
+            return radec.ra.deg[0] if scalar else radec.ra.deg
+
+        def dec_interp(elapsed):
+            radec, scalar = coords(elapsed)
+            return radec.dec.deg[0] if scalar else radec.dec.deg
+
+        return ra_interp, dec_interp
+
+    def _validate(
+        self, alt_profile, start_time, end_time, observatory_location, min_altitude=0.0
+    ):
+        """Validate a satellite action whose ephemeris follows alt_profile."""
+        config = ObjectActionConfig(
+            object="Moving Target", exptime=1.0, lookup_name="TLE", tle="1 ...\n2 ..."
+        )
+        ra_interp, dec_interp = self._ephemeris_for(
+            alt_profile, start_time, observatory_location
+        )
+        rate = unittest.mock.MagicMock(return_value=0.0)
+        with unittest.mock.patch(
+            "astra.action_configs.precompute_ephemeris",
+            return_value=(ra_interp, dec_interp, rate, rate),
+        ):
+            config.validate_visibility(
+                start_time=start_time,
+                end_time=end_time,
+                observatory_location=observatory_location,
+                min_altitude=min_altitude,
+                nonsidereal_supported=True,
+            )
+        return config
+
+    def test_target_below_horizon_between_the_sampled_ends_is_caught(
+        self, observatory_location, observation_times
+    ):
+        """The case three samples cannot see.
+
+        The profile puts the target at 20 degrees at the start, the middle and the
+        end, and at -20 degrees a quarter and three quarters of the way through.
+        """
+        start_time, end_time = observation_times
+        span_s = (end_time - start_time).to_value(u.s)
+
+        def profile(elapsed):
+            return 20.0 * np.cos(4.0 * np.pi * elapsed / span_s)
+
+        # The three moments the old check looked at are all well above the horizon.
+        assert profile(np.array([0.0, span_s / 2, span_s])).min() > 19.0
+
+        with pytest.raises(ValueError) as exc_info:
+            self._validate(profile, start_time, end_time, observatory_location)
+
+        message = str(exc_info.value)
+        assert "below the limit at" in message
+        assert "worst -20" in message
+
+    def test_start_and_end_are_reported_by_name(
+        self, observatory_location, observation_times
+    ):
+        """The exact start and end are always sampled and named in the error."""
+        start_time, end_time = observation_times
+        span_s = (end_time - start_time).to_value(u.s)
+
+        # Sets during the window: above the limit at the start, below it at the end.
+        with pytest.raises(ValueError) as exc_info:
+            self._validate(
+                lambda elapsed: 30.0 - 40.0 * elapsed / span_s,
+                start_time,
+                end_time,
+                observatory_location,
+            )
+
+        message = str(exc_info.value)
+        assert "end: altitude -10" in message
+        assert "start:" not in message
+
+    def test_target_above_the_limit_throughout_passes(
+        self, observatory_location, observation_times
+    ):
+        start_time, end_time = observation_times
+        self._validate(
+            lambda elapsed: np.full(np.shape(elapsed), 40.0),
+            start_time,
+            end_time,
+            observatory_location,
+        )
+
+    def test_sample_times_span_the_window_at_a_fixed_cadence(self):
+        """The first and last samples are the exact ends of the window."""
+        start_time = Time("2026-09-08 00:00:00")
+        end_time = start_time + 2 * u.hour
+        elapsed, times = ObjectActionConfig._visibility_sample_times(
+            start_time, end_time
+        )
+
+        assert elapsed[0] == 0.0
+        assert elapsed[-1] == pytest.approx(7200.0)
+        assert len(elapsed) == 241  # every 30 s
+        assert times[0].isclose(start_time)
+        assert times[-1].isclose(end_time)
+
+    def test_sample_count_is_capped_for_a_long_window(self):
+        start_time = Time("2026-09-08 00:00:00")
+        elapsed, _ = ObjectActionConfig._visibility_sample_times(
+            start_time, start_time + 30 * u.day
+        )
+        assert len(elapsed) == 2000
+
+
+class TestMovingBodyWithFixedCoordinates:
+    """A moving target cannot also carry a fixed coordinate.
+
+    At runtime the mount is driven from the ephemeris and the fixed coordinate is
+    ignored, so validating the fixed one reports on a position never visited.
+    """
+
+    def _moving(self):
+        """Patch the resolver so the name comes back as a moving body."""
+        interp = unittest.mock.MagicMock(return_value=0.0)
+        return unittest.mock.patch(
+            "astra.action_configs.precompute_ephemeris",
+            return_value=(interp, interp, interp, interp),
+        )
+
+    @pytest.mark.parametrize(
+        "coords",
+        [{"ra": 10.0, "dec": 20.0}, {"alt": 80.0, "az": 0.0}],
+        ids=["ra_dec", "alt_az"],
+    )
+    def test_moving_lookup_name_with_fixed_coordinates_is_rejected(
+        self, observatory_location, observation_times, coords
+    ):
+        start_time, end_time = observation_times
+        config = ObjectActionConfig(
+            object="Mars", exptime=60.0, lookup_name="mars", **coords
+        )
+        with self._moving():
+            with pytest.raises(ValueError, match="resolves to a moving body"):
+                config.validate_visibility(
+                    start_time=start_time,
+                    end_time=end_time,
+                    observatory_location=observatory_location,
+                    min_altitude=0.0,
+                    nonsidereal_supported=True,
+                )
+
+    def test_fixed_lookup_name_with_fixed_coordinates_is_allowed(
+        self, observatory_location, observation_times, visible_target_coords
+    ):
+        """A star named alongside its coordinates stays valid."""
+        start_time, end_time = observation_times
+        ra, dec = visible_target_coords
+        config = ObjectActionConfig(
+            object="M31", exptime=60.0, lookup_name="M31", ra=ra, dec=dec
+        )
+        with unittest.mock.patch(
+            "astra.action_configs.precompute_ephemeris",
+            side_effect=NotMovingBodyError("fixed"),
+        ):
+            config.validate_visibility(
+                start_time=start_time,
+                end_time=end_time,
+                observatory_location=observatory_location,
+                min_altitude=0.0,
+            )
+        assert config._nonsidereal is False
+
+
+class TestEphemerisWindow:
+    """The ephemeris covers the action and a margin past its end.
+
+    The margin is scaled to the action. A satellite pass is sampled every few
+    seconds, so a fixed half-hour margin would be thousands of points that the
+    sequence never reaches, and fetching them delays the schedule load.
+    """
+
+    @pytest.mark.parametrize(
+        "minutes, expected_hours",
+        [
+            (1, 1 / 60 + 5 / 60),  # short: the five minute floor
+            (60, 1.25),  # medium: a quarter of the action
+            (600, 10.5),  # long: the half hour ceiling
+        ],
+        ids=["short", "medium", "long"],
+    )
+    def test_margin_scales_with_the_action(self, minutes, expected_hours):
+        start_time = Time("2026-09-08 00:00:00")
+        window = ephemeris_window_hours(start_time, start_time + minutes * u.min)
+        assert window == pytest.approx(expected_hours)
+
+    def test_never_longer_than_the_old_fixed_margin(self):
+        """The window never grows, so no action pays more than it used to."""
+        start_time = Time("2026-09-08 00:00:00")
+        for minutes in (0, 1, 10, 60, 240, 600):
+            end_time = start_time + minutes * u.min
+            span_hours = minutes / 60
+            assert ephemeris_window_hours(start_time, end_time) <= span_hours + 0.5

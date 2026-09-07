@@ -29,6 +29,45 @@ from astra.utils.ephemeris import (
 
 logger = logging.getLogger(__name__)
 
+# Cadence of the altitude check across an observation window, and the largest
+# number of samples it may take. Three samples at the start, middle and end are
+# enough for a star, whose altitude changes monotonically between them, but not
+# for a satellite: the ISS rises and sets several times in a long window, so it
+# can be above the horizon at all three moments and below it for most of the
+# sequence. Sampling every 30 seconds finds any excursion that lasts longer than
+# that, and 2000 samples of it cost about a tenth of a second.
+_VISIBILITY_SAMPLE_INTERVAL_S = 30.0
+_VISIBILITY_MAX_SAMPLES = 2000
+
+# Ephemeris computed past the end of an action, so a sequence that overruns still
+# reads an interpolated position rather than an extrapolated one. A quarter of the
+# window, held between five minutes and half an hour. A satellite pass that lasts
+# a minute is sampled every few seconds, so half an hour of it would be thousands
+# of points, and fetching them delays the schedule load for no benefit.
+_EPHEMERIS_PAD_FRACTION = 0.25
+_EPHEMERIS_PAD_MIN_HOURS = 5.0 / 60.0
+_EPHEMERIS_PAD_MAX_HOURS = 0.5
+
+
+def ephemeris_window_hours(start_time: Time, end_time: Time) -> float:
+    """Return how many hours of ephemeris an action needs.
+
+    The window covers the action itself and a margin past its end.
+
+    Args:
+        start_time: Start of the action.
+        end_time: End of the action.
+
+    Returns:
+        float: Length of the ephemeris window in hours.
+    """
+    span_hours = max((end_time - start_time).to_value("hr"), 0.0)
+    pad_hours = min(
+        max(span_hours * _EPHEMERIS_PAD_FRACTION, _EPHEMERIS_PAD_MIN_HOURS),
+        _EPHEMERIS_PAD_MAX_HOURS,
+    )
+    return span_hours + pad_hours
+
 
 def public_fields(config) -> list:
     """Return the fields of an action config that belong in an action value.
@@ -743,13 +782,24 @@ class ObjectActionConfig(BaseActionConfig):
                 "Set lookup_name to 'TLE' to track a target from its element set."
             )
 
+        # A satellite is somewhere different every second, so a fixed coordinate
+        # cannot describe where to point at it. Given both, the mount would be sent
+        # to the TLE position and the fixed one silently ignored.
+        if self.tle is not None and (has_radec or has_altaz):
+            raise ValueError(
+                "A 'tle' cannot be combined with fixed 'ra'/'dec' or 'alt'/'az' "
+                "coordinates. A satellite has no fixed position, so give the "
+                "element set alone."
+            )
+
     def _resolve_lookup_name(
         self,
         start_time: Time,
         end_time: Time,
         observatory_location: EarthLocation,
         nonsidereal_supported: bool | None = None,
-    ) -> tuple[float, float]:
+        coordinates_needed: bool = True,
+    ) -> tuple[float | None, float | None]:
         """Resolve lookup_name to (ra_deg, dec_deg) at start_time.
 
         For solar system bodies and minor bodies (comets/asteroids), pre-computes
@@ -761,15 +811,19 @@ class ObjectActionConfig(BaseActionConfig):
             nonsidereal_supported: Whether any mount in the observatory can accept
                 differential tracking rates. ``None`` means unknown (no connected
                 devices) and is treated as supported.
+            coordinates_needed: Whether the caller wants a position back. A caller
+                that already has fixed coordinates only needs to know whether the
+                name moves, so the name resolver is not called for a fixed target.
 
         Returns:
-            (ra_deg, dec_deg) at start_time.
+            (ra_deg, dec_deg) at start_time, or (None, None) for a fixed target
+            when coordinates_needed is False.
 
         Raises:
             ValueError: If the name resolves to a moving body but no mount supports
                 differential rates.
         """
-        duration_hours = (end_time - start_time).to_value("hr") + 0.5
+        duration_hours = ephemeris_window_hours(start_time, end_time)
         try:
             (
                 self._ra_interp,
@@ -781,11 +835,13 @@ class ObjectActionConfig(BaseActionConfig):
                 start_time,
                 duration_hours,
                 observatory_location,
-                # Always use a fine sampling interval so that rate interpolation
-                # is accurate throughout the observation.  nonsidereal_recenter_interval
-                # controls only when the telescope physically re-slews, and must not
-                # be conflated with the ephemeris resolution.
-                1.0,
+                # Let the sampling interval follow the target's own sky motion. A
+                # planet needs a sample a minute and a satellite one every few
+                # seconds, and too coarse a grid leaves the interpolated position
+                # degrees out. nonsidereal_recenter_interval controls only when the
+                # telescope physically re-slews, and must not be conflated with the
+                # ephemeris resolution.
+                None,
                 self.tle,
                 return_rates=True,
             )
@@ -807,13 +863,16 @@ class ObjectActionConfig(BaseActionConfig):
                 f"target: {e}"
             )
 
-            target_coord = get_body_coordinates(
-                body_name=self.lookup_name,
-                obs_time=start_time,
-                obs_location=observatory_location,
-            )
-            ra = target_coord.ra.deg
-            dec = target_coord.dec.deg
+            if coordinates_needed:
+                target_coord = get_body_coordinates(
+                    body_name=self.lookup_name,
+                    obs_time=start_time,
+                    obs_location=observatory_location,
+                )
+                ra = target_coord.ra.deg
+                dec = target_coord.dec.deg
+            else:
+                ra = dec = None
 
         if self._nonsidereal and nonsidereal_supported is False:
             # The resolver says this body moves, so tracking it sidereally would
@@ -838,8 +897,11 @@ class ObjectActionConfig(BaseActionConfig):
     ) -> None:
         """Validate that the target is visible during the scheduled observation window.
 
-        Checks target visibility at the beginning, middle, and end of the planned
-        observation to ensure the target remains observable throughout.
+        Samples the target's altitude across the window, starting at the exact
+        start time and ending at the exact end time, and reports every sample below
+        the limit. A moving target is followed through its ephemeris, so the
+        altitude is that of the body itself at each moment, not of its start-time
+        position.
 
         Args:
             start_time: Observation start time as astropy Time object
@@ -852,9 +914,10 @@ class ObjectActionConfig(BaseActionConfig):
                 connected -- and leaves non-sidereal resolution enabled.
 
         Raises:
-            ValueError: If RA/Dec are not provided, if target is below minimum altitude
-                at any of the three check points (start, middle, end), or if
-                lookup_name resolves to a moving body that no mount can track
+            ValueError: If the target is below the minimum altitude at any sampled
+                time, if lookup_name resolves to a moving body that no mount can
+                track, or if lookup_name resolves to a moving body while fixed
+                coordinates are also given.
 
         Note:
             If RA/Dec are not provided, attempts to resolve them from 'lookup_name'
@@ -862,81 +925,102 @@ class ObjectActionConfig(BaseActionConfig):
         """
         ra = self.ra
         dec = self.dec
+        has_fixed_coords = (ra is not None and dec is not None) or (
+            self.alt is not None and self.az is not None
+        )
 
-        # Try to resolve coordinates if RA/Dec are not explicitly provided
-        if ra is None or dec is None:
-            if self.lookup_name is not None:
-                ra, dec = self._resolve_lookup_name(
-                    start_time,
-                    end_time,
-                    observatory_location,
-                    nonsidereal_supported=nonsidereal_supported,
+        if self.lookup_name is not None:
+            # Resolve the name even when fixed coordinates are also given. Only the
+            # resolution says whether the target moves, and a moving target cannot
+            # be described by a fixed coordinate.
+            resolved_ra, resolved_dec = self._resolve_lookup_name(
+                start_time,
+                end_time,
+                observatory_location,
+                nonsidereal_supported=nonsidereal_supported,
+                coordinates_needed=ra is None or dec is None,
+            )
+
+            if self._nonsidereal and has_fixed_coords:
+                # The mount would be driven from the ephemeris and the fixed
+                # coordinate ignored, so the check would report on a position the
+                # telescope never visits.
+                raise ValueError(
+                    f"Target '{self.object}' has both lookup_name="
+                    f"'{self.lookup_name}', which resolves to a moving body, and "
+                    "fixed 'ra'/'dec' or 'alt'/'az' coordinates. A moving target is "
+                    "tracked from its ephemeris, so remove the fixed coordinates or "
+                    "remove lookup_name."
                 )
 
-            elif self.alt is not None and self.az is not None:
-                # Convert Alt/Az to RA/Dec for proper visibility checking over time
-                # We assume the telescope will track the RA/Dec coordinate corresponding
-                # to this Alt/Az at the start time.
-                altaz_coord = SkyCoord(
-                    alt=u.Quantity(self.alt, u.deg),
-                    az=u.Quantity(self.az, u.deg),
-                    frame=AltAz(obstime=start_time, location=observatory_location),
-                )
-                radec_coord = altaz_coord.transform_to("icrs")
-                ra = radec_coord.ra.deg
-                dec = radec_coord.dec.deg
+            if ra is None or dec is None:
+                ra, dec = resolved_ra, resolved_dec
+
+        elif (
+            (ra is None or dec is None) and self.alt is not None and self.az is not None
+        ):
+            # Convert Alt/Az to RA/Dec for proper visibility checking over time
+            # We assume the telescope will track the RA/Dec coordinate corresponding
+            # to this Alt/Az at the start time.
+            altaz_coord = SkyCoord(
+                alt=u.Quantity(self.alt, u.deg),
+                az=u.Quantity(self.az, u.deg),
+                frame=AltAz(obstime=start_time, location=observatory_location),
+            )
+            radec_coord = altaz_coord.transform_to("icrs")
+            ra = radec_coord.ra.deg
+            dec = radec_coord.dec.deg
 
         # Only check visibility if we have valid coordinates
         if ra is None or dec is None:
             return
 
-        # Check times: start, middle, end
-        mid_time = Time(
-            (start_time.unix + end_time.unix) / 2,
-            format="unix",
+        elapsed_s, check_times = self._visibility_sample_times(start_time, end_time)
+
+        # For non-sidereal targets, read the ephemeris interpolators at every sample
+        # so that the object's actual position is used rather than its start-time
+        # coordinates. A fixed target keeps one position, which broadcasts against
+        # the sampled times.
+        if (
+            self._nonsidereal
+            and self._ra_interp is not None
+            and self._dec_interp is not None
+        ):
+            target = SkyCoord(
+                ra=u.Quantity(np.asarray(self._ra_interp(elapsed_s)) % 360.0, "deg"),
+                dec=u.Quantity(np.asarray(self._dec_interp(elapsed_s)), "deg"),
+                frame="icrs",
+            )
+        else:
+            target = SkyCoord(
+                ra=u.Quantity(ra, "deg"),
+                dec=u.Quantity(dec, "deg"),
+                frame="icrs",
+            )
+
+        altaz_frame = AltAz(obstime=check_times, location=observatory_location)
+        altitudes = np.atleast_1d(
+            np.asarray(target.transform_to(altaz_frame).alt.deg, dtype=float)  # type: ignore
         )
-        check_times = [
-            ("start", start_time),
-            ("middle", mid_time),
-            ("end", end_time),
-        ]
+        below = altitudes < min_altitude
 
         visibility_issues = []
-
-        for label, check_time in check_times:
-            # For non-sidereal targets, query the ephemeris interpolators at each
-            # check time so that the object's actual position is used rather than
-            # its start-time coordinates.
-            if (
-                self._nonsidereal
-                and self._ra_interp is not None
-                and self._dec_interp is not None
-            ):
-                elapsed_s = check_time.unix - start_time.unix
-                check_ra = float(self._ra_interp(elapsed_s)) % 360.0
-                check_dec = float(self._dec_interp(elapsed_s))
-                target = SkyCoord(
-                    ra=u.Quantity(check_ra, "deg"),
-                    dec=u.Quantity(check_dec, "deg"),
-                    frame="icrs",
-                )
-            else:
-                target = SkyCoord(
-                    ra=u.Quantity(ra, "deg"),
-                    dec=u.Quantity(dec, "deg"),
-                    frame="icrs",
-                )
-
-            # Transform to horizontal coordinates
-            altaz_frame = AltAz(obstime=check_time, location=observatory_location)
-            target_altaz = target.transform_to(altaz_frame)
-
-            altitude = target_altaz.alt.deg  # type: ignore
-
-            if altitude < min_altitude:  # type: ignore
-                visibility_issues.append(
-                    f"{label}: altitude {altitude:.1f}° (below {min_altitude:.1f}° limit)"
-                )
+        if below[0]:
+            visibility_issues.append(
+                f"start: altitude {altitudes[0]:.1f}° (below {min_altitude:.1f}° limit)"
+            )
+        if below[-1]:
+            visibility_issues.append(
+                f"end: altitude {altitudes[-1]:.1f}° (below {min_altitude:.1f}° limit)"
+            )
+        if below.any():
+            worst = int(np.argmin(altitudes))
+            first = int(np.argmax(below))
+            visibility_issues.append(
+                f"below the limit at {int(below.sum())} of {below.size} sampled "
+                f"times, first at {check_times[first].iso}, worst "
+                f"{altitudes[worst]:.1f}° at {check_times[worst].iso}"
+            )
 
         if visibility_issues:
             coord_str = (
@@ -949,6 +1033,33 @@ class ObjectActionConfig(BaseActionConfig):
                 f"is not visible during observation window:\n  "
                 + "\n  ".join(visibility_issues)
             )
+
+    @staticmethod
+    def _visibility_sample_times(
+        start_time: Time, end_time: Time
+    ) -> tuple[np.ndarray, Time]:
+        """Return the times the altitude check tests, over the whole window.
+
+        The first and last samples are the exact start and end of the window, so
+        those two moments are always reported on their own. The samples in between
+        follow a fixed cadence, up to a ceiling on their number.
+
+        Args:
+            start_time: Start of the observation window.
+            end_time: End of the observation window.
+
+        Returns:
+            (elapsed_seconds, times): Offsets from start_time in seconds, and the
+            matching astropy Time array.
+        """
+        span_s = max((end_time - start_time).to_value(u.s), 0.0)
+        # Round rather than truncate: a two hour window measured through astropy
+        # comes back a fraction of a microsecond short of 7200 s, which would
+        # otherwise drop a sample and stretch the cadence past the interval.
+        n_samples = round(span_s / _VISIBILITY_SAMPLE_INTERVAL_S) + 1
+        n_samples = min(max(n_samples, 2), _VISIBILITY_MAX_SAMPLES)
+        elapsed_s = np.linspace(0.0, span_s, n_samples)
+        return elapsed_s, start_time + u.Quantity(elapsed_s, u.s)
 
 
 @dataclass

@@ -983,6 +983,26 @@ class TestTleActionConfigValidation:
         )
         assert cfg.tle is not None
 
+    @pytest.mark.parametrize(
+        "coords",
+        [{"ra": 10.0, "dec": 20.0}, {"alt": 45.0, "az": 90.0}],
+        ids=["ra_dec", "alt_az"],
+    )
+    def test_fixed_coordinates_alongside_a_tle_are_rejected(self, coords):
+        """A satellite has no fixed position, so the pair is contradictory.
+
+        Left alone, the mount would be pointed from the element set and the fixed
+        coordinate silently ignored.
+        """
+        with pytest.raises(ValueError, match="cannot be combined with fixed"):
+            ObjectActionConfig(
+                object="ISS",
+                exptime=1.0,
+                lookup_name="TLE",
+                tle="1 ...\n2 ...",
+                **coords,
+            )
+
 
 class TestWaitForSlewSettle:
     """SlewSettleTime is optional in ASCOM; an unimplemented property must not abort."""

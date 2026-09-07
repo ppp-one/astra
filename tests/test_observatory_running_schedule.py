@@ -211,6 +211,11 @@ def create_schedule_data(
                 "pointing": False,
                 "nonsidereal_recenter_interval": 100,
                 "nonsidereal_start_lead_time_seconds": 15,
+                # A satellite overhead crosses about a degree a second, and its
+                # rate changes as quickly. Holding a rate for the default 10 s
+                # leaves the mount trailing, so the documented setting for a
+                # satellite is a rate update every second.
+                "nonsidereal_rate_update_interval": 1,
             },
             "duration": 1,
         },
@@ -611,23 +616,26 @@ def _precompute_tracking_path(
     if schedule_end.tzinfo is None:
         schedule_end = schedule_end.replace(tzinfo=UTC)
 
-    # Schedule validation precomputes from action start through action end + 0.5 h.
-    duration_hours = (schedule_end - schedule_start).total_seconds() / 3600.0 + 0.5
+    # Mirror schedule validation, which computes the window with this same rule.
+    from astra.action_configs import ephemeris_window_hours
+
+    duration_hours = ephemeris_window_hours(Time(schedule_start), Time(schedule_end))
 
     recenter_interval_s = float(
         schedule_data.get("action_value", {}).get("nonsidereal_recenter_interval", 0)
     )
-    # Mirror the schedule-side setup: action_configs.py hardcodes interval_minutes=1.0
-    # for non-sidereal ephemeris computation regardless of the recenter interval.
-    # Using the recenter interval here (e.g. 100 s → 1.667 min) produces different
-    # cubic-spline nodes and therefore different interpolated positions/rates for
-    # fast-moving objects like the ISS.
+    # Mirror the schedule-side setup: action_configs.py asks for the automatic
+    # interval, which precompute_ephemeris picks from the body's own sky motion.
+    # Naming one here instead (the recenter interval, say) produces different
+    # cubic-spline nodes and therefore different interpolated positions and rates
+    # for fast-moving objects like the ISS.
     _ = recenter_interval_s  # retained for clarity; not used for interval selection
-    interval_minutes = 1.0
+    interval_minutes = None
 
     ephem_start = Time(schedule_start)
     logger.info(
-        "Precomputing tracking path: ephem_start=%s, duration_hours=%.3f, interval_minutes=%.3f",
+        "Precomputing tracking path: ephem_start=%s, duration_hours=%.3f, "
+        "interval_minutes=%s",
         ephem_start.isot,
         duration_hours,
         interval_minutes,

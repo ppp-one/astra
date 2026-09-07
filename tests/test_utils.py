@@ -11,6 +11,7 @@ from astropy.table import Table
 from astropy.time import Time, TimeDelta
 
 from astra.utils.ephemeris import (
+    _interval_for_sky_rate,
     NotMovingBodyError,
     compute_nonsidereal_rates_from_interp,
     get_body_coordinates,
@@ -373,7 +374,7 @@ def test_precompute_ephemeris_return_rates_from_horizons(location, monkeypatch):
         def __init__(self, id, location, epochs):
             self.id = id
 
-        def ephemerides(self, optional_settings=None):
+        def ephemerides(self, optional_settings=None, quantities=None):
             return Table(
                 {
                     "RA": [10.0, 10.1, 10.2, 10.3],
@@ -686,3 +687,132 @@ def test_get_body_coordinates_planet_is_icrs(location):
 
     coord = get_body_coordinates("mars", Time("2026-09-02T02:00:00"), location)
     assert coord.frame.name == "icrs"
+
+
+class TestAutomaticEphemerisInterval:
+    """Passing interval_minutes=None picks the interval from the body's motion.
+
+    A fixed one minute interval leaves a satellite's interpolated position degrees
+    from the truth, because cubic interpolation cannot describe an arc that was
+    never sampled. A planet, which crosses a fraction of an arcsecond in a minute,
+    must not pay for that with a needlessly large query.
+    """
+
+    @staticmethod
+    def _fake_horizons(rate_arcsec_per_hour, calls):
+        """Return a Horizons stand-in reporting a constant sky rate.
+
+        Args:
+            rate_arcsec_per_hour: Rate reported in both the RA and Dec columns.
+            calls: List the requested step count of each query is appended to.
+        """
+
+        class _FakeHorizons:
+            def __init__(self, id, location, epochs):
+                self.n_points = int(epochs["step"]) + 1
+                calls.append(self.n_points)
+
+            def ephemerides(self, optional_settings=None, quantities=None):
+                obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+                hours = np.linspace(0.0, 1.0, self.n_points)
+                return Table(
+                    {
+                        "RA": 10.0 + hours,
+                        "DEC": 20.0 + hours,
+                        "datetime_jd": obs_time.jd + hours / 24.0,
+                        "RA_rate": np.full(self.n_points, rate_arcsec_per_hour),
+                        "DEC_rate": np.full(self.n_points, rate_arcsec_per_hour),
+                    }
+                )
+
+        return _FakeHorizons
+
+    def test_fast_target_is_resampled_more_finely(self, location, monkeypatch):
+        """A minor body that moves quickly starts at the default and is refined.
+
+        Only a TLE is known to be fast before the first query, so a fast minor
+        body, such as one that passes close to the Earth, is found this way.
+        """
+        # About 0.35 deg/s on each axis, the order of a very close approach.
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("2026 AA", obs_time, 1.0, location, None)
+
+        assert len(calls) > 1, "a fast target must be sampled again more finely"
+        # One hour sampled every minute is 61 points. The refined grid must be far
+        # denser, and no denser than the ceiling allows.
+        assert calls[0] == 61
+        assert calls[-1] > 500
+        assert calls[-1] <= 5000
+
+    def test_slow_target_keeps_the_default_interval(self, location, monkeypatch):
+        # 30 arcsec/hr, the order of a planet against the stars.
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons", self._fake_horizons(30.0, calls)
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("Ceres", obs_time, 1.0, location, None)
+
+        assert calls == [61], "a slow target needs only the one query"
+
+    def test_explicit_interval_is_left_alone(self, location, monkeypatch):
+        """A caller that names an interval gets exactly that interval."""
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, 1.0, tle_data="1 ...")
+
+        assert calls == [61]
+
+    def test_interval_is_bounded(self):
+        """The chosen interval stays between one second and the default minute."""
+        # Ridiculously fast: the floor holds.
+        assert _interval_for_sky_rate(1000.0, 1.0) * 60.0 == pytest.approx(1.0)
+        # Motionless: the default holds.
+        assert _interval_for_sky_rate(0.0, 1.0) * 60.0 == pytest.approx(60.0)
+        # A long window raises the floor, so the sample count stays under the cap.
+        interval_s = _interval_for_sky_rate(1000.0, 24.0) * 60.0
+        assert 24 * 3600.0 / interval_s <= 5000
+
+    def test_satellite_starts_at_a_fine_interval(self, location, monkeypatch):
+        """A TLE starts fine, so the usual satellite needs only one query.
+
+        The schedule can start seconds after it is written. A second query to
+        Horizons costs more time than that budget allows.
+        """
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, None, tle_data="1 ...")
+
+        assert len(calls) == 1
+        assert calls[0] == 1801  # one hour every 2 s
+
+    def test_slow_satellite_is_resampled_more_coarsely(self, location, monkeypatch):
+        """A satellite that hardly moves must not keep the fine starting grid."""
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons", self._fake_horizons(30.0, calls)
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, None, tle_data="1 ...")
+
+        assert len(calls) == 2
+        assert calls[0] == 1801  # started fine because it is a TLE
+        assert calls[1] == 61  # then went back to the default minute
