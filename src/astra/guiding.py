@@ -42,7 +42,7 @@ from astra.image_handler import ImageHandler
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.thread_manager import ThreadManager
-from astra.utils import CustomImageClass
+from astra.utils.image import CustomImageClass
 
 # rejection buffer length
 GUIDE_BUFFER_LENGTH = 20
@@ -372,7 +372,7 @@ class Guider:
         self.PID_COEFFS = params["PID_COEFFS"]
 
         # minimum guide interval
-        self.MIN_GUIDE_INTERVAL = params.get("MIN_GUIDE_INTERVAL", 30.0)
+        self.MIN_GUIDE_INTERVAL = params.get("MIN_GUIDE_INTERVAL", 60.0)
 
         # set up variables
         # initialise the PID controllers for X and Y
@@ -597,8 +597,8 @@ class Guider:
                     else:
                         y_p_dir = GuideDirections.guideWest
 
-            self.telescope.get("PulseGuide")(
-                Direction=y_p_dir, Duration=int(guide_time_y)
+            self.telescope.get(
+                "PulseGuide", Direction=y_p_dir, Duration=int(guide_time_y)
             )
 
         if pidy < 0 and pidy >= -CURRENT_MAX_SHIFT and self.running:
@@ -618,8 +618,8 @@ class Guider:
                     else:
                         y_n_dir = GuideDirections.guideWest
 
-            self.telescope.get("PulseGuide")(
-                Direction=y_n_dir, Duration=int(guide_time_y)
+            self.telescope.get(
+                "PulseGuide", Direction=y_n_dir, Duration=int(guide_time_y)
             )
 
         start_time = time.time()
@@ -648,8 +648,8 @@ class Guider:
                     else:
                         x_p_dir = GuideDirections.guideWest
 
-            self.telescope.get("PulseGuide")(
-                Direction=x_p_dir, Duration=int(guide_time_x)
+            self.telescope.get(
+                "PulseGuide", Direction=x_p_dir, Duration=int(guide_time_x)
             )
 
         if pidx < 0 and pidx >= -CURRENT_MAX_SHIFT and self.running:
@@ -669,8 +669,8 @@ class Guider:
                     else:
                         x_n_dir = GuideDirections.guideWest
 
-            self.telescope.get("PulseGuide")(
-                Direction=x_n_dir, Duration=int(guide_time_x)
+            self.telescope.get(
+                "PulseGuide", Direction=x_n_dir, Duration=int(guide_time_x)
             )
 
         start_time = time.time()

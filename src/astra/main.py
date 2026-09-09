@@ -22,7 +22,7 @@ import mimetypes
 import sqlite3
 import time
 from contextlib import asynccontextmanager
-from dataclasses import MISSING, fields
+from dataclasses import MISSING
 from datetime import UTC
 from io import BytesIO
 from pathlib import Path
@@ -45,7 +45,7 @@ from fastapi.templating import Jinja2Templates
 from PIL import Image
 
 from astra import Config, __version__
-from astra.action_configs import ACTION_CONFIGS
+from astra.action_configs import ACTION_CONFIGS, public_fields
 from astra.frontend.file_explorer.file_explorer import include_file_explorer
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, FileHandler
@@ -227,14 +227,20 @@ def to_json_safe(value):
 
 
 def schedule_template_loader() -> dict:
-    output = {}
+    """Build the default action value template for every action type.
 
-    for key, cls in ACTION_CONFIGS.items():
-        field_data = {}
-        for f in fields(cls):
-            if not f.init or f.name.startswith("_"):
-                continue
+    A nested config marked with ``flatten`` metadata is merged into the parent
+    template, because that is the layout the action config reads back.
 
+    Returns:
+        dict: Action type mapped to its default action value.
+    """
+
+    def defaults_for(cls) -> dict:
+        own = {}
+        flattened = {}
+
+        for f in public_fields(cls):
             # Handle cases where there is no default value (MISSING)
             default_val = f.default
             if default_val is MISSING:
@@ -244,17 +250,22 @@ def schedule_template_loader() -> dict:
                     except Exception:
                         pass
 
+            if f.metadata.get("flatten"):
+                if hasattr(default_val, "to_jsonable"):
+                    flattened.update(default_val.to_jsonable())
+                continue
+
             if default_val is MISSING:
                 default_val = None  # or some other placeholder
 
             if hasattr(default_val, "to_jsonable"):
                 default_val = default_val.to_jsonable()
 
-            field_data[f.name] = default_val
+            own[f.name] = to_json_safe(default_val)
 
-        output[key] = field_data
+        return {k: v for k, v in flattened.items() if k not in own} | own
 
-    return output
+    return {key: defaults_for(cls) for key, cls in ACTION_CONFIGS.items()}
 
 
 def convert_fits_to_preview(fits_file: str) -> tuple[bytes, dict]:
@@ -624,21 +635,21 @@ async def schedule():
         list: Schedule items with start/end times formatted as HH:MM:SS,
               or empty list if no schedule exists.
     """
-    obs = OBSERVATORY
-    if (
-        obs is None
-        or not hasattr(obs, "schedule_manager")
-        or obs.schedule_manager is None
-    ):
-        logger.warning(
-            "Schedule request but OBSERVATORY not initialized or has no schedule_manager"
-        )
-        return []
-
-    if getattr(obs.schedule_manager, "schedule_mtime", 0) == 0:
-        return []
-
     try:
+        obs = OBSERVATORY
+        if (
+            obs is None
+            or not hasattr(obs, "schedule_manager")
+            or obs.schedule_manager is None
+        ):
+            logger.warning(
+                "Schedule request but OBSERVATORY not initialized or has no schedule_manager"
+            )
+            return []
+
+        if getattr(obs.schedule_manager, "schedule_mtime", 0) == 0:
+            return []
+
         schedule_obj = obs.schedule_manager.get_schedule()
         schedule = schedule_obj.to_dataframe()
 
@@ -649,8 +660,18 @@ async def schedule():
         schedule["end_HHMMSS"] = pd.to_datetime(
             schedule["end_time"], errors="coerce"
         ).apply(lambda x: x.strftime("%H:%M:%S") if pd.notna(x) else "")
+
+        # remove private keys from action_value
+        schedule["action_value"] = schedule["action_value"].apply(
+            lambda x: (
+                {k: v for k, v in x.items() if not k.startswith("_")}
+                if isinstance(x, dict)
+                else x
+            )
+        )
+
         obs.logger.debug("Schedule read for frontend")
-        result = schedule.to_dict(orient="records")
+        result = json.loads(schedule.to_json(orient="records", date_format="iso"))
 
         return result
 

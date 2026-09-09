@@ -66,7 +66,8 @@ from matplotlib import pyplot as plt
 from photutils.detection import DAOStarFinder
 
 from astra.config import Config
-from astra.utils import clean_image
+from astra.utils import optics
+from astra.utils.image import clean_image
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +187,9 @@ def calculate_pointing_correction_from_image(
     stars_in_image = find_stars(
         image_clean,
         threshold=7,
-        fwhm=(2 / 3600) / plate_scale,
+        fwhm=optics.fwhm_pixels(
+            plate_scale_deg_per_pixel=plate_scale, seeing_arcsec=2.0
+        ),
     )
 
     # Limit number of stars and gaia stars to use for plate solve
@@ -285,7 +288,9 @@ def find_stars(
     dao_sources = dao_sources[dao_sources["peak"] > mean + threshold * std]
 
     # Convert to (x, y) coordinates
-    coordinates = np.column_stack([dao_sources["xcentroid"], dao_sources["ycentroid"]])
+    coordinates = np.column_stack(
+        [dao_sources["x_centroid"], dao_sources["y_centroid"]]
+    )
 
     return coordinates
 
@@ -609,9 +614,9 @@ def _extract_plate_scale_and_dateobs(header):
     else:
         focallen_unit = 1.0  # default to m
 
-    plate_scale = np.arctan(
-        (header["XPIXSZ"] * 1e-6) / (header["FOCALLEN"] * focallen_unit)
-    ) * (180 / np.pi)  # deg/pixel
+    plate_scale = optics.plate_scale(
+        header["XPIXSZ"] * 1e-6, header["FOCALLEN"] * focallen_unit
+    )  # deg/pixel
     return plate_scale, dateobs
 
 
@@ -673,7 +678,7 @@ def _get_gaia_star_coordinates(
         np.ndarray: Array of Gaia star coordinates.
     """
     # Get fov from image shape and plate scale
-    fov = np.array(image_clean.shape) * plate_scale * fov_scale
+    fov = optics.fov_from_plate_scale(image_clean.shape, plate_scale) * fov_scale
     gaia_tmass_filter = _map_filter_band_to_gaia_tmass(filter_band)
 
     # Try online query first (if local DB doesn't exist, this is the only option)
@@ -684,7 +689,7 @@ def _get_gaia_star_coordinates(
             table = cabaret.GaiaQuery.query(
                 center=(ra, dec),
                 radius=np.max(fov) / 2,
-                filter_band=gaia_tmass_filter,
+                filter_bands=gaia_tmass_filter,
                 limit=limit,
                 timeout=60,
             )
@@ -731,7 +736,7 @@ def _verify_offset_within_fov(
     """
     # Check that the offset is not larger than the fov
     # Get fov from image shape and plate scale
-    fov = np.array(image_shape) * plate_scale
+    fov = optics.fov_from_plate_scale(image_shape, plate_scale)
     if pointing_correction.angular_separation > max(fov):
         raise Exception("Pointing error is larger than the field of view")
 

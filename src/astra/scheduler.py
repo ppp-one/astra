@@ -339,6 +339,7 @@ class Schedule(list[Action]):
         filterwheel_names: dict[str, list[str]] | None = None,
         observatory_location: EarthLocation | None = None,
         min_altitude: float = 0.0,
+        nonsidereal_supported: bool | None = None,
     ):
         """Validate the schedule actions.
 
@@ -347,6 +348,10 @@ class Schedule(list[Action]):
                               for validation. e.g., {"fw1": ["Clear", "Red", "Green"]}
             observatory_location: Optional EarthLocation for visibility checks
             min_altitude: Minimum altitude in degrees for visibility checks (default: 0°)
+            nonsidereal_supported: Whether any telescope in the observatory can accept
+                              differential tracking rates. ``None`` means unknown and
+                              leaves non-sidereal target resolution enabled. See
+                              ``ScheduleManager.get_nonsidereal_support``.
 
         Raises:
             ValueError: If any action fails validation.
@@ -370,6 +375,7 @@ class Schedule(list[Action]):
                         end_time=Time(action["end_time"]),
                         observatory_location=observatory_location,
                         min_altitude=min_altitude,
+                        nonsidereal_supported=nonsidereal_supported,
                     )
                 except ValueError as e:
                     raise ValueError(
@@ -502,6 +508,45 @@ class ScheduleManager:
                     )
         return filterwheel_names
 
+    def get_nonsidereal_support(self) -> bool | None:
+        """Report whether any telescope can accept differential tracking rates.
+
+        Non-sidereal tracking needs the ASCOM ``CanSetRightAscensionRate`` and
+        ``CanSetDeclinationRate`` capabilities on the mount. Checking at schedule
+        load time turns "this mount cannot track my comet" into a schedule error
+        before the night starts, rather than a warning mid-sequence.
+
+        Returns:
+            True if at least one telescope supports differential rates on both axes,
+            False if every telescope reports it cannot, or None when this is unknown
+            (no device manager, no telescopes, or the capabilities are unreadable).
+            The per-action mount is only resolved at sequence start, so
+            ``NonSiderealManager`` re-checks the telescope it is actually paired with.
+        """
+        if self.device_manager is None:
+            return None
+
+        telescopes = self.device_manager.devices.get("Telescope", {})
+        if not telescopes:
+            return None
+
+        support = []
+        for name, telescope in telescopes.items():
+            try:
+                support.append(
+                    bool(telescope.get("CanSetRightAscensionRate"))
+                    and bool(telescope.get("CanSetDeclinationRate"))
+                )
+            except Exception as e:
+                self.logger.debug(
+                    f"Could not read differential tracking rate support from "
+                    f"Telescope {name}: {e}"
+                )
+
+        if not support:
+            return None
+        return any(support)
+
     def get_observatory_location(self) -> "EarthLocation | None":
         """Get observatory location from telescope device.
 
@@ -590,17 +635,24 @@ class ScheduleManager:
 
                 try:
                     schedule = Schedule.from_file(self.schedule_path)
-                    schedule.validate(
-                        filterwheel_names=self.get_filterwheel_names(),
-                        observatory_location=self.get_observatory_location(),
-                    )
                     self.logger.info(f"Schedule read: {schedule.to_one_line_string()}")
+
+                    # Truncate before validating. Validation resolves moving targets
+                    # and pre-computes their ephemerides against each action's
+                    # start_time, so shifting the times afterwards would leave the
+                    # interpolators keyed to an epoch the sequence never runs at.
                     if self.truncate_factor is not None:
                         schedule.update_times(self.truncate_factor)
                         self.logger.info(
                             f"Schedule truncated by factor {self.truncate_factor}. "
                             f"Truncated schedule: {schedule.to_one_line_string()}"
                         )
+
+                    schedule.validate(
+                        filterwheel_names=self.get_filterwheel_names(),
+                        observatory_location=self.get_observatory_location(),
+                        nonsidereal_supported=self.get_nonsidereal_support(),
+                    )
                     self.schedule = schedule
 
                     return schedule

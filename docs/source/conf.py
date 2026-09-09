@@ -32,6 +32,10 @@ extensions = [
     "_ext.fastapi_autodoc",
 ]
 
+# Generate anchors for headings so cross-document links like
+# "scheduling.md#tracking-moving-targets" resolve instead of warning.
+myst_heading_anchors = 3
+
 # Add mappings for intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),

@@ -27,12 +27,12 @@ from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.io import fits
 
 import astra
-from astra import utils
 from astra.config import ObservatoryConfig
 from astra.database_manager import DatabaseManager
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action, BaseActionConfig
+from astra.utils import time as time_utils
 
 __all__ = ["HeaderManager", "ObservatoryHeader"]
 
@@ -173,13 +173,13 @@ class ObservatoryHeader(fits.Header):
         dateend = exposure_start_datetime + datetime.timedelta(
             seconds=float(self["EXPTIME"])  # type : ignore
         )
-        jd = utils.to_jd(exposure_start_datetime)
-        jdend = utils.to_jd(dateend)
+        jd = time_utils.to_jd(exposure_start_datetime)
+        jdend = time_utils.to_jd(dateend)
 
         mjd = jd - 2400000.5
         mjdend = jdend - 2400000.5
 
-        hjd, bjd, lstsec, ha = utils.time_conversion(jd, location, target)
+        hjd, bjd, lstsec, ha = time_utils.time_conversion(jd, location, target)
 
         for row_header, row in fits_config[fits_config["fixed"] == False].iterrows():  # noqa: E712
             if row["device_type"] == "astra":
@@ -349,8 +349,21 @@ class HeaderManager:
                             fits_row["comment"],
                         )
                     elif fits_row["dtype"] == "bool":
+                        val = fits_row["device_command"]
+                        if isinstance(val, str):
+                            val_lower = val.lower()
+                            if val_lower in ["true", "1"]:
+                                val = True
+                            elif val_lower in ["false", "0"]:
+                                val = False
+                            else:
+                                raise ValueError(f"Invalid boolean string: {val}")
+                        elif isinstance(val, (int, float)) or val is None:
+                            # None stays False, as bool(None) did before the
+                            # string handling above was added.
+                            val = bool(val)
                         hdr[row_header] = (
-                            bool(fits_row["device_command"]),
+                            val,
                             fits_row["comment"],
                         )
                     else:
@@ -485,7 +498,7 @@ class HeaderManager:
             drop=True
         )
         df_images_filt["jd_obs"] = (
-            df_images_filt["date_obs"].apply(utils.to_jd).sort_values()
+            df_images_filt["date_obs"].apply(time_utils.to_jd).sort_values()
         )
         while df_images_filt["jd_obs"].duplicated().sum() > 0:
             df_images_filt["jd_obs"] = df_images_filt["jd_obs"].mask(
@@ -506,7 +519,7 @@ class HeaderManager:
         )
         df_poll["jd"] = pd.to_datetime(
             df_poll["datetime"], format="%Y-%m-%d %H:%M:%S.%f"
-        ).apply(utils.to_jd)
+        ).apply(time_utils.to_jd)
         return df_poll
 
     @staticmethod
@@ -571,7 +584,7 @@ class HeaderManager:
                 errors="coerce",
             ).fillna(-1)
 
-            df_inp[poll_row["header"]] = utils.interpolate_dfs(
+            df_inp[poll_row["header"]] = time_utils.interpolate_dfs(
                 df_images_filt["jd_obs"], df_poll_filtered["device_value"]
             )["device_value"].fillna(0)
         return df_inp

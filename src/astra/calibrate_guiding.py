@@ -25,7 +25,7 @@ from astra.config import Config
 from astra.image_handler import ImageHandler
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
-from astra.utils import CustomImageClass
+from astra.utils.image import CustomImageClass
 
 
 class GuidingCalibrator:
@@ -354,7 +354,7 @@ class GuidingCalibrator:
             f"Pulse guiding {guide_direction.name} for {duration} ms"
         )
 
-        self._telescope.get("PulseGuide")(guide_direction, duration)
+        self._telescope.get("PulseGuide", Direction=guide_direction, Duration=duration)
         while self._telescope.get("IsPulseGuiding"):
             self.astra_observatory.logger.debug("Pulse guiding...")
             time.sleep(0.1)

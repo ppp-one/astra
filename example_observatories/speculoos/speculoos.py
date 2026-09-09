@@ -1,6 +1,6 @@
 from typing import List
 
-import astra.utils as utils
+import astra.utils.astelos_errors as astelos_errors
 from astra.observatory import Observatory
 from astra.paired_devices import PairedDevices
 
@@ -168,7 +168,7 @@ class SPECULOOS(Observatory):
                 telescope = self.devices["Telescope"][telescope_name]
 
                 # check telescope status
-                valid, all_errors, messages = utils.check_astelos_error(
+                valid, all_errors, messages = astelos_errors.check_error(
                     telescope, close=close
                 )
 
@@ -176,7 +176,7 @@ class SPECULOOS(Observatory):
                     self.logger.info(
                         f"Attempting to acknowledge AsTelOS errors for {telescope_name}: {messages}"
                     )
-                    ack, messages = utils.ack_astelos_error(
+                    ack, messages = astelos_errors.ack_error(
                         telescope, valid, all_errors, messages, close=close
                     )
 

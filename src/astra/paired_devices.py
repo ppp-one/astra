@@ -44,9 +44,12 @@ Example:
     ...     telescope = paired_devices.telescope
 """
 
+import numpy as np
+
 import astra
 from astra.alpaca_device_process import AlpacaDevice
 from astra.config import ObservatoryConfig
+from astra.utils import optics
 
 
 class PairedDevices(dict[str, str]):
@@ -405,6 +408,59 @@ class PairedDevices(dict[str, str]):
         """
         self._raise_property_not_paired("Rotator")
         return self.devices["Rotator"][self["Rotator"]]
+
+    def calculate_field_of_view(self) -> np.ndarray:
+        """
+        Calculate the field of view of the paired camera-telescope system.
+
+        Returns:
+            np.ndarray: Field of view [width, height] in degrees.
+
+        Raises:
+            KeyError: If either camera or telescope is not paired.
+            TypeError: If a required camera/telescope property is missing (None).
+        """
+        camera = self.camera
+        telescope = self.telescope
+
+        # Convert microns to meters
+        pixel_size = 1e-6 * np.array(
+            [camera.get("PixelSizeX"), camera.get("PixelSizeY")]
+        )
+        number_of_pixels = np.array([camera.get("NumX"), camera.get("NumY")])
+
+        focal_length = telescope.get("FocalLength")  # meters
+        sensor_size = pixel_size * number_of_pixels  # [sx, sy]
+
+        return optics.field_of_view(sensor_size, focal_length)
+
+    def calculate_fwhm(self, seeing_arcsec: float = 1.0) -> float:
+        """
+        Calculate the FWHM (Full Width at Half Maximum) in pixels for the
+        paired camera-telescope system based on seeing.
+
+        Parameters:
+            seeing_arcsec (float): Atmospheric seeing in arcseconds (default: 2.0").
+
+        Returns:
+            float: Expected FWHM in pixels.
+
+        Raises:
+            KeyError: If either camera or telescope is not paired.
+            TypeError: If a required camera/telescope property is missing (None).
+        """
+        camera = self.camera
+        telescope = self.telescope
+
+        # Convert microns to meters (average X and Y pixel sizes)
+        pixel_size = 1e-6 * np.mean(
+            [camera.get("PixelSizeX"), camera.get("PixelSizeY")]
+        )
+        focal_length = telescope.get("FocalLength")  # meters
+
+        plate_scale_deg_per_pixel = optics.plate_scale(pixel_size, focal_length)
+
+        return optics.fwhm_pixels(plate_scale_deg_per_pixel, seeing_arcsec)
 
     def _raise_property_not_paired(self, device_type: str):
         """

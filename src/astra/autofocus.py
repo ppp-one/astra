@@ -25,7 +25,6 @@ import astropy.units as u
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from astrafocus import ExtremumEstimatorRegistry, FocusMeasureOperatorRegistry
 from astrafocus.autofocuser import (
     AnalyticResponseAutofocuser,
@@ -231,6 +230,9 @@ class AstraFocuser(FocuserInterface):
         while self.alpaca_device_focuser.get("IsMoving"):
             if time.time() - start_time > hard_timeout:
                 raise TimeoutError("Slew timeout")
+            if not self.observatory.check_conditions(action=self.action):
+                break
+
             time.sleep(0.1)
 
         time.sleep(self.settle_time)
@@ -304,10 +306,15 @@ class AstraTelescope(TelescopeInterface):
             coordinates (SkyCoord): Target celestial coordinates.
             hard_timeout (float): Maximum time to wait for slew completion in seconds.
         """
+        # The focus field is ICRS. Convert for a mount that expects another frame.
+        icrs = coordinates.icrs
+        ra_deg, dec_deg = self.observatory.to_mount_coordinates(
+            self.alpaca_device_telescope.device_name, icrs.ra.deg, icrs.dec.deg
+        )
         self.alpaca_device_telescope.get(
             "SlewToCoordinatesAsync",
-            RightAscension=coordinates.ra.hour,
-            Declination=coordinates.dec.deg,
+            RightAscension=ra_deg / 15.0,
+            Declination=dec_deg,
         )
 
         # Wait for slew to finish
@@ -570,8 +577,10 @@ class Autofocuser:
         self.paired_devices = paired_devices
         self.action_value = action.action_value
         self.autofocuser = autofocuser
+        self.error_message: str | None = None
         self.success = success
         self.config: AutofocusConfig = action.action_value  # type: ignore
+        self._run_timestamp: str | None = None
 
         if (
             self.config.calibration_field.fov_width == 0
@@ -580,6 +589,9 @@ class Autofocuser:
             fov_width, fov_height = self.determine_default_field_of_view(paired_devices)
             self.config.calibration_field.fov_width = fov_width
             self.config.calibration_field.fov_height = fov_height
+
+        if self.config.fwhm is None:
+            self.config.fwhm = self.determine_default_fwhm(paired_devices)
 
         self._initialise_logging()
         self.observatory.logger.info(f"Loaded action values {self.action_value}")
@@ -696,7 +708,6 @@ class Autofocuser:
             n_exposures=self.config.n_exposures,
             decrease_search_range=self.config.decrease_search_range,
             exposure_time=self.config.exptime,
-            # save_path=self.config.save_path,
             secondary_focus_measure_operators=self.config._secondary_focus_measure_operators,
             focus_measure_operator_kwargs=self.config.focus_measure_operator_kwargs,
             search_range_is_relative=self.config.search_range_is_relative,
@@ -966,6 +977,40 @@ class Autofocuser:
 
         return new_exposure_time
 
+    @property
+    def run_timestamp(self) -> str:
+        """Timestamp shared across all output files for a single run."""
+        if self._run_timestamp is None:
+            self._run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return self._run_timestamp
+
+    def _output_path(self, save_dir: Path, suffix: str, ext: str) -> Path:
+        save_dir.mkdir(parents=True, exist_ok=True)
+        return save_dir / f"autofocus_{self.run_timestamp}_{suffix}.{ext}"
+
+    def _determine_save_dir(self) -> Path | None:
+        """Resolve the directory to write autofocus output files to.
+
+        Prefers the configured save_path; falls back to the directory of the
+        last image saved by this camera, or None if neither is available.
+        """
+        if self.config.save_path is not None:
+            return Path(self.config.save_path)
+
+        try:
+            image_handler = self.observatory.get_image_handler(self.action.device_name)
+            last_image_path = getattr(image_handler, "last_image_path", None)
+        except Exception as e:
+            self.observatory.logger.warning(
+                f"Unable to determine last image path from image handler: {str(e)}"
+            )
+            last_image_path = None
+
+        if last_image_path is None:
+            return None
+
+        return last_image_path.parent
+
     def make_summary_plot(self) -> None:
         """Create visualization plot of autofocus results.
 
@@ -977,35 +1022,14 @@ class Autofocuser:
             if self.success is False:
                 return
 
-            # Determine directory to write the summary to. Prefer configured save_path;
-            # if not provided, fall back to the directory containing the last saved
-            # autofocus image for this camera (if available).
-            save_dir: Path | None = None
-            if self.config.save_path is not None:
-                save_dir = Path(self.config.save_path)
-
+            save_dir = self._determine_save_dir()
             if save_dir is None:
-                # try to find last image saved by this camera
-                try:
-                    image_handler = self.observatory.get_image_handler(
-                        self.action.device_name
-                    )
-                    last_image_path = getattr(image_handler, "last_image_path", None)
-                except Exception:
-                    last_image_path = None
+                self.observatory.logger.warning(
+                    "Skipping creation of autofocus summary plot: "
+                    "unable to determine save directory."
+                )
+                return
 
-                if last_image_path is None:
-                    self.observatory.logger.warning(
-                        "Skipping creation of summary plot: no save_path configured and no last image available."
-                    )
-                    return
-
-                save_dir = last_image_path.parent
-
-            # Obtain focus record dataframe. Prefer in-memory record from the
-            # astrafocus autofocuser instance; if not available, try reading CSVs
-            # from the chosen directory.
-            df: pd.DataFrame | None = None
             if (
                 hasattr(self, "autofocuser")
                 and getattr(self.autofocuser, "focus_record", None) is not None
@@ -1013,20 +1037,17 @@ class Autofocuser:
                 try:
                     df = self.autofocuser.focus_record
                 except Exception:
-                    df = None
-
-            if df is None:
-                assert save_dir is not None
-                csv_files = sorted(
-                    [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
-                    key=lambda p: p.stat().st_mtime,
-                )
-                if not csv_files:
-                    self.observatory.logger.error(
-                        f"No focus record CSV found in {save_dir}. Skipping summary plot."
+                    self.observatory.logger.warning(
+                        "Skipping creation of autofocus summary plot: "
+                        "unable to retrieve focus record from autofocuser instance."
                     )
                     return
-                df = pd.read_csv(csv_files[-1])
+            else:
+                self.observatory.logger.warning(
+                    "Skipping creation of autofocus summary plot: "
+                    "autofocuser instance does not have a focus_record attribute."
+                )
+                return
 
             df = df.sort_values("focus_pos")
 
@@ -1047,18 +1068,11 @@ class Autofocuser:
             )
             ax.legend()
 
-            # Build output filename: if we read a CSV file use its stem, otherwise timestamp it.
-            if "csv_files" in locals() and csv_files:
-                out_name = f"{csv_files[-1].stem}.png"
-            else:
-                out_name = (
-                    f"autofocus_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-                )
-
-            assert save_dir is not None
-            out_path = Path(save_dir) / out_name
-            plt.savefig(out_path)
+            plt.savefig(self._output_path(save_dir, "summary", "png"))
             plt.close()
+
+            df.to_csv(self._output_path(save_dir, "record", "csv"), index=False)
+
         except Exception as e:
             self.observatory.logger.exception(f"Error creating summary plot: {str(e)}")
 
@@ -1070,41 +1084,15 @@ class Autofocuser:
         """
         if self.success is False:
             return
-        save_dir: Path | None = None
-        if self.config.save_path is not None:
-            save_dir = Path(self.config.save_path)
-
+        save_dir = self._determine_save_dir()
         if save_dir is None:
-            try:
-                image_handler = self.observatory.get_image_handler(
-                    self.action.device_name
-                )
-                last_image_path = getattr(image_handler, "last_image_path", None)
-            except Exception:
-                last_image_path = None
+            self.observatory.logger.error(
+                "Skipping creation of result file: "
+                "no save_path configured and no last image available."
+            )
+            return
 
-            if last_image_path is None:
-                self.observatory.logger.error(
-                    "Skipping creation of log file: no save_path configured and no last image available."
-                )
-                return
-
-            save_dir = last_image_path.parent
-
-        # derive a timestring for filename; prefer an adjacent CSV if present
-        timestr = None
-        assert save_dir is not None
-        csv_files = sorted(
-            [p for p in Path(save_dir).iterdir() if p.suffix == ".csv"],
-            key=lambda p: p.stat().st_mtime,
-        )
-        if csv_files:
-            timestr = csv_files[-1].stem.split("_")[0]
-
-        if not timestr:
-            timestr = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        result_file_path = Path(save_dir) / f"{timestr}_result.txt"
+        result_file_path = self._output_path(save_dir, "result", "txt")
         try:
             with open(result_file_path, "w") as result_file:
                 result_file.write(f"Best focus position: {self.best_focus_position}\n")
@@ -1113,7 +1101,7 @@ class Autofocuser:
                 )
                 result_file.write(f"Autofocuser: {self.autofocuser}\n")
         except Exception as e:
-            self.observatory.logger.exception(f"Error creating log file: {str(e)}")
+            self.observatory.logger.exception(f"Error creating result file: {str(e)}")
 
     def _initialise_logging(self) -> None:
         """Set up logging integration with astrafocus library.
@@ -1199,43 +1187,29 @@ class Autofocuser:
         )
         return extremum_estimator
 
-    def calculate_field_of_view(self, paired_devices):
-        """
-        Calculate the field of view of the camera-telescope system.
-        """
-        try:
-            camera = paired_devices.camera
-            telescope = paired_devices.telescope
-
-            # Convert microns to meters
-            pixel_size = 1e-6 * np.array(
-                [camera.get("PixelSizeX"), camera.get("PixelSizeY")]
-            )
-            number_of_pixels = np.array([camera.get("NumX"), camera.get("NumY")])
-
-            focal_length = telescope.get("FocalLength")  # meters
-            # plate_scale = np.arctan(pixel_size / focal_length)
-
-            # field_of_view = plate_scale * number_of_pixels
-            sensor_size = pixel_size * number_of_pixels  # [sx, sy]
-
-            fov = 2.0 * np.arctan(sensor_size / (2.0 * focal_length)) * (180.0 / np.pi)
-            return fov
-
-        except Exception as e:
-            field_of_view = np.array([np.nan, np.nan])
-            self.observatory.error(
-                f"Error calculating field of view from paired devices. Exception: {e}"
-            )
-
-        return field_of_view
-
     def determine_default_field_of_view(self, paired_devices):
-        field_of_view = self.calculate_field_of_view(paired_devices)
-        fov_width = float(field_of_view[0])
-        fov_height = float(field_of_view[1])
+        try:
+            field_of_view = paired_devices.calculate_field_of_view()
+            fov_width = float(field_of_view[0])
+            fov_height = float(field_of_view[1])
 
-        self.observatory.logger.info(
-            f"Determined field of view width={fov_width}, height={fov_height}."
-        )
-        return fov_width, fov_height
+            self.observatory.logger.info(
+                f"Determined field of view width={fov_width}, height={fov_height}."
+            )
+            return fov_width, fov_height
+        except Exception as e:
+            raise ValueError(
+                f"Error determining default field of view from paired devices: {str(e)}"
+            )
+
+    def determine_default_fwhm(self, paired_devices) -> int:
+        try:
+            fwhm = paired_devices.calculate_fwhm(seeing_arcsec=3)
+            self.observatory.logger.info(
+                f"Determined default fwhm={fwhm} px from plate scale."
+            )
+            return fwhm
+        except Exception as e:
+            raise ValueError(
+                f"Error determining default fwhm from paired devices: {str(e)}"
+            )
