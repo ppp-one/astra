@@ -72,6 +72,7 @@ html_theme_options = {
     "show_navbar_depth": 1,
     "collapse_navigation": True,
     "navbar_end": ["navbar-icon-links"],
+    "navbar_persistent": [],
 }
 
 

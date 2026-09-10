@@ -63,7 +63,7 @@ license = {text = "GPL-3.0"}
 name = "astra"
 readme = "README.md"
 requires-python = "==3.11.*"
-version = "1.1.0"
+version = "1.2.0"
 
 [project.scripts]
 astra = "astra.main:main"
