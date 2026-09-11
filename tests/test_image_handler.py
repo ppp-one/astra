@@ -676,8 +676,8 @@ class TestImageHandler:
         # Test with relative path
         result_rel = handler._resolve_image_directory("subdir")
         assert result_rel == Path(temp_config.paths.images) / "subdir"
-        # Test with absolute path
-        abs_path = Path("/tmp/abs")
+        # Test with absolute path (anchored on the current drive on Windows)
+        abs_path = Path(Path.cwd().anchor) / "tmp" / "abs"
         result_abs = handler._resolve_image_directory(abs_path)
         assert result_abs == abs_path
 

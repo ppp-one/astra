@@ -273,7 +273,7 @@ class TestAssetPaths:
         # first line starts with the expected YYYY-MM-DD HH:MM:SS
         ap.log_file.write_text("2025-09-27 00:11:18 something\nnext\n")
         ap.archive_log_file()
-        expected = ap.logs / "archive" / "2025-09-27 00:11:18_astra.log"
+        expected = ap.logs / "archive" / "20250927_001118_astra.log"
         assert expected.exists(), f"archive file not found: {expected}"
         # current log recreated and empty
         assert ap.log_file.exists()

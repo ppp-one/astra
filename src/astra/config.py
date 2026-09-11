@@ -323,7 +323,11 @@ class AssetPaths:
             first_line = file.readline()
             match = re.match(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", first_line)
             if match:
-                timestamp = match.group(1)
+                # Reformat rather than reuse the raw match: the log timestamp
+                # contains colons, which are illegal in Windows file names.
+                timestamp = datetime.strptime(
+                    match.group(1), "%Y-%m-%d %H:%M:%S"
+                ).strftime("%Y%m%d_%H%M%S")
             else:
                 timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
 
