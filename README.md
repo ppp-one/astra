@@ -70,13 +70,37 @@ Released under the [GNU GPL v3](LICENSE).
 ## Citation
 
 If you use Astra in published research, please cite it as:
-```
-@software{Pedersen_Astra,
-author = {Pedersen, Peter P. and Degen, David and Garcia, Lionel and Zúñiga-Fernández, Sebastián and Sebastian, Daniel and Schroffenegger, Urs and Queloz, Didier},
-license = {GPL-3.0},
-title = {{Astra}},
-url = {https://github.com/ppp-one/astra}
+
+```bibtex
+@misc{https://doi.org/10.5281/zenodo.18890151,
+  doi = {10.5281/ZENODO.18890151},
+  url = {https://zenodo.org/doi/10.5281/zenodo.18890151},
+  author = {Pedersen,  Peter P. and Degen,  David and Garcia,  Lionel and Zúñiga-Fernández,  Sebastián and Sebastian,  Daniel and Schroffenegger,  Urs and Queloz,  Didier},
+  keywords = {observatory control software,  ocs,  astronomy,  control software,  ground-based,  telescope,  camera,  ascom,  survey telescope,  photometry,  imaging},
+  title = {Astra},
+  publisher = {Zenodo},
+  year = {2026},
+  copyright = {GNU General Public License v3.0 only}
 }
 ```
 
-> [DOI 10.5281/zenodo.18890151](https://doi.org/10.5281/zenodo.18890151)
+and
+
+```bibtex
+@inproceedings{10.1117/12.3105437,
+author = {Peter P. Pedersen and David Degen and Lionel Garcia and Urs Schroffenegger and Daniel Sebastian and Sebasti{\'a}n Z{\'u}{\~n}iga-Fern{\'a}ndez and Brice-Olivier Demory and Elsa Ducrot and Micha{\"e}l Gillon and Matthew J. Hooton and Cl{\`a}udia Jan{\'o}-Mu{\~n}oz and James McCormac and Mathilde Timmermans and Amaury H. M. J. Triaud and Didier Queloz},
+title = {{Astra: an open-source fully autonomous robotic observatory control software}},
+volume = {14155},
+booktitle = {Software and Cyberinfrastructure for Astronomy IX},
+editor = {Jorge Ibsen and Valentina Alberti},
+organization = {International Society for Optics and Photonics},
+publisher = {SPIE},
+pages = {141552U},
+keywords = {observatory control software, robotic, ground-based, observatory, robotic astronomy, plate solving, autoguiding, autofocus},
+year = {2026},
+doi = {10.1117/12.3105437},
+URL = {https://doi.org/10.1117/12.3105437}
+}
+```
+
+Zenodo DOI: [10.5281/zenodo.18890151](https://doi.org/10.5281/zenodo.18890151), Proceedings DOI: [10.1117/12.3105437](https://doi.org/10.1117/12.3105437), Arxiv DOI: [10.48550/arXiv.2607.12898](https://doi.org/10.48550/arXiv.2607.12898)
