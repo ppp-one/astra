@@ -306,10 +306,15 @@ class AstraTelescope(TelescopeInterface):
             coordinates (SkyCoord): Target celestial coordinates.
             hard_timeout (float): Maximum time to wait for slew completion in seconds.
         """
+        # The focus field is ICRS. Convert for a mount that expects another frame.
+        icrs = coordinates.icrs
+        ra_deg, dec_deg = self.observatory.to_mount_coordinates(
+            self.alpaca_device_telescope.device_name, icrs.ra.deg, icrs.dec.deg
+        )
         self.alpaca_device_telescope.get(
             "SlewToCoordinatesAsync",
-            RightAscension=coordinates.ra.hour,
-            Declination=coordinates.dec.deg,
+            RightAscension=ra_deg / 15.0,
+            Declination=dec_deg,
         )
 
         # Wait for slew to finish

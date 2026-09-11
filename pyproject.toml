@@ -54,7 +54,9 @@ dependencies = [
   "fastapi[standard]",
   "pyyaml",
   "ruamel.yaml",
-  "cabaret>=0.5.4"
+  "cabaret>=0.5.4",
+  "astroquery>=0.4.11",
+  "requests"
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"
 license = {text = "GPL-3.0"}
@@ -74,7 +76,8 @@ astra = "astra.main:main"
 [tool.pytest.ini_options]
 addopts = "-ra -q"
 markers = [
-  "slow: mark test as slow"
+  "slow: mark test as slow",
+  "network: mark test as requiring network access"
 ]
 minversion = "6.0"
 testpaths = ["tests"]

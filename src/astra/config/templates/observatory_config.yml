@@ -6,6 +6,7 @@ Telescope:
     settle_factor: 0.0 # exposure multiplier for calculated settle time after pointing (for SPIRIT like cameras)
     meridian_flip: false # enable automated meridian flips
     meridian_flip_min: 5 # minutes past meridian to trigger flip
+    equatorial_system: auto # frame the mount expects: auto (read ASCOM EquatorialSystem), J2000, JNow, J2050, B1950
     guider: # populated using calibrate_guiding sequence
       PIX2TIME: # ms/pixel for camera used for guiding
         +x: 71.62908053771561

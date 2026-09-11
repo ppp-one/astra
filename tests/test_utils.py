@@ -5,10 +5,20 @@ import astropy.units as u
 import numpy as np
 import pandas as pd
 import pytest
+import requests
 from astropy.coordinates import EarthLocation, SkyCoord
+from astropy.table import Table
 from astropy.time import Time, TimeDelta
 
-from astra.utils.ephemeris import get_body_coordinates, is_sun_rising
+from astra.utils.ephemeris import (
+    _interval_for_sky_rate,
+    NotMovingBodyError,
+    compute_nonsidereal_rates_from_interp,
+    get_body_coordinates,
+    is_solar_system_body,
+    is_sun_rising,
+    precompute_ephemeris,
+)
 from astra.utils.time import (
     __to_format,
     getLightTravelTimes,
@@ -282,14 +292,12 @@ def test_setting_detection(location, monkeypatch):
 
 
 def test_get_body_coordinates_solar_system(location, monkeypatch):
-    import astropy.coordinates
-
     # Mock return value
     expected_coord = SkyCoord(ra=100 * u.deg, dec=20 * u.deg)
 
     # Mock get_body to avoid ephemeris calculation/download
     monkeypatch.setattr(
-        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
+        "astra.utils.ephemeris.get_body", lambda name, time, loc: expected_coord
     )
 
     # Test with a known solar system object
@@ -318,12 +326,10 @@ def test_get_body_coordinates_deep_sky(location, monkeypatch):
 
 
 def test_get_body_coordinates_solar_system_case_insensitive(location, monkeypatch):
-    import astropy.coordinates
-
     expected_coord = SkyCoord(ra=200 * u.deg, dec=-10 * u.deg)
 
     monkeypatch.setattr(
-        astropy.coordinates, "get_body", lambda name, time, loc: expected_coord
+        "astra.utils.ephemeris.get_body", lambda name, time, loc: expected_coord
     )
 
     # Test with uppercase
@@ -331,3 +337,482 @@ def test_get_body_coordinates_solar_system_case_insensitive(location, monkeypatc
 
     assert result.ra == expected_coord.ra
     assert result.dec == expected_coord.dec
+
+
+# --- Non-sidereal tracking helpers ---
+
+
+def test_is_solar_system_body_known_bodies():
+    assert is_solar_system_body("mars") is True
+    assert is_solar_system_body("jupiter") is True
+    assert is_solar_system_body("moon") is True
+    assert is_solar_system_body("sun") is True
+
+
+def test_is_solar_system_body_case_insensitive():
+    assert is_solar_system_body("MARS") is True
+    assert is_solar_system_body("Jupiter") is True
+
+
+def test_is_solar_system_body_deep_sky():
+    assert is_solar_system_body("M31") is False
+    assert is_solar_system_body("Vega") is False
+    assert is_solar_system_body("") is False
+
+
+def test_precompute_ephemeris_returns_callables(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+
+def test_precompute_ephemeris_return_rates_from_horizons(location, monkeypatch):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+
+    class FakeHorizons:
+        def __init__(self, id, location, epochs):
+            self.id = id
+
+        def ephemerides(self, optional_settings=None, quantities=None):
+            return Table(
+                {
+                    "RA": [10.0, 10.1, 10.2, 10.3],
+                    "DEC": [20.0, 20.1, 20.2, 20.3],
+                    "datetime_jd": [
+                        obs_time.jd,
+                        obs_time.jd + 1.0 / 24.0,
+                        obs_time.jd + 2.0 / 24.0,
+                        obs_time.jd + 3.0 / 24.0,
+                    ],
+                    "RA_rate": [5400.0, 5400.0, 5400.0, 5400.0],
+                    "DEC_rate": [7200.0, 7200.0, 7200.0, 7200.0],
+                }
+            )
+
+    monkeypatch.setattr("astra.utils.ephemeris.Horizons", FakeHorizons)
+
+    ra_interp, dec_interp, ra_rate_interp, dec_rate_interp = precompute_ephemeris(
+        "90000033",
+        obs_time,
+        3.0,
+        location,
+        return_rates=True,
+    )
+
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+    assert callable(ra_rate_interp)
+    assert callable(dec_rate_interp)
+    # Expected value: 5400 arcsec/hr ÷ (15 × 3600 × cos(20°)) ÷ SOLAR_TO_SIDEREAL ≈ 0.1061.
+    # Horizons RA_rate is dRA*cos(Dec)/dt; dividing by cos(Dec) recovers the
+    # RA coordinate rate before conversion to ASCOM s/sidereal-s units.
+    assert float(ra_rate_interp(0.0)) == pytest.approx(0.1061, abs=1e-3)
+    # ASCOM DeclinationRate is arcsec per SI second, so 7200 arcsec/hr is exactly
+    # 2.0 with no sidereal factor.
+    assert float(dec_rate_interp(0.0)) == pytest.approx(2.0, abs=1e-6)
+
+
+def test_precompute_ephemeris_ra_dec_ranges(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+
+    # Sample several points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -180.0 <= ra <= 180.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+
+def test_precompute_ephemeris_continuity(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+
+    # Adjacent-second values should be very close (no discontinuity)
+    for t in [0, 1800]:
+        assert abs(float(ra_interp(t + 1)) - float(ra_interp(t))) < 0.01
+        assert abs(float(dec_interp(t + 1)) - float(dec_interp(t))) < 0.01
+
+
+def test_nonsidereal_rates_mars_plausible(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris("mars", obs_time, 1.0, location)
+    ra_rate, dec_rate = compute_nonsidereal_rates_from_interp(ra_interp, dec_interp, 0)
+
+    # Mars moves slowly; rates should be small but non-zero
+    assert abs(ra_rate) < 0.005, f"Mars RA rate unexpectedly large: {ra_rate}"
+    assert abs(dec_rate) < 0.05, f"Mars Dec rate unexpectedly large: {dec_rate}"
+    assert ra_rate != 0.0 or dec_rate != 0.0, "Both rates are zero — unexpected"
+
+
+def test_nonsidereal_rates_moon_faster_than_mars(location):
+    obs_time = Time("2025-06-01T00:00:00", format="isot", scale="utc")
+    ra_mars, dec_mars = precompute_ephemeris("mars", obs_time, 1.0, location)
+    ra_moon, dec_moon = precompute_ephemeris("moon", obs_time, 1.0, location)
+
+    mars_ra_rate, _ = compute_nonsidereal_rates_from_interp(ra_mars, dec_mars, 0)
+    moon_ra_rate, _ = compute_nonsidereal_rates_from_interp(ra_moon, dec_moon, 0)
+
+    assert abs(moon_ra_rate) > abs(mars_ra_rate), (
+        f"Moon RA rate ({moon_ra_rate}) should exceed Mars rate ({mars_ra_rate})"
+    )
+
+
+def test_precompute_ephemeris_propagates_network_errors(location, monkeypatch):
+    """A Horizons network failure must not be reported as "not a moving body".
+
+    Collapsing it into NotMovingBodyError makes the caller fall back to sidereal
+    coordinates for a genuinely moving target, silently mistracking it.
+    """
+    import astra.utils.ephemeris
+
+    class _OfflineHorizons:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def ephemerides(self, *args, **kwargs):
+            raise requests.exceptions.ConnectionError("no route to host")
+
+    monkeypatch.setattr(astra.utils.ephemeris, "Horizons", _OfflineHorizons)
+
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    with pytest.raises(requests.exceptions.RequestException):
+        precompute_ephemeris("C/2023 A3", obs_time, 1.0, location)
+
+
+def test_precompute_ephemeris_unresolved_name_is_not_moving_body(location, monkeypatch):
+    """A genuine resolution failure still maps to NotMovingBodyError."""
+    import astra.utils.ephemeris
+
+    class _UnresolvableHorizons:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def ephemerides(self, *args, **kwargs):
+            raise ValueError("Unknown target")
+
+    monkeypatch.setattr(astra.utils.ephemeris, "Horizons", _UnresolvableHorizons)
+
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    with pytest.raises(NotMovingBodyError, match="could not be resolved"):
+        precompute_ephemeris("NotARealObject", obs_time, 1.0, location)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_minor_body(location):
+    """precompute_ephemeris should resolve a JPL Horizons minor body via astroquery."""
+    obs_time = Time("2025-01-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "90000033", obs_time, duration_hours=1.0, obs_location=location
+    )
+
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+    # Spot-check a few points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -360.0 <= ra <= 360.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+    # Adjacent-second values should be smooth (no discontinuity)
+    assert abs(float(ra_interp(1)) - float(ra_interp(0))) < 0.01
+    assert abs(float(dec_interp(1)) - float(dec_interp(0))) < 0.01
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle(location):
+    """precompute_ephemeris should resolve a TLE via astroquery.jplhorizons."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, duration_hours=1.0, obs_location=location, tle_data=tle_data
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+    # Spot-check a few points across the window
+    for t in [0, 1800, 3600]:
+        ra = float(ra_interp(t))
+        dec = float(dec_interp(t))
+        assert -360.0 <= ra <= 360.0, f"RA out of range at t={t}: {ra}"
+        assert -90.0 <= dec <= 90.0, f"Dec out of range at t={t}: {dec}"
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_missing_data(location):
+    """Should raise ValueError if body_name is 'TLE' but tle_data is None."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+
+    with pytest.raises(ValueError, match="tle_data parameter is required"):
+        precompute_ephemeris("TLE", obs_time, 1.0, location)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_case_insensitive(location):
+    """Should accept 'TLE', 'tle', 'Tle' etc."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+
+    for name_variant in ["TLE", "tle", "Tle"]:
+        ra_interp, dec_interp = precompute_ephemeris(
+            name_variant, obs_time, 1.0, location, tle_data=tle_data
+        )
+        assert callable(ra_interp)
+        assert callable(dec_interp)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_invalid_data(location):
+    """Should raise NotMovingBodyError for malformed TLE data."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    invalid_tle = "this is not valid tle data"
+
+    with pytest.raises(NotMovingBodyError):
+        precompute_ephemeris("TLE", obs_time, 1.0, location, tle_data=invalid_tle)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_tle_rates_plausible(location):
+    """ISS (TLE) should have appreciable tracking rates."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    tle_data = "1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"
+
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, 1.0, location, tle_data=tle_data
+    )
+    ra_rate, dec_rate = compute_nonsidereal_rates_from_interp(ra_interp, dec_interp, 0)
+
+    # ISS moves much faster than planets
+    assert abs(ra_rate) > 0.01, "ISS should have significant RA rate"
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_minor_body_fallback(location):
+    """Should fallback to id_type='smallbody' for objects like comets."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "C/2023 A3",
+        obs_time,
+        1.0,
+        location,  # Comet example
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_unresolvable_body(location):
+    """Should raise NotMovingBodyError with descriptive message."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+
+    with pytest.raises(NotMovingBodyError, match="could not be resolved"):
+        precompute_ephemeris("12345INVALID", obs_time, 1.0, location)
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_short_interval(location):
+    """Should handle very short observation windows with fine resolution."""
+    obs_time = Time("2026-04-01T00:00:00", format="isot", scale="utc")
+    ra_interp, dec_interp = precompute_ephemeris(
+        "mars",
+        obs_time,
+        duration_hours=0.1,
+        interval_minutes=0.5,
+        obs_location=location,
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+    # Should produce consistent values
+    t1 = float(ra_interp(0))
+    t2 = float(ra_interp(60))
+    assert abs(t2 - t1) < 0.1  # Should change smoothly
+
+
+@pytest.mark.network
+def test_precompute_ephemeris_different_tle_objects(location):
+    """Should work with different satellite TLEs."""
+    obs_time = Time("2010-01-01T00:00:00", format="isot", scale="utc")
+
+    # Example: Hubble Space Telescope TLE
+    tle_hst = "1 20580U 90037B   10001.00000000  .00001524  00000-0  75821-5 0  8017\n2 20580  28.4698 279.0467 0002853 247.4627 112.6160 15.09299652680691"
+
+    ra_interp, dec_interp = precompute_ephemeris(
+        "TLE", obs_time, 1.0, location, tle_data=tle_hst
+    )
+    assert callable(ra_interp)
+    assert callable(dec_interp)
+
+
+# --- Astrometric ICRS from astropy get_body ---
+
+
+def test_astrometric_icrs_removes_aberration_and_roundtrips(location):
+    """astrometric_icrs must differ from GCRS by annual aberration only.
+
+    Adding aberration back (ICRS at infinity -> GCRS for the observer) must
+    reproduce the get_body direction to a few milliarcseconds.
+    """
+    from astropy.coordinates import GCRS, angular_separation, get_body
+
+    from astra.utils.ephemeris import astrometric_icrs
+
+    t = Time(["2026-09-02T02:00:00", "2026-09-02T03:00:00"])
+    body = get_body("mars", t, location)
+    astrom = astrometric_icrs(body, t, location)
+
+    assert astrom.frame.name == "icrs"
+    assert len(astrom) == 2
+
+    aberration = angular_separation(astrom.ra, astrom.dec, body.ra, body.dec).to_value(
+        u.arcsec
+    )
+    assert np.all((aberration > 0.5) & (aberration < 21.0))
+
+    posvel = location.get_gcrs_posvel(t)
+    back = astrom.transform_to(
+        GCRS(obstime=t, obsgeoloc=posvel[0], obsgeovel=posvel[1])
+    )
+    residual = angular_separation(back.ra, back.dec, body.ra, body.dec).to_value(
+        u.arcsec
+    )
+    assert np.all(residual < 0.02)
+
+
+def test_get_body_coordinates_planet_is_icrs(location):
+    from astra.utils.ephemeris import get_body_coordinates
+
+    coord = get_body_coordinates("mars", Time("2026-09-02T02:00:00"), location)
+    assert coord.frame.name == "icrs"
+
+
+class TestAutomaticEphemerisInterval:
+    """Passing interval_minutes=None picks the interval from the body's motion.
+
+    A fixed one minute interval leaves a satellite's interpolated position degrees
+    from the truth, because cubic interpolation cannot describe an arc that was
+    never sampled. A planet, which crosses a fraction of an arcsecond in a minute,
+    must not pay for that with a needlessly large query.
+    """
+
+    @staticmethod
+    def _fake_horizons(rate_arcsec_per_hour, calls):
+        """Return a Horizons stand-in reporting a constant sky rate.
+
+        Args:
+            rate_arcsec_per_hour: Rate reported in both the RA and Dec columns.
+            calls: List the requested step count of each query is appended to.
+        """
+
+        class _FakeHorizons:
+            def __init__(self, id, location, epochs):
+                self.n_points = int(epochs["step"]) + 1
+                calls.append(self.n_points)
+
+            def ephemerides(self, optional_settings=None, quantities=None):
+                obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+                hours = np.linspace(0.0, 1.0, self.n_points)
+                return Table(
+                    {
+                        "RA": 10.0 + hours,
+                        "DEC": 20.0 + hours,
+                        "datetime_jd": obs_time.jd + hours / 24.0,
+                        "RA_rate": np.full(self.n_points, rate_arcsec_per_hour),
+                        "DEC_rate": np.full(self.n_points, rate_arcsec_per_hour),
+                    }
+                )
+
+        return _FakeHorizons
+
+    def test_fast_target_is_resampled_more_finely(self, location, monkeypatch):
+        """A minor body that moves quickly starts at the default and is refined.
+
+        Only a TLE is known to be fast before the first query, so a fast minor
+        body, such as one that passes close to the Earth, is found this way.
+        """
+        # About 0.35 deg/s on each axis, the order of a very close approach.
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("2026 AA", obs_time, 1.0, location, None)
+
+        assert len(calls) > 1, "a fast target must be sampled again more finely"
+        # One hour sampled every minute is 61 points. The refined grid must be far
+        # denser, and no denser than the ceiling allows.
+        assert calls[0] == 61
+        assert calls[-1] > 500
+        assert calls[-1] <= 5000
+
+    def test_slow_target_keeps_the_default_interval(self, location, monkeypatch):
+        # 30 arcsec/hr, the order of a planet against the stars.
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons", self._fake_horizons(30.0, calls)
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("Ceres", obs_time, 1.0, location, None)
+
+        assert calls == [61], "a slow target needs only the one query"
+
+    def test_explicit_interval_is_left_alone(self, location, monkeypatch):
+        """A caller that names an interval gets exactly that interval."""
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, 1.0, tle_data="1 ...")
+
+        assert calls == [61]
+
+    def test_interval_is_bounded(self):
+        """The chosen interval stays between one second and the default minute."""
+        # Ridiculously fast: the floor holds.
+        assert _interval_for_sky_rate(1000.0, 1.0) * 60.0 == pytest.approx(1.0)
+        # Motionless: the default holds.
+        assert _interval_for_sky_rate(0.0, 1.0) * 60.0 == pytest.approx(60.0)
+        # A long window raises the floor, so the sample count stays under the cap.
+        interval_s = _interval_for_sky_rate(1000.0, 24.0) * 60.0
+        assert 24 * 3600.0 / interval_s <= 5000
+
+    def test_satellite_starts_at_a_fine_interval(self, location, monkeypatch):
+        """A TLE starts fine, so the usual satellite needs only one query.
+
+        The schedule can start seconds after it is written. A second query to
+        Horizons costs more time than that budget allows.
+        """
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons",
+            self._fake_horizons(0.35 * 3600.0**2, calls),
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, None, tle_data="1 ...")
+
+        assert len(calls) == 1
+        assert calls[0] == 1801  # one hour every 2 s
+
+    def test_slow_satellite_is_resampled_more_coarsely(self, location, monkeypatch):
+        """A satellite that hardly moves must not keep the fine starting grid."""
+        calls = []
+        monkeypatch.setattr(
+            "astra.utils.ephemeris.Horizons", self._fake_horizons(30.0, calls)
+        )
+        obs_time = Time("2026-06-01T00:00:00", format="isot", scale="utc")
+
+        precompute_ephemeris("TLE", obs_time, 1.0, location, None, tle_data="1 ...")
+
+        assert len(calls) == 2
+        assert calls[0] == 1801  # started fine because it is a TLE
+        assert calls[1] == 61  # then went back to the default minute

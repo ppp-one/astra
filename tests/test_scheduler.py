@@ -1,10 +1,11 @@
 import json
 from datetime import UTC, datetime, timedelta
+from unittest.mock import MagicMock
 
 import pandas as pd
 
 from astra.action_configs import BaseActionConfig, ObjectActionConfig
-from astra.scheduler import Action, Schedule
+from astra.scheduler import Action, Schedule, ScheduleManager
 
 
 class TestSchedule:
@@ -191,3 +192,60 @@ class TestSchedule:
         assert loaded[1].device_name == "cam2"
         assert loaded[0].start_time.tzinfo == UTC
         assert loaded[1].end_time.tzinfo == UTC
+
+
+class TestNonsiderealSupport:
+    """ScheduleManager reports whether any mount can do differential rates."""
+
+    def _manager(self, telescopes):
+        manager = ScheduleManager.__new__(ScheduleManager)
+        manager.logger = MagicMock()
+        if telescopes is None:
+            manager.device_manager = None
+        else:
+            manager.device_manager = MagicMock()
+            manager.device_manager.devices = {"Telescope": telescopes}
+        return manager
+
+    def _telescope(self, can_ra=True, can_dec=True):
+        telescope = MagicMock()
+        telescope.get.side_effect = lambda key, **kw: {
+            "CanSetRightAscensionRate": can_ra,
+            "CanSetDeclinationRate": can_dec,
+        }.get(key)
+        return telescope
+
+    def test_true_when_a_telescope_supports_both_axes(self):
+        manager = self._manager({"tel1": self._telescope()})
+        assert manager.get_nonsidereal_support() is True
+
+    def test_false_when_every_telescope_lacks_support(self):
+        manager = self._manager(
+            {
+                "tel1": self._telescope(can_ra=False),
+                "tel2": self._telescope(can_dec=False),
+            }
+        )
+        assert manager.get_nonsidereal_support() is False
+
+    def test_true_when_any_telescope_supports_it(self):
+        manager = self._manager(
+            {
+                "tel1": self._telescope(can_ra=False, can_dec=False),
+                "tel2": self._telescope(),
+            }
+        )
+        assert manager.get_nonsidereal_support() is True
+
+    def test_none_without_device_manager(self):
+        assert self._manager(None).get_nonsidereal_support() is None
+
+    def test_none_without_telescopes(self):
+        assert self._manager({}).get_nonsidereal_support() is None
+
+    def test_none_when_capabilities_are_unreadable(self):
+        """Unknown, not unsupported -- do not disable tracking on a read error."""
+        telescope = MagicMock()
+        telescope.get.side_effect = ConnectionError("mount unreachable")
+        manager = self._manager({"tel1": telescope})
+        assert manager.get_nonsidereal_support() is None

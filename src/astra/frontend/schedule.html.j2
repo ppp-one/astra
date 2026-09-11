@@ -770,7 +770,46 @@
         // Trigger file selection
         function selectScheduleFile() {
             document.getElementById('fileInput').click();
-        }        // Load initial schedule data
+        }
+
+        // Keys that older schedule files picked up from the config class.
+        // They are not action values, so the backend ignores them.
+        const actionValueMetaKeys = ['EXAMPLE_SCHEDULE', 'FIELD_DESCRIPTIONS'];
+
+        // Clean an action value written by an older version.
+        // Meta keys are dropped. A nested config is lifted to the top level,
+        // because that is the layout the backend reads back.
+        function normalizeActionValue(actionValue) {
+            if (!actionValue || typeof actionValue !== 'object' || Array.isArray(actionValue)) {
+                return actionValue;
+            }
+
+            const cleaned = {};
+            const nested = {};
+
+            const isMeta = key => actionValueMetaKeys.includes(key) || key.startsWith('_');
+
+            for (const [key, value] of Object.entries(actionValue)) {
+                if (isMeta(key)) {
+                    continue;
+                }
+                if (value && typeof value === 'object' && !Array.isArray(value)
+                    && actionValueMetaKeys.some(metaKey => metaKey in value)) {
+                    // A nested config that leaked the meta keys as well.
+                    for (const [nestedKey, nestedValue] of Object.entries(value)) {
+                        if (!isMeta(nestedKey)) {
+                            nested[nestedKey] = nestedValue;
+                        }
+                    }
+                    continue;
+                }
+                cleaned[key] = value;
+            }
+
+            return { ...nested, ...cleaned };
+        }
+
+        // Load initial schedule data
         function loadSchedule() {
             try {
                 // Jinja converts the Python list of dicts -> JS Array of Objects
@@ -781,6 +820,9 @@
 
                 // Ensure it is an array (handle null/undefined cases)
                 scheduleData = Array.isArray(scheduleDataRaw) ? scheduleDataRaw : [];
+                scheduleData.forEach(item => {
+                    item.action_value = normalizeActionValue(item.action_value);
+                });
 
                 // Store original data for comparison (Deep copy)
                 originalScheduleData = JSON.parse(JSON.stringify(scheduleData));

@@ -134,6 +134,29 @@ class TestSubframeValidation:
                 subframe_height=100,
             )
 
+    def test_nonsidereal_start_lead_time_defaults_to_zero(self):
+        """No lead time by default: the mount slews straight at the target.
+
+        A lead time costs idle seconds at the start of every sequence, and only
+        satellites move far enough during a slew to need one.
+        """
+        config = ObjectActionConfig(object="M31", exptime=300.0, ra=10.68, dec=41.27)
+        assert config.nonsidereal_start_lead_time_seconds == 0.0
+
+    def test_nonsidereal_start_lead_time_negative_raises(self):
+        """Negative lead wait is invalid."""
+        with pytest.raises(
+            ValueError,
+            match="nonsidereal_start_lead_time_seconds must be >= 0",
+        ):
+            ObjectActionConfig(
+                object="M31",
+                exptime=300.0,
+                ra=10.68,
+                dec=41.27,
+                nonsidereal_start_lead_time_seconds=-1,
+            )
+
 
 class TestSubframeInAllImagingConfigs:
     """Test that subframe works across all imaging action configs."""

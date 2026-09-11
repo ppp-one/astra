@@ -372,7 +372,7 @@ class Guider:
         self.PID_COEFFS = params["PID_COEFFS"]
 
         # minimum guide interval
-        self.MIN_GUIDE_INTERVAL = params.get("MIN_GUIDE_INTERVAL", 30.0)
+        self.MIN_GUIDE_INTERVAL = params.get("MIN_GUIDE_INTERVAL", 60.0)
 
         # set up variables
         # initialise the PID controllers for X and Y

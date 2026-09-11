@@ -23,6 +23,7 @@ Module Reference
    astra.image_handler
    astra.logger
    astra.main
+   astra.nonsidereal
    astra.observatory_loader
    astra.observatory
    astra.paired_devices

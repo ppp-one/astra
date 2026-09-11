@@ -392,8 +392,21 @@ class HeaderManager:
                             fits_row["comment"],
                         )
                     elif fits_row["dtype"] == "bool":
+                        val = fits_row["device_command"]
+                        if isinstance(val, str):
+                            val_lower = val.lower()
+                            if val_lower in ["true", "1"]:
+                                val = True
+                            elif val_lower in ["false", "0"]:
+                                val = False
+                            else:
+                                raise ValueError(f"Invalid boolean string: {val}")
+                        elif isinstance(val, (int, float)) or val is None:
+                            # None stays False, as bool(None) did before the
+                            # string handling above was added.
+                            val = bool(val)
                         hdr[row_header] = (
-                            bool(fits_row["device_command"]),
+                            val,
                             fits_row["comment"],
                         )
                     else:

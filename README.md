@@ -17,6 +17,7 @@ Astra (**Automated Survey observaTory Robotised with Alpaca**) is an open-source
 - **Fully Robotic** — Schedule once, observe automatically with error and bad weather handling
 - **ASCOM Alpaca** — Compatible with your existing ASCOM equipment  
 - **Cross-Platform** — Python based, runs on Windows, Linux, macOS  
+- **Moving Targets** — Non-sidereal tracking of planets, comets, asteroids, and satellites from TLEs  
 - **Web Interface** — Manage your observatory from any browser, use [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/) or similar to access outside your network
 - **[Comprehensive Docs](https://docs.withastra.io/)** — Setup, usage, and module reference  
 
