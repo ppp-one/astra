@@ -84,7 +84,12 @@ def server_url():
             yield url
         finally:
             if proc.poll() is None:
-                proc.send_signal(signal.SIGINT)
+                # Windows does not accept SIGINT via send_signal; terminate()
+                # maps to the platform's own "stop this process" call.
+                if os.name == "nt":
+                    proc.terminate()
+                else:
+                    proc.send_signal(signal.SIGINT)
                 try:
                     proc.wait(timeout=5)
                 except subprocess.TimeoutExpired:
