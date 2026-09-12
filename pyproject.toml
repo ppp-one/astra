@@ -51,7 +51,7 @@ dependencies = [
   "jinja2",
   "matplotlib",
   "pandas",
-  "fastapi[standard]",
+  "fastapi[standard-no-fastapi-cloud-cli]",
   "pyyaml",
   "ruamel.yaml",
   "cabaret>=0.5.4",
