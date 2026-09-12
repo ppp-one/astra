@@ -3,17 +3,13 @@ build-backend = "uv_build"
 requires = ["uv_build>=0.9.21,<0.10.0"]
 
 [dependency-groups]
-dev = ["ruff", "toml", "pre-commit", {include-group = "test"}]
+dev = ["ruff", "pre-commit", {include-group = "test"}]
 docs = [
   "sphinx",
-  "matplotlib",
-  "myst-nb",
+  "myst-parser",
   "sphinx-book-theme",
   "sphinx-design",
-  "ipywidgets",
   "sphinx-copybutton",
-  "docformatter[tomli]",
-  "toml",
   "sphinx-argparse"
 ]
 test = [
@@ -50,9 +46,10 @@ dependencies = [
   "donuts",
   "jinja2",
   "matplotlib",
+  "numpy",
   "pandas",
+  "pillow",
   "fastapi[standard-no-fastapi-cloud-cli]",
-  "pyyaml",
   "ruamel.yaml",
   "cabaret>=0.5.4",
   "astroquery>=0.4.11",

@@ -3,9 +3,12 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
-import yaml
+from ruamel.yaml import YAML
 
 from astra.config import AssetPaths, Config, _ConfigInitialiser
+
+_YAML = YAML(typ="safe")
+_YAML.default_flow_style = False
 
 
 class TestConfigInitialiser:
@@ -37,7 +40,7 @@ class TestConfigInitialiser:
         assert self.config_path.exists(), "Config file was not created."
 
         with self.config_path.open() as f:
-            config = yaml.safe_load(f)
+            config = _YAML.load(f)
 
         assert config["folder_assets"] == str(self.folder_assets)
         assert config["gaia_db"] == str(self.path_to_db)
@@ -74,7 +77,7 @@ class TestConfigInitialiser:
         assert self.config_path.exists(), "Config file was not created."
 
         with self.config_path.open() as f:
-            config = yaml.safe_load(f)
+            config = _YAML.load(f)
 
         assert config["folder_assets"] == str(Path.home() / "astra_test")
         assert config["gaia_db"] == str(self.path_to_db)
@@ -155,7 +158,7 @@ class TestConfig:
 
         assert self.config_path.exists(), "Config file should be created."
         with open(self.config_path) as f:
-            loaded_config = yaml.safe_load(f)
+            loaded_config = _YAML.load(f)
 
         assert loaded_config["observatory_name"] == "Test Observatory"
         assert loaded_config["folder_assets"] == str(self.folder_assets)
@@ -169,7 +172,7 @@ class TestConfig:
             "gaia_db": str(self.gaia_db),
         }
         with open(self.config_path, "w") as f:
-            yaml.dump(config_data, f)
+            _YAML.dump(config_data, f)
 
         config = Config(allow_default=True)
 
@@ -206,12 +209,13 @@ class TestConfig:
         config = Config("Test Observatory", str(self.folder_assets), str(self.gaia_db))
 
         mock_open = MagicMock()
+        mock_dump = MagicMock()
         monkeypatch.setattr("builtins.open", mock_open)
-        monkeypatch.setattr("yaml.dump", MagicMock())
+        monkeypatch.setattr("astra.config._SAFE_YAML.dump", mock_dump)
 
         config.save()
 
-        yaml.dump.assert_called_once_with(
+        mock_dump.assert_called_once_with(
             {
                 "folder_assets": str(self.folder_assets),
                 "gaia_db": str(self.gaia_db),

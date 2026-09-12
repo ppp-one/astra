@@ -16,8 +16,13 @@ from threading import Lock
 from typing import Any, Dict, Optional, Union
 
 import pandas as pd
-import yaml
 from ruamel.yaml import YAML
+
+# Plain handler for the small bootstrap config file, which carries no comments.
+# The observatory files use a round-trip handler created per call instead,
+# because that one holds per-file comment and formatting state.
+_SAFE_YAML = YAML(typ="safe")
+_SAFE_YAML.default_flow_style = False
 
 
 class _Colors:
@@ -187,7 +192,7 @@ class Config:
         }
 
         with open(self.CONFIG_PATH, "w") as file:
-            yaml.dump(config, file)
+            _SAFE_YAML.dump(config, file)
 
     def as_datetime(self, date_string: str) -> datetime:
         """Convert string to datetime using configured format.
@@ -207,7 +212,7 @@ class Config:
             dict: Configuration data from file.
         """
         with open(self.CONFIG_PATH, "r") as file:
-            config = yaml.safe_load(file)
+            config = _SAFE_YAML.load(file)
 
         return config
 
@@ -458,7 +463,7 @@ class _ConfigInitialiser:
         }
 
         with open(Config.CONFIG_PATH, "w") as file:
-            yaml.dump(config, file)
+            _SAFE_YAML.dump(config, file)
 
         _ConfigInitialiser._print_success("Configuration file created successfully.")
 
