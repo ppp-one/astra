@@ -18,7 +18,7 @@ docs = [
 ]
 test = [
   "pytest",
-  "alpaca-simulators @ git+https://github.com/ppp-one/alpaca-simulators"
+  "alpaca-simulators"
 ]
 
 [project]
