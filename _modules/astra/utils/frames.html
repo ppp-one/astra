@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.utils.frames &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/utils/frames';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.utils.frames</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Conversion between Astra's internal ICRS coordinates and the mount's frame.</span>
+
+<span class="sd">Astra works in ICRS (J2000) everywhere: schedule ``ra``/``dec``, SIMBAD lookups,</span>
+<span class="sd">JPL Horizons positions and the astrometric planet positions from astropy. A mount</span>
+<span class="sd">may expect a different frame. The ASCOM ``EquatorialSystem`` property says which</span>
+<span class="sd">one. Most modern drivers report ``equTopocentric``, the apparent coordinates of</span>
+<span class="sd">date (JNow). Sending J2000 coordinates to such a mount misses by the precession</span>
+<span class="sd">since 2000, about 20 arcminutes in the mid 2020s.</span>
+
+<span class="sd">The observatory reads ``EquatorialSystem`` once per mount and converts at the</span>
+<span class="sd">hardware boundary, just before a slew or sync. A mount that reports J2000, or</span>
+<span class="sd">whose property cannot be read, gets the ICRS coordinates unchanged.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">FK4</span><span class="p">,</span> <span class="n">FK5</span><span class="p">,</span> <span class="n">ICRS</span><span class="p">,</span> <span class="n">TETE</span><span class="p">,</span> <span class="n">EarthLocation</span><span class="p">,</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"EquatorialSystem"</span><span class="p">,</span>
+    <span class="s2">"parse_equatorial_system"</span><span class="p">,</span>
+    <span class="s2">"to_mount_frame"</span><span class="p">,</span>
+    <span class="s2">"from_mount_frame"</span><span class="p">,</span>
+    <span class="s2">"needs_conversion"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="EquatorialSystem">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.frames.html#astra.utils.frames.EquatorialSystem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EquatorialSystem</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""ASCOM ``EquatorialCoordinateType`` values reported by ``EquatorialSystem``."""</span>
+
+    <span class="n">OTHER</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TOPOCENTRIC</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># apparent coordinates of date, "JNow"</span>
+    <span class="n">J2000</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">J2050</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">B1950</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+
+<span class="n">_ALIASES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EquatorialSystem</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"j2000"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2000</span><span class="p">,</span>
+    <span class="s2">"icrs"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2000</span><span class="p">,</span>
+    <span class="s2">"equj2000"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2000</span><span class="p">,</span>
+    <span class="s2">"jnow"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">,</span>
+    <span class="s2">"topocentric"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">,</span>
+    <span class="s2">"equtopocentric"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">,</span>
+    <span class="s2">"equlocaltopocentric"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">,</span>
+    <span class="s2">"j2050"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2050</span><span class="p">,</span>
+    <span class="s2">"equj2050"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2050</span><span class="p">,</span>
+    <span class="s2">"b1950"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">B1950</span><span class="p">,</span>
+    <span class="s2">"equb1950"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">B1950</span><span class="p">,</span>
+    <span class="s2">"other"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">OTHER</span><span class="p">,</span>
+    <span class="s2">"equother"</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">OTHER</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="parse_equatorial_system">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.frames.html#astra.utils.frames.parse_equatorial_system">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_equatorial_system</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EquatorialSystem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Parse an ASCOM enum value or a config string into an EquatorialSystem.</span>
+
+<span class="sd">    Accepts the integer the driver returns (0 to 4) or a name such as "J2000" or</span>
+<span class="sd">    "JNow", in any case. Returns None for "auto", for an unknown value, and for</span>
+<span class="sd">    anything that is not an int or a str. None means "unknown, send ICRS unchanged".</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EquatorialSystem</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_ALIASES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="needs_conversion">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.frames.html#astra.utils.frames.needs_conversion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">needs_conversion</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="n">EquatorialSystem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return True if coordinates must be transformed before reaching the mount."""</span>
+    <span class="k">return</span> <span class="n">system</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">,</span>
+        <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2050</span><span class="p">,</span>
+        <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">B1950</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mount_frame</span><span class="p">(</span>
+    <span class="n">system</span><span class="p">:</span> <span class="n">EquatorialSystem</span><span class="p">,</span> <span class="n">obstime</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">EarthLocation</span> <span class="o">|</span> <span class="kc">None</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="o">==</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">TOPOCENTRIC</span><span class="p">:</span>
+        <span class="c1"># True equator and equinox of date. With a location astropy also applies</span>
+        <span class="c1"># diurnal aberration. This is the ASCOM "apparent, topocentric" place.</span>
+        <span class="k">return</span> <span class="n">TETE</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">obstime</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="o">==</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">J2050</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FK5</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="s2">"J2050"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="o">==</span> <span class="n">EquatorialSystem</span><span class="o">.</span><span class="n">B1950</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FK4</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="s2">"B1950"</span><span class="p">,</span> <span class="n">obstime</span><span class="o">=</span><span class="n">obstime</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ICRS</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="to_mount_frame">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.frames.html#astra.utils.frames.to_mount_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_mount_frame</span><span class="p">(</span>
+    <span class="n">ra_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dec_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">system</span><span class="p">:</span> <span class="n">EquatorialSystem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">obstime</span><span class="p">:</span> <span class="n">Time</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">EarthLocation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Convert an ICRS position to the mount's frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ra_deg: ICRS right ascension in degrees.</span>
+<span class="sd">        dec_deg: ICRS declination in degrees.</span>
+<span class="sd">        system: The mount's ``EquatorialSystem``. None, J2000 and OTHER return the</span>
+<span class="sd">            input unchanged.</span>
+<span class="sd">        obstime: Time of the slew. Defaults to now. Needed for JNow and B1950.</span>
+<span class="sd">        location: Observer location. Improves the JNow result slightly.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (ra_deg, dec_deg) in the mount's frame.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_conversion</span><span class="p">(</span><span class="n">system</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="n">obstime</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">obstime</span>
+    <span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec_deg</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"deg"</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">"icrs"</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">_mount_frame</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">obstime</span><span class="p">,</span> <span class="n">location</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="from_mount_frame">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.frames.html#astra.utils.frames.from_mount_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_mount_frame</span><span class="p">(</span>
+    <span class="n">ra_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dec_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">system</span><span class="p">:</span> <span class="n">EquatorialSystem</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">obstime</span><span class="p">:</span> <span class="n">Time</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">location</span><span class="p">:</span> <span class="n">EarthLocation</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Convert a position read from the mount into ICRS. Inverse of to_mount_frame."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_conversion</span><span class="p">(</span><span class="n">system</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="n">obstime</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">obstime</span>
+    <span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+        <span class="n">ra</span><span class="o">=</span><span class="n">ra_deg</span><span class="p">,</span>
+        <span class="n">dec</span><span class="o">=</span><span class="n">dec_deg</span><span class="p">,</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s2">"deg"</span><span class="p">,</span>
+        <span class="n">frame</span><span class="o">=</span><span class="n">_mount_frame</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">obstime</span><span class="p">,</span> <span class="n">location</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">ICRS</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1196 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Scheduling Syntax &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/scheduling';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Operation Guide" href="operation.html" />
+    <link rel="prev" title="FITS Header Configuration" href="fits_header_configuration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Scheduling Syntax</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-schedule">Example Schedule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schedule-file-location">Schedule File Location</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-action-types">Supported Action Types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-moving-targets">Tracking Moving Targets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-of-operations">Sequence of operations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-periodic-re-centering-is-necessary">Why periodic re-centering is necessary</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements-and-limitations">Requirements and limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-target-must-be-above-the-horizon">The target must be above the horizon</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#action-value-parameters">Action Value Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#object-action"><code class="docutils literal notranslate"><span class="pre">object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-action"><code class="docutils literal notranslate"><span class="pre">calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flats-action"><code class="docutils literal notranslate"><span class="pre">flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrate-guiding-action"><code class="docutils literal notranslate"><span class="pre">calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autofocus-action"><code class="docutils literal notranslate"><span class="pre">autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointing-model-action"><code class="docutils literal notranslate"><span class="pre">pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-action"><code class="docutils literal notranslate"><span class="pre">open</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#close-action"><code class="docutils literal notranslate"><span class="pre">close</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cool-camera-action"><code class="docutils literal notranslate"><span class="pre">cool_camera</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-headers-action"><code class="docutils literal notranslate"><span class="pre">complete_headers</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="scheduling-syntax">
+<h1>Scheduling Syntax<a class="headerlink" href="#scheduling-syntax" title="Link to this heading">#</a></h1>
+<img alt="banner" class="align-center responsive-banner" src="../_images/scheduling-banner.svg" />
+<p><em>Astra</em> uses a schedule to operate the observatory automatically. A schedule is a
+JSONL file (JSON Lines format). Each line of the file is one JSON object, and each
+object is one action. An action has these fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device_name</span></code>: The name of the camera. The camera tells <em>Astra</em> which other
+devices the action uses through its configured paired devices.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">action_type</span></code>: The type of the action.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">action_value</span></code>: The parameters of the action.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_time</span></code>: The first time at which the action can start. Use the UTC ISO
+format YYYY-MM-DD HH:MM:SS.sss.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">end_time</span></code>: The last time at which the action can run. Use the UTC ISO format
+YYYY-MM-DD HH:MM:SS.sss.</p></li>
+</ul>
+<div class="admonition-instrument-centric-design admonition">
+<p class="admonition-title">Instrument-Centric Design</p>
+<p>Each action gives a camera as the <code class="docutils literal notranslate"><span class="pre">device_name</span></code>. The camera does not control the
+other devices. It tells <em>Astra</em> which devices the action uses. The observatory
+configuration gives the <code class="docutils literal notranslate"><span class="pre">paired_devices</span></code> of each camera: the telescope, the dome,
+the filter wheel and the focuser. <em>Astra</em> operates these devices together for the
+action.</p>
+</div>
+<div class="admonition-timing-and-execution-flow admonition">
+<p class="admonition-title">Timing and Execution Flow</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">start_time</span></code> and <code class="docutils literal notranslate"><span class="pre">end_time</span></code> fields give the window in which the action is
+valid. They do not give a fixed duration.</p>
+<ul class="simple">
+<li><p><strong>Early completion</strong>: If an action is completed correctly before its <code class="docutils literal notranslate"><span class="pre">end_time</span></code>,
+<em>Astra</em> does <strong>not</strong> wait. It starts the next action immediately. If the next
+action cannot start before its <code class="docutils literal notranslate"><span class="pre">start_time</span></code>, <em>Astra</em> waits until that time.</p></li>
+<li><p><strong>Order</strong>: <em>Astra</em> does the actions in sequence, in the order of their start
+times. The next action does not start until the current action is completed.
+This is also true when the <code class="docutils literal notranslate"><span class="pre">start_time</span></code> of the next action is in the past. To
+let actions run at the same time, set <code class="docutils literal notranslate"><span class="pre">execute_parallel</span></code> to true.</p></li>
+</ul>
+</div>
+<section id="example-schedule">
+<h2>Example Schedule<a class="headerlink" href="#example-schedule" title="Link to this heading">#</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="c1">// open observatory</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"open"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-23 22:38:25.210"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 10:49:15.363"</span>
+<span class="p">}</span>
+<span class="c1">// dusk sky flats</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"flats"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"filter"</span><span class="p">:[</span><span class="s2">"r'"</span><span class="p">,</span><span class="w"> </span><span class="s2">"g'"</span><span class="p">],</span><span class="nt">"n"</span><span class="p">:[</span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-23 22:39:25.210"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-23 23:16:00.018"</span>
+<span class="p">}</span>
+<span class="c1">// science observations</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"object"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"object"</span><span class="p">:</span><span class="s2">"Kepler-1"</span><span class="p">,</span><span class="nt">"filter"</span><span class="p">:</span><span class="s2">"r'"</span><span class="p">,</span><span class="nt">"ra"</span><span class="p">:</span><span class="mf">286.808542</span><span class="p">,</span><span class="nt">"dec"</span><span class="p">:</span><span class="mf">49.316422</span><span class="p">,</span><span class="nt">"exptime"</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="nt">"guiding"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="nt">"pointing"</span><span class="p">:</span><span class="kc">true</span><span class="p">},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-23 23:17:00.018"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 04:43:40.018"</span>
+<span class="p">}</span>
+<span class="c1">// dawn sky flats</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"flats"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"filter"</span><span class="p">:[</span><span class="s2">"r'"</span><span class="p">,</span><span class="w"> </span><span class="s2">"g'"</span><span class="p">],</span><span class="nt">"n"</span><span class="p">:[</span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">]},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-24 10:24:40.018"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 10:49:15.363"</span>
+<span class="p">}</span>
+<span class="c1">// close observatory</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"close"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-24 10:49:15.363"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 11:49:15.363"</span>
+<span class="p">}</span>
+<span class="c1">// calibration frames, biases and darks</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"calibration"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"exptime"</span><span class="p">:[</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">120</span><span class="p">],</span><span class="nt">"n"</span><span class="p">:[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">]},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-24 10:55:15.363"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 11:49:15.363"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition-jsonl-comments admonition">
+<p class="admonition-title">JSONL Comments</p>
+<p>In a JSONL file, a line that starts with <code class="docutils literal notranslate"><span class="pre">//</span></code> is a comment. <em>Astra</em> ignores it.</p>
+</div>
+</section>
+<section id="schedule-file-location">
+<h2>Schedule File Location<a class="headerlink" href="#schedule-file-location" title="Link to this heading">#</a></h2>
+<p>Put the schedule file in the schedules directory of the observatory. The file must
+have the extension <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>. For example:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">~/Documents/Astra/schedules/{observatory_name}.jsonl</span></code></p></li>
+</ul>
+<p><em>Astra</em> finds a file with this name and loads it. If you change the file, <em>Astra</em>
+loads it again.</p>
+</section>
+<section id="supported-action-types">
+<h2>Supported Action Types<a class="headerlink" href="#supported-action-types" title="Link to this heading">#</a></h2>
+<p><em>Astra</em> has these action types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">open</span></code>: Open the observatory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">close</span></code>: Close the observatory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cool_camera</span></code>: Start the camera cooling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">object</span></code>: Record light frames. Pointing correction and autoguiding are optional.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calibration</span></code>: Record dark frames and bias frames.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flats</span></code>: Record sky flat frames.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">autofocus</span></code>: Focus the telescope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calibrate_guiding</span></code>: Calibrate the guiding parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pointing_model</span></code>: Collect data for a telescope pointing model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete_headers</span></code>: Complete the FITS headers of all the images.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>Astra</em> runs the <code class="docutils literal notranslate"><span class="pre">complete_headers</span></code> action at the end of each schedule. This makes
+sure that all the FITS files have the full metadata.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Each action runs <code class="docutils literal notranslate"><span class="pre">cool_camera</span></code> first. This makes sure that the camera is at the
+correct temperature before an exposure starts. The <code class="docutils literal notranslate"><span class="pre">open</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code> actions run
+<code class="docutils literal notranslate"><span class="pre">cool_camera</span></code> after they are completed.</p>
+</div>
+</section>
+<section id="tracking-moving-targets">
+<h2>Tracking Moving Targets<a class="headerlink" href="#tracking-moving-targets" title="Link to this heading">#</a></h2>
+<p>Solar system bodies and artificial satellites move against the background stars.
+You can see this movement in one exposure. To correct for it, <em>Astra</em> commands
+differential tracking rates in right ascension and declination.</p>
+<p>To observe such a target, give a <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> in the <code class="docutils literal notranslate"><span class="pre">object</span></code> action. Give the
+name alone, because <em>Astra</em> points the mount from the ephemeris of the target. A
+fixed position cannot describe a moving target. If you also give <code class="docutils literal notranslate"><span class="pre">ra</span></code> and <code class="docutils literal notranslate"><span class="pre">dec</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">alt</span></code> and <code class="docutils literal notranslate"><span class="pre">az</span></code>, <em>Astra</em> rejects the schedule. <em>Astra</em> rejects a <code class="docutils literal notranslate"><span class="pre">tle</span></code> with one
+of these pairs in the same way.</p>
+<p><em>Astra</em> finds the position for <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> when it loads the schedule. The source
+of the position sets the type of tracking:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Source of the position</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Tracking</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Astropy’s built-in ephemeris</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mars&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;moon&quot;</span></code></p></td>
+<td><p>Non-sidereal</p></td>
+</tr>
+<tr class="row-odd"><td><p>JPL Horizons small-body search</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;C/2023</span> <span class="pre">A3&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Ceres&quot;</span></code></p></td>
+<td><p>Non-sidereal</p></td>
+</tr>
+<tr class="row-even"><td><p>A two-line element set that you give, with <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> set to <code class="docutils literal notranslate"><span class="pre">&quot;TLE&quot;</span></code></p></td>
+<td><p>The ISS</p></td>
+<td><p>Non-sidereal</p></td>
+</tr>
+<tr class="row-odd"><td><p>SIMBAD (stars and deep-sky objects)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;M31&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Vega&quot;</span></code></p></td>
+<td><p>Sidereal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="sequence-of-operations">
+<h3>Sequence of operations<a class="headerlink" href="#sequence-of-operations" title="Link to this heading">#</a></h3>
+<ol class="arabic">
+<li><p><strong>Pointing.</strong> The mount slews to the calculated position of the target at
+<code class="docutils literal notranslate"><span class="pre">start_time</span></code>. A planet or a comet moves less than one arcsecond during a normal
+slew. Thus the mount points at it correctly. A satellite moves much more
+quickly. For example, the ISS moves about 20 degrees in 30 seconds. The mount
+cannot slew directly to a target that moves this quickly.</p>
+<p>For a satellite, set <code class="docutils literal notranslate"><span class="pre">nonsidereal_start_lead_time_seconds</span></code>. Make it equal to or
+more than the slew time and the settling time of the mount. The mount then
+slews to the position of the target at <code class="docutils literal notranslate"><span class="pre">start_time</span></code> plus this number of
+seconds. The mount waits there for the target.</p>
+<p>The exposures can start later than planned. The target can then be more than
+one arcminute from the position of the mount. If this occurs, <em>Astra</em> re-centers
+the mount before the exposures start. This limit is an angle, not a time. Thus
+the delay that is possible changes with the speed of the target. For Mars, the
+delay must be about 45 minutes before a re-center is necessary. For the ISS, a
+delay of a few milliseconds is enough.</p>
+</li>
+<li><p><strong>Tracking.</strong> <em>Astra</em> applies the differential rates and refreshes them during
+the full sequence. This includes the exposures and the time when <em>Astra</em> writes
+each frame to the disk. The re-center interval starts when <em>Astra</em> applies the
+rates for the first time.</p></li>
+<li><p><strong>Re-centering.</strong> At each interval of <code class="docutils literal notranslate"><span class="pre">nonsidereal_recenter_interval</span></code> seconds,
+the mount slews to the current ephemeris position of the target. If you set the
+interval to zero, the mount does not do these slews. Only the rates then keep
+the target in the field. This does not stop non-sidereal tracking.</p></li>
+<li><p><strong>Reset.</strong> <em>Astra</em> sets the rates to zero when the sequence ends, and also when
+an error occurs. <em>Astra</em> sets the rates to zero before each slew. So a sequence
+that stopped incorrectly cannot leave old rates on the mount.</p></li>
+</ol>
+</section>
+<section id="why-periodic-re-centering-is-necessary">
+<h3>Why periodic re-centering is necessary<a class="headerlink" href="#why-periodic-re-centering-is-necessary" title="Link to this heading">#</a></h3>
+<p>Differential rates are an open-loop control of speed. They tell the mount how
+quickly to move, but not where to point. So they remove the apparent movement of
+the target. They do not correct a position error that already occurred.</p>
+<p><em>Astra</em> stops autoguiding during non-sidereal tracking. So re-centering is the
+only feedback of position. Without it, three errors increase continuously.</p>
+<p>The first pointing error continues. The initial slew leaves an offset. The offset
+comes from the pointing model, from an old ephemeris, or from the movement of the
+target during the slew. The rates keep this offset.</p>
+<p>Rate errors become position errors. No mount applies a commanded rate exactly, and
+the correct rate changes between the updates.</p>
+<p><em>Astra</em> does not correct mechanical defects. Periodic error, flexure and polar
+misalignment have the same effect during non-sidereal tracking as during sidereal
+tracking.</p>
+<p>The interval is a balance between drift and dead time. Each re-center needs a slew
+and a settling time. If a fast target moves more than one arcsecond during the
+first slew, the mount does a second slew to correct this. For a comet or an
+asteroid, start with an interval of a few minutes. A target that moves more quickly
+needs a shorter interval.</p>
+</section>
+<section id="requirements-and-limitations">
+<h3>Requirements and limitations<a class="headerlink" href="#requirements-and-limitations" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>The mount must have differential rates.</strong> It must report the ASCOM
+capabilities <code class="docutils literal notranslate"><span class="pre">CanSetRightAscensionRate</span></code> and <code class="docutils literal notranslate"><span class="pre">CanSetDeclinationRate</span></code>. If no
+telescope in the observatory reports the two capabilities, <em>Astra</em> rejects the
+schedule when it loads it.</p></li>
+<li><p><strong><em>Astra</em> stops autoguiding.</strong> The guide stars move across the field when the
+mount tracks a moving target. So the guider operates against the tracking rates.
+If you set <code class="docutils literal notranslate"><span class="pre">guiding</span></code> to true for a moving target, <em>Astra</em> gives a warning and
+ignores the field.</p></li>
+<li><p><strong><em>Astra</em> sends few rate commands.</strong> Some mounts stop the tracking for a short
+time when they receive a new rate. So <em>Astra</em> sends a rate only when the current
+rate causes the target to trail. It does not send a rate more frequently than
+<code class="docutils literal notranslate"><span class="pre">nonsidereal_rate_update_interval</span></code> seconds. The default value is 10 seconds.
+Decrease the value for a target whose rate changes quickly. Increase it for a
+mount that is sensitive to rate commands.</p></li>
+<li><p><strong>All positions are ICRS (J2000) before they go to the mount.</strong> The planet
+positions from Astropy, the Horizons positions and the SIMBAD positions are all
+astrometric ICRS. So they agree to better than one arcsecond. If the mount
+reports that it needs JNow coordinates, <em>Astra</em> converts each slew position to
+the apparent frame of the date. Refer to <code class="docutils literal notranslate"><span class="pre">equatorial_system</span></code> in the
+<a class="reference internal" href="observatory_configuration.html#telescope-configuration"><span class="std std-ref">telescope configuration</span></a>.</p></li>
+<li><p><strong>The ephemeris interval agrees with the movement of the target.</strong> One sample
+each minute gives the position of a planet to better than one arcsecond. In one
+minute, the ISS moves 30 degrees. <em>Astra</em> cannot interpolate an arc that it did
+not sample, and the error becomes some degrees. So <em>Astra</em> uses an interval of a
+few seconds for a satellite, and one minute for a planet, a comet or an
+asteroid. It then measures the speed of the target in the ephemeris and changes
+the interval if the first value was not correct. A very fast target in a long
+window gets to the maximum number of samples. <em>Astra</em> then gives a warning.</p></li>
+<li><p><strong>Minor bodies and TLEs need a network connection when the schedule loads.</strong>
+<em>Astra</em> sends a request to JPL Horizons when it reads the schedule. It
+calculates an ephemeris and interpolates it during the night. Usually one
+request is enough. <em>Astra</em> sends a second request only when the interval
+does not agree with the speed of the target. So a network failure during the
+observations has no effect. But a network failure when the
+schedule loads causes <em>Astra</em> to reject the schedule. <em>Astra</em> calculates the
+positions of the planets and the Moon with the built-in ephemeris of Astropy.
+These positions need no network.</p></li>
+</ul>
+</section>
+<section id="the-target-must-be-above-the-horizon">
+<h3>The target must be above the horizon<a class="headerlink" href="#the-target-must-be-above-the-horizon" title="Link to this heading">#</a></h3>
+<p><em>Astra</em> does this check for each <code class="docutils literal notranslate"><span class="pre">object</span></code> action, for a moving target and for a
+fixed target. It calculates the altitude of the target every 30 seconds, from
+<code class="docutils literal notranslate"><span class="pre">start_time</span></code> to <code class="docutils literal notranslate"><span class="pre">end_time</span></code>. If the altitude at one of these times is less than 0
+degrees, <em>Astra</em> rejects the schedule. For a moving target, <em>Astra</em> uses the
+ephemeris. So the altitude is the altitude of the body at each time. The error
+message gives the altitude at the start and at the end when these are below the
+limit. It also gives the number of times below the limit, the first of them, and
+the lowest altitude.</p>
+<p>This is most important for a satellite. A satellite rises and sets more than one
+time in a long window. Its altitude at the start, at the middle and at the end
+tells you little about the other times. Make the window no longer than one pass.</p>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h3>
+<p>This action tracks Saturn. The mount re-centers every five minutes:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"object"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"object"</span><span class="p">:</span><span class="s2">"Saturn"</span><span class="p">,</span><span class="nt">"lookup_name"</span><span class="p">:</span><span class="s2">"saturn"</span><span class="p">,</span><span class="nt">"filter"</span><span class="p">:</span><span class="s2">"r'"</span><span class="p">,</span><span class="nt">"exptime"</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="nt">"nonsidereal_recenter_interval"</span><span class="p">:</span><span class="mi">300</span><span class="p">},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-23 23:17:00.018"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-24 00:17:00.018"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This action tracks a satellite with its two-line element set. Set <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> to
+<code class="docutils literal notranslate"><span class="pre">&quot;TLE&quot;</span></code>. Give the two element lines in <code class="docutils literal notranslate"><span class="pre">tle</span></code>, with a <code class="docutils literal notranslate"><span class="pre">\n</span></code> between them. The lead
+time gives the mount 45 seconds to move to the position of the satellite. The rate
+update interval is short because the rates of a low orbit change quickly:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">"device_name"</span><span class="p">:</span><span class="s2">"camera_main"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_type"</span><span class="p">:</span><span class="s2">"object"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"action_value"</span><span class="p">:{</span><span class="nt">"object"</span><span class="p">:</span><span class="s2">"ISS"</span><span class="p">,</span><span class="nt">"lookup_name"</span><span class="p">:</span><span class="s2">"TLE"</span><span class="p">,</span><span class="nt">"tle"</span><span class="p">:</span><span class="s2">"1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777"</span><span class="p">,</span><span class="nt">"filter"</span><span class="p">:</span><span class="s2">"Clear"</span><span class="p">,</span><span class="nt">"exptime"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="nt">"nonsidereal_recenter_interval"</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span><span class="nt">"nonsidereal_rate_update_interval"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">"nonsidereal_start_lead_time_seconds"</span><span class="p">:</span><span class="mi">45</span><span class="p">},</span>
+<span class="w">   </span><span class="nt">"start_time"</span><span class="p">:</span><span class="s2">"2025-08-23 23:17:00.018"</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">"end_time"</span><span class="p">:</span><span class="s2">"2025-08-23 23:27:00.018"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>A two-line element set becomes less accurate quickly. If a set is more than a few
+days old, it cannot give the position of a satellite in low Earth orbit with
+enough accuracy. The satellite is then not on the detector.</p>
+</div>
+</section>
+</section>
+<section id="action-value-parameters">
+<h2>Action Value Parameters<a class="headerlink" href="#action-value-parameters" title="Link to this heading">#</a></h2>
+<p>Each action type needs its own parameters in the <code class="docutils literal notranslate"><span class="pre">action_value</span></code> field. <em>Astra</em>
+generates the sections that follow from the action configuration dataclasses. So
+the documentation always agrees with the software.</p>
+<section id="object-action">
+<h3><code class="docutils literal notranslate"><span class="pre">object</span></code><a class="headerlink" href="#object-action" title="Link to this heading">#</a></h3>
+<p>Capture a sequence of light frames.</p>
+<dl>
+<dt>Workflow:</dt><dd><ol class="arabic simple">
+<li><dl class="simple">
+<dt>Pre-sequence setup (pointing, filters, focus, binning, sub-framing, headers)</dt><dd><ul class="simple">
+<li><p>Observatory opens if not already done by a prior action if coordinates specified</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Capture exposures in succession</p></li>
+<li><p>Perform pointing correction if <code class="docutils literal notranslate"><span class="pre">pointing=true</span></code></p></li>
+<li><p>Start autoguiding if <code class="docutils literal notranslate"><span class="pre">guiding=true</span></code></p></li>
+<li><p>Stop exposures, guiding, and tracking at completion</p></li>
+</ol>
+</dd>
+<dt>Non-sidereal tracking:</dt><dd><p>Differential tracking is enabled implicitly: whenever <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> is
+given in place of a fixed <code class="docutils literal notranslate"><span class="pre">ra</span></code>/<code class="docutils literal notranslate"><span class="pre">dec</span></code> and resolves to a moving body, the
+sequence is tracked non-sidereally. Names resolved against Astropy’s
+built-in ephemeris (the planets, the Moon and the Sun) or against JPL
+Horizons (asteroids and comets) are treated as moving, while names resolved
+as stars or deep-sky objects are tracked sidereally.
+<code class="docutils literal notranslate"><span class="pre">nonsidereal_recenter_interval</span></code> governs only how often the mount re-slews
+once tracking is under way. Autoguiding is incompatible with non-sidereal
+tracking and is disabled automatically. For Earth-orbiting objects, supply
+<code class="docutils literal notranslate"><span class="pre">tle</span></code> and set <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> to “TLE”.</p>
+<p>The mount must report the ASCOM capabilities <code class="docutils literal notranslate"><span class="pre">CanSetRightAscensionRate</span></code>
+and <code class="docutils literal notranslate"><span class="pre">CanSetDeclinationRate</span></code>. Where <code class="docutils literal notranslate"><span class="pre">lookup_name</span></code> resolves to a moving
+body and no telescope in the observatory reports both, the schedule is
+rejected as it is loaded rather than run sidereally.</p>
+<p><strong>Schedule example for tracking Saturn</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">"device_name"</span><span class="p">:</span> <span class="s2">"camera_name"</span><span class="p">,</span>
+    <span class="s2">"action_type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+    <span class="s2">"action_value"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"object"</span><span class="p">:</span> <span class="s2">"Saturn"</span><span class="p">,</span>
+        <span class="s2">"lookup_name"</span><span class="p">:</span> <span class="s2">"saturn"</span><span class="p">,</span>
+        <span class="s2">"exptime"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="s2">"filter"</span><span class="p">:</span> <span class="s2">"Clear"</span><span class="p">,</span>
+        <span class="s2">"nonsidereal_recenter_interval"</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">"start_time"</span><span class="p">:</span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+    <span class="s2">"end_time"</span><span class="p">:</span><span class="s2">"2025-01-01 01:00:00.000"</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"object"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"object"</span><span class="p">:</span><span class="w"> </span><span class="s2">"M42"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"exptime"</span><span class="p">:</span><span class="w"> </span><span class="mf">60.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"ra"</span><span class="p">:</span><span class="w"> </span><span class="mf">83.82208</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"dec"</span><span class="p">:</span><span class="w"> </span><span class="mf">-5.39111</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"V"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"n"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"guiding"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"pointing"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"47026"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"requested_by_user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user@mail.com"</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">object</span>: <span class="param-type">str</span> <span class="param-required">Required</span> — Target name.
+<span class="param-name">exptime</span>: <span class="param-type">float</span> <span class="param-required">Required</span> — Exposure time per frame in seconds.
+<span class="param-name">ra</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Right Ascension to slew to
+<span class="param-name">dec</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Declination to slew to
+<span class="param-name">alt</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Altitude coordinate when issuing Alt/Az pointings.
+<span class="param-name">az</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Azimuth coordinate when issuing Alt/Az pointings.
+<span class="param-name">lookup_name</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Instead of specifying ra/dec or alt/az, use SIMBAD/Astropy to look up coordinates for celestial body to observe (e.g., &#x27;mars&#x27;, &#x27;M31&#x27;).
+<span class="param-name">tle</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Two-line element set for an Earth-orbiting object, given as the two element lines separated by a newline. Set lookup_name to &#x27;TLE&#x27; when this is supplied. Requires a mount that can set differential tracking rates.
+<span class="param-name">filter</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Filter name to load before imaging.
+<span class="param-name">focus_shift</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Focus offset relative to the stored best focus.
+<span class="param-name">focus_position</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Absolute focus position override.
+<span class="param-name">n</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Number of exposures in the sequence. If not specified, defaults to infinite exposures until end_time.
+<span class="param-name">guiding</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Start autoguiding with Donuts before imaging. Should be False for solar system objects using non-sidereal tracking, as the star field drifts relative to the guide reference.
+<span class="param-name">pointing</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Perform pointing correction with twirl before imaging.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">dir</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Base directory path for saving images.
+<span class="param-name">execute_parallel</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Execute action in parallel mode when supported.
+<span class="param-name">disable_telescope_movement</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Prevent any telescope motion during the sequence.
+<span class="param-name">reset_guiding_reference</span>: <span class="param-type">bool</span> <span class="param-default">= true</span> — Acquire a fresh guiding reference frame at the start.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal location of the subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical location of the subframe center (0=top, 1=bottom).
+<span class="param-name">nonsidereal_recenter_interval</span>: <span class="param-type">int</span> <span class="param-default">= 0</span> — Interval in seconds at which the mount re-slews to the target&#x27;s current ephemeris position, refreshing the tracking rates as it does so. Setting it to 0 suppresses the re-slews and leaves the differential rates to work alone, which does not disable non-sidereal tracking. Has no effect on fixed targets.
+<span class="param-name">nonsidereal_start_lead_time_seconds</span>: <span class="param-type">float</span> <span class="param-default">= 0.0</span> — Lead time in seconds for the initial slew, for targets too fast to slew to directly. The mount is sent to the position the target will occupy at start_time plus this value, idles until that moment, and only then begins exposing. Set it to at least the slew and settling time. The default of 0 slews straight at the target, which is accurate to well under an arcsecond for a planet or comet; only satellites, which cross degrees during a slew, need a lead time.
+<span class="param-name">nonsidereal_rate_update_interval</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Minimum interval in seconds between differential rate commands sent to the mount. Astra will not issue a new rate more often than this, however rapidly the ephemeris changes. Lengthen it for mounts that stutter when a rate is applied; shorten it for targets whose rate changes over seconds, such as satellites in low orbit. Defaults to 10 seconds.
+<span class="param-name">metadata</span>: <span class="param-type">Dict[str, Any]</span> <span class="param-default">= {}</span> — Arbitrary user-defined key/value pairs that are not otherwise interpreted by Astra.Values ca be written to the FITS header via a `device_type=action_metadata` row in the FITS header configuration CSV, where `device_command` names the metadata key.</pre></section>
+<section id="calibration-action">
+<h3><code class="docutils literal notranslate"><span class="pre">calibration</span></code><a class="headerlink" href="#calibration-action" title="Link to this heading">#</a></h3>
+<p>Capture a sequence of calibration images (bias/dark).</p>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calibration"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"exptime"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w"> </span><span class="mf">30.0</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">"n"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">exptime</span>: <span class="param-type">List[float]</span> <span class="param-required">Required</span> — Exposure times (seconds) to iterate.
+<span class="param-name">n</span>: <span class="param-type">List[int]</span> <span class="param-required">Required</span> — Exposure counts aligned with each exposure time.
+<span class="param-name">filter</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Filter name to load before imaging.
+<span class="param-name">dir</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Base directory path for saving images.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">execute_parallel</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Execute action in parallel mode when supported.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical subframe center (0=top, 1=bottom).
+<span class="param-name">metadata</span>: <span class="param-type">Dict[str, Any]</span> <span class="param-default">= {}</span> — Arbitrary user-defined key/value pairs, exposed to FITS headers via `device_type=action_metadata` rows in the FITS header configuration CSV.</pre></section>
+<section id="flats-action">
+<h3><code class="docutils literal notranslate"><span class="pre">flats</span></code><a class="headerlink" href="#flats-action" title="Link to this heading">#</a></h3>
+<p>Capture a sequence of sky flats as the sky brightness evolves.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><p>Wait for Sun altitude between -1° and -12°</p></li>
+<li><dl class="simple">
+<dt>Point to a near-uniform patch of sky opposite the Sun</dt><dd><ul class="simple">
+<li><p>Opens observatory if not already done by a prior action</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Capture exposures and re-position between frames</p></li>
+<li><p>Iterate through requested filters while auto-adjusting exposure times</p></li>
+</ol>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flats"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"V"</span><span class="p">,</span><span class="w"> </span><span class="s2">"R"</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">"n"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">filter</span>: <span class="param-type">List[str]</span> <span class="param-required">Required</span> — Filters to iterate while capturing flats.
+<span class="param-name">n</span>: <span class="param-type">List[int]</span> <span class="param-required">Required</span> — Number of flats to capture per filter.
+<span class="param-name">dir</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Base directory path for saving images.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">execute_parallel</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Execute action in parallel mode when supported.
+<span class="param-name">disable_telescope_movement</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Prevent telescope motion during the sequence.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical subframe center (0=top, 1=bottom).</pre></section>
+<section id="calibrate-guiding-action">
+<h3><code class="docutils literal notranslate"><span class="pre">calibrate_guiding</span></code><a class="headerlink" href="#calibrate-guiding-action" title="Link to this heading">#</a></h3>
+<p>Calibrate guiding parameters using timed guide pulses.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><dl class="simple">
+<dt>Slews telescope to RA = LST - 1 hour, Dec = 0° at the start of sequence</dt><dd><ul class="simple">
+<li><p>Opens observatory if not already done by a prior action</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Issues a series of guide pulses in each cardinal direction with specified duration and settling time</p></li>
+<li><p>Captures exposures after each pulse and measures star shifts to determine pixel-to-time scales and camera orientation relative to mount axes</p></li>
+<li><p>Averages results over specified number of cycles</p></li>
+<li><p>Saves calibration parameters in the observatory configuration for use in guiding</p></li>
+</ol>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calibrate_guiding"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">filter</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Filter to use during calibration.
+<span class="param-name">pulse_time</span>: <span class="param-type">int</span> <span class="param-default">= 5000</span> — Duration of guide pulses in milliseconds.
+<span class="param-name">exptime</span>: <span class="param-type">float</span> <span class="param-default">= 1.0</span> — Exposure time for calibration images.
+<span class="param-name">settle_time</span>: <span class="param-type">float</span> <span class="param-default">= 1.0</span> — Wait time after pulses before exposing.
+<span class="param-name">number_of_cycles</span>: <span class="param-type">int</span> <span class="param-default">= 10</span> — How many calibration cycles to take average over.
+<span class="param-name">focus_shift</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Focus offset relative to best focus.
+<span class="param-name">focus_position</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Absolute focus position override.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical subframe center (0=top, 1=bottom).</pre></section>
+<section id="autofocus-action">
+<h3><code class="docutils literal notranslate"><span class="pre">autofocus</span></code><a class="headerlink" href="#autofocus-action" title="Link to this heading">#</a></h3>
+<p>Perform an autofocus sweep to determine the optimal focus position.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><dl class="simple">
+<dt>Select a suitable autofocus field (or use provided coordinates)</dt><dd><ul class="simple">
+<li><p>Opens observatory if not already done by a prior action</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Move the telescope if needed</p></li>
+<li><p>Capture images at different focus positions</p></li>
+<li><p>Measure star sharpness in each image</p></li>
+<li><p>Fit a curve to determine optimal focus</p></li>
+<li><p>Save plots/results and save the best focus position in the observatory configuration</p></li>
+</ol>
+</dd>
+<dt>Note:</dt><dd><p>Coarse searches (for example <cite>fft</cite>, <cite>normalized_variance</cite>) use non-parametric
+focus measures that characterise overall frame sharpness and are well suited
+for very broad search ranges where stars appear as large, defocused “donuts”.
+Analytic response-function autofocusers (for example <cite>HFR</cite>/StarSize), which fit
+a V-curve to measured star sizes, are better for fine-tuning near the focus
+peak but can give incorrect results if applied over an excessively large range
+because the assumed response model may not fit across the whole span.</p>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"autofocus"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"exptime"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"V"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"focus_measure_operator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HFR"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"search_range_is_relative"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"search_range"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"n_steps"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">"n_exposures"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">exptime</span>: <span class="param-type">float | int</span> <span class="param-default">= 3.0</span> — Exposure time for focus frames in seconds.
+<span class="param-name">filter</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Filter to use during autofocus procedure.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">reduce_exposure_time</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Automatically shorten exposures to prevent saturation.
+<span class="param-name">search_range</span>: <span class="param-type">List[int] | int | None</span> <span class="param-default">= None</span> — Range of focus positions to search. Accepts a single width or explicit bounds.
+<span class="param-name">search_range_is_relative</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Interpret search_range relative to the current focus position.
+<span class="param-name">n_steps</span>: <span class="param-type">List[int]</span> <span class="param-default">= [30, 20]</span> — Number of steps for each sweep.
+<span class="param-name">n_exposures</span>: <span class="param-type">List[int] | int</span> <span class="param-default">= [1, 1]</span> — Number of exposures at each focus position or an array specifying exposures for each sweep. If an integer is given, the same number of exposures is used for each sweep. If an array is given, the length of the array must match the number of sweeps. 
+<span class="param-name">decrease_search_range</span>: <span class="param-type">bool</span> <span class="param-default">= true</span> — Reduce the search range after each sweep.
+<span class="param-name">star_find_threshold</span>: <span class="param-type">float | int</span> <span class="param-default">= 5.0</span> — DAOStarFinder threshold for star detection.
+<span class="param-name">fwhm</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — DAOStarFinder FWHM of the Gaussian kernel in pixels. If not set, derived from the camera/telescope plate scale assuming ~2&quot; seeing.
+<span class="param-name">percent_to_cut</span>: <span class="param-type">int</span> <span class="param-default">= 60</span> — Percentage of worst-performing focus samples to drop when shrinking the range.
+<span class="param-name">focus_measure_operator</span>: <span class="param-type">str</span> <span class="param-default">= &#x27;HFR&#x27;</span> — Focus metric to optimize (e.g., hfr, gauss, tenengrad, fft, normalized_variance).
+<span class="param-name">save</span>: <span class="param-type">bool</span> <span class="param-default">= true</span> — Persist the optimal focus position back into observatory configuration.
+<span class="param-name">extremum_estimator</span>: <span class="param-type">str</span> <span class="param-default">= &#x27;LOWESS&#x27;</span> — Curve-fitting method used to determine the minimum (LOWESS, medianfilter, spline, rbf).
+<span class="param-name">extremum_estimator_kwargs</span>: <span class="param-type">Dict[str, Any]</span> <span class="param-default">= {}</span> — Additional keyword overrides for the extremum estimator.
+<span class="param-name">secondary_focus_measure_operators</span>: <span class="param-type">List[str]</span> <span class="param-default">= [&#x27;fft&#x27;, &#x27;normalized_variance&#x27;, &#x27;tenengrad&#x27;]</span> — Additional focus metrics to compute for diagnostics.
+<span class="param-name">maximal_zenith_angle</span>: <span class="param-type">float | int | Angle | None</span> <span class="param-default">= None</span> — Maximum zenith angle allowed when selecting autofocus fields.
+<span class="param-name">airmass_threshold</span>: <span class="param-type">float</span> <span class="param-default">= 1.01</span> — Highest acceptable airmass for autofocus candidates.
+<span class="param-name">g_mag_range</span>: <span class="param-type">List[float | int]</span> <span class="param-default">= [0, 10]</span> — Inclusive Gaia G magnitude range to consider.
+<span class="param-name">j_mag_range</span>: <span class="param-type">List[float | int]</span> <span class="param-default">= [0, 10]</span> — Inclusive 2MASS J magnitude range to consider.
+<span class="param-name">fov_height</span>: <span class="param-type">float | int</span> <span class="param-default">= 0</span> — Height of the field of view in degrees.
+<span class="param-name">fov_width</span>: <span class="param-type">float | int</span> <span class="param-default">= 0</span> — Width of the field of view in degrees.
+<span class="param-name">selection_method</span>: <span class="param-type">SelectionMethod | str</span> <span class="param-default">= &#x27;single&#x27;</span> — Strategy for selecting stars (single, maximal, any).
+<span class="param-name">use_gaia</span>: <span class="param-type">bool</span> <span class="param-default">= true</span> — Whether to rely on Gaia catalog sources.
+<span class="param-name">observation_time</span>: <span class="param-type">Time | None</span> <span class="param-default">= None</span> — Observation time used when evaluating constraints.
+<span class="param-name">maximal_number_of_stars</span>: <span class="param-type">int</span> <span class="param-default">= 100000</span> — Maximum number of stars to query or consider.
+<span class="param-name">ra</span>: <span class="param-type">float | int | None</span> <span class="param-default">= None</span> — Fixed Right Ascension used to bypass automatic selection.
+<span class="param-name">dec</span>: <span class="param-type">float | int | None</span> <span class="param-default">= None</span> — Fixed Declination used to bypass automatic selection.
+<span class="param-name">save_path</span>: <span class="param-type">Path | None</span> <span class="param-default">= None</span> — Directory override for saving autofocus results.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical subframe center (0=top, 1=bottom).</pre></section>
+<section id="pointing-model-action">
+<h3><code class="docutils literal notranslate"><span class="pre">pointing_model</span></code><a class="headerlink" href="#pointing-model-action" title="Link to this heading">#</a></h3>
+<p>Aid building a telescope pointing model. Astra itself does not build or maintain
+a pointing model.</p>
+<p>Captures a spiral of points from zenith down to 30° altitude while
+avoiding positions within 20° of the Moon.</p>
+<p>Plate solves each pointing and sends SyncToCoordinates commands to the mount. The
+receipt of these commands can be used to build a pointing model in the mount
+control software. The action can be configured to use the local star catalog for
+plate solving to speed up the process if the online Gaia catalog is unavailable or
+slow.</p>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pointing_model"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Action values</strong></p>
+<pre class="autoschedule-params"><span class="param-name">n</span>: <span class="param-type">int</span> <span class="param-default">= 50</span> — Number of points to include in the model.
+<span class="param-name">exptime</span>: <span class="param-type">float</span> <span class="param-default">= 3.0</span> — Exposure time for each pointing image.
+<span class="param-name">dark_subtraction</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Enable dark subtraction using previously taken calibration frames of same exposure time in the same date folder.
+<span class="param-name">object</span>: <span class="param-type">str</span> <span class="param-default">= &#x27;Pointing Model&#x27;</span> — Descriptive label for the pointing run.
+<span class="param-name">use_local_db</span>: <span class="param-type">bool</span> <span class="param-default">= false</span> — Use local star catalog database for plate solving (faster).
+<span class="param-name">filter</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Filter to use for exposures.
+<span class="param-name">focus_shift</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Focus offset relative to best focus.
+<span class="param-name">focus_position</span>: <span class="param-type">float | None</span> <span class="param-default">= None</span> — Absolute focus position override.
+<span class="param-name">bin</span>: <span class="param-type">int</span> <span class="param-default">= 1</span> — Camera binning factor.
+<span class="param-name">dir</span>: <span class="param-type">str | None</span> <span class="param-default">= None</span> — Directory path for saving images.
+<span class="param-name">subframe_width</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Width of the requested subframe in binned pixels.
+<span class="param-name">subframe_height</span>: <span class="param-type">int | None</span> <span class="param-default">= None</span> — Height of the requested subframe in binned pixels.
+<span class="param-name">subframe_center_x</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Horizontal subframe center (0=left, 1=right).
+<span class="param-name">subframe_center_y</span>: <span class="param-type">float</span> <span class="param-default">= 0.5</span> — Vertical subframe center (0=top, 1=bottom).</pre></section>
+<section id="open-action">
+<h3><code class="docutils literal notranslate"><span class="pre">open</span></code><a class="headerlink" href="#open-action" title="Link to this heading">#</a></h3>
+<p>Open the observatory for observations.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><p>Opens dome shutter</p></li>
+<li><p>Unparks telescope</p></li>
+<li><p>Cools camera</p></li>
+</ol>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"open"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="close-action">
+<h3><code class="docutils literal notranslate"><span class="pre">close</span></code><a class="headerlink" href="#close-action" title="Link to this heading">#</a></h3>
+<p>Close the observatory safely.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><p>Stop any active guiding operations</p></li>
+<li><p>Stop telescope slewing and tracking</p></li>
+<li><p>Park the telescope</p></li>
+<li><p>Park the dome and close shutter</p></li>
+<li><p>Cools camera</p></li>
+</ol>
+</dd>
+</dl>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"close"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="cool-camera-action">
+<h3><code class="docutils literal notranslate"><span class="pre">cool_camera</span></code><a class="headerlink" href="#cool-camera-action" title="Link to this heading">#</a></h3>
+<p>Configuration for the <code class="docutils literal notranslate"><span class="pre">cool_camera</span></code> schedule action.</p>
+<p>Activates the camera cooler and sets the target temperature with specified tolerance
+and timeout from observatory configuration.</p>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cool_camera"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-headers-action">
+<h3><code class="docutils literal notranslate"><span class="pre">complete_headers</span></code><a class="headerlink" href="#complete-headers-action" title="Link to this heading">#</a></h3>
+<p>Complete FITS headers after exposures finish.</p>
+<p>Uses paired device polled data to fill in FITS header fields that were unavailable
+at exposure time. Automatically executed at the end of every schedule.</p>
+<p><strong>Minimal schedule example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"device_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"camera_name"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"complete_headers"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"action_value"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-01 00:00:00.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"end_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-02-01 00:00:00.000"</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="fits_header_configuration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">FITS Header Configuration</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="operation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Operation Guide</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-schedule">Example Schedule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schedule-file-location">Schedule File Location</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-action-types">Supported Action Types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-moving-targets">Tracking Moving Targets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-of-operations">Sequence of operations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-periodic-re-centering-is-necessary">Why periodic re-centering is necessary</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements-and-limitations">Requirements and limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-target-must-be-above-the-horizon">The target must be above the horizon</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#action-value-parameters">Action Value Parameters</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#object-action"><code class="docutils literal notranslate"><span class="pre">object</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-action"><code class="docutils literal notranslate"><span class="pre">calibration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flats-action"><code class="docutils literal notranslate"><span class="pre">flats</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrate-guiding-action"><code class="docutils literal notranslate"><span class="pre">calibrate_guiding</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autofocus-action"><code class="docutils literal notranslate"><span class="pre">autofocus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointing-model-action"><code class="docutils literal notranslate"><span class="pre">pointing_model</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-action"><code class="docutils literal notranslate"><span class="pre">open</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#close-action"><code class="docutils literal notranslate"><span class="pre">close</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cool-camera-action"><code class="docutils literal notranslate"><span class="pre">cool_camera</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-headers-action"><code class="docutils literal notranslate"><span class="pre">complete_headers</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>astra.utils.ephemeris &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/astra.utils.ephemeris';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="astra.utils.frames" href="astra.utils.frames.html" />
+    <link rel="prev" title="astra.utils.astelos_errors" href="astra.utils.astelos_errors.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.0</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Module Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="astra.utils.html">astra.utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>astra.utils.ephemeris</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.NotMovingBodyError"><code class="docutils literal notranslate"><span class="pre">NotMovingBodyError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.is_sun_rising"><code class="docutils literal notranslate"><span class="pre">is_sun_rising()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.astrometric_icrs"><code class="docutils literal notranslate"><span class="pre">astrometric_icrs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.get_body_coordinates"><code class="docutils literal notranslate"><span class="pre">get_body_coordinates()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.is_solar_system_body"><code class="docutils literal notranslate"><span class="pre">is_solar_system_body()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.precompute_ephemeris"><code class="docutils literal notranslate"><span class="pre">precompute_ephemeris()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.compute_nonsidereal_rates_from_interp"><code class="docutils literal notranslate"><span class="pre">compute_nonsidereal_rates_from_interp()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-astra.utils.ephemeris">
+<span id="astra-utils-ephemeris"></span><h1>astra.utils.ephemeris<a class="headerlink" href="#module-astra.utils.ephemeris" title="Link to this heading">#</a></h1>
+<p>Solar position analysis and celestial body coordinate lookup.</p>
+<p>Also provides pre-computed ephemerides for non-sidereal (moving) targets,
+sourced either from astropy’s built-in solar system ephemeris or from JPL
+Horizons (including TLE-defined satellites).</p>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.ephemeris.astrometric_icrs" title="astra.utils.ephemeris.astrometric_icrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astrometric_icrs</span></code></a>(body, obstime, obs_location)</p></td>
+<td><p>Return the astrometric ICRS direction of a solar system body from the observer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.ephemeris.compute_nonsidereal_rates_from_interp" title="astra.utils.ephemeris.compute_nonsidereal_rates_from_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_nonsidereal_rates_from_interp</span></code></a>(...[, dt])</p></td>
+<td><p>Compute ASCOM RightAscensionRate and DeclinationRate from pre-computed interpolators.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.ephemeris.get_body_coordinates" title="astra.utils.ephemeris.get_body_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_body_coordinates</span></code></a>(body_name, obs_time, ...)</p></td>
+<td><p>Get the ICRS position of a celestial body (Solar System or Deep Sky).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.ephemeris.is_solar_system_body" title="astra.utils.ephemeris.is_solar_system_body"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_solar_system_body</span></code></a>(body_name)</p></td>
+<td><p>Return True if name is a known solar system body in the astropy ephemeris.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.ephemeris.is_sun_rising" title="astra.utils.ephemeris.is_sun_rising"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_sun_rising</span></code></a>(obs_location)</p></td>
+<td><p>Determine solar motion and flat field observation readiness.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astra.utils.ephemeris.precompute_ephemeris" title="astra.utils.ephemeris.precompute_ephemeris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">precompute_ephemeris</span></code></a>(body_name, start_time, ...)</p></td>
+<td><p>Pre-compute a moving body's sky positions over a time window.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Exceptions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astra.utils.ephemeris.NotMovingBodyError" title="astra.utils.ephemeris.NotMovingBodyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NotMovingBodyError</span></code></a></p></td>
+<td><p>Raised when a lookup_name cannot be resolved as a solar system or minor body.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.NotMovingBodyError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">NotMovingBodyError</span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#NotMovingBodyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.NotMovingBodyError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
+<p>Raised when a lookup_name cannot be resolved as a solar system or minor body.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.is_sun_rising">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">is_sun_rising</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v8.0)"><span class="pre">EarthLocation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.AltAz.html#astropy.coordinates.AltAz" title="(in Astropy v8.0)"><span class="pre">AltAz</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#is_sun_rising"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.is_sun_rising" title="Link to this definition">#</a></dt>
+<dd><p>Determine solar motion and flat field observation readiness.</p>
+<p>Analyzes sun position and movement to determine if conditions are suitable
+for flat field calibration observations, which require specific twilight conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obs_location</strong> (<em>EarthLocation</em>) – Observer’s geographic location.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>Tuple[bool, bool, AltAz]</em> –</p>
+<dl class="simple">
+<dt>Solar status as (rising, flat_ready, position):</dt><dd><ul class="simple">
+<li><p>rising: True if sun is rising, False if setting</p></li>
+<li><p>flat_ready: True if optimal for flats (sun altitude -12° to -1°)</p></li>
+<li><p>position: Current sun position in alt-az coordinates</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.astrometric_icrs">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">astrometric_icrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v8.0)"><span class="pre">SkyCoord</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v8.0)"><span class="pre">Time</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v8.0)"><span class="pre">EarthLocation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v8.0)"><span class="pre">SkyCoord</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#astrometric_icrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.astrometric_icrs" title="Link to this definition">#</a></dt>
+<dd><p>Return the astrometric ICRS direction of a solar system body from the observer.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_body</span></code> returns GCRS coordinates. Those include annual aberration, so they
+differ from a catalogue (ICRS) direction by up to 20 arcseconds. JPL Horizons
+and SIMBAD give astrometric ICRS. This function brings the astropy result onto
+the same footing, so every source Astra uses is in one frame.</p>
+<p>The direction is the light-time corrected barycentric position of the body,
+which astropy provides, minus the barycentric position of the observer. Do not
+use <code class="docutils literal notranslate"><span class="pre">transform_to(ICRS())</span></code> on a <code class="docutils literal notranslate"><span class="pre">get_body</span></code> result for this. That returns the
+direction from the solar system barycentre, not from the observer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body</strong> – Output of <code class="docutils literal notranslate"><span class="pre">get_body</span></code>, one or many times.</p></li>
+<li><p><strong>obstime</strong> – The time(s) the body was evaluated at.</p></li>
+<li><p><strong>obs_location</strong> – The observer location used for <code class="docutils literal notranslate"><span class="pre">get_body</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SkyCoord in ICRS with no distance, one entry per input time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.get_body_coordinates">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">get_body_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v8.0)"><span class="pre">Time</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v8.0)"><span class="pre">EarthLocation</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v8.0)"><span class="pre">SkyCoord</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#get_body_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.get_body_coordinates" title="Link to this definition">#</a></dt>
+<dd><p>Get the ICRS position of a celestial body (Solar System or Deep Sky).</p>
+<p>Calculates the astrometric ICRS coordinates of a solar system body as seen
+from the observer, or resolves the coordinates of a deep sky object by name.
+Both are in the same frame as the schedule’s <code class="docutils literal notranslate"><span class="pre">ra</span></code>/<code class="docutils literal notranslate"><span class="pre">dec</span></code>.</p>
+<p>This returns a single position and is for targets that are tracked sidereally.
+Moving targets that need differential tracking – minor bodies and TLE-defined
+satellites – go through <a class="reference internal" href="#astra.utils.ephemeris.precompute_ephemeris" title="astra.utils.ephemeris.precompute_ephemeris"><code class="xref py py-func docutils literal notranslate"><span class="pre">precompute_ephemeris()</span></code></a> instead, which returns
+interpolators over the whole observation window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body_name</strong> (<em>str</em>) – Name of the body (e.g., ‘mars’, ‘jupiter’, ‘M31’, ‘Vega’).</p></li>
+<li><p><strong>obs_time</strong> (<em>Time</em>) – Observation time (used for solar system bodies).</p></li>
+<li><p><strong>obs_location</strong> (<em>EarthLocation</em>) – Observer’s geographic location (used for solar system bodies).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>SkyCoord</em> – Position of the body in the sky.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.is_solar_system_body">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">is_solar_system_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#is_solar_system_body"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.is_solar_system_body" title="Link to this definition">#</a></dt>
+<dd><p>Return True if name is a known solar system body in the astropy ephemeris.</p>
+<p>O(1) lookup on a lowercase name against the ephemeris bodies set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.precompute_ephemeris">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">precompute_ephemeris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.time.Time.html#astropy.time.Time" title="(in Astropy v8.0)"><span class="pre">Time</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration_hours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.EarthLocation.html#astropy.coordinates.EarthLocation" title="(in Astropy v8.0)"><span class="pre">EarthLocation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_minutes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tle_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_rates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#precompute_ephemeris"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.precompute_ephemeris" title="Link to this definition">#</a></dt>
+<dd><p>Pre-compute a moving body’s sky positions over a time window.</p>
+<blockquote>
+<div><p>Samples the body’s position over the whole window and returns cubic
+interpolation functions keyed on seconds since start_time. Planets, the Moon
+and the Sun come from vectorised astropy get_body() calls. Minor bodies and
+TLE-defined satellites come from JPL Horizons, in one query, or two where the
+interval is chosen automatically and the target moves fast enough to need a
+finer grid. Reading the interpolators at runtime is much faster than repeated
+position lookups.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>body_name: Name of the body (e.g. ‘mars’, ‘moon’). Must be present in</dt><dd><p>astropy’s built-in solar system ephemeris, resolvable by JPL Horizons,
+or ‘TLE’ if tle_data is provided.</p>
+</dd>
+</dl>
+<p>start_time: Start of the observation window.
+duration_hours: Length of the window in hours.
+obs_location: Observer EarthLocation.
+interval_minutes: Ephemeris sampling interval in minutes. Pass None to</p>
+<blockquote>
+<div><p>choose it from the target’s own sky motion, which a fast target needs:
+sampled once a minute, the ISS lands 8 degrees from its true position
+between samples, because cubic interpolation cannot describe an arc it
+never sampled. The search starts at a few seconds for a TLE and at one
+minute for everything else, so one query is normally enough, and then
+checks that against the sampled rates. The interval is held between one
+second and one minute, and never fine enough to exceed the sample
+ceiling.</p>
+</div></blockquote>
+<dl>
+<dt>tle_data: Two-line element (TLE) data as a string with two lines separated</dt><dd><p>by newline. Required when body_name is ‘TLE’. Example format:
+“1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927n</p>
+<blockquote>
+<div><p>2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537”</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>If return_rates is False (default):</dt><dd><p>(ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.
+RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.</p>
+</dd>
+<dt>If return_rates is True:</dt><dd><p>(ra_interp, dec_interp, ra_rate_interp, dec_rate_interp), where
+ra_rate_interp and dec_rate_interp map elapsed seconds to ASCOM tracking
+units (RightAscensionRate in seconds of RA per sidereal second and
+DeclinationRate in arcseconds per SI second).</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>NotMovingBodyError: If body cannot be resolved as a solar system body,</dt><dd><p>minor body, or TLE.</p>
+</dd>
+</dl>
+<p>ValueError: If body_name is ‘TLE’ but tle_data is not provided.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Get the position of Mars as observed from Greenwich at the current time:</dt><dd><p>from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris
+from astropy.time import Time
+location = EarthLocation.of_site(‘greenwich’)
+ra_interp, dec_interp = precompute_ephemeris(‘mars’, Time.now(), 4, location)</p>
+</dd>
+<dt>Get position of ISS using TLE data:</dt><dd><p>tle = “1 25544U 98067A   23001.00000000  .00016717  00000-0  29641-3 0  9991</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>2 25544  51.6416 339.8014 0002571  235.7582  1.5976 15.54178122381131”</dt><dd><p>ra_interp, dec_interp = precompute_ephemeris(‘TLE’, start_time, 4, location, tle_data=tle)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="astra.utils.ephemeris.compute_nonsidereal_rates_from_interp">
+<span class="sig-prename descclassname"><span class="pre">astra.utils.ephemeris.</span></span><span class="sig-name descname"><span class="pre">compute_nonsidereal_rates_from_interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra_interp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_interp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html#scipy.interpolate.interp1d" title="(in SciPy v1.18.0)"><span class="pre">interp1d</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/astra/utils/ephemeris.html#compute_nonsidereal_rates_from_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astra.utils.ephemeris.compute_nonsidereal_rates_from_interp" title="Link to this definition">#</a></dt>
+<dd><p>Compute ASCOM RightAscensionRate and DeclinationRate from pre-computed interpolators.</p>
+<p>Uses a finite difference on the interpolated ephemeris so no additional
+get_body() calls are needed at runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ra_interp</strong> – RA interpolator (seconds to degrees, unwrapped/continuous).</p></li>
+<li><p><strong>dec_interp</strong> – Dec interpolator (seconds to degrees).</p></li>
+<li><p><strong>t_seconds</strong> – Elapsed seconds since the ephemeris start_time.</p></li>
+<li><p><strong>dt</strong> – Finite-difference step in seconds (default 60).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>(ra_rate, dec_rate) where</em> –   ra_rate  - seconds of time per sidereal second  (ASCOM RightAscensionRate)
+dec_rate - arcseconds per SI second             (ASCOM DeclinationRate)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="astra.utils.astelos_errors.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">astra.utils.astelos_errors</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="astra.utils.frames.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">astra.utils.frames</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.NotMovingBodyError"><code class="docutils literal notranslate"><span class="pre">NotMovingBodyError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.is_sun_rising"><code class="docutils literal notranslate"><span class="pre">is_sun_rising()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.astrometric_icrs"><code class="docutils literal notranslate"><span class="pre">astrometric_icrs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.get_body_coordinates"><code class="docutils literal notranslate"><span class="pre">get_body_coordinates()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.is_solar_system_body"><code class="docutils literal notranslate"><span class="pre">is_solar_system_body()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.precompute_ephemeris"><code class="docutils literal notranslate"><span class="pre">precompute_ephemeris()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astra.utils.ephemeris.compute_nonsidereal_rates_from_interp"><code class="docutils literal notranslate"><span class="pre">compute_nonsidereal_rates_from_interp()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
