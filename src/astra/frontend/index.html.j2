@@ -257,10 +257,16 @@
                             <div id="guiding-chart" class="w-full"></div>
                         </div>
 
-                        <div id="log-0-parent"
-                            class="flex flex-row h-full w-full rounded-lg bg-gray-600/20 overflow-y-scroll overflow-x-clip">
-                            <div id="log-0" class="text-left flex-grow text-sm">
+                        <div class="relative h-full w-full min-h-0">
+                            <div id="log-0-parent"
+                                class="flex flex-row h-full w-full rounded-lg bg-gray-600/20 overflow-y-scroll overflow-x-clip">
+                                <div id="log-0" class="text-left flex-grow text-sm">
+                                </div>
                             </div>
+                            <button id="log-jump-latest" type="button" hidden onclick="scrollLogToBottom()"
+                                class="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-gray-700/90 hover:bg-gray-600 px-3 py-1 text-xs text-gray-100 shadow-lg">
+                                New logs &darr;
+                            </button>
                         </div>
 
                     </div>
@@ -428,6 +434,27 @@
         const popup = document.querySelector('#popup');
 
         let scheduleLoadTime = 0;
+
+        // Log auto-scroll: follow new messages only while the user stays at the bottom
+        const logScrollParent = document.getElementById("log-0-parent");
+        const logJumpButton = document.getElementById("log-jump-latest");
+        let logStickToBottom = true;
+        logScrollParent.addEventListener('scroll', () => {
+            const gap = logScrollParent.scrollHeight - logScrollParent.scrollTop - logScrollParent.clientHeight;
+            logStickToBottom = gap < 30;
+            if (logStickToBottom) logJumpButton.hidden = true;
+        }, { passive: true });
+
+        function scrollLogToBottom() {
+            logScrollParent.scrollTop = logScrollParent.scrollHeight;
+            logStickToBottom = true;
+            logJumpButton.hidden = true;
+        }
+        // A wheel-up shows intent to leave the bottom before the scroll event fires
+        logScrollParent.addEventListener('wheel', (e) => {
+            if (e.deltaY < 0) logStickToBottom = false;
+        }, { passive: true });
+
         let lastMousePosition = { x: 0, y: 0 };
         let activeRowIndex = -1;
         let activeTableId = null;
@@ -567,11 +594,8 @@
 
             let div = document.getElementById("content")
             if (element.id.split("--")[0] == 'log') {
-                let divLog = document.getElementById("log-0" + "-parent");
                 // Use setTimeout to ensure the content is fully rendered before scrolling
-                setTimeout(() => {
-                    divLog.scrollTop = divLog.scrollHeight;
-                }, 0);
+                setTimeout(scrollLogToBottom, 0);
             } else {
                 div.scrollTop = 0;
             }
@@ -1135,20 +1159,9 @@
 
             } else if (type == 'log') {
                 let logDiv = document.getElementById("log-0");
-                let divParent = document.getElementById("log-0-parent");
 
-                // Check if we are at the bottom before adding new content
-                let scrollBottom = divParent.scrollHeight - divParent.scrollTop - divParent.clientHeight;
-                let isAtBottom = scrollBottom < 100;
-
-                // Fallback: check if last element is roughly in view (handles container resize/wrapping)
-                if (!isAtBottom && logDiv.lastElementChild) {
-                    let lastRect = logDiv.lastElementChild.getBoundingClientRect();
-                    let parentRect = divParent.getBoundingClientRect();
-                    if (lastRect.top < parentRect.bottom + 250) {
-                        isAtBottom = true;
-                    }
-                }
+                // Follow new content only if the user has not scrolled away from the bottom
+                let isAtBottom = logStickToBottom;
 
                 let fragment = document.createDocumentFragment();
 
@@ -1181,12 +1194,11 @@
 
                     if (isAtBottom) {
                         div.scrollTop = div.scrollHeight;
+                    } else if (log.length > 0) {
+                        logJumpButton.hidden = false;
                     }
 
-                    let scrollPos = div.scrollTop;
-                    let divHeight = div.scrollHeight;
-
-                    if (scrollPos < 10) {
+                    if (div.scrollTop < 10) {
                         // get datetime of first log by getting title of first child
                         let firstLog = divChild.firstElementChild.firstElementChild.title;
 
@@ -1215,10 +1227,13 @@
 
                                     fragment.appendChild(logMessage);
                                 });
+                                // Measure right before prepending, because new logs may have arrived during the fetch
+                                let prevHeight = div.scrollHeight;
+                                let prevTop = div.scrollTop;
                                 logDiv.prepend(fragment);
 
                                 // scroll to the same position
-                                div.scrollTop = div.scrollHeight - divHeight + scrollPos;
+                                div.scrollTop = div.scrollHeight - prevHeight + prevTop;
 
                             });
 
