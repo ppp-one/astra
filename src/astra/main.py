@@ -21,7 +21,7 @@ import logging
 import mimetypes
 import sqlite3
 import time
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from dataclasses import MISSING
 from datetime import UTC
 from io import BytesIO
@@ -52,6 +52,7 @@ from astra.logger import ConsoleStreamHandler, FileHandler
 from astra.observatory import Observatory
 from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
+from astra.timelapse import TimelapseRecorder, build_sources
 
 pd.set_option("future.no_silent_downcasting", True)
 
@@ -75,6 +76,7 @@ LAST_IMAGE_TIME = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
 ALLSKY_FEEDS = []  # List of {name, path} dicts
+TIMELAPSE: TimelapseRecorder | None = None  # Set when a camera has a `timelapse` key
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -121,6 +123,7 @@ def load_observatories() -> None:
     global WEBCAMFEEDS
     global FWS
     global ALLSKY_FEEDS
+    global TIMELAPSE
 
     config_file = (
         Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
@@ -164,6 +167,18 @@ def load_observatories() -> None:
                 ALLSKY_FEEDS = allsky_config
             else:
                 logger.warning(f"Invalid AllSky config format: {allsky_config}")
+
+        # Time-lapse recording, set per camera with a `timelapse` key
+        sources = build_sources(ALLSKY_FEEDS, WEBCAMFEEDS)
+        if sources:
+            # Copy the feeds before adding ids, so the observatory config is not changed
+            ALLSKY_FEEDS = list(ALLSKY_FEEDS)
+            WEBCAMFEEDS = list(WEBCAMFEEDS)
+            for source in sources:
+                feeds = ALLSKY_FEEDS if source.kind == "allsky" else WEBCAMFEEDS
+                feeds[source.index] = {**feeds[source.index], "timelapse_id": source.id}
+
+            TIMELAPSE = TimelapseRecorder(Config().paths.timelapse, sources)
 
     obs.connect_all_devices()
 
@@ -337,8 +352,17 @@ async def lifespan(app: FastAPI):
     # Load observatories
     load_observatories()
 
+    timelapse_task = None
+    if TIMELAPSE is not None:
+        timelapse_task = asyncio.create_task(TIMELAPSE.run())
+
     yield
     # Clean up
+    if timelapse_task is not None:
+        timelapse_task.cancel()
+        # Returns at once: a capture already running in a worker thread is not awaited
+        with suppress(asyncio.CancelledError):
+            await timelapse_task
     clean_up()
 
 
@@ -432,6 +456,49 @@ async def get_allsky_image(name: str | None = None):
             },
         )
     return HTMLResponse(status_code=404, content="All-Sky image not available")
+
+
+@app.get("/api/timelapse/{camera}")
+async def list_timelapse_frames(camera: str):
+    """List the saved time-lapse frames for a camera, oldest first.
+
+    Args:
+        camera (str): Camera id, as set in the feed's ``timelapse_id``.
+
+    Returns:
+        dict: JSON response with ``frames`` (list of ``{file, time}``) and
+            ``last_error``.
+    """
+    if TIMELAPSE is None or camera not in TIMELAPSE.sources:
+        return HTMLResponse(
+            status_code=404, content=f"No time-lapse for camera '{camera}'"
+        )
+
+    status = await asyncio.to_thread(TIMELAPSE.status, camera)
+    return {"status": "success", "data": status, "message": ""}
+
+
+@app.get("/api/timelapse/{camera}/{frame}")
+async def get_timelapse_frame(camera: str, frame: str):
+    """Serve one saved time-lapse frame.
+
+    Args:
+        camera (str): Camera id.
+        frame (str): Frame file name from ``/api/timelapse/{camera}``.
+
+    Returns:
+        FileResponse: The frame image. Frames never change, so browsers may cache them.
+    """
+    path = TIMELAPSE.frame_path(camera, frame) if TIMELAPSE is not None else None
+    if path is None:
+        return HTMLResponse(status_code=404, content="Frame not found")
+
+    media_type, _ = mimetypes.guess_type(path)
+    return FileResponse(
+        path,
+        media_type=media_type,
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
 
 
 @app.post("/api/close")
