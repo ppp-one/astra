@@ -8,6 +8,7 @@ Key capabilities:
 """
 
 import logging
+import types
 import typing
 from dataclasses import MISSING, dataclass, field
 from dataclasses import fields as dataclass_fields
@@ -102,6 +103,213 @@ def field_default(config, name: str):
     if f.default_factory is not MISSING:
         return f.default_factory()
     return None
+
+
+# Annotation types that map straight onto a JSON type name. The schedule editor
+# picks its input widget from that name: a number spinner, a checkbox, a text
+# box. Angle and Time are the astropy types an action value carries as a plain
+# number of degrees and an ISO string respectively.
+_JSON_TYPES: dict[type, str] = {
+    bool: "boolean",
+    int: "integer",
+    float: "number",
+    str: "string",
+    Path: "string",
+    Time: "string",
+    Angle: "number",
+}
+
+
+def json_type(annotation) -> tuple[str, list | None]:
+    """Map a field annotation to a JSON type name and its allowed values.
+
+    A union of an integer and a float collapses to "number", because the two
+    accept the same input. Any other union of unlike types becomes "any", which
+    the editor renders as a small free-form JSON box. That is honest: fields
+    such as ``search_range`` really do take either a scalar or a list.
+
+    Args:
+        annotation: The type annotation of a dataclass field.
+
+    Returns:
+        tuple: The JSON type name, and the allowed values for an enum field
+            (None when the field is not an enum).
+    """
+    if annotation is None:
+        return "any", None
+
+    # Exact lookup first, so bool does not fall through to int.
+    if annotation in _JSON_TYPES:
+        return _JSON_TYPES[annotation], None
+
+    if isinstance(annotation, type) and issubclass(annotation, Enum):
+        return "string", [member.value for member in annotation]
+
+    origin = typing.get_origin(annotation)
+    args = typing.get_args(annotation)
+
+    if origin in (list, tuple):
+        return "array", None
+
+    if origin is dict:
+        return "object", None
+
+    if origin is Union or origin is types.UnionType:
+        names = set()
+        choices = None
+        for arm in args:
+            if arm is type(None):
+                continue
+            name, arm_choices = json_type(arm)
+            names.add(name)
+            if arm_choices:
+                choices = arm_choices
+        if choices:
+            return "string", choices
+        if not names:
+            return "any", None
+        if len(names) == 1:
+            return names.pop(), None
+        if names == {"integer", "number"}:
+            return "number", None
+        return "any", None
+
+    if hasattr(annotation, "__dataclass_fields__"):
+        return "object", None
+
+    return "any", None
+
+
+def example_value(annotation, default, curated=None):
+    """Pick a placeholder that is actually valid for this field.
+
+    A single hardcoded hint cannot serve every field: ``metadata`` takes a
+    mapping, ``filter`` on a flats action takes filter names, and
+    ``search_range`` takes either a number or a pair. The curated example from
+    the class's EXAMPLE_SCHEDULE is used where there is one, then the declared
+    default, and only then a shape derived from the annotation.
+
+    Args:
+        annotation: The type annotation of the field.
+        default: The field's declared default.
+        curated: The value this field has in the class's EXAMPLE_SCHEDULE.
+
+    Returns:
+        A JSON-serializable example, or None when nothing useful can be shown.
+    """
+    if curated is not None:
+        return curated
+
+    # An empty list or mapping is the absence of an example, not an example.
+    if default is not None and not (
+        isinstance(default, (list, tuple, dict)) and len(default) == 0
+    ):
+        return default
+
+    origin = typing.get_origin(annotation)
+    args = typing.get_args(annotation)
+
+    if origin is dict:
+        return {"key": "value"}
+
+    if origin in (list, tuple):
+        item_type = json_type(args[0])[0] if args else "any"
+        return ["a", "b"] if item_type == "string" else [1, 2]
+
+    return None
+
+
+def action_value_schema(config, _defaults: dict | None = None) -> list[dict]:
+    """Describe every field a user may set in an action value.
+
+    The schedule editor builds its form from this, so it needs one entry per
+    input: what to call the field, which widget to show, whether the action
+    fails without it, and what the field does. A nested config marked with
+    ``flatten`` metadata is expanded in place, because that is the flat layout
+    `from_dict` reads back.
+
+    Args:
+        config: An action config class or instance.
+        _defaults: Default values for a flattened nested config, taken from the
+            instance rather than the field declarations. Internal.
+
+    Returns:
+        list: One descriptor dict per field, with the keys ``name``, ``type``,
+            ``required``, ``default``, ``description``, ``choices`` and
+            ``group``.
+    """
+    descriptions = getattr(config, "FIELD_DESCRIPTIONS", {})
+    examples = getattr(config, "EXAMPLE_SCHEDULE", {}).get("action_value", {}) or {}
+    annotations = typing.get_type_hints(
+        config if isinstance(config, type) else type(config)
+    )
+
+    own: list[dict] = []
+    nested: list[dict] = []
+
+    for f in public_fields(config):
+        if _defaults is not None and f.name in _defaults:
+            default = _defaults[f.name]
+        else:
+            default = field_default(config, f.name)
+
+        if f.metadata.get("flatten"):
+            # Take the nested defaults from a built instance, not from the field
+            # declarations: a nested config may fill a field in __post_init__,
+            # as AutofocusCalibrationFieldConfig does for maximal_zenith_angle.
+            nested_defaults = (
+                default.to_jsonable() if hasattr(default, "to_jsonable") else {}
+            )
+            nested_type = annotations.get(f.name)
+            if nested_type is not None and hasattr(nested_type, "__dataclass_fields__"):
+                for entry in action_value_schema(nested_type, nested_defaults):
+                    nested.append(entry | {"group": f.name})
+            continue
+
+        if hasattr(default, "to_jsonable"):
+            default = default.to_jsonable()
+
+        field_type, choices = json_type(annotations.get(f.name))
+        own.append(
+            {
+                "name": f.name,
+                "type": field_type,
+                "required": bool(f.metadata.get("required")),
+                "default": _jsonable_default(default),
+                "description": descriptions.get(f.name, ""),
+                "choices": choices,
+                "example": _jsonable_default(
+                    example_value(
+                        annotations.get(f.name), default, examples.get(f.name)
+                    )
+                ),
+                "group": None,
+            }
+        )
+
+    own_names = {entry["name"] for entry in own}
+    return own + [entry for entry in nested if entry["name"] not in own_names]
+
+
+def _jsonable_default(value):
+    """Convert a field default into something JSON can carry."""
+    if isinstance(value, Angle):
+        return value.deg
+    if isinstance(value, Time):
+        return value.isot
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {k: _jsonable_default(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable_default(v) for v in value]
+    if isinstance(value, np.generic):
+        return value.item()
+    if hasattr(value, "to_jsonable"):
+        return value.to_jsonable()
+    return value
 
 
 @dataclass
