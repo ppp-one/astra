@@ -246,7 +246,10 @@ class ImageHandler:
             device=device_name,
             imagetype=str(header.get("IMAGETYP", "default")),
             filter_name=str(header.get("FILTER", "NA")).replace("'", ""),
-            object_name=header.get("OBJECT", "NA"),
+            # A comet name such as "C/2023 A3" would otherwise add a folder
+            object_name=str(header.get("OBJECT", "NA"))
+            .replace("/", "_")
+            .replace("\\", "_"),
             exptime=float(header.get("EXPTIME", float("nan"))),  # type: ignore
             sequence_counter=sequence_counter,
             timestamp=date.strftime("%Y%m%d_%H%M%S.%f")[:-3],

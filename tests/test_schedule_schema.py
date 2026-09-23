@@ -79,7 +79,8 @@ class TestActionValueSchema:
 
     def test_required_fields_are_marked(self):
         schema = schema_by_name(ObjectActionConfig)
-        assert schema["object"]["required"] is True
+        # object is filled from lookup_name when left out
+        assert schema["object"]["required"] is False
         assert schema["exptime"]["required"] is True
         assert schema["filter"]["required"] is False
 
@@ -212,6 +213,18 @@ class TestValidateScheduleItems:
                     "device_name": "cam1",
                     "action_type": "object",
                     "action_value": {"object": "M42", "exptime": 60.0},
+                }
+            )
+            == []
+        )
+
+    def test_accepts_an_object_row_named_by_lookup_name(self):
+        assert (
+            self.validate(
+                {
+                    "device_name": "cam1",
+                    "action_type": "object",
+                    "action_value": {"lookup_name": "M42", "exptime": 60.0},
                 }
             )
             == []

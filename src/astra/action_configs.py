@@ -829,7 +829,6 @@ class ObjectActionConfig(BaseActionConfig):
                 "device_name": "camera_name",
                 "action_type": "object",
                 "action_value": {
-                    "object": "Saturn",
                     "lookup_name": "saturn",
                     "exptime": 30,
                     "filter": "Clear",
@@ -839,10 +838,14 @@ class ObjectActionConfig(BaseActionConfig):
                 "end_time":"2025-01-01 01:00:00.000",
             }
 
+        ``object`` is left out here, so it defaults to "saturn".
+
     """
 
-    object: str = field(metadata={"required": True})
-    exptime: float = field(metadata={"required": True})
+    # object may be left out when lookup_name is given; validate() fills it in.
+    # exptime needs a default only because it now follows a field that has one.
+    object: Optional[str] = None
+    exptime: float = field(default=None, metadata={"required": True})
     ra: Optional[float] = None
     dec: Optional[float] = None
     alt: Optional[float] = None
@@ -879,7 +882,7 @@ class ObjectActionConfig(BaseActionConfig):
     metadata: dict[str, Any] = field(default_factory=dict)
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
-        "object": "Target name.",
+        "object": "Target name. Optional when lookup_name is given: it then defaults to lookup_name, or to 'NORAD <number>' for a TLE.",
         "exptime": "Exposure time per frame in seconds.",
         "ra": "Right Ascension to slew to",
         "dec": "Declination to slew to",
@@ -931,6 +934,11 @@ class ObjectActionConfig(BaseActionConfig):
     }
 
     def validate(self):
+        # The FITS OBJECT header, the file name and the guiding reference all
+        # read object, so it must hold a name once the config is built.
+        if self.object is None:
+            self.object = self._default_object_name()
+
         missing = []
         for f in self.__dataclass_fields__.values():
             if f.metadata.get("required") and getattr(self, f.name) is None:
@@ -1008,6 +1016,42 @@ class ObjectActionConfig(BaseActionConfig):
                 "coordinates. A satellite has no fixed position, so give the "
                 "element set alone."
             )
+
+    def _default_object_name(self) -> str:
+        """Name the target when object is not given.
+
+        A TLE row always has lookup_name 'TLE', so that name would give every
+        satellite the same OBJECT header and file name. The NORAD catalog number
+        from line 1 is used instead.
+
+        Returns:
+            str: lookup_name, or "NORAD <number>" for a TLE.
+
+        Raises:
+            ValueError: If there is no lookup_name, or if a TLE has no readable
+                catalog number.
+        """
+        if self.lookup_name is None:
+            raise ValueError(
+                "Give 'object', or 'lookup_name' to name the target from it."
+            )
+
+        if self.lookup_name.upper() != "TLE" or self.tle is None:
+            return self.lookup_name
+
+        # Line 1 of a TLE holds the catalog number in columns 3-7
+        for line in self.tle.splitlines():
+            line = line.strip()
+            if line.startswith("1 "):
+                catalog_number = line[2:7].strip()
+                if catalog_number:
+                    return f"NORAD {catalog_number}"
+                break
+
+        raise ValueError(
+            "Could not read the NORAD catalog number from line 1 of 'tle'. "
+            "Give 'object' to name the target."
+        )
 
     def _resolve_lookup_name(
         self,
