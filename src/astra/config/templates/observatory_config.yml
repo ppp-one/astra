@@ -107,6 +107,10 @@ Misc:
   #     url: http://localhost:8888/inside
   #   - name: Outside View
   #     url: http://localhost:8888/outside
+  #     snapshot_url: http://camera-ip/snapshot.jpg # JPEG/PNG image, needed for time-lapse
+  #     timelapse:      # optional, record a time-lapse of this camera
+  #       interval: 10  # minutes between frames
+  #       retention: 24 # hours to keep frames
 
   # AllSky: /path/to/allsky.jpg
   ## Multiple all-sky cameras:
@@ -115,6 +119,7 @@ Misc:
   #     path: /path/to/allsky_east.jpg
   #   - name: West Sky
   #     path: /path/to/allsky_west.jpg
+  #     timelapse: true # optional, record a time-lapse (10 min interval, 24 h retention)
 
   # filename_templates:
   #   object: "{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits"

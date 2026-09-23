@@ -319,6 +319,7 @@ class AssetPaths:
         self.images = folder_assets / "images"
         self.logs = folder_assets / "logs"
         self.log_file = self.logs / "astra.log"
+        self.timelapse = folder_assets / "timelapse"
 
         self._initialize_folders_and_log_file()
 
@@ -370,6 +371,7 @@ class AssetPaths:
             f"  schedules={self.schedules},\n"
             f"  logs={self.logs},\n"
             f"  images={self.images},\n"
+            f"  timelapse={self.timelapse},\n"
             f"  log_file={self.log_file}\n"
             f")"
         )

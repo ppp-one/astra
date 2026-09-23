@@ -965,17 +965,22 @@ class TestRateCheckGate:
 
 
 class TestTleActionConfigValidation:
-    """A TLE and lookup_name 'TLE' must be given together."""
+    """A TLE may not be given with any lookup_name other than 'TLE'."""
 
     def test_tle_name_without_elements_is_rejected(self):
         with pytest.raises(ValueError, match="no 'tle' was given"):
             ObjectActionConfig(object="ISS", exptime=1.0, lookup_name="TLE")
 
     def test_elements_without_tle_name_are_rejected(self):
-        with pytest.raises(ValueError, match="Set lookup_name to 'TLE'"):
+        with pytest.raises(ValueError, match="Leave lookup_name out"):
             ObjectActionConfig(
                 object="ISS", exptime=1.0, lookup_name="mars", tle="1 ...\n2 ..."
             )
+
+    def test_elements_without_lookup_name_are_accepted(self):
+        cfg = ObjectActionConfig(object="ISS", exptime=1.0, tle="1 ...\n2 ...")
+        # Code that runs the sequence checks for lookup_name 'TLE'
+        assert cfg.lookup_name == "TLE"
 
     def test_matching_pair_is_accepted(self):
         cfg = ObjectActionConfig(

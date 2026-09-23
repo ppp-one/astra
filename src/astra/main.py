@@ -21,8 +21,7 @@ import logging
 import mimetypes
 import sqlite3
 import time
-from contextlib import asynccontextmanager
-from dataclasses import MISSING
+from contextlib import asynccontextmanager, suppress
 from datetime import UTC
 from io import BytesIO
 from pathlib import Path
@@ -45,13 +44,14 @@ from fastapi.templating import Jinja2Templates
 from PIL import Image
 
 from astra import Config, __version__
-from astra.action_configs import ACTION_CONFIGS, public_fields
+from astra.action_configs import ACTION_CONFIGS, action_value_schema
 from astra.frontend.file_explorer.file_explorer import include_file_explorer
 from astra.image_handler import HeaderManager
 from astra.logger import ConsoleStreamHandler, FileHandler
 from astra.observatory import Observatory
 from astra.observatory_loader import ObservatoryLoader
 from astra.paired_devices import PairedDevices
+from astra.timelapse import TimelapseRecorder, build_sources
 
 pd.set_option("future.no_silent_downcasting", True)
 
@@ -75,6 +75,7 @@ LAST_IMAGE_TIME = None
 TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
 ALLSKY_FEEDS = []  # List of {name, path} dicts
+TIMELAPSE: TimelapseRecorder | None = None  # Set when a camera has a `timelapse` key
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -83,7 +84,7 @@ TWILIGHT_CACHE_TIME = None
 # Celestial data cache: stores celestial body positions for sky projection
 CELESTIAL_CACHE = None
 CELESTIAL_CACHE_TIME = None
-SCHEDULE_TEMPLATES = {}
+SCHEDULE_SCHEMAS = {}
 
 # Per-device-type append-only polling cache.
 # Structure per key (device_type str):
@@ -121,6 +122,7 @@ def load_observatories() -> None:
     global WEBCAMFEEDS
     global FWS
     global ALLSKY_FEEDS
+    global TIMELAPSE
 
     config_file = (
         Config().paths.observatory_config / f"{Config().observatory_name}_config.yml"
@@ -164,6 +166,18 @@ def load_observatories() -> None:
                 ALLSKY_FEEDS = allsky_config
             else:
                 logger.warning(f"Invalid AllSky config format: {allsky_config}")
+
+        # Time-lapse recording, set per camera with a `timelapse` key
+        sources = build_sources(ALLSKY_FEEDS, WEBCAMFEEDS)
+        if sources:
+            # Copy the feeds before adding ids, so the observatory config is not changed
+            ALLSKY_FEEDS = list(ALLSKY_FEEDS)
+            WEBCAMFEEDS = list(WEBCAMFEEDS)
+            for source in sources:
+                feeds = ALLSKY_FEEDS if source.kind == "allsky" else WEBCAMFEEDS
+                feeds[source.index] = {**feeds[source.index], "timelapse_id": source.id}
+
+            TIMELAPSE = TimelapseRecorder(Config().paths.timelapse, sources)
 
     obs.connect_all_devices()
 
@@ -226,46 +240,48 @@ def to_json_safe(value):
     return value
 
 
-def schedule_template_loader() -> dict:
+def schedule_schema_loader() -> dict:
+    """Describe the action value fields of every action type.
+
+    The schedule editor builds its form from this, so that the inputs it shows
+    always match the action configs rather than a hand-kept copy of them.
+
+    Returns:
+        dict: Action type mapped to its list of field descriptors.
+    """
+    return {
+        key: [
+            {**entry, "default": to_json_safe(entry["default"])}
+            for entry in action_value_schema(cls)
+        ]
+        for key, cls in ACTION_CONFIGS.items()
+    }
+
+
+def schedule_template_loader(schemas: dict | None = None) -> dict:
     """Build the default action value template for every action type.
 
     A nested config marked with ``flatten`` metadata is merged into the parent
     template, because that is the layout the action config reads back.
 
+    The schedule editor no longer needs this: it reads the defaults from the
+    field descriptors, which also carry the type and the description. The
+    function stays because it is part of the documented API.
+
+    Args:
+        schemas (dict | None): Field descriptors per action type. Loaded when
+            not given.
+
     Returns:
         dict: Action type mapped to its default action value.
     """
+    if schemas is None:
+        schemas = schedule_schema_loader()
 
-    def defaults_for(cls) -> dict:
-        own = {}
-        flattened = {}
-
-        for f in public_fields(cls):
-            # Handle cases where there is no default value (MISSING)
-            default_val = f.default
-            if default_val is MISSING:
-                if f.default_factory is not MISSING:
-                    try:
-                        default_val = f.default_factory()
-                    except Exception:
-                        pass
-
-            if f.metadata.get("flatten"):
-                if hasattr(default_val, "to_jsonable"):
-                    flattened.update(default_val.to_jsonable())
-                continue
-
-            if default_val is MISSING:
-                default_val = None  # or some other placeholder
-
-            if hasattr(default_val, "to_jsonable"):
-                default_val = default_val.to_jsonable()
-
-            own[f.name] = to_json_safe(default_val)
-
-        return {k: v for k, v in flattened.items() if k not in own} | own
-
-    return {key: defaults_for(cls) for key, cls in ACTION_CONFIGS.items()}
+    return {
+        key: {entry["name"]: entry["default"] for entry in schema}
+        for key, schema in schemas.items()
+    }
 
 
 def convert_fits_to_preview(fits_file: str) -> tuple[bytes, dict]:
@@ -330,15 +346,24 @@ async def lifespan(app: FastAPI):
     Yields:
         None: Application runs between yield statements.
     """
-    # Populate schedule templates once at startup
-    global SCHEDULE_TEMPLATES
-    SCHEDULE_TEMPLATES = schedule_template_loader()
+    # Populate the action value field descriptors once at startup
+    global SCHEDULE_SCHEMAS
+    SCHEDULE_SCHEMAS = schedule_schema_loader()
 
     # Load observatories
     load_observatories()
 
+    timelapse_task = None
+    if TIMELAPSE is not None:
+        timelapse_task = asyncio.create_task(TIMELAPSE.run())
+
     yield
     # Clean up
+    if timelapse_task is not None:
+        timelapse_task.cancel()
+        # Returns at once: a capture already running in a worker thread is not awaited
+        with suppress(asyncio.CancelledError):
+            await timelapse_task
     clean_up()
 
 
@@ -432,6 +457,49 @@ async def get_allsky_image(name: str | None = None):
             },
         )
     return HTMLResponse(status_code=404, content="All-Sky image not available")
+
+
+@app.get("/api/timelapse/{camera}")
+async def list_timelapse_frames(camera: str):
+    """List the saved time-lapse frames for a camera, oldest first.
+
+    Args:
+        camera (str): Camera id, as set in the feed's ``timelapse_id``.
+
+    Returns:
+        dict: JSON response with ``frames`` (list of ``{file, time}``) and
+            ``last_error``.
+    """
+    if TIMELAPSE is None or camera not in TIMELAPSE.sources:
+        return HTMLResponse(
+            status_code=404, content=f"No time-lapse for camera '{camera}'"
+        )
+
+    status = await asyncio.to_thread(TIMELAPSE.status, camera)
+    return {"status": "success", "data": status, "message": ""}
+
+
+@app.get("/api/timelapse/{camera}/{frame}")
+async def get_timelapse_frame(camera: str, frame: str):
+    """Serve one saved time-lapse frame.
+
+    Args:
+        camera (str): Camera id.
+        frame (str): Frame file name from ``/api/timelapse/{camera}``.
+
+    Returns:
+        FileResponse: The frame image. Frames never change, so browsers may cache them.
+    """
+    path = TIMELAPSE.frame_path(camera, frame) if TIMELAPSE is not None else None
+    if path is None:
+        return HTMLResponse(status_code=404, content="Frame not found")
+
+    media_type, _ = mimetypes.guess_type(path)
+    return FileResponse(
+        path,
+        media_type=media_type,
+        headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
 
 
 @app.post("/api/close")
@@ -680,14 +748,169 @@ async def schedule():
         return []
 
 
-@app.post("/api/editschedule")
-async def edit_schedule(schedule_data: str = Body(..., media_type="text/plain")):
-    """Update observatory schedule from web editor.
+def filters_by_camera(cameras: list[str]) -> dict:
+    """Return the filters each camera can load.
 
-    Parses JSONL schedule data and saves to observatory schedule file.
+    A camera reaches its filters through the wheel it is paired with, so the
+    schedule editor can offer the right names per row rather than every filter
+    in the observatory. A camera with no wheel, or one whose wheel does not
+    report its names, maps to an empty list and the editor leaves that field
+    free text.
+
+    Args:
+        cameras (list[str]): Camera names to look up.
+
+    Returns:
+        dict: Camera name mapped to its list of filter names. The key
+            ``"__all__"`` holds every filter across all wheels, used as the
+            fallback when a camera cannot be matched to a wheel.
+    """
+    obs = OBSERVATORY
+    per_camera: dict[str, list] = {}
+
+    for camera in cameras:
+        names = []
+        try:
+            paired = PairedDevices.from_camera_name(
+                camera_name=camera,
+                devices=obs.devices if obs else {},
+                observatory_config=getattr(obs, "config", None),
+            )
+            wheel_name = paired.get("FilterWheel")
+            if wheel_name and FWS.get(wheel_name):
+                names = list(FWS[wheel_name])
+            elif "FilterWheel" in paired:
+                names = list(paired.filter_wheel.get("Names") or [])
+        except Exception as e:
+            # A camera with no wheel configured is normal, not an error.
+            logging.getLogger(__name__).debug(
+                f"No filter list for camera {camera}: {e}"
+            )
+        per_camera[camera] = names
+
+    per_camera["__all__"] = sorted(
+        {name for names in FWS.values() if names for name in names}
+    )
+    return per_camera
+
+
+def validate_schedule_items(schedule_items: list[dict]) -> list[dict]:
+    """Check every schedule row by building its action config.
+
+    This runs the same validation the scheduler runs when it loads the file, so
+    the editor reports a missing required field or a bad value before the row
+    reaches the schedule rather than when the action is due to start.
+
+    Args:
+        schedule_items (list[dict]): Parsed schedule rows.
+
+    Returns:
+        list: One entry per bad row, with the keys ``row`` (zero-based index)
+            and ``message``.
+    """
+    obs = OBSERVATORY
+    errors = []
+
+    for index, item in enumerate(schedule_items):
+        action_type = item.get("action_type")
+        config_cls = ACTION_CONFIGS.get(action_type)
+        if config_cls is None:
+            errors.append(
+                {"row": index, "message": f"Unknown action type: {action_type}"}
+            )
+            continue
+
+        device_name = item.get("device_name")
+        if not device_name:
+            errors.append({"row": index, "message": "No device name selected"})
+            continue
+
+        try:
+            default_dict = config_cls.defaults_from_observatory_config(
+                device_name=device_name,
+                observatory_config=getattr(obs, "config", None),
+            )
+        except Exception:
+            default_dict = {}
+
+        try:
+            # By keyword: BaseActionConfig.from_dict takes
+            # (config_dict, default_dict, logger) but AutofocusConfig takes
+            # (config_dict, logger, default_dict), so a positional call hands
+            # the defaults to the autofocus configs as their logger.
+            config_cls.from_dict(
+                item.get("action_value") or {}, default_dict=default_dict
+            )
+        except Exception as e:
+            errors.append({"row": index, "message": str(e)})
+
+    return errors
+
+
+@app.post("/api/validateschedule")
+async def validate_schedule(schedule_data: str = Body(..., media_type="text/plain")):
+    """Check a schedule from the web editor without saving it.
 
     Args:
         schedule_data (str): JSONL formatted schedule data.
+
+    Returns:
+        dict: Status response whose data holds the per-row errors.
+    """
+    try:
+        schedule_items = parse_schedule_jsonl(schedule_data)
+    except json.JSONDecodeError as e:
+        return {
+            "status": "error",
+            "data": None,
+            "message": f"Schedule is not valid JSON: {e}",
+        }
+
+    errors = validate_schedule_items(schedule_items)
+
+    return {
+        "status": "success",
+        "data": {"errors": errors},
+        "message": (
+            "Schedule is valid"
+            if not errors
+            else f"{len(errors)} row{'s' if len(errors) != 1 else ''} rejected"
+        ),
+    }
+
+
+def parse_schedule_jsonl(schedule_data: str) -> list[dict]:
+    """Parse JSONL schedule text into a list of rows.
+
+    Args:
+        schedule_data (str): JSONL formatted schedule data.
+
+    Returns:
+        list: The parsed rows.
+
+    Raises:
+        json.JSONDecodeError: If any line is not valid JSON.
+    """
+    return [
+        json.loads(line.strip())
+        for line in schedule_data.strip().split("\n")
+        if line.strip()
+    ]
+
+
+@app.post("/api/editschedule")
+async def edit_schedule(
+    schedule_data: str = Body(..., media_type="text/plain"), force: bool = False
+):
+    """Update observatory schedule from web editor.
+
+    Parses JSONL schedule data and saves to observatory schedule file. A row
+    that fails validation stops the write, because the scheduler would reject
+    the file when it next loads it. Pass ``force`` to save a draft anyway.
+
+    Args:
+        schedule_data (str): JSONL formatted schedule data.
+        force (bool): Save even when a row fails validation.
 
     Returns:
         dict: Status response with success/error information.
@@ -698,11 +921,18 @@ async def edit_schedule(schedule_data: str = Body(..., media_type="text/plain"))
 
     try:
         # Parse the JSONL data
-        lines = schedule_data.strip().split("\n")
-        schedule_items = []
-        for line in lines:
-            if line.strip():
-                schedule_items.append(json.loads(line.strip()))
+        schedule_items = parse_schedule_jsonl(schedule_data)
+
+        if not force:
+            errors = validate_schedule_items(schedule_items)
+            if errors:
+                rows = ", ".join(str(e["row"] + 1) for e in errors)
+                obs.logger.warning(f"Rejected schedule edit, bad rows: {rows}")
+                return {
+                    "status": "error",
+                    "data": {"errors": errors},
+                    "message": f"Schedule not saved. Fix row {rows} first.",
+                }
 
         # Convert to DataFrame and save as JSONL
         df = pd.DataFrame(schedule_items)
@@ -2009,7 +2239,8 @@ async def get_schedule(request: Request):
             "request": request,
             "observatory": OBSERVATORY.name,
             "schedule": data,
-            "schedule_templates": json.dumps(SCHEDULE_TEMPLATES),
+            "schedule_schemas": json.dumps(SCHEDULE_SCHEMAS),
+            "filters": filters_by_camera(cameras),
             "cameras": cameras,
         },
     )

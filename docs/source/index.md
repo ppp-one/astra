@@ -31,7 +31,7 @@ delivering reliable, unattended survey operations, including:
 
 - [SPECULOOS-South (4x 1 m class): ESO Paranal, Chile](https://www.eso.org/public/teles-instr/paranal-observatory/speculoos/)
 - [Saint-Ex (1 m class): San Pedro Mártir, Mexico](https://www.saintex.unibe.ch/saint_ex/description/)
-- [ETH Observatory (0.5 m class): Zurich, Switzerland](https://mira.ethz.ch/)
+- [ETH Hönggerberg Observatory (0.5 m class): Zurich, Switzerland](https://mira.ethz.ch/)
 
 ## Screenshots
 
@@ -68,6 +68,8 @@ delivering reliable, unattended survey operations, including:
     </td>
   </tr>
 </table>
+
+You may find additional miscellaneous tools, such as an [exposure time calculator](https://etc.withastra.io/) and a [satellite finder tool](https://satellites.withastra.io/), to aid your observations with Astra here: [https://withastra.io/](https://withastra.io/).
 
 ## Developed by
 

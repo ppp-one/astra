@@ -145,6 +145,11 @@ fixed position cannot describe a moving target. If you also give `ra` and `dec`,
 or `alt` and `az`, _Astra_ rejects the schedule. _Astra_ rejects a `tle` with one
 of these pairs in the same way.
 
+You do not have to give `object` when you give `lookup_name`. _Astra_ then uses
+`lookup_name` as the target name in the FITS `OBJECT` header and in the file name.
+For a `tle`, the default name is the NORAD catalog number from line 1, for example
+`NORAD 25544`. Give `object` if you want a different name.
+
 _Astra_ finds the position for `lookup_name` when it loads the schedule. The source
 of the position sets the type of tracking:
 
@@ -152,7 +157,7 @@ of the position sets the type of tracking:
 | --- | --- | --- |
 | Astropy's built-in ephemeris | `"mars"`, `"moon"` | Non-sidereal |
 | JPL Horizons small-body search | `"C/2023 A3"`, `"Ceres"` | Non-sidereal |
-| A two-line element set that you give, with `lookup_name` set to `"TLE"` | The ISS | Non-sidereal |
+| A two-line element set that you give in `tle` | The ISS | Non-sidereal |
 | SIMBAD (stars and deep-sky objects) | `"M31"`, `"Vega"` | Sidereal |
 
 ### Sequence of operations
@@ -282,8 +287,9 @@ This action tracks Saturn. The mount re-centers every five minutes:
 }
 ```
 
-This action tracks a satellite with its two-line element set. Set `lookup_name` to
-`"TLE"`. Give the two element lines in `tle`, with a `\n` between them. The lead
+This action tracks a satellite with its two-line element set. Give the two element
+lines in `tle`, with a `\n` between them. You do not need `lookup_name`. If you give
+it, it must be `"TLE"`. The lead
 time gives the mount 45 seconds to move to the position of the satellite. The rate
 update interval is short because the rates of a low orbit change quickly:
 
@@ -291,7 +297,7 @@ update interval is short because the rates of a low orbit change quickly:
 {
    "device_name":"camera_main",
    "action_type":"object",
-   "action_value":{"object":"ISS","lookup_name":"TLE","tle":"1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777","filter":"Clear","exptime":2,"nonsidereal_recenter_interval":60,"nonsidereal_rate_update_interval":1,"nonsidereal_start_lead_time_seconds":45},
+   "action_value":{"object":"ISS","tle":"1 25544U 98067A   26084.45430866  .00012951  00000-0  24673-3 0  9999\n2 25544  51.6344 354.4276 0006215 231.1671 128.8763 15.48531543558777","filter":"Clear","exptime":2,"nonsidereal_recenter_interval":60,"nonsidereal_rate_update_interval":1,"nonsidereal_start_lead_time_seconds":45},
    "start_time":"2025-08-23 23:17:00.018",
    "end_time":"2025-08-23 23:27:00.018"
 }

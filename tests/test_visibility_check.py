@@ -645,3 +645,37 @@ class TestEphemerisWindow:
             end_time = start_time + minutes * u.min
             span_hours = minutes / 60
             assert ephemeris_window_hours(start_time, end_time) <= span_hours + 0.5
+
+
+class TestDefaultObjectName:
+    """object may be left out when lookup_name names the target."""
+
+    ISS_TLE = (
+        "1 25544U 98067A   24001.50000000  .00016717  00000-0  10270-3 0  9005\n"
+        "2 25544  51.6400 208.9163 0006317  69.9862  25.2906 15.49560020432139"
+    )
+
+    def test_object_defaults_to_lookup_name(self):
+        config = ObjectActionConfig(exptime=60.0, lookup_name="mars")
+        assert config.object == "mars"
+
+    def test_given_object_is_kept(self):
+        config = ObjectActionConfig(object="Mars", exptime=60.0, lookup_name="mars")
+        assert config.object == "Mars"
+
+    def test_tle_object_defaults_to_norad_number(self):
+        config = ObjectActionConfig(exptime=1.0, lookup_name="TLE", tle=self.ISS_TLE)
+        assert config.object == "NORAD 25544"
+
+    def test_tle_alone_names_the_target(self):
+        config = ObjectActionConfig(exptime=1.0, tle=self.ISS_TLE)
+        assert config.object == "NORAD 25544"
+        assert config.lookup_name == "TLE"
+
+    def test_tle_without_readable_line_1_is_rejected(self):
+        with pytest.raises(ValueError, match="NORAD catalog number"):
+            ObjectActionConfig(exptime=1.0, lookup_name="TLE", tle="not a tle\nat all")
+
+    def test_no_object_and_no_lookup_name_is_rejected(self):
+        with pytest.raises(ValueError, match="'object', or 'lookup_name'"):
+            ObjectActionConfig(exptime=60.0, ra=10.0, dec=20.0)

@@ -62,6 +62,82 @@
             letter-spacing: 0.05em;
         }
 
+        /* Help badge beside each action value field. Written as plain CSS, not
+           Tailwind utilities, so its size and font do not depend on the CDN
+           build generating an arbitrary value at runtime. */
+        .field-help {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid #4b5563;
+            border-radius: 9999px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 11px;
+            font-style: italic;
+            font-weight: 700;
+            line-height: 1;
+            color: #9ca3af;
+            cursor: help;
+            user-select: none;
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .field-help:hover,
+        .field-help:focus-visible,
+        .field-help.is-open {
+            color: #93c5fd;
+            border-color: #60a5fa;
+            outline: none;
+        }
+
+        /* Mobile Safari zooms the whole page in when a focused input has text
+           smaller than 16px. The editor is a long form, so that zoom fired
+           constantly. The inputs stay 16px on a phone and shrink from sm up. */
+        @media (max-width: 639px) {
+            .schedule-table input,
+            .schedule-table select,
+            .schedule-table textarea {
+                font-size: 16px;
+            }
+
+            /* Buy back some of the width that larger text costs */
+            .schedule-table td {
+                padding: 0.625rem;
+            }
+        }
+
+        /* Keeps fields without a description aligned with those that have one */
+        .field-help-spacer {
+            flex: 0 0 auto;
+            width: 1rem;
+        }
+
+        /* Description popover. The native title attribute was not usable here:
+           it waits about a second before it appears, ignores a click, and
+           cannot be styled. This one opens at once and stays open when the
+           badge is clicked. */
+        .field-tooltip {
+            position: fixed;
+            z-index: 60;
+            max-width: min(22rem, calc(100vw - 1.5rem));
+            padding: 0.5rem 0.625rem;
+            border: 1px solid rgb(100 116 139 / 0.6);
+            border-radius: 0.375rem;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            box-shadow: 0 10px 25px rgb(0 0 0 / 0.5);
+            pointer-events: none;
+        }
+
+        .field-tooltip[hidden] {
+            display: none;
+        }
+
         /* Optional: Desktop enhancement - Show traditional table on very large screens */
         @media (min-width: 1280px) {
             .schedule-table.desktop-table thead {
@@ -150,11 +226,30 @@
                         <div id="statusIcon" class="w-6 h-6 flex-shrink-0"></div>
                         <h3 id="statusTitle" class="text-lg font-semibold"></h3>
                     </div>
-                    <p id="statusText" class="text-gray-300 mb-6"></p>
+                    <p id="statusText" class="text-gray-300 mb-6 whitespace-pre-line max-h-64 overflow-y-auto"></p>
                     <div class="flex justify-end">
                         <button id="statusCloseBtn"
                             class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
                             Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmModal"
+                class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center hidden">
+                <div class="bg-neutral-900 border border-gray-700/50 rounded-lg p-6 mx-4 max-w-md w-full shadow-xl">
+                    <h3 class="text-lg font-semibold text-white mb-2">Confirmation</h3>
+                    <p id="confirmMessage" class="text-gray-300 mb-6 whitespace-pre-line max-h-64 overflow-y-auto"></p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="confirmCancelBtn"
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm text-white transition-colors">
+                            Cancel
+                        </button>
+                        <button id="confirmOkBtn"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm text-white transition-colors">
+                            Confirm
                         </button>
                     </div>
                 </div>
@@ -182,6 +277,10 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <h2 class="text-xl font-semibold">Schedule</h2>
                     <div class="flex space-x-2">
+                        <button id="validateBtn"
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
+                            Validate
+                        </button>
                         <button id="sortByTimeBtn"
                             class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors">
                             Sort by Start Time
@@ -226,10 +325,10 @@
                                 <th class="text-left p-2 w-12">#</th>
                                 <th class="text-left p-2">Device Name</th>
                                 <th class="text-left p-2">Action Type</th>
-                                <th class="text-left p-2">Action Value (JSON)</th>
+                                <th class="text-left p-2">Action Value</th>
                                 <th class="text-left p-2">Start Time (UTC)</th>
                                 <th class="text-left p-2">End Time (UTC)</th>
-                                <th class="text-left p-2 w-24">Actions</th>
+                                <th class="text-left p-2 w-24"><span class="sr-only">Row actions</span></th>
                             </tr>
                         </thead>
                         <tbody id="scheduleTable">
@@ -248,6 +347,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Shared popover for the action value field descriptions -->
+    <div id="fieldTooltip" class="field-tooltip" role="tooltip" hidden></div>
 
     <datalist id="camera-list">
         {% for camera in cameras %}
@@ -275,11 +377,64 @@
         let hasUnsavedChanges = false;
         let originalScheduleData = [];
 
-        // Action value templates
-        const actionValueTemplates = {{ schedule_templates | safe }};
+        // Action value field descriptors, built from the action config classes.
+        // The editor renders its inputs from these, so the form always matches
+        // what the scheduler accepts.
+        const actionValueSchemas = {{ schedule_schemas | safe }};
+
+        // Action types, in the order the backend registers them
+        const actionTypes = Object.keys(actionValueSchemas);
+
+        // Rows whose action value is being edited as raw JSON, by row index
+        const rawJsonRows = new Set();
+
+        // Rows showing every field rather than only the ones that are set
+        const showAllRows = new Set();
+
+        // Unparsable text the editor is holding on to, so it can show it back to
+        // the user instead of silently discarding the edit. A whole raw JSON box
+        // is keyed by the row index, a single JSON field by "index:field_name".
+        const invalidJson = new Map();
+
+        // Drop every unparsable-text marker held for one row: the raw JSON box
+        // key is the row index, each field key is "index:field_name".
+        function clearRowInvalid(index) {
+            invalidJson.delete(index);
+            for (const key of [...invalidJson.keys()]) {
+                if (typeof key === 'string' && key.startsWith(`${index}:`)) {
+                    invalidJson.delete(key);
+                }
+            }
+        }
+
+        // Row state above is keyed by position, so any change to the row order
+        // invalidates it.
+        function resetRowState() {
+            rawJsonRows.clear();
+            showAllRows.clear();
+            invalidJson.clear();
+        }
 
         // Available cameras
         const availableCameras = {{ cameras | tojson }};
+
+        // Filters each camera can load, through the wheel it is paired with.
+        // "__all__" lists every filter in the observatory and is the fallback
+        // for a camera that has no wheel the page can match to it.
+        const filtersByCamera = {{ filters | tojson }};
+
+        // The filters this camera's own wheel reports. Empty when the page
+        // cannot match the camera to a wheel, which is what decides between a
+        // closed dropdown and a free-text box.
+        function filtersForCamera(camera) {
+            return filtersByCamera[camera] || [];
+        }
+
+        // Every filter in the observatory. Only ever offered as a suggestion,
+        // for a camera whose own wheel is unknown.
+        function allKnownFilters() {
+            return filtersByCamera['__all__'] || [];
+        }
 
         // Color mapping for action types
         const actionColors = {
@@ -606,6 +761,151 @@
         }
 
         // Status modal function
+        // --- Field description popover ---------------------------------------
+        // Hovering opens it at once, clicking pins it open. One shared element,
+        // positioned with fixed coordinates, so a long description is never
+        // clipped by the table cell it belongs to.
+        let tooltipPinned = false;
+
+        function placeFieldTooltip(badge) {
+            const tip = document.getElementById('fieldTooltip');
+            const badgeBox = badge.getBoundingClientRect();
+            const tipBox = tip.getBoundingClientRect();
+
+            let left = badgeBox.left + badgeBox.width / 2 - tipBox.width / 2;
+            left = Math.max(8, Math.min(left, window.innerWidth - tipBox.width - 8));
+
+            // Below the badge, unless that would run off the bottom
+            let top = badgeBox.bottom + 6;
+            if (top + tipBox.height > window.innerHeight - 8) {
+                top = badgeBox.top - tipBox.height - 6;
+            }
+
+            tip.style.left = `${left}px`;
+            tip.style.top = `${Math.max(8, top)}px`;
+        }
+
+        function showFieldTooltip(badge, pinned) {
+            const text = badge.dataset.help;
+            if (!text) return;
+
+            const tip = document.getElementById('fieldTooltip');
+            tip.textContent = text;
+            tip.hidden = false;
+            placeFieldTooltip(badge);
+
+            document.querySelectorAll('.field-help.is-open')
+                .forEach(el => el.classList.remove('is-open'));
+            if (pinned) badge.classList.add('is-open');
+            tooltipPinned = pinned;
+        }
+
+        // A pinned tooltip ignores the mouse leaving; only a click, Escape or a
+        // scroll closes it.
+        function hideFieldTooltip(force = false) {
+            if (tooltipPinned && !force) return;
+
+            document.getElementById('fieldTooltip').hidden = true;
+            document.querySelectorAll('.field-help.is-open')
+                .forEach(el => el.classList.remove('is-open'));
+            tooltipPinned = false;
+        }
+
+        function helpBadgeFrom(event) {
+            const target = event.target;
+            return target && target.closest ? target.closest('.field-help') : null;
+        }
+
+        // Delegated, because the badges are rebuilt whenever a row re-renders
+        document.addEventListener('mouseover', (e) => {
+            const badge = helpBadgeFrom(e);
+            if (badge && !tooltipPinned) showFieldTooltip(badge, false);
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (helpBadgeFrom(e)) hideFieldTooltip();
+        });
+
+        document.addEventListener('click', (e) => {
+            const badge = helpBadgeFrom(e);
+            if (!badge) {
+                hideFieldTooltip(true);
+                return;
+            }
+            e.preventDefault();
+            if (tooltipPinned && badge.classList.contains('is-open')) {
+                hideFieldTooltip(true);
+            } else {
+                showFieldTooltip(badge, true);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideFieldTooltip(true);
+                return;
+            }
+            const badge = helpBadgeFrom(e);
+            if (badge && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                if (tooltipPinned && badge.classList.contains('is-open')) {
+                    hideFieldTooltip(true);
+                } else {
+                    showFieldTooltip(badge, true);
+                }
+            }
+        });
+
+        // The tooltip is placed against the viewport, so any scroll moves it
+        // away from its badge.
+        window.addEventListener('scroll', () => hideFieldTooltip(true), true);
+        window.addEventListener('resize', () => hideFieldTooltip(true));
+
+        // Confirmation modal, matching the observatory page. It replaces the
+        // browser confirm() box, which cannot be styled and blocks the page.
+        let confirmCallback = null;
+        let cancelCallback = null;
+
+        function showConfirmModal(message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('confirmModal');
+
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = onConfirm;
+            cancelCallback = onCancel;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            confirmCallback = null;
+            cancelCallback = null;
+        }
+
+        document.getElementById('confirmOkBtn').addEventListener('click', () => {
+            const callback = confirmCallback;
+            closeConfirmModal();
+            if (callback) callback();
+        });
+
+        document.getElementById('confirmCancelBtn').addEventListener('click', () => {
+            const callback = cancelCallback;
+            closeConfirmModal();
+            if (callback) callback();
+        });
+
+        // Close on click outside
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('confirmModal')) {
+                const callback = cancelCallback;
+                closeConfirmModal();
+                if (callback) callback();
+            }
+        });
+
         function showStatus(message, type = 'info') {
             const modal = document.getElementById('statusModal');
             const icon = document.getElementById('statusIcon');
@@ -823,6 +1123,7 @@
                 scheduleData.forEach(item => {
                     item.action_value = normalizeActionValue(item.action_value);
                 });
+                resetRowState();
 
                 // Store original data for comparison (Deep copy)
                 originalScheduleData = JSON.parse(JSON.stringify(scheduleData));
@@ -886,22 +1187,11 @@
                     <td class="p-2" data-label="Action Type">
                         <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors"
                                 onchange="updateActionType(${index}, this.value)">
-                            <option value="open" ${item.action_type === 'open' ? 'selected' : ''}>open</option>
-                            <option value="close" ${item.action_type === 'close' ? 'selected' : ''}>close</option>
-                            <option value="flats" ${item.action_type === 'flats' ? 'selected' : ''}>flats</option>
-                            <option value="object" ${item.action_type === 'object' ? 'selected' : ''}>object</option>
-                            <option value="calibration" ${item.action_type === 'calibration' ? 'selected' : ''}>calibration</option>
-                            <option value="pointing_model" ${item.action_type === 'pointing_model' ? 'selected' : ''}>pointing_model</option>
-                            <option value="autofocus" ${item.action_type === 'autofocus' ? 'selected' : ''}>autofocus</option>
-                            <option value="calibrate_guiding" ${item.action_type === 'calibrate_guiding' ? 'selected' : ''}>calibrate_guiding</option>
-                            <option value="cool_camera" ${item.action_type === 'cool_camera' ? 'selected' : ''}>cool_camera</option>
-                            <option value="complete_headers" ${item.action_type === 'complete_headers' ? 'selected' : ''}>complete_headers</option>
+                            ${actionTypes.map(type => `<option value="${type}" ${item.action_type === type ? 'selected' : ''}>${type}</option>`).join('')}
                         </select>
                     </td>
-                    <td class="p-2" data-label="Action Value (JSON)">
-                        <textarea class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm font-mono h-32 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors resize-y"
-                                  onchange="updateActionValue(${index}, this.value)"
-                                  placeholder="Enter JSON object">${JSON.stringify(item.action_value || {}, null, 2)}</textarea>
+                    <td class="p-2" data-label="Action Value">
+                        <div id="action-value-${index}"></div>
                     </td>
                     <td class="p-2" data-label="Start Time (UTC)">
                         <div class="flex items-center space-x-1">
@@ -935,7 +1225,7 @@
                             </button>
                         </div>
                     </td>
-                    <td class="p-2" data-label="Actions">
+                    <td class="p-2">
                         <div class="flex space-x-1 justify-end">
                             <button onclick="duplicateRow(${index})" 
                                     class="px-2 py-1 bg-blue-600 hover:bg-blue-700/80 rounded-lg text-xs transition-colors"
@@ -952,6 +1242,7 @@
                 `;
 
                 tbody.appendChild(row);
+                renderActionValue(index);
             });
 
             // Update the chart as well
@@ -976,34 +1267,396 @@
                 scheduleData[index][field] = value;
                 // Update chart when device names or action types change
                 if (field === 'device_name' || field === 'action_type') {
+                    // The filter suggestions come from the camera's wheel, so
+                    // the inputs have to be rebuilt when the camera changes.
+                    renderActionValue(index);
                     renderChart();
                 }
             }
             markAsChanged();
         }
 
-        // Update action type with template
-        function updateActionType(index, actionType) {
-            scheduleData[index].action_type = actionType;
+        // Is this value usable for a field of that type? Used when the action
+        // type changes: two actions can share a field name but not its type.
+        // "filter" is one string for an object sequence and a list for flats.
+        function valueFitsType(value, type) {
+            if (value === null || value === undefined) return true;
+            switch (type) {
+                case 'boolean': return typeof value === 'boolean';
+                case 'integer':
+                case 'number': return typeof value === 'number';
+                case 'string': return typeof value === 'string';
+                case 'array': return Array.isArray(value);
+                case 'object': return typeof value === 'object' && !Array.isArray(value);
+                default: return true;
+            }
+        }
 
-            // Apply template for the action type
-            const template = actionValueTemplates[actionType] || {};
-            scheduleData[index].action_value = JSON.parse(JSON.stringify(template)); // Deep copy
+        // Change the action type, keeping the settings the new type also accepts.
+        // Switching type by mistake used to discard everything the row held.
+        function updateActionType(index, actionType) {
+            const previous = scheduleData[index].action_value || {};
+            const accepted = new Map(fieldSchema(actionType).map(f => [f.name, f]));
+
+            const kept = {};
+            for (const [name, value] of Object.entries(previous)) {
+                const field = accepted.get(name);
+                if (field && valueFitsType(value, field.type)) {
+                    kept[name] = value;
+                }
+            }
+
+            // Seed the fields the action cannot run without, so an empty one is
+            // visible in the form rather than missing.
+            for (const field of fieldSchema(actionType)) {
+                if (field.required && !(field.name in kept)) {
+                    kept[field.name] = field.default;
+                }
+            }
+
+            scheduleData[index].action_type = actionType;
+            scheduleData[index].action_value = kept;
+            clearRowInvalid(index);
 
             markAsChanged();
 
-            // Re-render the table to update the action value textarea
+            // Re-render the table to show the inputs of the new action type
             renderTable();
         }
 
-        // Update action value (JSON)
-        function updateActionValue(index, value) {
-            try {
-                scheduleData[index].action_value = JSON.parse(value);
-                markAsChanged();
-            } catch (error) {
-                showStatus('Invalid JSON in action value for row ' + (index + 1), 'error');
+        // --- Action value form -------------------------------------------------
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function fieldSchema(actionType) {
+            return actionValueSchemas[actionType] || [];
+        }
+
+        // Render one input for a schema field. The widget follows the field type
+        // the action config declares, so the user never types JSON punctuation.
+        function fieldInput(index, field, value) {
+            const id = `field-${index}-${field.name}`;
+            const base = 'w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-sm focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/25 transition-colors';
+            const handler = `onchange="setField(${index}, '${field.name}', this)" oninput="setField(${index}, '${field.name}', this)"`;
+            // A field that is not set runs with its default, so show that
+            // rather than an empty box or an unchecked checkbox, which would
+            // say something the action will not do.
+            const unset = value === undefined;
+            const hasDefault = field.default !== null && field.default !== undefined;
+            const placeholder = unset && hasDefault
+                ? ` placeholder="${escapeHtml(field.default)}"`
+                : '';
+
+            if (field.type === 'boolean') {
+                const checked = unset ? field.default === true : value;
+                return `<input type="checkbox" id="${id}" data-type="boolean" ${checked ? 'checked' : ''}
+                               class="w-4 h-4 accent-blue-500 bg-gray-700/50 border-gray-600/50 rounded"
+                               onchange="setField(${index}, '${field.name}', this)">`;
             }
+
+            if (field.choices) {
+                const selected = unset ? field.default : value;
+                const options = field.choices.map(choice =>
+                    `<option value="${escapeHtml(choice)}" ${selected === choice ? 'selected' : ''}>${escapeHtml(choice)}</option>`
+                ).join('');
+                return `<select id="${id}" data-type="string" class="${base}"
+                                onchange="setField(${index}, '${field.name}', this)">${options}</select>`;
+            }
+
+            if (field.type === 'integer' || field.type === 'number') {
+                const step = field.type === 'integer' ? '1' : 'any';
+                return `<input type="number" id="${id}" data-type="${field.type}" step="${step}"
+                               value="${value === null || value === undefined ? '' : escapeHtml(value)}"${placeholder}
+                               class="${base}" ${handler}>`;
+            }
+
+            if (field.type === 'string') {
+                const text = value === null || value === undefined ? '' : String(value);
+
+                if (field.name === 'filter') {
+                    // Paired with a wheel: a closed dropdown, so a name the
+                    // wheel cannot load never reaches the schedule.
+                    const names = filtersForCamera(scheduleData[index].device_name);
+                    if (names.length > 0) {
+                        const options = [`<option value="">(no filter)</option>`];
+
+                        for (const name of names) {
+                            options.push(`<option value="${escapeHtml(name)}" ${text === name ? 'selected' : ''}>${escapeHtml(name)}</option>`);
+                        }
+
+                        // A value this wheel does not report is kept and marked,
+                        // rather than silently swapped for the first filter in
+                        // the list. A hand-written schedule stays as written.
+                        if (text && !names.includes(text)) {
+                            options.push(`<option value="${escapeHtml(text)}" selected>${escapeHtml(text)} — not on this wheel</option>`);
+                        }
+
+                        return `<select id="${id}" data-type="string" class="${base}"
+                                        onchange="setField(${index}, '${field.name}', this)">${options.join('')}</select>`;
+                    }
+
+                    // No wheel to read: offer every filter in the observatory as
+                    // a suggestion, but let the name be typed. A closed list
+                    // here could not be completed for a camera we cannot match.
+                    const suggestions = allKnownFilters();
+                    if (suggestions.length > 0) {
+                        const options = suggestions
+                            .map(n => `<option value="${escapeHtml(n)}">`).join('');
+                        return `<input type="text" id="${id}" data-type="string" list="filter-list-${index}"
+                                       value="${escapeHtml(text)}" class="${base}" ${handler}>
+                                <datalist id="filter-list-${index}">${options}</datalist>`;
+                    }
+                }
+
+                return `<input type="text" id="${id}" data-type="string"
+                               value="${escapeHtml(text)}"${placeholder} class="${base}" ${handler}>`;
+            }
+
+            // Lists, dicts and fields that accept either a scalar or a list stay
+            // as JSON, but in a one-line box with its own error marker. Text
+            // that did not parse is shown back, so a re-render cannot hide an
+            // error that is still blocking the save.
+            const invalidKey = `${index}:${field.name}`;
+            const bad = invalidJson.has(invalidKey);
+            const text = bad
+                ? invalidJson.get(invalidKey)
+                : (value === null || value === undefined ? '' : JSON.stringify(value));
+            const border = bad ? ' border-red-500' : '';
+
+            // The example comes from the field itself. One fixed hint would be
+            // wrong for most of these: metadata takes a mapping, a flats filter
+            // takes filter names, and search_range takes a number or a pair.
+            const example = field.example === null || field.example === undefined
+                ? (field.type === 'object' ? '{"key": "value"}'
+                    : field.type === 'array' ? '[...]' : 'a value or a list')
+                : JSON.stringify(field.example);
+
+            return `<input type="text" id="${id}" data-type="json"
+                           value="${escapeHtml(text)}" placeholder="${escapeHtml(example)}"
+                           class="${base}${border} font-mono" ${handler}>`;
+        }
+
+        function fieldRow(index, field, actionValue) {
+            const value = actionValue[field.name];
+            const required = field.required ? ' <span class="text-red-400">*</span>' : '';
+
+            // An "i" badge carries the field description. A tooltip on the label
+            // itself was not discoverable: the cursor changed but nothing said
+            // why, so the help went unread.
+            const info = field.description
+                ? `<span class="field-help" role="button" tabindex="0"
+                         aria-label="What ${escapeHtml(field.name)} does"
+                         data-help="${escapeHtml(field.description)}">i</span>`
+                : '<span class="field-help-spacer"></span>';
+
+            const remove = field.required ? '' :
+                `<button onclick="removeField(${index}, '${field.name}')"
+                         class="flex-shrink-0 px-1.5 text-gray-500 hover:text-red-400 transition-colors"
+                         title="Remove this setting">&times;</button>`;
+
+            return `
+                <div class="py-1 sm:flex sm:items-center sm:gap-2">
+                    <div class="flex items-center gap-2 sm:w-44 sm:flex-shrink-0">
+                        ${info}
+                        <label for="field-${index}-${field.name}"
+                               class="min-w-0 truncate text-xs text-gray-400">${escapeHtml(field.name)}${required}</label>
+                    </div>
+                    <div class="mt-1 flex items-center gap-1 sm:mt-0 sm:flex-1 sm:min-w-0">
+                        <div class="flex-1 min-w-0">${fieldInput(index, field, value)}</div>
+                        ${remove}
+                    </div>
+                </div>`;
+        }
+
+        function renderActionValue(index) {
+            const container = document.getElementById(`action-value-${index}`);
+            if (!container) return;
+
+            const item = scheduleData[index];
+            const schema = fieldSchema(item.action_type);
+            const actionValue = item.action_value || {};
+
+            const toggle = `
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-gray-500">${schema.length === 0 ? 'No settings' : ''}</span>
+                    <div class="flex space-x-1">
+                        ${schema.length === 0 ? '' : `
+                        <button onclick="toggleShowAll(${index})"
+                                class="px-2 py-0.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded text-xs text-gray-300 transition-colors">
+                            ${showAllRows.has(index) ? 'Only set' : 'All fields'}
+                        </button>`}
+                        <button onclick="toggleRawJson(${index})"
+                                class="px-2 py-0.5 bg-gray-700/50 hover:bg-gray-600/80 border border-gray-600/50 rounded text-xs text-gray-300 transition-colors">
+                            ${rawJsonRows.has(index) ? 'Form' : 'JSON'}
+                        </button>
+                    </div>
+                </div>`;
+
+            if (rawJsonRows.has(index)) {
+                const text = invalidJson.has(index)
+                    ? invalidJson.get(index)
+                    : JSON.stringify(actionValue, null, 2);
+                container.innerHTML = toggle + `
+                    <textarea id="raw-json-${index}"
+                              class="w-full bg-gray-700/50 border ${invalidJson.has(index) ? 'border-red-500' : 'border-gray-600/50'} rounded-lg px-2 py-1 text-sm font-mono h-32 resize-y transition-colors"
+                              oninput="updateActionValue(${index}, this.value)"
+                              placeholder="Enter JSON object">${escapeHtml(text)}</textarea>
+                    <p id="raw-json-error-${index}" class="mt-1 text-xs text-red-400 ${invalidJson.has(index) ? '' : 'hidden'}"></p>`;
+                return;
+            }
+
+            if (schema.length === 0) {
+                container.innerHTML = toggle +
+                    '<p class="text-xs text-gray-500 italic">This action takes no settings.</p>';
+                return;
+            }
+
+            const showAll = showAllRows.has(index);
+            const visible = schema.filter(f => f.required || f.name in actionValue || showAll);
+
+            const ungrouped = visible.filter(f => !f.group);
+            const groups = {};
+            for (const field of visible.filter(f => f.group)) {
+                (groups[field.group] = groups[field.group] || []).push(field);
+            }
+
+            let html = toggle + ungrouped.map(f => fieldRow(index, f, actionValue)).join('');
+
+            for (const [group, fields] of Object.entries(groups)) {
+                html += `
+                    <details class="mt-2 border-t border-gray-600/50 pt-2">
+                        <summary class="text-xs text-gray-400 cursor-pointer">${escapeHtml(group)}</summary>
+                        <div class="mt-1">${fields.map(f => fieldRow(index, f, actionValue)).join('')}</div>
+                    </details>`;
+            }
+
+            const unset = schema.filter(f => !(f.name in actionValue));
+            if (unset.length > 0) {
+                html += `
+                    <div class="mt-2">
+                        <select class="w-full bg-gray-700/50 border border-gray-600/50 rounded-lg px-2 py-1 text-xs text-gray-400 transition-colors"
+                                onchange="addField(${index}, this.value); this.value='';">
+                            <option value="">+ Add setting...</option>
+                            ${unset.map(f => `<option value="${f.name}" title="${escapeHtml(f.description)}">${f.name}${f.group ? ' (' + escapeHtml(f.group) + ')' : ''}</option>`).join('')}
+                        </select>
+                    </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Write one field back into the action value, converting the input text
+        // to the type the action config expects.
+        function setField(index, name, element) {
+            const type = element.dataset.type;
+            const actionValue = scheduleData[index].action_value || (scheduleData[index].action_value = {});
+            const key = `${index}:${name}`;
+
+            if (type === 'boolean') {
+                actionValue[name] = element.checked;
+            } else if (type === 'integer' || type === 'number') {
+                const raw = element.value.trim();
+                actionValue[name] = raw === '' ? null : Number(raw);
+            } else if (type === 'json') {
+                const raw = element.value.trim();
+                if (raw === '') {
+                    actionValue[name] = null;
+                    invalidJson.delete(key);
+                    element.classList.remove('border-red-500');
+                } else {
+                    try {
+                        actionValue[name] = JSON.parse(raw);
+                        invalidJson.delete(key);
+                        element.classList.remove('border-red-500');
+                    } catch (error) {
+                        // Keep the text on screen and block the save, rather than
+                        // dropping the edit and letting a stale value be saved.
+                        invalidJson.set(key, raw);
+                        element.classList.add('border-red-500');
+                    }
+                }
+            } else {
+                // An empty box means "not set". Sending "" instead would make
+                // the action look for a filter named "" on the wheel, and a
+                // required field would pass the missing-value check.
+                actionValue[name] = element.value === '' ? null : element.value;
+            }
+
+            markAsChanged();
+        }
+
+        function addField(index, name) {
+            if (!name) return;
+            const field = fieldSchema(scheduleData[index].action_type).find(f => f.name === name);
+            if (!field) return;
+
+            scheduleData[index].action_value = scheduleData[index].action_value || {};
+            scheduleData[index].action_value[name] = field.default;
+            markAsChanged();
+            renderActionValue(index);
+        }
+
+        function removeField(index, name) {
+            delete (scheduleData[index].action_value || {})[name];
+            invalidJson.delete(`${index}:${name}`);
+            markAsChanged();
+            renderActionValue(index);
+        }
+
+        function toggleShowAll(index) {
+            showAllRows.has(index) ? showAllRows.delete(index) : showAllRows.add(index);
+            renderActionValue(index);
+        }
+
+        function toggleRawJson(index) {
+            if (rawJsonRows.has(index)) {
+                // Refuse to leave raw mode while the text cannot be parsed,
+                // because the form has nothing to show for it.
+                if (invalidJson.has(index)) {
+                    showStatus(`Fix the JSON in row ${index + 1} before switching back to the form`, 'error');
+                    return;
+                }
+                rawJsonRows.delete(index);
+            } else {
+                rawJsonRows.add(index);
+            }
+            renderActionValue(index);
+        }
+
+        // Update action value from the raw JSON box
+        function updateActionValue(index, value) {
+            const errorLine = document.getElementById(`raw-json-error-${index}`);
+            const textarea = document.getElementById(`raw-json-${index}`);
+
+            try {
+                const parsed = JSON.parse(value);
+                if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                    throw new Error('Action value must be a JSON object');
+                }
+                scheduleData[index].action_value = parsed;
+                invalidJson.delete(index);
+                if (errorLine) errorLine.classList.add('hidden');
+                if (textarea) textarea.classList.replace('border-red-500', 'border-gray-600/50');
+            } catch (error) {
+                // The old editor kept the previous value here and said nothing
+                // more, so a typo could be saved without warning. Now the bad
+                // text is held and the save is blocked until it parses.
+                invalidJson.set(index, value);
+                if (errorLine) {
+                    errorLine.textContent = error.message;
+                    errorLine.classList.remove('hidden');
+                }
+                if (textarea) textarea.classList.replace('border-gray-600/50', 'border-red-500');
+            }
+
+            markAsChanged();
         }
 
         // Add new row
@@ -1053,6 +1706,7 @@
             // Combine sorted items with time first, then items without time
             scheduleData = [...itemsWithTime, ...itemsWithoutTime];
 
+            resetRowState();
             renderTable();
             // showStatus('Schedule sorted by start time', 'success');
         }
@@ -1062,6 +1716,7 @@
             const originalItem = scheduleData[index];
             const duplicatedItem = JSON.parse(JSON.stringify(originalItem)); // Deep copy
             scheduleData.splice(index + 1, 0, duplicatedItem);
+            resetRowState();
             markAsChanged();
             renderTable();
         }
@@ -1073,47 +1728,134 @@
                 return;
             }
 
-            if (confirm(`Are you sure you want to delete row ${index + 1}?`)) {
+            const item = scheduleData[index];
+            const what = item.device_name && item.action_type
+                ? ` (${item.device_name}: ${item.action_type})`
+                : '';
+
+            showConfirmModal(`Delete row ${index + 1}${what}?`, () => {
                 scheduleData.splice(index, 1);
+                resetRowState();
                 markAsChanged();
                 renderTable();
-            }
+            });
         }
 
         // Save schedule
-        async function saveSchedule() {
+        // Build the JSONL body the save and validate endpoints both take
+        function scheduleAsJsonl() {
+            return scheduleData.map(item => {
+                // Only include the core fields that should be saved
+                const coreItem = {
+                    device_name: item.device_name || '',
+                    action_type: item.action_type || '',
+                    action_value: item.action_value || {},
+                    start_time: item.start_time || '',  // Keep as string
+                    end_time: item.end_time || ''       // Keep as string
+                };
+                return JSON.stringify(coreItem);
+            }).join('\n');
+        }
+
+        // Report the rows the backend rejected, in the order it found them
+        function showRowErrors(message, errors) {
+            const detail = (errors || [])
+                .map(e => `Row ${e.row + 1}: ${e.message}`)
+                .join('\n');
+            showStatus(detail ? `${message}\n\n${detail}` : message, 'error');
+        }
+
+        // Check the schedule without saving it. The backend builds each action
+        // config, so this is the same check the scheduler runs at load time.
+        async function validateSchedule() {
+            let result;
+            try {
+                const response = await fetch('/api/validateschedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: scheduleAsJsonl()
+                });
+                result = await response.json();
+            } catch (error) {
+                showStatus('Could not reach the observatory: ' + error.message, 'error');
+                return false;
+            }
+
+            if (result.status !== 'success') {
+                showStatus(result.message || 'Could not validate schedule', 'error');
+                return false;
+            }
+
+            const errors = (result.data && result.data.errors) || [];
+            if (errors.length > 0) {
+                showRowErrors(result.message, errors);
+                return false;
+            }
+
+            showStatus('Schedule is valid', 'success');
+            return true;
+        }
+
+        // A schedule the scheduler would reject is not written by default. It
+        // can still be saved as a draft, because a night's plan is often filled
+        // in over several passes, but only as a deliberate second step.
+        function offerDraftSave(message, errors) {
+            const detail = (errors || [])
+                .map(e => `Row ${e.row + 1}: ${e.message}`)
+                .join('\n');
+
+            showConfirmModal(
+                `${message}\n\n${detail}\n\n` +
+                'Save it anyway as a draft? The scheduler refuses to load a ' +
+                'schedule with these rows in it, so fix them before the run.',
+                () => saveSchedule(true)
+            );
+        }
+
+        async function saveSchedule(force = false) {
             try {
                 // Disable save button during save
                 const saveButton = document.getElementById('saveScheduleBtn');
                 const saveButtonText = document.getElementById('saveButtonText');
                 const originalText = saveButtonText.textContent;
 
+                // Never save over a row whose JSON the editor could not parse:
+                // the value on screen is not the value that would be written.
+                if (invalidJson.size > 0) {
+                    const rows = [...invalidJson.keys()]
+                        .map(key => Number(String(key).split(':')[0]) + 1)
+                        .sort((a, b) => a - b);
+                    showStatus(
+                        `Schedule not saved. Fix the JSON in row ${[...new Set(rows)].join(', ')} first.`,
+                        'error'
+                    );
+                    return;
+                }
+
                 saveButton.disabled = true;
                 saveButtonText.textContent = 'Saving...';
 
-                // Convert to JSONL format, only including the core fields
-                const jsonl = scheduleData.map(item => {
-                    // Only include the core fields that should be saved
-                    const coreItem = {
-                        device_name: item.device_name || '',
-                        action_type: item.action_type || '',
-                        action_value: item.action_value || {},
-                        start_time: item.start_time || '',  // Keep as string
-                        end_time: item.end_time || ''       // Keep as string
-                    };
-                    return JSON.stringify(coreItem);
-                }).join('\n');
-
-                const response = await fetch(`/api/editschedule`, {
+                const response = await fetch(`/api/editschedule?force=${force}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain',
                     },
-                    body: jsonl
+                    body: scheduleAsJsonl()
                 });
 
                 if (response.ok) {
                     const result = await response.json();
+                    if (result.status !== 'success') {
+                        // Only rejected rows can be saved as a draft. Any other
+                        // failure, such as a write error, would fail again.
+                        const errors = result.data && result.data.errors;
+                        if (errors && errors.length > 0) {
+                            offerDraftSave(result.message || 'Failed to save schedule', errors);
+                        } else {
+                            showStatus(result.message || 'Failed to save schedule', 'error');
+                        }
+                        return;
+                    }
                     markAsSaved();
                     //showStatus('Schedule saved successfully!', 'success');
                 } else {
@@ -1134,9 +1876,10 @@
 
         // Event listeners
         document.getElementById('addRowBtn').addEventListener('click', addRow);
-        document.getElementById('saveScheduleBtn').addEventListener('click', saveSchedule);
+        document.getElementById('saveScheduleBtn').addEventListener('click', () => saveSchedule());
         //document.getElementById('toggleChartBtn').addEventListener('click', toggleChart);
         document.getElementById('sortByTimeBtn').addEventListener('click', sortByStartTime);
+        document.getElementById('validateBtn').addEventListener('click', validateSchedule);
         document.getElementById('statusCloseBtn').addEventListener('click', closeStatusModal);
 
         // File input change listener

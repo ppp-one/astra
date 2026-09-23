@@ -138,10 +138,32 @@ Optional observatory-wide settings:
 - `backup_time`: UTC time of day to perform automatic daily backups of polled data and logs on the SQLite database (string, format: "HH:MM")
 - `Webcam`: Webcam feed configuration. The URL is embedded in an iframe element in the frontend. Can be:
   - Single URL string for one webcam (e.g., `Webcam: http://localhost:8888/inside`)
-  - Array of objects for multiple webcams, each with `name` and `url` properties
+  - Array of objects for multiple webcams, each with `name` and `url` properties, and an optional `snapshot_url`
   - Any iframe-compatible video source (e.g., [mediamtx](https://github.com/bluenviron/mediamtx))
+  - `snapshot_url` must return a JPEG or PNG image. It is needed only for time-lapse recording.
 - `AllSky`: All-sky camera configuration. Images are fetched via `/api/allsky/latest` endpoint and automatically refreshed every 60 seconds. Can be:
   - Single path string for one camera (e.g., `AllSky: /path/to/allsky.jpg`)
   - Array of objects for multiple cameras, each with `name` and `path` properties
   - Supports JPEG and PNG formats
+- `timelapse` (per camera): Add this key to a camera in the `AllSky` or `Webcam` array to record a time-lapse of that camera. Cameras without this key are not recorded. On the Summary page, click the camera image or its clock button to play back the frames.
+  - `timelapse: true` uses the defaults. A mapping can set these options:
+    - `interval`: Minutes between frames (float, default `10`).
+    - `retention`: Hours to keep frames (float, default `24`). Older frames are deleted.
+  - All-sky cameras: a frame is saved only when the image file changes. The frame time is the file's modification time. A file older than `retention` is not saved, and a warning is logged.
+  - Webcams: a `snapshot_url` is necessary. It must return one JPEG or PNG image of at most 20 MB, not a video stream.
+  - Frames are stored in the `timelapse` folder of the Astra assets folder. At a 10 minute interval, each camera uses about 40–150 MB, depending on image size.
+
+  ```yaml
+  AllSky:
+    - name: East Sky
+      path: /path/to/allsky_east.jpg
+      timelapse:
+        interval: 5
+        retention: 48
+  Webcam:
+    - name: Outside View
+      url: http://localhost:8888/outside
+      snapshot_url: http://camera-ip/snapshot.jpg
+      timelapse: true
+  ```
 - `filename_templates`: Customize how FITS files are named and organized (dict). See {py:mod}`astra.filename_templates` for more details.
