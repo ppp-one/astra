@@ -816,7 +816,7 @@ class ObjectActionConfig(BaseActionConfig):
         ``nonsidereal_recenter_interval`` governs only how often the mount re-slews
         once tracking is under way. Autoguiding is incompatible with non-sidereal
         tracking and is disabled automatically. For Earth-orbiting objects, supply
-        ``tle`` and set ``lookup_name`` to "TLE".
+        ``tle``. ``lookup_name`` can then be left out, or set to "TLE".
 
         The mount must report the ASCOM capabilities ``CanSetRightAscensionRate``
         and ``CanSetDeclinationRate``. Where ``lookup_name`` resolves to a moving
@@ -889,7 +889,7 @@ class ObjectActionConfig(BaseActionConfig):
         "alt": "Altitude coordinate when issuing Alt/Az pointings.",
         "az": "Azimuth coordinate when issuing Alt/Az pointings.",
         "lookup_name": "Instead of specifying ra/dec or alt/az, use SIMBAD/Astropy to look up coordinates for celestial body to observe (e.g., 'mars', 'M31').",
-        "tle": "Two-line element set for an Earth-orbiting object, given as the two element lines separated by a newline. Set lookup_name to 'TLE' when this is supplied. Requires a mount that can set differential tracking rates.",
+        "tle": "Two-line element set for an Earth-orbiting object, given as the two element lines separated by a newline. lookup_name can be left out, or set to 'TLE'. Requires a mount that can set differential tracking rates.",
         "filter": "Filter name to load before imaging.",
         "focus_shift": "Focus offset relative to the stored best focus.",
         "focus_position": "Absolute focus position override.",
@@ -934,6 +934,11 @@ class ObjectActionConfig(BaseActionConfig):
     }
 
     def validate(self):
+        # A TLE already says what the target is, so lookup_name may be left out.
+        # The code that runs the sequence checks for lookup_name 'TLE'.
+        if self.tle is not None and self.lookup_name is None:
+            self.lookup_name = "TLE"
+
         # The FITS OBJECT header, the file name and the guiding reference all
         # read object, so it must hold a name once the config is built.
         if self.object is None:
@@ -992,8 +997,8 @@ class ObjectActionConfig(BaseActionConfig):
                 f"got {self.nonsidereal_rate_update_interval}"
             )
 
-        # A TLE and lookup_name 'TLE' only make sense together. Catching this here
-        # gives a clear message. Left unchecked, the name 'TLE' would fall through to
+        # A TLE and any lookup_name other than 'TLE' contradict each other.
+        # Catching this here gives a clear message. Left unchecked, the name 'TLE' would fall through to
         # a SIMBAD lookup and fail with an unrelated name-resolution error.
         is_tle_name = self.lookup_name is not None and self.lookup_name.upper() == "TLE"
         if is_tle_name and self.tle is None:
@@ -1003,8 +1008,9 @@ class ObjectActionConfig(BaseActionConfig):
             )
         if self.tle is not None and not is_tle_name:
             raise ValueError(
-                f"'tle' was given but lookup_name is {self.lookup_name!r}. "
-                "Set lookup_name to 'TLE' to track a target from its element set."
+                f"'tle' was given, but lookup_name is {self.lookup_name!r}. "
+                "Leave lookup_name out, or set it to 'TLE', to track a target "
+                "from its element set."
             )
 
         # A satellite is somewhere different every second, so a fixed coordinate
@@ -1031,27 +1037,27 @@ class ObjectActionConfig(BaseActionConfig):
             ValueError: If there is no lookup_name, or if a TLE has no readable
                 catalog number.
         """
+        if self.tle is not None:
+            # Line 1 of a TLE holds the catalog number in columns 3-7
+            for line in self.tle.splitlines():
+                line = line.strip()
+                if line.startswith("1 "):
+                    catalog_number = line[2:7].strip()
+                    if catalog_number:
+                        return f"NORAD {catalog_number}"
+                    break
+
+            raise ValueError(
+                "Could not read the NORAD catalog number from line 1 of 'tle'. "
+                "Give 'object' to name the target."
+            )
+
         if self.lookup_name is None:
             raise ValueError(
                 "Give 'object', or 'lookup_name' to name the target from it."
             )
 
-        if self.lookup_name.upper() != "TLE" or self.tle is None:
-            return self.lookup_name
-
-        # Line 1 of a TLE holds the catalog number in columns 3-7
-        for line in self.tle.splitlines():
-            line = line.strip()
-            if line.startswith("1 "):
-                catalog_number = line[2:7].strip()
-                if catalog_number:
-                    return f"NORAD {catalog_number}"
-                break
-
-        raise ValueError(
-            "Could not read the NORAD catalog number from line 1 of 'tle'. "
-            "Give 'object' to name the target."
-        )
+        return self.lookup_name
 
     def _resolve_lookup_name(
         self,

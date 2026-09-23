@@ -667,12 +667,23 @@ class TestImageHandler:
         assert filepath.name.startswith("TestCamera_V_M31_60.000_")
         assert filepath.parent == image_directory / "20240515"
 
-    def test_get_file_path_keeps_a_slash_out_of_the_path(self, temp_config):
+    @pytest.mark.parametrize(
+        "object_name, expected",
+        [
+            ("C/2023 A3", "C_2023 A3"),
+            ("Sat: 12", "Sat_ 12"),
+            ('a\\b<c>d"e|f?g*h', "a_b_c_d_e_f_g_h"),
+        ],
+        ids=["slash", "colon", "other_windows_characters"],
+    )
+    def test_get_file_path_cleans_the_object_name(
+        self, temp_config, object_name, expected
+    ):
         header = ObservatoryHeader.get_test_header()
         header["ASTRATYP"] = "object"
         header["IMAGETYP"] = "Light Frame"
         header["FILTER"] = "V"
-        header["OBJECT"] = "C/2023 A3"
+        header["OBJECT"] = object_name
         header["EXPTIME"] = 60.0
         image_directory = Path(temp_config.paths.images) / "test"
         handler = ImageHandler(header, image_directory)
@@ -681,10 +692,10 @@ class TestImageHandler:
         )
         date = datetime.datetime(2024, 5, 15, 12, 0, 0, tzinfo=datetime.UTC)
         filepath = handler.get_file_path("TestCamera", header, date, 0, image_directory)
-        assert filepath.name.startswith("TestCamera_V_C_2023 A3_60.000_")
+        assert filepath.name.startswith(f"TestCamera_V_{expected}_60.000_")
         assert filepath.parent == image_directory / "20240515"
         # The header keeps the real name
-        assert header["OBJECT"] == "C/2023 A3"
+        assert header["OBJECT"] == object_name
 
     def test_resolve_image_directory(self, temp_config):
         header = ObservatoryHeader.get_test_header()

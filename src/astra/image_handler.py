@@ -19,6 +19,7 @@ and file organization for astronomical data processing pipelines.
 
 import datetime
 import logging
+import re
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -37,6 +38,27 @@ from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
 
 __all__ = ["ImageHandler"]
+
+# Characters that Windows does not allow in a file name, and control characters.
+# "/" and "\" also start a new folder. One rule for all systems keeps a data
+# set that is copied between them readable.
+_UNSAFE_FILENAME_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+
+
+def safe_filename_part(value) -> str:
+    """Make a header value safe to use as part of a file name.
+
+    Each character that cannot appear in a file name becomes "_". A comet name
+    such as "C/2023 A3" would otherwise add a folder, and a colon, as in
+    "Sat: 12", is not allowed in a Windows file name.
+
+    Args:
+        value: The header value, such as the OBJECT name.
+
+    Returns:
+        str: The value with each unsafe character replaced by "_".
+    """
+    return _UNSAFE_FILENAME_CHARS.sub("_", str(value))
 
 
 class ImageHandler:
@@ -246,10 +268,7 @@ class ImageHandler:
             device=device_name,
             imagetype=str(header.get("IMAGETYP", "default")),
             filter_name=str(header.get("FILTER", "NA")).replace("'", ""),
-            # A comet name such as "C/2023 A3" would otherwise add a folder
-            object_name=str(header.get("OBJECT", "NA"))
-            .replace("/", "_")
-            .replace("\\", "_"),
+            object_name=safe_filename_part(header.get("OBJECT", "NA")),
             exptime=float(header.get("EXPTIME", float("nan"))),  # type: ignore
             sequence_counter=sequence_counter,
             timestamp=date.strftime("%Y%m%d_%H%M%S.%f")[:-3],

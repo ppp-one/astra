@@ -667,6 +667,11 @@ class TestDefaultObjectName:
         config = ObjectActionConfig(exptime=1.0, lookup_name="TLE", tle=self.ISS_TLE)
         assert config.object == "NORAD 25544"
 
+    def test_tle_alone_names_the_target(self):
+        config = ObjectActionConfig(exptime=1.0, tle=self.ISS_TLE)
+        assert config.object == "NORAD 25544"
+        assert config.lookup_name == "TLE"
+
     def test_tle_without_readable_line_1_is_rejected(self):
         with pytest.raises(ValueError, match="NORAD catalog number"):
             ObjectActionConfig(exptime=1.0, lookup_name="TLE", tle="not a tle\nat all")
