@@ -116,3 +116,30 @@ def test_queue_get_exception(queue_manager, mock_observatory_logger):
     queue_manager.queue_get()
     assert mock_observatory_logger.report_device_issue.called
     assert not queue_manager.queue_is_running
+
+
+def test_flush_waits_for_earlier_messages(
+    mock_observatory_logger, mock_db, mock_thread_manager
+):
+    import queue as queue_module
+    from threading import Thread
+
+    qm = QueueManager(mock_observatory_logger, mock_db, mock_thread_manager)
+    qm.queue = queue_module.Queue()
+    metadata = {"device_type": "Camera", "device_name": "cam0"}
+    qm.queue.put((metadata, {"type": "log", "data": ["error", "old poll error"]}))
+
+    reader = Thread(target=qm.queue_get, daemon=True)
+    reader.start()
+    try:
+        assert qm.flush(timeout=5) is True
+        # the error queued before the flush was processed first
+        mock_observatory_logger.report_device_issue.assert_called_once()
+    finally:
+        qm.queue_is_running = False
+        qm.queue.put((None, {"type": "log", "data": ["debug", "stop"]}))
+        reader.join(5)
+
+
+def test_flush_times_out_without_reader(queue_manager):
+    assert queue_manager.flush(timeout=0.1) is False

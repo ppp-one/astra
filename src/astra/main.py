@@ -20,6 +20,7 @@ import json
 import logging
 import mimetypes
 import sqlite3
+import threading
 import time
 from contextlib import asynccontextmanager, suppress
 from datetime import UTC
@@ -76,6 +77,8 @@ TRUNCATE_FACTOR = None
 CUSTOM_OBSERVATORY = None
 ALLSKY_FEEDS = []  # List of {name, path} dicts
 TIMELAPSE: TimelapseRecorder | None = None  # Set when a camera has a `timelapse` key
+# Makes "check, then start" atomic for the watchdog start and device reconnect
+WATCHDOG_CONTROL_LOCK = threading.Lock()
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -120,7 +123,6 @@ def load_observatories() -> None:
     """
     global OBSERVATORY  # not sure if this is necessary
     global WEBCAMFEEDS
-    global FWS
     global ALLSKY_FEEDS
     global TIMELAPSE
 
@@ -181,12 +183,25 @@ def load_observatories() -> None:
 
     obs.connect_all_devices()
 
-    if "FilterWheel" in obs.devices:
-        FWS = {}
-        for fw_name in obs.devices["FilterWheel"].keys():
-            filter_names = obs.devices["FilterWheel"][fw_name].get("Names")
-            obs.logger.info(f"FilterWheel {fw_name} has filters: {filter_names}")
-            FWS[fw_name] = obs.devices["FilterWheel"][fw_name].get("Names")
+    update_filter_wheels(obs)
+
+
+def update_filter_wheels(obs: Observatory) -> None:
+    """Read the filter names of each filter wheel into the global FWS.
+
+    Args:
+        obs (Observatory): Observatory whose filter wheels are read.
+    """
+    global FWS
+
+    # Fill a new dict and replace FWS only when all wheels answered, so a
+    # failed read keeps the names that were there before.
+    fws = {}
+    for fw_name in obs.devices.get("FilterWheel", {}).keys():
+        filter_names = obs.devices["FilterWheel"][fw_name].get("Names")
+        obs.logger.info(f"FilterWheel {fw_name} has filters: {filter_names}")
+        fws[fw_name] = filter_names
+    FWS = fws
 
 
 def clean_up() -> None:
@@ -610,12 +625,87 @@ def complete_headers():
     return {"status": "success", "data": "null", "message": ""}
 
 
+def reconnect_devices_task() -> None:
+    """Reconnect all devices, then read the filter wheel names again."""
+    obs = OBSERVATORY
+    old_devices = obs.devices
+    try:
+        obs.reconnect_devices()
+    except Exception as e:
+        obs.logger.error(f"Device reconnect failed: {e}", exc_info=True)
+
+    # A cancelled reconnect keeps the old devices, which may not answer.
+    if obs.devices is old_devices:
+        return
+
+    try:
+        update_filter_wheels(obs)
+    except Exception as e:
+        obs.logger.warning(f"Could not read filter wheel names: {e}")
+
+
+@app.post("/api/reconnect_devices")
+def reconnect_devices():
+    """Restart all device processes, connect again, and restart polling.
+
+    Use this to recover from lost devices without restarting Astra. The
+    watchdog stops, every device process is replaced, the devices connect
+    again, polling starts again, and the watchdog starts again. Device
+    changes in the config file are used. The robotic switch stays off.
+
+    The work runs in a background thread; the log shows the progress. The
+    request is refused while a schedule, a reconnect, or another task that
+    uses the devices runs (an action or a guider).
+
+    Returns:
+        dict: JSON response with operation status.
+    """
+    obs = OBSERVATORY
+
+    obs.logger.info("User initiated reconnect of all devices from web interface")
+
+    # Check and start under one lock, so that two requests cannot both start
+    # a reconnect, and a watchdog start cannot run between the two steps.
+    with WATCHDOG_CONTROL_LOCK:
+        busy = obs.device_tasks_running()
+        if obs.schedule_manager.running or obs.thread_manager.is_thread_running(
+            "schedule"
+        ):
+            refusal = "Stop the schedule before you reconnect devices."
+        elif obs.thread_manager.is_thread_running("reconnect_devices"):
+            refusal = "A reconnect is already in progress."
+        elif busy:
+            refusal = (
+                f"Tasks that use the devices still run: {', '.join(busy)}. "
+                "Try again when they are done."
+            )
+        else:
+            refusal = None
+            obs.thread_manager.start_thread(
+                target=reconnect_devices_task,
+                device_name="astra",
+                thread_type="Reconnect",
+                thread_id="reconnect_devices",
+            )
+
+    if refusal is not None:
+        obs.logger.warning(f"Reconnect refused: {refusal}")
+        return {"status": "error", "data": None, "message": refusal}
+
+    return {
+        "status": "success",
+        "data": None,
+        "message": "Reconnecting devices. See the log for progress.",
+    }
+
+
 @app.post("/api/startwatchdog")
 async def start_watchdog():
     """Start observatory watchdog monitoring system.
 
     Resets error states and starts the watchdog process for
-    continuous observatory health monitoring.
+    continuous observatory health monitoring. Refused while a device
+    reconnect runs, because the reconnect starts the watchdog itself.
 
     Returns:
         dict: JSON response with operation status.
@@ -624,9 +714,18 @@ async def start_watchdog():
 
     obs.logger.info("User initiated starting of watchdog from web interface")
 
-    obs.logger.error_free = True
-    obs.logger.error_source = []
-    obs.start_watchdog()
+    # Held only for the check and the thread start, which do not block.
+    with WATCHDOG_CONTROL_LOCK:
+        reconnecting = obs.thread_manager.is_thread_running("reconnect_devices")
+        if not reconnecting:
+            obs.logger.error_free = True
+            obs.logger.error_source = []
+            obs.start_watchdog()
+
+    if reconnecting:
+        message = "A device reconnect is in progress. It starts the watchdog."
+        obs.logger.warning(f"Watchdog start refused: {message}")
+        return {"status": "error", "data": None, "message": message}
 
     return {"status": "success", "data": "null", "message": ""}
 
@@ -1634,20 +1733,23 @@ async def websocket_endpoint(websocket: WebSocket):
             polled_list[device_type] = {}
 
             for device_name in obs.devices[device_type]:
-                polled_list[device_type][device_name] = {}
-
                 polled = obs.devices[device_type][device_name].poll_latest()
 
-                if polled is not None:  # not sure if correct to put this here, or later
-                    polled_keys = polled.keys()
-                    for k in polled_keys:
-                        polled_list[device_type][device_name][k] = {}
-                        polled_list[device_type][device_name][k]["value"] = polled[k][
-                            "value"
-                        ]
-                        polled_list[device_type][device_name][k]["datetime"] = polled[
-                            k
-                        ]["datetime"]
+                # Leave out a device with no poll data yet, for example just
+                # after a reconnect; the status blocks below need its values.
+                if not polled:
+                    continue
+
+                polled_list[device_type][device_name] = {}
+
+                for k in polled.keys():
+                    polled_list[device_type][device_name][k] = {}
+                    polled_list[device_type][device_name][k]["value"] = polled[k][
+                        "value"
+                    ]
+                    polled_list[device_type][device_name][k]["datetime"] = polled[k][
+                        "datetime"
+                    ]
 
         thread_summaries = obs.thread_manager.get_thread_summary()
         table0 = []

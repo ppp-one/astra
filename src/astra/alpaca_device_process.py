@@ -342,8 +342,15 @@ class AlpacaDevice(Process):
             return dict(self._cached_poll_latest)
 
         try:
-            self.front_pipe.send("poll_latest")
-            msg = self.front_pipe.recv()
+            try:
+                self.front_pipe.send("poll_latest")
+                msg = self.front_pipe.recv()
+            except (OSError, EOFError):
+                # The device process is stopped or its pipe is closed, for
+                # example during a reconnect. Return the last known values.
+                if not self._cached_poll_latest:
+                    return None  # type: ignore[return-value]
+                return dict(self._cached_poll_latest)
             if isinstance(msg, Exception):
                 # On error, still return cached data rather than raising
                 # to keep WebSocket responsive
@@ -357,9 +364,18 @@ class AlpacaDevice(Process):
         finally:
             self.lock.release()
 
-    def stop(self) -> None:
-        """Stop the device process and clean up resources."""
-        with self.lock:
+    def stop(self, timeout: float = 10.0) -> None:
+        """Stop the device process and clean up resources.
+
+        Asks the process to stop. If a hung call holds the pipe lock, or the
+        process does not exit within ``timeout``, the process is killed.
+
+        Args:
+            timeout (float): Seconds to wait for the lock, and for the process
+                to exit, before it is killed.
+        """
+        acquired = self.lock.acquire(timeout=timeout)
+        try:
             self.queue.put(
                 (
                     self.metadata,
@@ -372,8 +388,29 @@ class AlpacaDevice(Process):
                     },
                 )
             )
-            self.front_pipe.send("stop")
-            self.join()
+            if acquired:
+                try:
+                    self.front_pipe.send("stop")
+                except OSError:
+                    pass  # pipe already broken, kill below
+
+            self.join(timeout)
+            if self.is_alive():
+                # kill, not terminate: run() handles SIGTERM, so it would not exit
+                self.kill()
+                self.join(timeout)
+
+            # Close the parent's pipe ends, so each restart does not leak file
+            # handles. Closing back_pipe also wakes a thread blocked in recv()
+            # with EOFError. If that thread still holds the lock, leave
+            # front_pipe open: once closed, its handle number can be reused by
+            # a new device's pipe while the thread still reads from it.
+            self.back_pipe.close()
+            if acquired:
+                self.front_pipe.close()
+        finally:
+            if acquired:
+                self.lock.release()
 
     ## BACKEND CORE
 

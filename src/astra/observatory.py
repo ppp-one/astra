@@ -84,6 +84,24 @@ SLEW_POLL_START_DELAY = 1.0
 # which would leave no time for mechanical vibrations to dampen.
 MIN_SLEW_SETTLE_TIME = 1.0
 
+# Seconds reconnect_devices() waits for the watchdog to stop. The watchdog can be
+# closing the observatory, which can take minutes, so the wait is long.
+WATCHDOG_STOP_TIMEOUT = 600.0
+
+# Seconds reconnect_devices() waits for the old devices' queued messages.
+QUEUE_FLUSH_TIMEOUT = 10.0
+
+# Thread IDs that may run during a device reconnect: they do not call the
+# device processes, or the reconnect stops them itself (the watchdog). Header
+# completion reads only the database and the FITS files.
+RECONNECT_SAFE_THREADS = {
+    "queue",
+    "watchdog",
+    "backup",
+    "complete_headers",
+    "reconnect_devices",
+}
+
 
 class Observatory:
     """
@@ -546,6 +564,147 @@ class Observatory:
             fits_config=self.fits_config,
         )
         self.start_watchdog()
+
+    def reconnect_devices(self) -> bool:
+        """
+        Restart all device processes, connect again, and restart polling.
+
+        Use this to recover from lost devices without restarting Astra. A poll
+        that fails twice stops for good, so only new device processes bring
+        the polling back.
+
+        The method:
+            1. Stops the watchdog and waits for it to exit. If the watchdog is
+               closing the observatory, the close completes first.
+            2. Cancels if a schedule or another task that uses the devices
+               still runs.
+            3. Stops all device processes and waits until their queued
+               messages are processed.
+            4. Clears the error state, so only new errors stop the watchdog.
+            5. Loads the devices from the config, which is read again if the
+               file changed.
+            6. Connects all devices, starts polling and starts the watchdog.
+
+        If the reconnect is cancelled before the devices are stopped, the
+        watchdog runs again as before. The robotic switch stays off.
+
+        Returns:
+            bool: True if all devices were reconnected with no errors.
+        """
+        self.logger.info("Reconnecting all devices")
+        # A watchdog that handles errors stops by itself; a cancel must not
+        # start it again.
+        watchdog_was_running = (
+            self.thread_manager.is_thread_running("watchdog") and self.logger.error_free
+        )
+
+        # Log the cancel messages as warnings: an error sets error_free to
+        # False, and the watchdog would then close the observatory.
+        if not self.stop_watchdog(timeout=WATCHDOG_STOP_TIMEOUT):
+            # The watchdog thread is still alive; let it continue.
+            self.watchdog_running = True
+            self.logger.warning(
+                f"Watchdog did not stop within {WATCHDOG_STOP_TIMEOUT:.0f} s. "
+                "Reconnect cancelled. Devices not changed."
+            )
+            return False
+
+        busy = self.device_tasks_running()
+        if self.schedule_manager.running or busy:
+            self.logger.warning(
+                "Reconnect cancelled, tasks that use the devices still run: "
+                f"{', '.join(busy) or 'schedule'}. Devices not changed."
+            )
+            if watchdog_was_running:
+                self.start_watchdog()
+            return False
+
+        self.robotic_switch = False
+
+        try:
+            self.device_manager.stop_all_devices()
+
+            # Errors that the old devices put on the queue must not count
+            # against the new devices.
+            if not self.queue_manager.flush(timeout=QUEUE_FLUSH_TIMEOUT):
+                self.logger.warning(
+                    "Old device messages not processed within "
+                    f"{QUEUE_FLUSH_TIMEOUT:.0f} s. Old errors can still show."
+                )
+            self.logger.error_free = True
+            self.logger.error_source = []
+
+            self.device_manager.load_devices()
+
+            # values read from the old devices
+            self._observatory_locations.clear()
+            self._equatorial_systems.clear()
+            self._rate_offset_support.clear()
+
+            self.connect_all_devices()
+
+            # Each Guider keeps a reference to its telescope device. Rebuilt
+            # after the watchdog starts, so an error here is handled by it.
+            self.guider_manager = GuiderManager.from_observatory(self)
+        except Exception as e:
+            self.logger.error(
+                f"Reconnect failed: {e}. Check the watchdog status; "
+                "reconnect again or restart Astra.",
+                exc_info=True,
+            )
+            return False
+
+        if not self.logger.error_free:
+            self.logger.warning(
+                "Reconnect done, but some devices report errors. Robotic switch is off."
+            )
+            return False
+
+        self.logger.info("Reconnect complete. Robotic switch is off.")
+        return True
+
+    def device_tasks_running(self) -> list[str]:
+        """
+        Return the types of the live threads that can use the devices.
+
+        The threads in RECONNECT_SAFE_THREADS are left out. A reconnect must
+        not replace the devices while one of the other threads runs, for
+        example a schedule, an action or a guider.
+
+        Returns:
+            list[str]: Sorted thread types.
+        """
+        return sorted(
+            {
+                str(th["type"])
+                for th in list(self.thread_manager.threads)
+                if th["thread"].is_alive() and th["id"] not in RECONNECT_SAFE_THREADS
+            }
+        )
+
+    def stop_watchdog(self, timeout: float) -> bool:
+        """
+        Stop the watchdog and wait for its thread to exit.
+
+        The flag is set again while waiting, because a watchdog thread that
+        has just started sets it to True.
+
+        Parameters:
+            timeout (float): Seconds to wait for the watchdog thread.
+
+        Returns:
+            bool: True if the watchdog is stopped.
+        """
+        deadline = time.monotonic() + timeout
+        while True:
+            self.watchdog_running = False
+            remaining = deadline - time.monotonic()
+            if self.thread_manager.wait_for_thread(
+                "watchdog", max(0.0, min(0.5, remaining))
+            ):
+                return True
+            if remaining <= 0:
+                return False
 
     def start_watchdog(self) -> None:
         """

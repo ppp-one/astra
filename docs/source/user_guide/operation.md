@@ -120,7 +120,7 @@ The header bar displays critical system status:
 
 - **Observatory Name**: Turns red if system errors are present.
 - **UTC Time**: Current universal time.
-- **Watchdog Status**: Green when the watchdog is running, red if stopped. It should always be running during operation to ensure safety mechanisms are active. If stopped, the system will not execute any schedule actions and will ignore weather and device statuses.
+- **Watchdog Status**: Green when the watchdog is running, red if stopped. It should always be running during operation to ensure safety mechanisms are active. If stopped, the system will not execute any schedule actions and will ignore weather and device statuses. To start it again, use **Reconnect Devices** in the Controls view.
 - **Weather Status**: Green indicates safe conditions, red indicates unsafe - dictated by the SafetyMonitor and internal safety monitor logic.
 - **Schedule Status**: Green when a schedule is active, gray when idle.
 - **Robotic Operations Switch**: The master switch for automated control (green=enabled, gray=disabled).
@@ -165,7 +165,7 @@ In most cases you will run `astra` without any additional options.
 
 **Schedule Not Starting?**
 
-- **Watchdog**: Ensure the Watchdog is running.
+- **Watchdog**: Ensure the Watchdog is running. If it is stopped, use **Reconnect Devices** in the Controls view.
 - **Robotic Mode**: Verify the Robotic Operations Switch is enabled.
 - **Time**: Confirm the schedule's `start_time` and `end_time` are valid for the current time.
 - **Syntax**: Validate the schedule file is valid JSONL format.
@@ -182,3 +182,12 @@ In most cases you will run `astra` without any additional options.
 
 - **Safety**: Intermittent weather issues can abort a running sequence.
 - **Timing**: Ensure sufficient duration was allocated for the action to complete.
+
+**Watchdog Stopped or Device Lost?**
+
+An error stops the watchdog. A device poll that fails twice also stops, and it does not start again by itself. To recover without restarting _Astra_, use **Reconnect Devices** in the Controls view (or `POST /api/reconnect_devices`).
+
+- **What it does**: It stops the watchdog, restarts every device process, connects the devices again, restarts polling, clears the errors, and starts the watchdog again. It does not disconnect the drivers. Device changes in the observatory config (for example a new IP address, or an added or removed device) are used. A changed SafetyMonitor `device_name` or `max_safe_duration` needs a restart of _Astra_.
+- **Before you use it**: Stop the schedule. The reconnect is refused while a schedule, an action, or the guider runs. The message names the tasks that still run.
+- **If it is refused**: Wait until the named tasks end. To start only the watchdog, without new device processes, call `POST /api/startwatchdog`, for example from the API page at `/docs`.
+- **After**: The **Robotic Operations Switch** stays off. Check the device status and the logs, then turn it on again.
