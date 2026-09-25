@@ -11,6 +11,8 @@ Key capabilities:
 """
 
 import multiprocessing
+import time
+import uuid
 
 from astra.database_manager import DatabaseManager
 from astra.logger import ObservatoryLogger
@@ -42,6 +44,7 @@ class QueueManager:
         self.database_manager = database_manager
         self.thread_manager = thread_manager
         self.logger = logger
+        self._flushed = None
 
     def start_queue_thread(
         self,
@@ -52,6 +55,29 @@ class QueueManager:
             device_name="queue",
             thread_id="queue",
         )
+
+    def flush(self, timeout: float) -> bool:
+        """Wait until the messages already on the queue are processed.
+
+        Puts a marker on the queue and waits for queue_get to reach it. The
+        queue is first in, first out, with one reader, so all earlier
+        messages are then done.
+
+        Parameters:
+            timeout (float): Seconds to wait.
+
+        Returns:
+            bool: True if the marker was reached within ``timeout``.
+        """
+        token = uuid.uuid4().hex
+        self.queue.put(({}, {"type": "flush", "data": token}))
+
+        deadline = time.monotonic() + timeout
+        while self._flushed != token:
+            if time.monotonic() >= deadline:
+                return False
+            time.sleep(0.05)
+        return True
 
     def queue_get(self) -> None:
         """
@@ -67,6 +93,7 @@ class QueueManager:
             - 'log': Processes log messages with different severity levels
                 - 'info', 'warning', 'error', 'debug' log levels supported
                 - Error messages are added to error_source for monitoring
+            - 'flush': Marker from flush(); records that it was reached
 
         Background Operations:
             - Cleans up completed threads from the threads list
@@ -105,6 +132,8 @@ class QueueManager:
                         )
                     elif r["data"][0] == "debug":
                         self.logger.debug(r["data"][1])
+                elif r["type"] == "flush":
+                    self._flushed = r["data"]
 
                 # pick up work of watchdog
                 self.thread_manager.remove_dead_threads()

@@ -6,6 +6,7 @@ Key capabilities:
     - Safely stop and clean up threads
 """
 
+import time
 from threading import Thread
 from typing import Any, Callable, Dict, List
 
@@ -47,6 +48,18 @@ class ThreadManager:
             if th_info["id"] == thread_id:
                 th_info["thread"].join()
                 break
+
+    def wait_for_thread(self, thread_id: Any, timeout: float) -> bool:
+        """Wait for all live threads with the given ID to complete.
+
+        Returns:
+            bool: True if no thread with this ID is alive when the wait ends.
+        """
+        deadline = time.monotonic() + timeout
+        for th_info in list(self.threads):
+            if th_info["id"] == thread_id and th_info["thread"].is_alive():
+                th_info["thread"].join(max(0.0, deadline - time.monotonic()))
+        return not self.is_thread_running(thread_id)
 
     def remove_dead_threads(self) -> None:
         """Remove threads that have completed from the threads list."""

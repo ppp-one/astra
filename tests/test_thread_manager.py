@@ -108,3 +108,33 @@ def test_get_thread_summary(tm):
     assert summary[0]["type"] == "typeA"
     assert summary[0]["device_name"] == "devA"
     assert summary[0]["id"] == "idA"
+
+
+def test_wait_for_thread_returns_true_when_thread_ends(tm):
+    event = Event()
+    th = tm.start_thread(
+        target=dummy_target,
+        args=(event,),
+        thread_type="test",
+        device_name="dev6",
+        thread_id="wait1",
+    )
+    assert tm.wait_for_thread("wait1", timeout=5) is True
+    assert not th.is_alive()
+
+
+def test_wait_for_thread_returns_false_on_timeout(tm):
+    event = Event()
+    tm.start_thread(
+        target=event.wait,
+        thread_type="test",
+        device_name="dev7",
+        thread_id="wait2",
+    )
+    assert tm.wait_for_thread("wait2", timeout=0.1) is False
+    event.set()
+    assert tm.wait_for_thread("wait2", timeout=5) is True
+
+
+def test_wait_for_thread_without_thread(tm):
+    assert tm.wait_for_thread("missing", timeout=0.1) is True

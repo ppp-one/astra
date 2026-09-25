@@ -334,15 +334,14 @@
 
                             <button
                                 class="flex flex-col items-center justify-center aspect-square p-4 rounded-md bg-gray-600/20 hover:bg-gray-600/40 text-gray-200 transition-colors duration-100 group"
-                                onclick="startWatchdog()">
+                                onclick="reconnectDevices()">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 mb-2 text-gray-400 group-hover:text-white transition-colors">
-                                    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
                                     <path fill-rule="evenodd"
-                                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                                        d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <span class="text-sm font-medium">Start Watchdog</span>
+                                <span class="text-sm font-medium">Reconnect Devices</span>
                             </button>
 
                             {% if config['Camera'] %}
@@ -966,12 +965,15 @@
             });
         }
 
-        function startWatchdog() {
-            showConfirmModal("Are you sure you want to start the watchdog?", () => {
-                fetch('/api/startwatchdog', { method: 'POST' })
+        function reconnectDevices() {
+            showConfirmModal("Reconnect all devices? All device processes restart, the watchdog starts again, and the robotic switch turns off.", () => {
+                fetch('/api/reconnect_devices', { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
+                        if (data.status === 'error') {
+                            alert(data.message);
+                        }
                     });
             });
         }

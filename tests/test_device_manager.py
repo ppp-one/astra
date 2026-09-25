@@ -200,6 +200,19 @@ class TestDeviceManager:
             for d in device_manager.devices[t].values():
                 assert d.stopped is True
 
+    def test_reload_replaces_stopped_devices(self, device_manager):
+        device_manager.load_devices()
+        old_cam = device_manager.devices["Camera"]["cam0"]
+
+        device_manager.stop_all_devices()
+        device_manager.load_devices()
+
+        new_cam = device_manager.devices["Camera"]["cam0"]
+        assert new_cam is not old_cam
+        assert old_cam.stopped is True
+        assert new_cam.started is True
+        assert new_cam.stopped is False
+
     def test_force_poll_observing_conditions(self, device_manager):
         device_manager.load_devices()
 
