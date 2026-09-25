@@ -1,0 +1,1631 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.autofocus &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/autofocus';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.1" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.1</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.autofocus</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Automated telescope autofocus system for astronomical observations.</span>
+
+<span class="sd">This module provides a comprehensive autofocus system for astronomical telescopes,</span>
+<span class="sd">integrating with ALPACA devices and the astrafocus library. It supports various</span>
+<span class="sd">focus measurement operators, automatic target selection using Gaia catalog data,</span>
+<span class="sd">and sophisticated focusing algorithms for optimal image quality.</span>
+
+<span class="sd">Key components:</span>
+<span class="sd">    - Camera, focuser, and telescope interfaces for ALPACA devices</span>
+<span class="sd">    - Automated target selection using Gaia star catalog</span>
+<span class="sd">    - Multiple focus measurement algorithms (HFR, FFT, variance-based)</span>
+<span class="sd">    - Defocusing and refocusing capabilities</span>
+<span class="sd">    - Comprehensive logging and result visualization</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.io.fits</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtremumEstimatorRegistry</span><span class="p">,</span> <span class="n">FocusMeasureOperatorRegistry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus.autofocuser</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnalyticResponseAutofocuser</span><span class="p">,</span>
+    <span class="n">NonParametricResponseAutofocuser</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus.interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AutofocusDeviceManager</span><span class="p">,</span>
+    <span class="n">CameraInterface</span><span class="p">,</span>
+    <span class="n">FocuserInterface</span><span class="p">,</span>
+    <span class="n">TelescopeInterface</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus.star_size_focus_measure_operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarSizeFocusMeasure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astrafocus.targeting</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ZenithNeighbourhoodQuery</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">AltAz</span><span class="p">,</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">median_filter</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.action_configs</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutofocusConfig</span><span class="p">,</span> <span class="n">SelectionMethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.alpaca_device_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlpacaDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseLoggingHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Autofocuser"</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AstraCamera</span><span class="p">(</span><span class="n">CameraInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Camera interface for autofocus operations with ALPACA devices.</span>
+
+<span class="sd">    Provides image acquisition capabilities for autofocus sequences,</span>
+<span class="sd">    including exposure control, hot pixel removal, and data type handling.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory: Observatory instance for device control and logging.</span>
+<span class="sd">        alpaca_device_camera (AlpacaDevice): ALPACA camera device instance.</span>
+<span class="sd">        action (Action): Action configuration for the camera.</span>
+<span class="sd">        maxadu: Maximum ADU value for camera, auto-detected if None.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">alpaca_device_camera</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">maxadu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_camera</span> <span class="o">=</span> <span class="n">alpaca_device_camera</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxadu</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">maxadu</span> <span class="k">if</span> <span class="n">maxadu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alpaca_device_camera</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"MaxADU"</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">perform_exposure</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">texp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_option</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_light</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Capture image with specified exposure time and settings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texp (float): Exposure time in seconds.</span>
+<span class="sd">            log_option (Optional[str]): Logging option for the exposure.</span>
+<span class="sd">            use_light (bool): Whether to use light frame (vs bias frame).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Captured image data as numpy array.</span>
+<span class="sd">        """</span>
+        <span class="n">exposure_successful</span><span class="p">,</span> <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_exposure</span><span class="p">(</span>
+            <span class="n">texp</span><span class="o">=</span><span class="n">texp</span><span class="p">,</span> <span class="n">log_option</span><span class="o">=</span><span class="n">log_option</span><span class="p">,</span> <span class="n">use_light</span><span class="o">=</span><span class="n">use_light</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">exposure_successful</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># type: ignore</span>
+
+            <span class="c1"># image = self.remove_hot_pixels(image, kernel_size=5)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+        <span class="k">return</span> <span class="n">image</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_hot_pixels</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Remove hot pixels from image using median filtering.</span>
+
+<span class="sd">        Identifies and replaces hot pixels by comparing with a smoothed version</span>
+<span class="sd">        of the image using median filtering.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image (np.ndarray): 2D image array to process.</span>
+<span class="sd">            threshold (float): Threshold factor to identify hot pixels.</span>
+<span class="sd">            kernel_size (int): Size of median filter kernel.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Image with hot pixels replaced by smoothed values.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Create a copy of the image to avoid modifying the original</span>
+        <span class="n">cleaned_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># Create a smoothed version of the image using a median filter</span>
+        <span class="n">smoothed_image</span> <span class="o">=</span> <span class="n">median_filter</span><span class="p">(</span><span class="n">cleaned_image</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the difference between the original and smoothed images</span>
+        <span class="n">difference</span> <span class="o">=</span> <span class="n">cleaned_image</span> <span class="o">-</span> <span class="n">smoothed_image</span>
+
+        <span class="c1"># Identify hot pixels based on the difference</span>
+        <span class="n">hot_pixels</span> <span class="o">=</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">difference</span><span class="p">))</span>
+
+        <span class="c1"># Replace hot pixels with the smoothed value</span>
+        <span class="n">cleaned_image</span><span class="p">[</span><span class="n">hot_pixels</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoothed_image</span><span class="p">[</span><span class="n">hot_pixels</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">cleaned_image</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_perform_exposure</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">texp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_option</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_light</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Internal method to perform camera exposure.</span>
+
+<span class="sd">        Handles the actual camera exposure operation and updates success status.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texp (float): Exposure time in seconds.</span>
+<span class="sd">            log_option (Optional[str]): Logging option for the exposure.</span>
+<span class="sd">            use_light (bool): Whether to use light frame (vs bias frame).</span>
+<span class="sd">        """</span>
+        <span class="n">exposure_successful</span><span class="p">,</span> <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">perform_exposure</span><span class="p">(</span>
+            <span class="n">camera</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_camera</span><span class="p">,</span>
+            <span class="n">exptime</span><span class="o">=</span><span class="n">texp</span><span class="p">,</span>
+            <span class="n">maxadu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maxadu</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">use_light</span><span class="o">=</span><span class="n">use_light</span><span class="p">,</span>
+            <span class="n">log_option</span><span class="o">=</span><span class="n">log_option</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="n">exposure_successful</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Exposure failed."</span><span class="p">)</span>
+            <span class="c1"># raise ValueError("Exposure failed.")</span>
+
+        <span class="k">return</span> <span class="n">exposure_successful</span><span class="p">,</span> <span class="n">filepath</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AstraFocuser</span><span class="p">(</span><span class="n">FocuserInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Focuser interface for Astra observatory automation system.</span>
+
+<span class="sd">    Provides position control interface for telescope focuser through ALPACA protocol.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory (astra.Observatory): Main Astra instance for system coordination.</span>
+<span class="sd">        alpaca_device_focuser (AlpacaDevice): ALPACA focuser device interface.</span>
+<span class="sd">        action (Action): Action configuration for the focuser.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="s2">"astra.observatory.Observatory"</span><span class="p">,</span>
+        <span class="n">alpaca_device_focuser</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Action</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settle_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">alpaca_device_focuser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Absolute"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Focuser must be absolute for autofocusing to work."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_focuser</span> <span class="o">=</span> <span class="n">alpaca_device_focuser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settle_time</span> <span class="o">=</span> <span class="n">settle_time</span>
+
+        <span class="n">current_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_position</span><span class="p">()</span>
+        <span class="n">allowed_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpaca_device_focuser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"MaxStep"</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">current_position</span><span class="o">=</span><span class="n">current_position</span><span class="p">,</span> <span class="n">allowed_range</span><span class="o">=</span><span class="n">allowed_range</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_focuser_to_position</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">new_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hard_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Move focuser to specified position with timeout protection.</span>
+
+<span class="sd">        Moves the focuser to the target position and waits for completion.</span>
+<span class="sd">        Includes range checking and timeout protection.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_position (int): Target focuser position.</span>
+<span class="sd">            hard_timeout (float): Maximum time to wait for movement in seconds.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TimeoutError: If movement takes longer than hard_timeout.</span>
+<span class="sd">        """</span>
+        <span class="n">new_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_project_to_allowed_range</span><span class="p">(</span><span class="n">new_position</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_focuser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Move"</span><span class="p">,</span> <span class="n">Position</span><span class="o">=</span><span class="n">new_position</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_focuser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"IsMoving"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">hard_timeout</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">"Slew timeout"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settle_time</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the current focuser position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Current position of the focuser.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_focuser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Position"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_project_to_allowed_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Project position to the allowed focuser range.</span>
+
+<span class="sd">        Ensures the requested position is within the focuser's allowed range,</span>
+<span class="sd">        adjusting to boundaries if necessary with warning messages.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_position (int): Requested focuser position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Position adjusted to allowed range.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">new_position</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">new_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Requested focuser position </span><span class="si">{</span><span class="n">new_position</span><span class="si">}</span><span class="s2"> is below the allowed range. "</span>
+                <span class="sa">f</span><span class="s2">"Moving focuser to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> instead."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">new_position</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">new_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Requested focuser position </span><span class="si">{</span><span class="n">new_position</span><span class="si">}</span><span class="s2"> is above the allowed range. "</span>
+                <span class="sa">f</span><span class="s2">"Moving focuser to MaxStep </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> instead."</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_position</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AstraTelescope</span><span class="p">(</span><span class="n">TelescopeInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Telescope interface for Astra observatory automation system.</span>
+
+<span class="sd">    Provides coordinate control and pointing interface for telescope through ALPACA protocol.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory (astra.observatory.Observatory): Observatory instance.</span>
+<span class="sd">        alpaca_device_telescope (AlpacaDevice): ALPACA telescope device interface.</span>
+<span class="sd">        action (Action): Action configuration for the telescope.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="s2">"astra.observatory.Observatory"</span><span class="p">,</span>
+        <span class="n">alpaca_device_telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_telescope</span> <span class="o">=</span> <span class="n">alpaca_device_telescope</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_telescope_position</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">:</span> <span class="n">SkyCoord</span><span class="p">,</span> <span class="n">hard_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Move telescope to specified celestial coordinates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            coordinates (SkyCoord): Target celestial coordinates.</span>
+<span class="sd">            hard_timeout (float): Maximum time to wait for slew completion in seconds.</span>
+<span class="sd">        """</span>
+        <span class="c1"># The focus field is ICRS. Convert for a mount that expects another frame.</span>
+        <span class="n">icrs</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">icrs</span>
+        <span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">to_mount_coordinates</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_telescope</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span> <span class="n">icrs</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">icrs</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">"SlewToCoordinatesAsync"</span><span class="p">,</span>
+            <span class="n">RightAscension</span><span class="o">=</span><span class="n">ra_deg</span> <span class="o">/</span> <span class="mf">15.0</span><span class="p">,</span>
+            <span class="n">Declination</span><span class="o">=</span><span class="n">dec_deg</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Wait for slew to finish</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpaca_device_telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Slewing"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">hard_timeout</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">"Slew timeout"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AstraAutofocusDeviceManager</span><span class="p">(</span><span class="n">AutofocusDeviceManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Device manager for Astra autofocus operations.</span>
+
+<span class="sd">    Coordinates camera, focuser, and telescope for automated focusing operations</span>
+<span class="sd">    using the astrafocus library framework.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory (astra.observatory.Observatory): Observatory instance.</span>
+<span class="sd">        action_value (dict): Configuration values for autofocus action.</span>
+<span class="sd">        action (Action): Action configuration for the autofocus.</span>
+<span class="sd">        astra_camera (AstraCamera): Camera interface for image capture.</span>
+<span class="sd">        astra_focuser (AstraFocuser): Focuser interface for position control.</span>
+<span class="sd">        astra_telescope (Optional[AstraTelescope]): Telescope interface for positioning.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="s2">"astra.observatory.Observatory"</span><span class="p">,</span>
+        <span class="n">action_value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">astra_camera</span><span class="p">:</span> <span class="n">AstraCamera</span><span class="p">,</span>
+        <span class="n">astra_focuser</span><span class="p">:</span> <span class="n">AstraFocuser</span><span class="p">,</span>
+        <span class="n">astra_telescope</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AstraTelescope</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span> <span class="o">=</span> <span class="n">action_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">camera</span><span class="o">=</span><span class="n">astra_camera</span><span class="p">,</span> <span class="n">focuser</span><span class="o">=</span><span class="n">astra_focuser</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">astra_telescope</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_action</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="s2">"astra.observatory.Observatory"</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AstraAutofocusDeviceManager"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create device manager from the scheduled action.</span>
+
+<span class="sd">        Factory method to construct an autofocus device manager from</span>
+<span class="sd">        observatory configuration and device mappings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            observatory (astra.observatory.Observatory): Astra Observatory instance.</span>
+<span class="sd">            action (Action): Scheduled autofocus action.</span>
+<span class="sd">            paired_devices (PairedDevices): Device manager instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            AstraAutofocusDeviceManager: Configured device manager instance.</span>
+<span class="sd">        """</span>
+        <span class="n">action_value</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span>
+
+        <span class="n">alpaca_device_camera</span> <span class="o">=</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"Camera"</span><span class="p">][</span><span class="n">action</span><span class="o">.</span><span class="n">device_name</span><span class="p">]</span>
+        <span class="n">alpaca_device_focuser</span> <span class="o">=</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"Focuser"</span><span class="p">][</span>
+            <span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Focuser"</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">alpaca_device_telescope</span> <span class="o">=</span> <span class="n">observatory</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">][</span>
+            <span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">astra_camera</span> <span class="o">=</span> <span class="n">AstraCamera</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="p">,</span>
+            <span class="n">alpaca_device_camera</span><span class="o">=</span><span class="n">alpaca_device_camera</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">astra_focuser</span> <span class="o">=</span> <span class="n">AstraFocuser</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="p">,</span>
+            <span class="n">alpaca_device_focuser</span><span class="o">=</span><span class="n">alpaca_device_focuser</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">settle_time</span><span class="o">=</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="s2">"Focuser"</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">"settle_time"</span><span class="p">,</span> <span class="mi">3</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">astra_telescope</span> <span class="o">=</span> <span class="n">AstraTelescope</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="p">,</span> <span class="n">alpaca_device_telescope</span><span class="o">=</span><span class="n">alpaca_device_telescope</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="o">=</span><span class="n">observatory</span><span class="p">,</span>
+            <span class="n">action_value</span><span class="o">=</span><span class="n">action_value</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">astra_camera</span><span class="o">=</span><span class="n">astra_camera</span><span class="p">,</span>
+            <span class="n">astra_focuser</span><span class="o">=</span><span class="n">astra_focuser</span><span class="p">,</span>
+            <span class="n">astra_telescope</span><span class="o">=</span><span class="n">astra_telescope</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check if observatory conditions are suitable for autofocus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if conditions are acceptable, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Defocuser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Defocusing control for creating intentionally out-of-focus images.</span>
+
+<span class="sd">    Used for specific observational techniques requiring defocused stellar images,</span>
+<span class="sd">    such as photometry of very bright stars or specific calibration procedures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory (astra.observatory.Observatory): Astra observatory instance.</span>
+<span class="sd">        paired_devices (PairedDevices): Device manager for observatory components.</span>
+<span class="sd">        action (Optional[Action]): Action configuration for the focuser.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Action</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span> <span class="o">=</span> <span class="n">paired_devices</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span> <span class="o">=</span> <span class="n">AstraFocuser</span><span class="p">(</span>
+            <span class="n">observatory</span><span class="o">=</span><span class="n">observatory</span><span class="p">,</span>
+            <span class="n">alpaca_device_focuser</span><span class="o">=</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">focuser</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_best_focus_position_from_config</span><span class="p">()</span>
+        <span class="n">focuser_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="s2">"Focuser"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">focus_tolerance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">focuser_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"focus_tolerance"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">focuser_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the name of the connected focuser device.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Name identifier of the focuser device.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Focuser"</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_best_focus_position_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load the best focus position from device configuration.</span>
+
+<span class="sd">        Retrieves the stored focus position from the focuser configuration.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Best focus position from configuration.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If focuser configuration is not found or missing focus_position.</span>
+<span class="sd">        """</span>
+        <span class="n">focuser_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="s2">"Focuser"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"focus_position"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">focuser_config</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"No best focus position found in focuser configuration. "</span>
+                <span class="s2">"Using current position as best focus position."</span>
+                <span class="sa">f</span><span class="s2">" Focuser: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focuser_name</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"focuser_config: </span><span class="si">{</span><span class="n">focuser_config</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Focuser configuration not found in paired devices."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">focuser_config</span><span class="p">[</span><span class="s2">"focus_position"</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the current focuser position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Current position of the focuser.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span><span class="o">.</span><span class="n">get_current_position</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">defocus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Move focuser to a defocused position.</span>
+
+<span class="sd">        Intentionally moves the focuser away from the best focus position</span>
+<span class="sd">        for specialized observing techniques.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            position (int): Target defocus position.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_position</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_tolerance</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Focuser </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focuser_name</span><span class="si">}</span><span class="s2"> within focus tolerance "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus_tolerance</span><span class="si">}</span><span class="s2"> steps) of target position "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">. No change of focus needed."</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">current_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span><span class="o">.</span><span class="n">get_current_position</span><span class="p">()</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="n">position</span> <span class="o">-</span> <span class="n">current_position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Defocusing by </span><span class="si">{</span><span class="n">shift</span><span class="si">}</span><span class="s2"> steps from current position </span><span class="si">{</span><span class="n">current_position</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"to new position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span><span class="o">.</span><span class="n">move_focuser_to_position</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">refocus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return focuser to the best focus position.</span>
+
+<span class="sd">        Moves the focuser back to the stored best focus position</span>
+<span class="sd">        after defocusing operations.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="p">)</span>
+            <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_tolerance</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Focuser </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focuser_name</span><span class="si">}</span><span class="s2"> within focus tolerance "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus_tolerance</span><span class="si">}</span><span class="s2"> steps) of best focus position "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="si">}</span><span class="s2">. No refocusing needed."</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Refocusing from current position </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span><span class="o">.</span><span class="n">get_current_position</span><span class="p">()</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"to the best focus position: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_focuser</span><span class="o">.</span><span class="n">move_focuser_to_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Autofocuser">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Autofocuser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Main autofocus orchestration class for Astra observatory.</span>
+
+<span class="sd">    Coordinates complete autofocus operations including target selection,</span>
+<span class="sd">    focus measurement, and optimization using multiple algorithms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observatory (Any): Main Astra instance for system coordination.</span>
+<span class="sd">        action (Action): Action configuration for the autofocus.</span>
+<span class="sd">        paired_devices (PairedDevices): Device manager for observatory components.</span>
+<span class="sd">        action_value (dict): Configuration values for autofocus action.</span>
+<span class="sd">        save_path (Optional[Path]): Directory path for saving autofocus data.</span>
+<span class="sd">        autofocuser (Optional[Union[NonParametricResponseAutofocuser, AnalyticResponseAutofocuser]]):</span>
+<span class="sd">            Specific autofocus algorithm instance.</span>
+<span class="sd">        success (bool): Success flag for autofocus operation.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">observatory</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">autofocuser</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">NonParametricResponseAutofocuser</span><span class="p">,</span> <span class="n">AnalyticResponseAutofocuser</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span> <span class="o">=</span> <span class="n">observatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span> <span class="o">=</span> <span class="n">paired_devices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span> <span class="o">=</span> <span class="n">autofocuser</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="n">success</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">AutofocusConfig</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">fov_width</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">fov_height</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">fov_width</span><span class="p">,</span> <span class="n">fov_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_default_field_of_view</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">fov_width</span> <span class="o">=</span> <span class="n">fov_width</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">fov_height</span> <span class="o">=</span> <span class="n">fov_height</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fwhm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_default_fwhm</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialise_logging</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded action values </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Autofocus configuration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">best_focus_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the best focus position found by the autofocuser.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Optimal focus position determined by autofocus algorithm.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If autofocuser has not been set up yet.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Autofocuser has not been set up yet."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="o">.</span><span class="n">best_focus_position</span>
+
+<div class="viewcode-block" id="Autofocuser.run">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Execute the autofocus sequence.</span>
+
+<span class="sd">        Runs the complete autofocus operation using the configured algorithm.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if autofocus completed successfully, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Autofocuser has not been set up yet."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">"Autofocuser"</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">],</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">"Error running autofocus"</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.setup">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.setup">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set up the autofocus system with devices and algorithms.</span>
+
+<span class="sd">        Configures camera, focuser, telescope interfaces and initializes</span>
+<span class="sd">        the autofocus algorithm with specified parameters.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_conditions</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">"Autofocuser"</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">],</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">"Error extracting action_value for autofocus"</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Internal setup method for autofocus configuration.</span>
+
+<span class="sd">        Configures save paths, device managers, focus measure operators,</span>
+<span class="sd">        and autofocus algorithms based on action values.</span>
+<span class="sd">        """</span>
+        <span class="n">autofocus_device_manager</span> <span class="o">=</span> <span class="n">AstraAutofocusDeviceManager</span><span class="o">.</span><span class="n">from_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">,</span>
+            <span class="n">paired_devices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">focus_measure_operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_focus_measure_operator</span><span class="p">()</span>
+
+        <span class="c1"># Reduce exposure time if necessary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">reduce_exposure_time</span><span class="p">:</span>
+            <span class="c1"># Clean image, CustomImageClass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">exptime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_exposure_time</span><span class="p">(</span>
+                <span class="n">autofocus_device_manager</span><span class="o">=</span><span class="n">autofocus_device_manager</span><span class="p">,</span>
+                <span class="n">exposure_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">exptime</span><span class="p">,</span>
+                <span class="n">reduction_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">max_reduction_steps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">minimal_exposure_time</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">initial_focus_position</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_range_is_relative</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">initial_focus_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span>
+                <span class="s2">"Focuser"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"focus_position"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">initial_focus_position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">initial_focus_position</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">autofocus_device_manager</span><span class="o">.</span><span class="n">focuser</span><span class="o">.</span><span class="n">get_current_position</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">"No best focus position found in focuser configuration. "</span>
+                    <span class="sa">f</span><span class="s2">"Using current position </span><span class="si">{</span><span class="n">initial_focus_position</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="s2">"to define autofocus search range instead."</span>
+                <span class="p">)</span>
+
+        <span class="n">autofocus_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">autofocus_device_manager</span><span class="o">=</span><span class="n">autofocus_device_manager</span><span class="p">,</span>
+            <span class="n">search_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_range</span><span class="p">,</span>  <span class="c1"># None defaults to allowed focuser range</span>
+            <span class="n">n_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">n_steps</span><span class="p">,</span>
+            <span class="n">n_exposures</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">n_exposures</span><span class="p">,</span>
+            <span class="n">decrease_search_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">decrease_search_range</span><span class="p">,</span>
+            <span class="n">exposure_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">exptime</span><span class="p">,</span>
+            <span class="n">secondary_focus_measure_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_secondary_focus_measure_operators</span><span class="p">,</span>
+            <span class="n">focus_measure_operator_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">focus_measure_operator_kwargs</span><span class="p">,</span>
+            <span class="n">search_range_is_relative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_range_is_relative</span><span class="p">,</span>
+            <span class="n">initial_position</span><span class="o">=</span><span class="n">initial_focus_position</span><span class="p">,</span>
+            <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Autofocus arguments: </span><span class="si">{</span><span class="n">autofocus_args</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">focus_measure_operator</span><span class="p">,</span> <span class="n">StarSizeFocusMeasure</span><span class="p">):</span>
+            <span class="n">autofocuser</span> <span class="o">=</span> <span class="n">AnalyticResponseAutofocuser</span><span class="p">(</span>
+                <span class="n">focus_measure_operator</span><span class="o">=</span><span class="n">focus_measure_operator</span><span class="p">,</span>
+                <span class="n">percent_to_cut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">percent_to_cut</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">autofocus_args</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Using the focus_measure_operator </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">focus_measure_operator_name</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extremum_estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_extremum_estimator</span><span class="p">()</span>
+            <span class="n">autofocuser</span> <span class="o">=</span> <span class="n">NonParametricResponseAutofocuser</span><span class="p">(</span>
+                <span class="n">focus_measure_operator</span><span class="o">=</span><span class="n">focus_measure_operator</span><span class="p">(),</span>
+                <span class="n">extremum_estimator</span><span class="o">=</span><span class="n">extremum_estimator</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">autofocus_args</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Using the extremum_estimator </span><span class="si">{</span><span class="n">extremum_estimator</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using autofocuser </span><span class="si">{</span><span class="n">autofocuser</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span> <span class="o">=</span> <span class="n">autofocuser</span>
+
+<div class="viewcode-block" id="Autofocuser.determine_autofocus_calibration_field">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.determine_autofocus_calibration_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determine_autofocus_calibration_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Determine optimal celestial coordinates for autofocus operation.</span>
+
+<span class="sd">        Selects suitable star field for autofocus using Gaia catalog data and</span>
+<span class="sd">        zenith neighborhood analysis. Uses various selection criteria including</span>
+<span class="sd">        magnitude ranges, field of view, and star density preferences.</span>
+
+<span class="sd">        Selection methods:</span>
+<span class="sd">            - 'single': Isolated star closest to zenith</span>
+<span class="sd">            - 'maximal': Star with maximum neighbors in field</span>
+<span class="sd">            - 'any': Any suitable star closest to zenith</span>
+
+<span class="sd">        Updates self.config.calibration_field.coordinates with selected coordinates or</span>
+<span class="sd">        sets self.success to False if no suitable field found.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_conditions</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_determine_autofocus_calibration_field</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">"Autofocuser"</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">],</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">"Error determining autofocus calibration field"</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_determine_autofocus_calibration_field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Determine the calibration field for the autofocus using config attributes."""</span>
+        <span class="n">calibration_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span>
+
+        <span class="c1"># Use user-specified coordinates if present</span>
+        <span class="k">if</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">dec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Using user-specified calibration coordinates for autofocus."</span>
+            <span class="p">)</span>
+            <span class="n">calibration_config</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">ra</span><span class="o">=</span><span class="n">Angle</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">ra</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                <span class="n">dec</span><span class="o">=</span><span class="n">Angle</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">dec</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Determining autofocus calibration field."</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">observatory_location</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">image_handler</span><span class="o">.</span><span class="n">get_observatory_location</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Observatory location determined to be at </span><span class="si">{</span><span class="n">observatory_location</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error determining observatory location: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">gaia_db</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">use_gaia</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"gaia_tmass_db_path not specified in config."</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Computing coordinates for the autofocus target with maximal zenith angle of "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">maximal_zenith_angle</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+            <span class="n">zenith_neighbourhood_query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ZenithNeighbourhoodQuery</span><span class="o">.</span><span class="n">create_from_location_and_angle</span><span class="p">(</span>
+                    <span class="n">db_path</span><span class="o">=</span><span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">gaia_db</span><span class="p">,</span>
+                    <span class="n">observatory_location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">,</span>
+                    <span class="n">observation_time</span><span class="o">=</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">observation_time</span><span class="p">,</span>
+                    <span class="n">maximal_zenith_angle</span><span class="o">=</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">maximal_zenith_angle</span><span class="p">,</span>
+                    <span class="n">maximal_number_of_stars</span><span class="o">=</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">maximal_number_of_stars</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Zenith was determined to be at "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">zenith_neighbourhood_query</span><span class="o">.</span><span class="n">zenith_neighbourhood</span><span class="o">.</span><span class="n">zenith</span><span class="o">.</span><span class="n">icrs</span><span class="si">!r}</span><span class="s2">."</span>
+            <span class="p">)</span>
+
+            <span class="n">min_phot_g_mean_mag</span><span class="p">,</span> <span class="n">max_phot_g_mean_max</span> <span class="o">=</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">g_mag_range</span>
+            <span class="n">min_j_m</span><span class="p">,</span> <span class="n">max_j_m</span> <span class="o">=</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">j_mag_range</span>
+            <span class="n">znqr</span> <span class="o">=</span> <span class="n">zenith_neighbourhood_query</span><span class="o">.</span><span class="n">query_shardwise</span><span class="p">(</span>
+                <span class="n">n_sub_div</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">min_phot_g_mean_mag</span><span class="o">=</span><span class="n">min_phot_g_mean_mag</span><span class="p">,</span>
+                <span class="n">max_phot_g_mean_mag</span><span class="o">=</span><span class="n">max_phot_g_mean_max</span><span class="p">,</span>
+                <span class="n">min_j_m</span><span class="o">=</span><span class="n">min_j_m</span><span class="p">,</span>
+                <span class="n">max_j_m</span><span class="o">=</span><span class="n">max_j_m</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Retrieved </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">znqr</span><span class="p">)</span><span class="si">}</span><span class="s2"> stars in the neighbourhood of the zenith from the database "</span>
+                <span class="s2">"within the desired magnitude ranges."</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+                <span class="k">return</span>
+
+            <span class="n">znqr</span><span class="o">.</span><span class="n">determine_stars_in_neighbourhood</span><span class="p">(</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">fov_height</span><span class="p">,</span>
+                <span class="n">width</span><span class="o">=</span><span class="n">calibration_config</span><span class="o">.</span><span class="n">fov_width</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+                <span class="k">return</span>
+
+            <span class="n">znqr</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"zenith_angle"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+
+            <span class="n">selection_method</span> <span class="o">=</span> <span class="n">calibration_config</span><span class="o">.</span><span class="n">selection_method</span>
+            <span class="k">if</span> <span class="n">selection_method</span> <span class="o">==</span> <span class="n">SelectionMethod</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">:</span>
+                <span class="n">centre_coordinates</span> <span class="o">=</span> <span class="n">znqr</span><span class="o">.</span><span class="n">get_sky_coord_of_select_star</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">znqr</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">selection_method</span> <span class="o">==</span> <span class="n">SelectionMethod</span><span class="o">.</span><span class="n">MAXIMAL</span><span class="p">:</span>
+                <span class="n">centre_coordinates</span> <span class="o">=</span> <span class="n">znqr</span><span class="o">.</span><span class="n">get_sky_coord_of_select_star</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">znqr</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">selection_method</span> <span class="o">==</span> <span class="n">SelectionMethod</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span>
+                <span class="n">centre_coordinates</span> <span class="o">=</span> <span class="n">znqr</span><span class="o">.</span><span class="n">get_sky_coord_of_select_star</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># This should never happen due to enum selection</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown selection_method: </span><span class="si">{</span><span class="n">selection_method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">centre_coordinates</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">centre_coordinates</span><span class="p">,</span> <span class="n">SkyCoord</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No suitable calibration field found."</span><span class="p">)</span>
+
+            <span class="n">calibration_config</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">centre_coordinates</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Error determining autofocus target coordinates: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="s2">"Attempt to autofocus at zenith."</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">calibration_config</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                    <span class="n">AltAz</span><span class="p">(</span>
+                        <span class="n">obstime</span><span class="o">=</span><span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                        <span class="n">location</span><span class="o">=</span><span class="n">observatory_location</span><span class="p">,</span>
+                        <span class="n">alt</span><span class="o">=</span><span class="n">Angle</span><span class="p">(</span><span class="mf">90.0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                        <span class="n">az</span><span class="o">=</span><span class="n">Angle</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">icrs</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">"Autofocus target coordinates set to zenith."</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Error determining zenith: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+                    <span class="s2">"This is likely due to an error in the observatory location in the header."</span>
+                <span class="p">)</span>
+
+<div class="viewcode-block" id="Autofocuser.slew_to_calibration_field">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.slew_to_calibration_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slew_to_calibration_field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Slew telescope to the determined autofocus calibration field.</span>
+
+<span class="sd">        Moves the telescope to the coordinates selected for autofocus operations.</span>
+<span class="sd">        Updates action_value with target coordinates and initiates observatory setup.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Slewing to autofocus calibration field: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">coordinates</span><span class="si">!r}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="p">[</span><span class="s2">"ra"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="p">[</span><span class="s2">"dec"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">calibration_field</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">setup_observatory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">report_device_issue</span><span class="p">(</span>
+                <span class="n">device_type</span><span class="o">=</span><span class="s2">"Autofocuser"</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="p">[</span><span class="s2">"Telescope"</span><span class="p">],</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">"Error slewing to autofocus calibration field"</span><span class="p">,</span>
+                <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.reduce_exposure_time">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.reduce_exposure_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reduce_exposure_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">autofocus_device_manager</span><span class="p">:</span> <span class="n">AstraAutofocusDeviceManager</span><span class="p">,</span>
+        <span class="n">exposure_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">reduction_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_reduction_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">minimal_exposure_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Automatically reduce exposure time to prevent saturation.</span>
+
+<span class="sd">        Takes test exposures and progressively reduces exposure time if saturation</span>
+<span class="sd">        is detected, ensuring optimal image quality for focus measurements.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            autofocus_device_manager (AstraAutofocusDeviceManager): Device manager for camera access.</span>
+<span class="sd">            exposure_time (float): Initial exposure time in seconds.</span>
+<span class="sd">            reduction_factor (float): Factor by which to reduce exposure time.</span>
+<span class="sd">            max_reduction_steps (int): Maximum number of reduction iterations.</span>
+<span class="sd">            minimal_exposure_time (float): Minimum allowed exposure time.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Optimal exposure time that avoids saturation.</span>
+<span class="sd">        """</span>
+        <span class="n">new_exposure_time</span> <span class="o">=</span> <span class="n">exposure_time</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_reduction_steps</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">new_exposure_time</span> <span class="o">&lt;</span> <span class="n">minimal_exposure_time</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Minimal exposure time of </span><span class="si">{</span><span class="n">minimal_exposure_time</span><span class="si">}</span><span class="s2"> reached. "</span>
+                    <span class="sa">f</span><span class="s2">"Cannot reduce exposure time further. Image might still be saturated."</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">new_exposure_time</span> <span class="o">*</span> <span class="n">reduction_factor</span>
+
+            <span class="n">image</span> <span class="o">=</span> <span class="n">autofocus_device_manager</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">perform_exposure</span><span class="p">(</span>
+                <span class="n">texp</span><span class="o">=</span><span class="n">new_exposure_time</span><span class="p">,</span> <span class="n">use_light</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+            <span class="n">clean</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">median_filter</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"mirror"</span><span class="p">)</span>
+            <span class="n">band_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">band_clean</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">-</span> <span class="n">band_corr</span>
+
+            <span class="k">if</span> <span class="n">band_clean</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">autofocus_device_manager</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">maxadu</span><span class="p">:</span>
+                <span class="n">new_exposure_time</span> <span class="o">=</span> <span class="n">new_exposure_time</span> <span class="o">/</span> <span class="n">reduction_factor</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">band_clean</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">autofocus_device_manager</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">maxadu</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Reduced exposure time of </span><span class="si">{</span><span class="n">exposure_time</span><span class="si">}</span><span class="s2"> s is still saturating. "</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">new_exposure_time</span> <span class="o">!=</span> <span class="n">exposure_time</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Reduced exposure time from </span><span class="si">{</span><span class="n">exposure_time</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_exposure_time</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="sa">f</span><span class="s2">"to avoid saturation."</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_exposure_time</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Timestamp shared across all output files for a single run."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_timestamp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="n">save_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">save_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"autofocus_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_timestamp</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_determine_save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Resolve the directory to write autofocus output files to.</span>
+
+<span class="sd">        Prefers the configured save_path; falls back to the directory of the</span>
+<span class="sd">        last image saved by this camera, or None if neither is available.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">save_path</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">image_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">get_image_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="o">.</span><span class="n">device_name</span><span class="p">)</span>
+            <span class="n">last_image_path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">image_handler</span><span class="p">,</span> <span class="s2">"last_image_path"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Unable to determine last image path from image handler: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="n">last_image_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">last_image_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">last_image_path</span><span class="o">.</span><span class="n">parent</span>
+
+<div class="viewcode-block" id="Autofocuser.make_summary_plot">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.make_summary_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_summary_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create visualization plot of autofocus results.</span>
+
+<span class="sd">        Generates a summary plot showing focus measure vs focuser position</span>
+<span class="sd">        with the determined best focus position marked. Saves plot to the</span>
+<span class="sd">        autofocus results directory.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_save_dir</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"Skipping creation of autofocus summary plot: "</span>
+                    <span class="s2">"unable to determine save directory."</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"autofocuser"</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="p">,</span> <span class="s2">"focus_record"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="o">.</span><span class="n">focus_record</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">"Skipping creation of autofocus summary plot: "</span>
+                        <span class="s2">"unable to retrieve focus record from autofocuser instance."</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"Skipping creation of autofocus summary plot: "</span>
+                    <span class="s2">"autofocuser instance does not have a focus_record attribute."</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"focus_pos"</span><span class="p">)</span>
+
+            <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">"Agg"</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">"focus_pos"</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">"focus_measure"</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">""</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Focuser position"</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Focus measure (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">focus_measure_operator_name</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+                <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"Best focus position"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">"summary"</span><span class="p">,</span> <span class="s2">"png"</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">"record"</span><span class="p">,</span> <span class="s2">"csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error creating summary plot: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.create_result_file">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.create_result_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_result_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create text file with autofocus results summary.</span>
+
+<span class="sd">        Writes a summary file containing the best focus position, algorithm used,</span>
+<span class="sd">        and autofocuser configuration for future reference.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_save_dir</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">"Skipping creation of result file: "</span>
+                <span class="s2">"no save_path configured and no last image available."</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">result_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">"result"</span><span class="p">,</span> <span class="s2">"txt"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">result_file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">result_file</span><span class="p">:</span>
+                <span class="n">result_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Best focus position: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">result_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Focus measure operator: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">focus_measure_operator_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="p">)</span>
+                <span class="n">result_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Autofocuser: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">autofocuser</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error creating result file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialise_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set up logging integration with astrafocus library.</span>
+
+<span class="sd">        Configures the astrafocus logger to use Astra's logging system</span>
+<span class="sd">        for consistent log formatting and storage.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"astrafocus"</span><span class="p">)</span><span class="o">.</span><span class="n">hasHandlers</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"astrafocus"</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"astrafocus"</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span>
+            <span class="n">DatabaseLoggingHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">database_manager</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Verify observatory conditions are suitable for autofocus.</span>
+
+<span class="sd">        Checks weather, equipment status, and other conditions before</span>
+<span class="sd">        proceeding with autofocus operations.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if conditions are acceptable, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">check_conditions</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Autofocus aborted due to bad conditions."</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span>
+
+<div class="viewcode-block" id="Autofocuser.save_best_focus_position">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.save_best_focus_position">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_best_focus_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Save determined best focus position to observatory configuration.</span>
+
+<span class="sd">        Updates the focuser configuration with the optimal focus position</span>
+<span class="sd">        found during autofocus operation for future use.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Saving best focus position </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span><span class="p">)</span><span class="si">}</span><span class="s2"> "</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">get_device_config</span><span class="p">(</span><span class="s2">"Focuser"</span><span class="p">)[</span><span class="s2">"focus_position"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_focus_position</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paired_devices</span><span class="o">.</span><span class="n">observatory_config</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.determine_focus_measure_operator">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.determine_focus_measure_operator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determine_focus_measure_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Select focus measurement algorithm from configuration.</span>
+
+<span class="sd">        Determines the appropriate focus measure operator based on user preferences,</span>
+<span class="sd">        supporting various algorithms like HFR, 2D Gaussian, FFT, and variance-based methods.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[Any, str]: Focus measure operator class and descriptive name.</span>
+<span class="sd">        """</span>
+        <span class="n">focus_measure_operator</span> <span class="o">=</span> <span class="n">FocusMeasureOperatorRegistry</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">focus_measure_operator</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">focus_measure_operator</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.determine_extremum_estimator">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.determine_extremum_estimator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determine_extremum_estimator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Select extremum estimation algorithm for focus curve analysis.</span>
+
+<span class="sd">        Chooses appropriate curve fitting method for determining optimal focus</span>
+<span class="sd">        from focus measure vs position data. Supports LOWESS, median filter,</span>
+<span class="sd">        spline, and RBF methods.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            astrafee.RobustExtremumEstimator: Configured extremum estimator instance.</span>
+<span class="sd">        """</span>
+        <span class="n">extremum_estimator_class</span> <span class="o">=</span> <span class="n">ExtremumEstimatorRegistry</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">extremum_estimator</span>
+        <span class="p">)</span>
+        <span class="n">extremum_estimator</span> <span class="o">=</span> <span class="n">extremum_estimator_class</span><span class="p">(</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">extremum_estimator_kwargs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Initialised extremum estimator: </span><span class="si">{</span><span class="n">extremum_estimator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"with parameters: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">extremum_estimator_kwargs</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">extremum_estimator</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.determine_default_field_of_view">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.determine_default_field_of_view">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determine_default_field_of_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">field_of_view</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">calculate_field_of_view</span><span class="p">()</span>
+            <span class="n">fov_width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">field_of_view</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">fov_height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">field_of_view</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Determined field of view width=</span><span class="si">{</span><span class="n">fov_width</span><span class="si">}</span><span class="s2">, height=</span><span class="si">{</span><span class="n">fov_height</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">fov_width</span><span class="p">,</span> <span class="n">fov_height</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Error determining default field of view from paired devices: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Autofocuser.determine_default_fwhm">
+<a class="viewcode-back" href="../../api/generated/astra.autofocus.html#astra.autofocus.Autofocuser.determine_default_fwhm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determine_default_fwhm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paired_devices</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fwhm</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">calculate_fwhm</span><span class="p">(</span><span class="n">seeing_arcsec</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observatory</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Determined default fwhm=</span><span class="si">{</span><span class="n">fwhm</span><span class="si">}</span><span class="s2"> px from plate scale."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">fwhm</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Error determining default fwhm from paired devices: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

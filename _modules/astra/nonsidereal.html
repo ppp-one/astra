@@ -1,0 +1,1006 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.nonsidereal &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/nonsidereal';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.1" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.1</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.nonsidereal</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Non-sidereal (moving target) tracking for observatory imaging sequences.</span>
+
+<span class="sd">This module tracks solar system objects and Earth-orbiting objects. Their sky</span>
+<span class="sd">coordinates change over the length of an exposure. The module reads positions</span>
+<span class="sd">from a pre-computed ephemeris and sends differential tracking rates to the mount</span>
+<span class="sd">through ASCOM.</span>
+
+<span class="sd">What it does:</span>
+<span class="sd">    - Reads the ephemeris that ``ObjectActionConfig`` computed at schedule load</span>
+<span class="sd">      time, from Astropy or from JPL Horizons.</span>
+<span class="sd">    - Interpolates RA/Dec and their rates at any moment without new lookups.</span>
+<span class="sd">    - Sends the ASCOM ``RightAscensionRate`` and ``DeclinationRate`` the mount needs</span>
+<span class="sd">      to follow the target (open-loop tracking).</span>
+<span class="sd">    - Re-slews the mount to the current ephemeris position at a set interval, to</span>
+<span class="sd">      remove drift that the rates cannot correct.</span>
+
+<span class="sd">Notes:</span>
+<span class="sd">    - Autoguiding does not work with non-sidereal tracking. The observatory</span>
+<span class="sd">      disables guiding when this tracking is active.</span>
+<span class="sd">    - The mount must report ``CanSetRightAscensionRate`` and</span>
+<span class="sd">      ``CanSetDeclinationRate``.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ephemeris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.alpaca_device_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlpacaDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.paired_devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairedDevices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astra.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NonSiderealManager"</span><span class="p">]</span>
+
+<span class="c1"># Issuing a rate command interrupts tracking on some mounts, so the two settings</span>
+<span class="c1"># below govern how rarely we can get away with it.</span>
+<span class="c1">#</span>
+<span class="c1"># Never send rates more often than this, however fast the caller asks. apply_rates</span>
+<span class="c1"># is driven from the exposure and image-save loops at up to 10 Hz, which is far</span>
+<span class="c1"># beyond what any ephemeris justifies: outside low Earth orbit the required rate</span>
+<span class="c1"># changes over minutes, not milliseconds. A schedule overrides this default with</span>
+<span class="c1"># the action value "nonsidereal_rate_update_interval".</span>
+<span class="n">_MIN_RATE_UPDATE_INTERVAL_S</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="c1"># Beyond the interval floor, only send a rate once keeping the current one would</span>
+<span class="c1"># trail the target by more than this much. This is an angle on the sky, not a</span>
+<span class="c1"># percentage of the rate. A percentage is undefined when a rate passes through</span>
+<span class="c1"># zero, which happens at a target's maximum declination, and would then fire</span>
+<span class="c1"># continuously over changes far too small to see.</span>
+<span class="n">_RATE_UPDATE_TOLERANCE_ARCSEC</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="c1"># How far the target may drift past the intended start of imaging before the mount</span>
+<span class="c1"># is re-pointed. Expressed as an angle rather than as a grace period, because no</span>
+<span class="c1"># single period suits every target: a comet takes most of an hour to move this far,</span>
+<span class="c1"># while a satellite in low orbit covers it in a fraction of a second.</span>
+<span class="n">_MAX_START_DRIFT_ARCSEC</span> <span class="o">=</span> <span class="mf">60.0</span>
+
+<span class="c1"># Seconds to wait after issuing an asynchronous slew before the caller starts</span>
+<span class="c1"># polling ``Slewing``; some drivers do not raise the flag immediately. Mirrors</span>
+<span class="c1"># ``observatory.SLEW_POLL_START_DELAY``, which cannot be imported here because</span>
+<span class="c1"># observatory imports this module. The post-slew settle is applied by the</span>
+<span class="c1"># ``wait_for_slew_fn`` passed into ``recenter``.</span>
+<span class="n">_SLEW_POLL_START_DELAY</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="c1"># How far the sequence start may sit from the epoch the ephemeris interpolators</span>
+<span class="c1"># were computed for. These are the same timestamp in a correctly ordered load, so</span>
+<span class="c1"># any real drift is a re-timed schedule, not rounding.</span>
+<span class="n">_MAX_EPHEMERIS_EPOCH_DRIFT_S</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+
+<span class="c1"># Skip the second, fine re-centering slew when the target moved less than this</span>
+<span class="c1"># during the first slew. A planet moves well under an arcsecond in that time, so</span>
+<span class="c1"># the second slew would only add settle time.</span>
+<span class="n">_RECENTER_CORRECTION_MIN_ARCSEC</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_NonSiderealState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Holds pre-computed ephemeris state for a single imaging sequence.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        body_name (str): Name of the solar system body being tracked.</span>
+<span class="sd">        ra_interp (Any): Scipy interpolator for Right Ascension (degrees).</span>
+<span class="sd">        dec_interp (Any): Scipy interpolator for Declination (degrees).</span>
+<span class="sd">        ra_rate_interp (Any): Scipy interpolator for ASCOM RightAscensionRate</span>
+<span class="sd">            (seconds of RA per sidereal second), or None to derive rates from</span>
+<span class="sd">            ``ra_interp`` and ``dec_interp`` by finite difference.</span>
+<span class="sd">        dec_rate_interp (Any): Scipy interpolator for ASCOM DeclinationRate</span>
+<span class="sd">            (arcseconds per SI second), or None as above.</span>
+<span class="sd">        sequence_start_time (Time): The epoch the interpolators are keyed to (t=0).</span>
+<span class="sd">        recenter_interval (int): Seconds between re-centering slews. 0 disables them.</span>
+<span class="sd">        last_recenter_time (float | None): Unix timestamp of the last re-center.</span>
+<span class="sd">            None until tracking rates are first applied, so the interval counts</span>
+<span class="sd">            from the start of tracking rather than from sequence setup.</span>
+<span class="sd">        last_applied_ra_rate (float | None): Last RightAscensionRate sent to the mount.</span>
+<span class="sd">        last_applied_dec_rate (float | None): Last DeclinationRate sent to the mount.</span>
+<span class="sd">        last_rate_update_time (float | None): Unix timestamp of the last rate command.</span>
+<span class="sd">        last_rate_check_time (float | None): Unix timestamp of the last time the</span>
+<span class="sd">            rates were evaluated and found not worth sending. Gates re-evaluation</span>
+<span class="sd">            so that a steady target is not re-checked at the caller's 10 Hz.</span>
+<span class="sd">    """</span>
+
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">ra_interp</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dec_interp</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">ra_rate_interp</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dec_rate_interp</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">sequence_start_time</span><span class="p">:</span> <span class="n">Time</span>
+    <span class="n">recenter_interval</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">last_recenter_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_applied_ra_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_applied_dec_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_rate_update_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_rate_check_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="NonSiderealManager">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NonSiderealManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Manages non-sidereal tracking for a single imaging sequence.</span>
+
+<span class="sd">    This class computes the tracking rates and the re-center positions from the</span>
+<span class="sd">    pre-computed ephemeris. The observatory loop only controls the hardware.</span>
+
+<span class="sd">    Usage::</span>
+
+<span class="sd">        manager = NonSiderealManager(action, logger)</span>
+<span class="sd">        if manager.is_active:</span>
+<span class="sd">            manager.apply_rates(telescope)</span>
+
+<span class="sd">        try:</span>
+<span class="sd">            # ... exposure loop ...</span>
+<span class="sd">            if manager.should_recenter():</span>
+<span class="sd">                manager.recenter(paired_devices, wait_for_slew_fn)</span>
+<span class="sd">        finally:</span>
+<span class="sd">            manager.reset_rates(telescope)</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">,</span>
+        <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">to_mount_frame</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Args:</span>
+<span class="sd">            action: The scheduled action for this sequence.</span>
+<span class="sd">            logger: Observatory logger.</span>
+<span class="sd">            telescope: Mount this sequence will run on. When given, its ASCOM</span>
+<span class="sd">                ``CanSetRightAscensionRate`` / ``CanSetDeclinationRate`` flags decide</span>
+<span class="sd">                whether non-sidereal tracking can run at all. This is the authoritative</span>
+<span class="sd">                check: schedule validation only knows whether *some* mount in the</span>
+<span class="sd">                observatory supports differential rates, not which one the action is</span>
+<span class="sd">                paired with.</span>
+<span class="sd">            to_mount_frame: Optional ``(ra_deg, dec_deg) -&gt; (ra_deg, dec_deg)`` that</span>
+<span class="sd">                converts an ICRS position into the mount's frame. The ephemeris is</span>
+<span class="sd">                ICRS; a JNow mount needs the conversion before every re-centering</span>
+<span class="sd">                slew. None sends ICRS unchanged. The observatory supplies</span>
+<span class="sd">                ``to_mount_coordinates`` for the paired telescope.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_to_mount_frame</span> <span class="o">=</span> <span class="n">to_mount_frame</span>
+
+        <span class="c1"># The schedule sets the shortest time between rate commands. Increase it for</span>
+        <span class="c1"># a mount that moves incorrectly when it receives a rate command. Decrease it</span>
+        <span class="c1"># for a target whose rate changes over seconds.</span>
+        <span class="n">requested</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"nonsidereal_rate_update_interval"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_rate_update_interval</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_MIN_RATE_UPDATE_INTERVAL_S</span> <span class="k">if</span> <span class="n">requested</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">requested</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">:</span> <span class="n">_NonSiderealState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">telescope</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="NonSiderealManager.apply_rates">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.apply_rates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Push current differential RA/Dec rates to the mount."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_rates</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.prepoint_coordinates">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.prepoint_coordinates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepoint_coordinates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">lead_time_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return RA/Dec for an initial lead-pointing slew.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            lead_time_seconds: Seconds after sequence start used as the pre-pointing</span>
+<span class="sd">                target. Defaults to 0, which points at the target's position at the</span>
+<span class="sd">                start of the sequence.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (ra_deg, dec_deg) or None when non-sidereal tracking is inactive.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+        <span class="n">ra_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">ra_interp</span><span class="p">(</span><span class="n">lead_time_seconds</span><span class="p">))</span> <span class="o">%</span> <span class="mf">360.0</span>
+        <span class="n">dec_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">lead_time_seconds</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.tracking_activation_time">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.tracking_activation_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tracking_activation_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lead_time_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Time</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the time when non-sidereal rates and imaging should begin."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">sequence_start_time</span> <span class="o">+</span> <span class="n">lead_time_seconds</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.should_recenter">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.should_recenter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">should_recenter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return True if the recenter interval has elapsed since tracking started.</span>
+
+<span class="sd">        The interval is counted from the first rate command, not from when the</span>
+<span class="sd">        manager was built. Sequence setup (slew, filter, focus, lead-time wait)</span>
+<span class="sd">        can take longer than a short interval, and a re-center on the first</span>
+<span class="sd">        exposure would waste two slews on a mount that just arrived on target.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">recenter_interval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_recenter_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_recenter_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">recenter_interval</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.drift_between">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.drift_between">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drift_between</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">Time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Angular distance the target moves between two times, in arcsec.</span>
+
+<span class="sd">        Returns None when non-sidereal tracking is inactive.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">position</span><span class="p">(</span><span class="n">when</span><span class="p">:</span> <span class="n">Time</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">when</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">sequence_start_time</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">ra</span><span class="o">=</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">ra_interp</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+                <span class="n">dec</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">position</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">position</span><span class="p">(</span><span class="n">end</span><span class="p">))</span><span class="o">.</span><span class="n">arcsec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.recenter_if_late">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.recenter_if_late">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recenter_if_late</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">activation_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">wait_for_slew_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PairedDevices</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">can_slew</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Re-point the mount if the target has drifted since ``activation_time``.</span>
+
+<span class="sd">        The mount is pre-pointed at where the target would be at ``activation_time``.</span>
+<span class="sd">        If the sequence reaches that point late, the target has moved on, and how</span>
+<span class="sd">        much that matters depends entirely on the target: the same delay is</span>
+<span class="sd">        imperceptible for a comet and puts a satellite degrees outside the field. The</span>
+<span class="sd">        decision is therefore made on the distance the target has actually travelled,</span>
+<span class="sd">        not on how late the sequence is.</span>
+
+<span class="sd">        Returns True if a re-centre was performed.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">now</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">late_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">activation_time</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">late_s</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">drift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_between</span><span class="p">(</span><span class="n">activation_time</span><span class="p">,</span> <span class="n">now</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">drift</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">drift</span> <span class="o">&lt;</span> <span class="n">_MAX_START_DRIFT_ARCSEC</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Imaging of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">body_name</span><span class="si">}</span><span class="s2"> starts </span><span class="si">{</span><span class="n">late_s</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s after the "</span>
+            <span class="sa">f</span><span class="s1">'intended moment. The target has moved </span><span class="si">{</span><span class="n">drift</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">" since then. '</span>
+            <span class="s2">"Re-centering."</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recenter</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">,</span> <span class="n">wait_for_slew_fn</span><span class="p">,</span> <span class="n">can_slew</span><span class="o">=</span><span class="n">can_slew</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.recenter">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.recenter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recenter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">paired_devices</span><span class="p">:</span> <span class="n">PairedDevices</span><span class="p">,</span>
+        <span class="n">wait_for_slew_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PairedDevices</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">can_slew</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Slew to the current ephemeris position and refresh the tracking rates.</span>
+
+<span class="sd">        The first slew goes to the target's position at the moment the slew is</span>
+<span class="sd">        commanded. A fast target moves on while the mount is slewing, so a second</span>
+<span class="sd">        slew corrects for that motion. The second slew is skipped when the target</span>
+<span class="sd">        moved less than ``_RECENTER_CORRECTION_MIN_ARCSEC`` during the first one.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            paired_devices: PairedDevices for the sequence.</span>
+<span class="sd">            wait_for_slew_fn: Callable(paired_devices) that blocks until slew completes.</span>
+<span class="sd">            can_slew: Optional predicate checked before each slew. Conditions can</span>
+<span class="sd">                change between the two slews. A weather alert parks the mount, and a</span>
+<span class="sd">                parked mount rejects a slew. So it is checked before each slew, not</span>
+<span class="sd">                only on entry.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if re-centering was performed.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">unsafe_to_slew</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">can_slew</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">can_slew</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Conditions are no longer safe for movement. Abandoning the "</span>
+                <span class="sa">f</span><span class="s2">"re-center on </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">body_name</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">slew_to_current_position</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Time</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">"""Slew to the target's position now and return the time used."""</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">t_seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">sequence_start_time</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">ra_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">ra_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span> <span class="o">%</span> <span class="mf">360.0</span>  <span class="c1"># unwrap to [0, 360)</span>
+            <span class="n">dec_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="n">level</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">body_name</span><span class="si">}</span><span class="s2"> at RA=</span><span class="si">{</span><span class="n">ra_deg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">°, Dec=</span><span class="si">{</span><span class="n">dec_deg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">°"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_mount_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_mount_frame</span><span class="p">(</span><span class="n">ra_deg</span><span class="p">,</span> <span class="n">dec_deg</span><span class="p">)</span>
+            <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">"SlewToCoordinatesAsync"</span><span class="p">,</span>
+                <span class="n">RightAscension</span><span class="o">=</span><span class="n">ra_deg</span> <span class="o">/</span> <span class="mf">15.0</span><span class="p">,</span>  <span class="c1"># ASCOM expects RA in hours [0, 24)</span>
+                <span class="n">Declination</span><span class="o">=</span><span class="n">dec_deg</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">_SLEW_POLL_START_DELAY</span><span class="p">)</span>
+            <span class="n">wait_for_slew_fn</span><span class="p">(</span><span class="n">paired_devices</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">now</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">telescope</span> <span class="o">=</span> <span class="n">paired_devices</span><span class="o">.</span><span class="n">telescope</span>
+
+            <span class="k">if</span> <span class="n">unsafe_to_slew</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Coarse slew to the target's current position.</span>
+            <span class="n">slew_time</span> <span class="o">=</span> <span class="n">slew_to_current_position</span><span class="p">(</span><span class="s2">"Re-centering"</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">unsafe_to_slew</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Fine correction: the target moved during the coarse slew. Re-target</span>
+            <span class="c1"># the current position so the tracking rates do not lock in the offset.</span>
+            <span class="n">moved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_between</span><span class="p">(</span><span class="n">slew_time</span><span class="p">,</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">())</span> <span class="ow">or</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="n">moved</span> <span class="o">&gt;=</span> <span class="n">_RECENTER_CORRECTION_MIN_ARCSEC</span><span class="p">:</span>
+                <span class="n">slew_to_current_position</span><span class="p">(</span><span class="s2">"Re-centering correction"</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Skipping re-centering correction on </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">body_name</span><span class="si">}</span><span class="s2">: the "</span>
+                    <span class="sa">f</span><span class="s1">'target moved only </span><span class="si">{</span><span class="n">moved</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">" during the slew.'</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Force the post-slew rate push regardless of delta or interval. The</span>
+            <span class="c1"># mount has just moved and needs a known-good rate applied immediately.</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_applied_ra_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_applied_dec_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_rate_update_time</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_rate_check_time</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_rates</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_recenter_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Non-sidereal re-centering failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="NonSiderealManager.reset_rates">
+<a class="viewcode-back" href="../../api/generated/astra.nonsidereal.html#astra.nonsidereal.NonSiderealManager.reset_rates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Reset differential tracking rates to zero.</span>
+
+<span class="sd">        Safe to call even when not active (no-op if non-sidereal tracking was</span>
+<span class="sd">        never started, so the telescope is never touched); always call this in</span>
+<span class="sd">        a finally block.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">telescope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"RightAscensionRate"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">telescope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"DeclinationRate"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_applied_ra_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_applied_dec_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_rate_update_time</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_rate_check_time</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Non-sidereal tracking rates reset to zero"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not reset non-sidereal tracking rates: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Action</span><span class="p">,</span> <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_NonSiderealState</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build state from the pre-computed ephemeris in the action config.</span>
+
+<span class="sd">        Returns None if non-sidereal tracking is not active (``_nonsidereal`` is</span>
+<span class="sd">        False), if telescope movement is disabled, or if the mount cannot accept</span>
+<span class="sd">        differential tracking rates. The ephemeris interpolators are computed once</span>
+<span class="sd">        at schedule load time, in ``ObjectActionConfig.validate_visibility``, and</span>
+<span class="sd">        read here at sequence start. There are no network or ephemeris calls at</span>
+<span class="sd">        runtime.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_nonsidereal"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">action</span><span class="o">.</span><span class="n">action_type</span> <span class="o">==</span> <span class="s2">"calibration"</span>
+            <span class="ow">or</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"disable_telescope_movement"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">lname</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"lookup_name"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">telescope</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_telescope_supports_rates</span><span class="p">(</span><span class="n">telescope</span><span class="p">):</span>
+            <span class="c1"># Reaching here means the schedule resolved this target as a moving body,</span>
+            <span class="c1"># so running the sequence sidereally would trail it. logger.error clears</span>
+            <span class="c1"># error_free, stopping the sequence via the usual check_conditions() path.</span>
+            <span class="c1"># Schedule validation catches this for the observatory as a whole; it can</span>
+            <span class="c1"># still fire here when the action is paired with a different mount than</span>
+            <span class="c1"># the one validation happened to sample.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">lname</span><span class="si">}</span><span class="s2">' needs non-sidereal tracking, but mount "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span><span class="w"> </span><span class="s1">'device_name'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not support "</span>
+                <span class="s2">"differential tracking rates (CanSetRightAscensionRate / "</span>
+                <span class="s2">"CanSetDeclinationRate are False)."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">ra_interp</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_ra_interp"</span><span class="p">)</span>
+        <span class="n">dec_interp</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_dec_interp"</span><span class="p">)</span>
+        <span class="n">ra_rate_interp</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_ra_rate_interp"</span><span class="p">)</span>
+        <span class="n">dec_rate_interp</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_dec_rate_interp"</span><span class="p">)</span>
+        <span class="n">recenter_interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"nonsidereal_recenter_interval"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ra_interp</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dec_interp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Non-sidereal tracking requested for '</span><span class="si">{</span><span class="n">lname</span><span class="si">}</span><span class="s2">' but ephemeris "</span>
+                <span class="s2">"interpolators are missing. This should never happen if the schedule "</span>
+                <span class="s2">"was validated correctly at load time."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># The interpolators are keyed to the epoch they were computed for. If the</span>
+        <span class="c1"># sequence is starting at a different time, every position and rate read out</span>
+        <span class="c1"># of them is for the wrong moment, and far enough out the cubic fit is</span>
+        <span class="c1"># extrapolating. Refuse rather than slew somewhere confidently wrong.</span>
+        <span class="n">sequence_start_time</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">action_value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_ephemeris_epoch"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">drift_s</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">sequence_start_time</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">drift_s</span> <span class="o">&gt;</span> <span class="n">_MAX_EPHEMERIS_EPOCH_DRIFT_S</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Ephemeris for '</span><span class="si">{</span><span class="n">lname</span><span class="si">}</span><span class="s2">' was computed for </span><span class="si">{</span><span class="n">epoch</span><span class="o">.</span><span class="n">isot</span><span class="si">}</span><span class="s2"> but the "</span>
+                    <span class="sa">f</span><span class="s2">"sequence starts at </span><span class="si">{</span><span class="n">sequence_start_time</span><span class="o">.</span><span class="n">isot</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">drift_s</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s "</span>
+                    <span class="s2">"later). The schedule was re-timed after validation; refusing to "</span>
+                    <span class="s2">"track from a stale ephemeris."</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">sequence_start_time</span> <span class="o">=</span> <span class="n">epoch</span>
+
+        <span class="n">recenter_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"re-centering every </span><span class="si">{</span><span class="n">recenter_interval</span><span class="si">}</span><span class="s2">s"</span>
+            <span class="k">if</span> <span class="n">recenter_interval</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="s2">"re-centering disabled"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Non-sidereal tracking active for '</span><span class="si">{</span><span class="n">lname</span><span class="si">}</span><span class="s2">', </span><span class="si">{</span><span class="n">recenter_msg</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_NonSiderealState</span><span class="p">(</span>
+            <span class="n">body_name</span><span class="o">=</span><span class="n">lname</span><span class="p">,</span>
+            <span class="n">ra_interp</span><span class="o">=</span><span class="n">ra_interp</span><span class="p">,</span>
+            <span class="n">dec_interp</span><span class="o">=</span><span class="n">dec_interp</span><span class="p">,</span>
+            <span class="n">ra_rate_interp</span><span class="o">=</span><span class="n">ra_rate_interp</span><span class="p">,</span>
+            <span class="n">dec_rate_interp</span><span class="o">=</span><span class="n">dec_rate_interp</span><span class="p">,</span>
+            <span class="n">sequence_start_time</span><span class="o">=</span><span class="n">sequence_start_time</span><span class="p">,</span>
+            <span class="n">recenter_interval</span><span class="o">=</span><span class="n">recenter_interval</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">_NonSiderealState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set ASCOM RightAscensionRate / DeclinationRate from the interpolated ephemeris.</span>
+
+<span class="sd">        Called at up to 10 Hz from the exposure and image-save loops. Most of those</span>
+<span class="sd">        calls must not reach the mount: rate commands interrupt tracking on some</span>
+<span class="sd">        mounts, and the required rate changes much more slowly than that. Two gates</span>
+<span class="sd">        decide whether a call gets through. The first is a minimum interval since</span>
+<span class="sd">        the last rate command or the last rate check. The second is whether keeping</span>
+<span class="sd">        the current rate would trail the target, see ``_projected_drift_arcsec``.</span>
+<span class="sd">        """</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">last_visit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_rate_update_time</span> <span class="ow">or</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">last_rate_check_time</span> <span class="ow">or</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">last_visit</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">now</span> <span class="o">-</span> <span class="n">last_visit</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_rate_update_interval</span><span class="p">:</span>
+            <span class="c1"># Cheap early exit before touching the interpolators, since this is the</span>
+            <span class="c1"># branch the high-frequency callers take almost every time.</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">last_recenter_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># First rate command of the sequence: tracking starts now, so the</span>
+            <span class="c1"># re-center interval starts counting from here.</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_recenter_time</span> <span class="o">=</span> <span class="n">now</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">t_seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">sequence_start_time</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">ra_rate_interp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">dec_rate_interp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ra_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">ra_rate_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+                <span class="n">dec_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">dec_rate_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ra_rate</span><span class="p">,</span> <span class="n">dec_rate</span> <span class="o">=</span> <span class="n">ephemeris</span><span class="o">.</span><span class="n">compute_nonsidereal_rates_from_interp</span><span class="p">(</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">ra_interp</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">dec_interp</span><span class="p">,</span> <span class="n">t_seconds</span>
+                <span class="p">)</span>
+
+            <span class="n">drift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_projected_drift_arcsec</span><span class="p">(</span>
+                <span class="n">state</span><span class="p">,</span> <span class="n">ra_rate</span><span class="p">,</span> <span class="n">dec_rate</span><span class="p">,</span> <span class="n">t_seconds</span><span class="p">,</span> <span class="n">now</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">drift</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">drift</span> <span class="o">&lt;</span> <span class="n">_RATE_UPDATE_TOLERANCE_ARCSEC</span><span class="p">:</span>
+                <span class="c1"># Record the check so the next evaluation waits a full interval</span>
+                <span class="c1"># instead of running at the caller's rate.</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">last_rate_check_time</span> <span class="o">=</span> <span class="n">now</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="s2">"Keeping current non-sidereal rates. Updating them would "</span>
+                        <span class="sa">f</span><span class="s1">'recover only </span><span class="si">{</span><span class="n">drift</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">" of trailing '</span>
+                        <span class="sa">f</span><span class="s2">"(dRA=</span><span class="si">{</span><span class="n">ra_rate</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> s/s, dDec=</span><span class="si">{</span><span class="n">dec_rate</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> as/s)"</span>
+                    <span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="n">telescope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"RightAscensionRate"</span><span class="p">,</span> <span class="n">ra_rate</span><span class="p">)</span>
+            <span class="n">telescope</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"DeclinationRate"</span><span class="p">,</span> <span class="n">dec_rate</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_applied_ra_rate</span> <span class="o">=</span> <span class="n">ra_rate</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_applied_dec_rate</span> <span class="o">=</span> <span class="n">dec_rate</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">last_rate_update_time</span> <span class="o">=</span> <span class="n">now</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Non-sidereal tracking rates: dRA=</span><span class="si">{</span><span class="n">ra_rate</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> s/s, dDec=</span><span class="si">{</span><span class="n">dec_rate</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> as/s"</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Rate support was verified in _setup, so this is a transient device</span>
+            <span class="c1"># or ephemeris failure. Do not re-query the mount here: if the link is</span>
+            <span class="c1"># down that raises a second exception out of the handler.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not set non-sidereal tracking rates: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_telescope_supports_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">telescope</span><span class="p">:</span> <span class="n">AlpacaDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return True if the mount can accept differential RA and Dec tracking rates.</span>
+
+<span class="sd">        Both ASCOM capability flags are required: a mount that can offset only one</span>
+<span class="sd">        axis cannot follow a moving target. If the flags cannot be read the mount is</span>
+<span class="sd">        assumed capable, so a transient query failure degrades to the previous</span>
+<span class="sd">        behaviour (attempt the rates, warn if they are rejected) rather than</span>
+<span class="sd">        silently disabling tracking.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">can_ra</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CanSetRightAscensionRate"</span><span class="p">))</span>
+            <span class="n">can_dec</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CanSetDeclinationRate"</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Could not query differential tracking rate support: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="s2">"Assuming the mount supports it."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">can_ra</span> <span class="ow">and</span> <span class="n">can_dec</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_projected_drift_arcsec</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">_NonSiderealState</span><span class="p">,</span>
+        <span class="n">ra_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">dec_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">t_seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">now</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Trailing, in arcsec, that keeping the current rates would cause.</span>
+
+<span class="sd">        Measured over the time until rates could next be sent. This answers the</span>
+<span class="sd">        question that matters: how far off target the mount drifts if it is not</span>
+<span class="sd">        updated. It does not measure how much the rate number changed.</span>
+
+<span class="sd">        Returns None when no rates have been applied yet, meaning the caller should</span>
+<span class="sd">        send them unconditionally.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">last_applied_ra_rate</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">last_applied_dec_rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># RightAscensionRate is in seconds of RA, DeclinationRate in arcsec. Put both</span>
+        <span class="c1"># on the sky in arcsec so they are comparable and the tolerance means one</span>
+        <span class="c1"># thing on each axis.</span>
+        <span class="n">dec_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+        <span class="n">cos_dec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">dec_deg</span><span class="p">))),</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="n">d_ra_arcsec_s</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ra_rate</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">last_applied_ra_rate</span><span class="p">)</span> <span class="o">*</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">cos_dec</span>
+        <span class="n">d_dec_arcsec_s</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dec_rate</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">last_applied_dec_rate</span><span class="p">)</span>
+
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">last_rate_update_time</span> <span class="ow">or</span> <span class="n">now</span><span class="p">)</span>
+        <span class="n">horizon_s</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">elapsed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_rate_update_interval</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">d_ra_arcsec_s</span><span class="p">,</span> <span class="n">d_dec_arcsec_s</span><span class="p">)</span> <span class="o">*</span> <span class="n">horizon_s</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

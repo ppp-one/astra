@@ -1,0 +1,740 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.filename_templates &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/filename_templates';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.1" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.1</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.filename_templates</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">This module provides two primary classes for generating filenames used by</span>
+<span class="sd">Astra when writing image files.</span>
+
+<span class="sd">- ``FilenameTemplates`` — simple templates using Python ``str.format``.</span>
+<span class="sd">- ``JinjaFilenameTemplates`` — richer templates powered by Jinja2 when templates include</span>
+<span class="sd">  template logic (``{{ ... }}``) at the cost of a slightly slower template rendering.</span>
+
+<span class="sd">Key behavior</span>
+<span class="sd">------------</span>
+
+<span class="sd">- Normalises ``imagetype`` values to a standard set</span>
+<span class="sd">  (``light``, ``bias``, ``dark``, ``flat``, ``default``).</span>
+<span class="sd">- Validates templates against a set of test keyword arguments to catch formatting errors</span>
+<span class="sd">  early.</span>
+<span class="sd">- Automatically selects the Jinja2-based implementation when input templates contain</span>
+<span class="sd">  Jinja2 markers.</span>
+
+<span class="sd">Quick example</span>
+<span class="sd">-------------</span>
+<span class="sd">&gt;&gt;&gt; from astra.filename_templates import FilenameTemplates</span>
+<span class="sd">&gt;&gt;&gt; templates = FilenameTemplates()</span>
+<span class="sd">&gt;&gt;&gt; templates.render_filename(**templates.TEST_KWARGS)</span>
+<span class="sd">'20240101/TestCamera_TestFilter_TestObject_300.123_2025-01-01_00-00-00.fits'</span>
+
+<span class="sd">For details and advanced examples see the class docstrings for</span>
+<span class="sd">``FilenameTemplates`` and ``JinjaFilenameTemplates``.</span>
+
+<span class="sd">Example configurations</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">Example str.format() configurations</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">The following is the default used by ASTRA in `observatory_config.yaml`.</span>
+
+<span class="sd">.. code-block:: yaml</span>
+
+<span class="sd">    filename_templates:</span>
+<span class="sd">      object: "{action_date}/{device}_{filter_name}_{object_name}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      calibration: "{action_date}/{device}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      flats: "{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      autofocus: "autofocus/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      calibrate_guiding: "calibrate_guiding/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      pointing_model: "pointing_model/{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+<span class="sd">      default: "{action_date}/{device}_{filter_name}_{imagetype}_{exptime:.3f}_{timestamp}.fits"</span>
+
+<span class="sd">Example Jinja2 configurations</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="sd">The following code would be identical to the default used by ASTRA in</span>
+<span class="sd">`observatory_config.yaml`, but using Jinja2 syntax. See the example in</span>
+<span class="sd">:class:`JinjaFilenameTemplates` for more advanced examples using Jinja2 logic.</span>
+
+<span class="sd">.. code-block:: yaml</span>
+
+<span class="sd">    filename_templates:</span>
+<span class="sd">      object: "{{ action_date }}/{{ device }}_{{ filter_name }}_{{ object_name }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      calibration: "{{ action_date }}/{{ device }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      flats: "{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      autofocus: "autofocus/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      calibrate_guiding: "calibrate_guiding/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      pointing_model: "pointing_model/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+<span class="sd">      default: "{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '%.3f'|format(exptime) }}_{{ timestamp }}.fits"</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">jinja2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"FilenameTemplates"</span><span class="p">,</span> <span class="s2">"JinjaFilenameTemplates"</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="FilenameTemplates">
+<a class="viewcode-back" href="../../api/generated/astra.filename_templates.html#astra.filename_templates.FilenameTemplates">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FilenameTemplates</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Filename templates using Python :py:meth:`str.format` syntax.</span>
+
+<span class="sd">    The templates can be customised by passing a dictionary to</span>
+<span class="sd">    :meth:`FilenameTemplates.from_dict()`, which is the constructor used in astra.</span>
+<span class="sd">    If the templates contain Jinja2 syntax, the :py:class:`jinja2.Template` class will</span>
+<span class="sd">    be used instead, which allows more advanced logic.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; from astra.filename_templates import FilenameTemplates</span>
+
+<span class="sd">        Default templates</span>
+
+<span class="sd">        &gt;&gt;&gt; templates = FilenameTemplates()</span>
+<span class="sd">        &gt;&gt;&gt; templates.render_filename(</span>
+<span class="sd">        ... **templates.TEST_KWARGS | {"action_type": "object", "imagetype": "light"}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        '20240101/TestCamera_TestFilter_TestObject_300.123_2025-01-01_00-00-00.fits'</span>
+
+<span class="sd">        Let's create a template with more advanced logic using :py:class:`jinja2.Template` syntax.</span>
+<span class="sd">        As the following example illustrates, :py:class:`jinja2.Template` supports more complex logic,</span>
+<span class="sd">        than :py:meth:`str.format` syntax, at the cost of a slightly slower template</span>
+<span class="sd">        rendering performance.</span>
+
+<span class="sd">        &gt;&gt;&gt; flat_template = (</span>
+<span class="sd">        ...     # use subdirs</span>
+<span class="sd">        ...     "{{ imagetype.split('_')[0].upper() }}/{{ device }}_"</span>
+<span class="sd">        ...     # customise timestamp format</span>
+<span class="sd">        ...     + "{{ datetime_timestamp.strftime('%Y%m%d_%H%M%S.%f')[:-5] }}_"</span>
+<span class="sd">        ...     # Add custom logic</span>
+<span class="sd">        ...     + "{{ 'Dusk' if (datetime_timestamp + datetime.timedelta(hours=5)).hour &gt; 12 else 'Dawn' }}"</span>
+<span class="sd">        ...     + "_sequence_{{ '%03d'|format(sequence_counter) }}"</span>
+<span class="sd">        ...     + ".fits"</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; filename_templates = FilenameTemplates.from_dict(</span>
+<span class="sd">        ...     {"flats": flat_template}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; filename_templates.render_filename(</span>
+<span class="sd">        ...     **filename_templates.TEST_KWARGS | {</span>
+<span class="sd">        ...         "action_type": "flats", "imagetype": "Flat Frame"</span>
+<span class="sd">        ...     }</span>
+<span class="sd">        ... )</span>
+<span class="sd">        'FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits'</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        :class:`JinjaFilenameTemplates` for more advanced template logic using :py:class:`jinja2.Template`.</span>
+
+<span class="sd">    """</span>
+
+    <span class="nb">object</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{object_name}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="n">calibration</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="p">)</span>
+    <span class="n">flats</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="n">autofocus</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"autofocus/</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="n">calibrate_guiding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"calibrate_guiding/</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="n">pointing_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pointing_model/</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{action_date}</span><span class="s2">/</span><span class="si">{device}</span><span class="s2">_</span><span class="si">{filter_name}</span><span class="s2">_</span><span class="si">{imagetype}</span><span class="s2">_</span><span class="si">{exptime:.3f}</span><span class="s2">_</span><span class="si">{timestamp}</span><span class="s2">.fits"</span>
+
+    <span class="n">TEST_KWARGS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"action_type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+        <span class="s2">"device"</span><span class="p">:</span> <span class="s2">"TestCamera"</span><span class="p">,</span>
+        <span class="s2">"filter_name"</span><span class="p">:</span> <span class="s2">"TestFilter"</span><span class="p">,</span>
+        <span class="s2">"object_name"</span><span class="p">:</span> <span class="s2">"TestObject"</span><span class="p">,</span>
+        <span class="s2">"imagetype"</span><span class="p">:</span> <span class="s2">"light"</span><span class="p">,</span>
+        <span class="s2">"exptime"</span><span class="p">:</span> <span class="mf">300.123456</span><span class="p">,</span>
+        <span class="s2">"timestamp"</span><span class="p">:</span> <span class="s2">"2025-01-01_00-00-00"</span><span class="p">,</span>
+        <span class="s2">"datetime_timestamp"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="s2">"action_date"</span><span class="p">:</span> <span class="s2">"20240101"</span><span class="p">,</span>
+        <span class="s2">"action_datetime"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="s2">"datetime"</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+        <span class="s2">"sequence_counter"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">SUPPORTED_ACTION_TYPES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"object"</span><span class="p">,</span>
+        <span class="s2">"calibration"</span><span class="p">,</span>
+        <span class="s2">"flats"</span><span class="p">,</span>
+        <span class="s2">"autofocus"</span><span class="p">,</span>
+        <span class="s2">"calibrate_guiding"</span><span class="p">,</span>
+        <span class="s2">"pointing_model"</span><span class="p">,</span>
+        <span class="s2">"default"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">SUPPORTED_IMAGETYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"light"</span><span class="p">,</span> <span class="s2">"bias"</span><span class="p">,</span> <span class="s2">"dark"</span><span class="p">,</span> <span class="s2">"flat"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SUPPORTED_ARGS</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TEST_KWARGS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_jinja_templates</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"FilenameTemplates contains Jinja2 syntax. "</span>
+                <span class="s2">"Please use JinjaFilenameTemplates class instead."</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FilenameTemplates.from_dict">
+<a class="viewcode-back" href="../../api/generated/astra.filename_templates.html#astra.filename_templates.FilenameTemplates.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">template_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"FilenameTemplates"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create FilenameTemplates from a dictionary.</span>
+
+<span class="sd">        If the templates contain Jinja2 syntax, the JinjaFilenameTemplates class will</span>
+<span class="sd">        be used instead.</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            Basic Example using :py:meth:`str.format` syntax:</span>
+
+<span class="sd">            &gt;&gt;&gt; from astra.filename_templates import FilenameTemplates</span>
+<span class="sd">            &gt;&gt;&gt; templates = FilenameTemplates.from_dict(</span>
+<span class="sd">            ...     {</span>
+<span class="sd">            ...         "object": "{device}_{object_name}_{timestamp}.fits",</span>
+<span class="sd">            ...         "flats": "{device}_FLAT_{timestamp}.fits"</span>
+<span class="sd">            ...     }</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; type(templates)</span>
+<span class="sd">            &lt;class 'astra.filename_templates.FilenameTemplates'&gt;</span>
+<span class="sd">            &gt;&gt;&gt; templates.render_filename(</span>
+<span class="sd">            ...     **templates.TEST_KWARGS | {"action_type": "object", "imagetype": "light"}</span>
+<span class="sd">            ... )</span>
+<span class="sd">            'TestCamera_TestObject_2025-01-01_00-00-00.fits'</span>
+<span class="sd">            &gt;&gt;&gt; templates.render_filename(</span>
+<span class="sd">            ...     **templates.TEST_KWARGS | {"action_type": "flats", "imagetype": "Flat Frame"}</span>
+<span class="sd">            ... )</span>
+<span class="sd">            'TestCamera_FLAT_2025-01-01_00-00-00.fits'</span>
+
+
+<span class="sd">            Example using :py:class:`jinja2.Template` syntax:</span>
+
+<span class="sd">            &gt;&gt;&gt; from astra.filename_templates import FilenameTemplates</span>
+<span class="sd">            &gt;&gt;&gt; templates = FilenameTemplates.from_dict(</span>
+<span class="sd">            ...     {</span>
+<span class="sd">            ...         "object": "{{ device }}_{{ object_name }}_{{ timestamp }}.fits",</span>
+<span class="sd">            ...         "flats": "{{ device }}_FLAT_{{ timestamp }}.fits"</span>
+<span class="sd">            ...     }</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; type(templates)</span>
+<span class="sd">            &lt;class 'astra.filename_templates.JinjaFilenameTemplates'&gt;</span>
+<span class="sd">            &gt;&gt;&gt; templates.render_filename(</span>
+<span class="sd">            ...     **templates.TEST_KWARGS | {"action_type": "object", "imagetype": "light"}</span>
+<span class="sd">            ... )</span>
+<span class="sd">            'TestCamera_TestObject_2025-01-01_00-00-00.fits'</span>
+<span class="sd">            &gt;&gt;&gt; templates.render_filename(</span>
+<span class="sd">            ...     **templates.TEST_KWARGS | {"action_type": "flats", "imagetype": "Flat Frame"}</span>
+<span class="sd">            ... )</span>
+<span class="sd">            'TestCamera_FLAT_2025-01-01_00-00-00.fits'</span>
+
+<span class="sd">        """</span>
+        <span class="n">valid_keywords</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">template_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_has_jinja_templates</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">valid_keywords</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+            <span class="k">return</span> <span class="n">JinjaFilenameTemplates</span><span class="p">(</span><span class="o">**</span><span class="n">valid_keywords</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">valid_keywords</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_action_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">action_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">:</span>
+            <span class="n">supported</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Invalid action_type: </span><span class="si">{</span><span class="n">action_type</span><span class="si">!r}</span><span class="s2">. Expected one of: </span><span class="si">{</span><span class="n">supported</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="FilenameTemplates.render_filename">
+<a class="viewcode-back" href="../../api/generated/astra.filename_templates.html#astra.filename_templates.FilenameTemplates.render_filename">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_action_type</span><span class="p">(</span><span class="n">action_type</span><span class="p">)</span>
+
+        <span class="n">imagetype_standardised</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_imagetype</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"imagetype"</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">imagetype</span><span class="o">=</span><span class="n">imagetype_standardised</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_imagetype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imagetype</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">imagetype_lower</span> <span class="o">=</span> <span class="n">imagetype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_IMAGETYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">imagetype_lower</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="s2">"default"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">action_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">render_filename</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">TEST_KWARGS</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"action_type"</span><span class="p">:</span> <span class="n">action_type</span><span class="p">})</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Error rendering template for '</span><span class="si">{</span><span class="n">action_type</span><span class="si">}</span><span class="s2">'. "</span>
+                    <span class="sa">f</span><span class="s2">"Template: '</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">action_type</span><span class="p">)</span><span class="si">}</span><span class="s2">'. Exception: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_has_jinja_templates</span><span class="p">(</span><span class="n">templates</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">([</span><span class="s2">"{{"</span> <span class="ow">in</span> <span class="n">item</span> <span class="ow">and</span> <span class="s2">"}}"</span> <span class="ow">in</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="JinjaFilenameTemplates">
+<a class="viewcode-back" href="../../api/generated/astra.filename_templates.html#astra.filename_templates.JinjaFilenameTemplates">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JinjaFilenameTemplates</span><span class="p">(</span><span class="n">FilenameTemplates</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Filename templates using :py:class:`jinja2.Template` syntax.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Let's create a template with more advanced logic using :py:class:`jinja2.Template` syntax.</span>
+
+<span class="sd">        &gt;&gt;&gt; from astra.filename_templates import JinjaFilenameTemplates</span>
+<span class="sd">        &gt;&gt;&gt; flat_template = (</span>
+<span class="sd">        ...     # use subdirs</span>
+<span class="sd">        ...     "{{ imagetype.split('_')[0].upper() }}/{{ device }}_"</span>
+<span class="sd">        ...     # customise timestamp format</span>
+<span class="sd">        ...     + "{{ datetime_timestamp.strftime('%Y%m%d_%H%M%S.%f')[:-5] }}_"</span>
+<span class="sd">        ...     # Add custom logic</span>
+<span class="sd">        ...     + "{{ 'Dusk' if (datetime_timestamp + datetime.timedelta(hours=5)).hour &gt; 12 else 'Dawn' }}"</span>
+<span class="sd">        ...     + "_sequence_{{ '%03d'|format(sequence_counter) }}"</span>
+<span class="sd">        ...     + ".fits"</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; filename_templates = FilenameTemplates.from_dict(</span>
+<span class="sd">        ...     {"flats": flat_template}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; filename_templates.render_filename(</span>
+<span class="sd">        ...     **filename_templates.TEST_KWARGS | {</span>
+<span class="sd">        ...         "action_type": "flats", "imagetype": "Flat Frame"</span>
+<span class="sd">        ...     }</span>
+<span class="sd">        ... )</span>
+<span class="sd">        'FLAT/TestCamera_20250101_000000.0_Dawn_sequence_000.fits'</span>
+
+<span class="sd">    """</span>
+
+    <span class="nb">object</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"{{ action_date }}/{{ device }}_{{ filter_name }}_{{ object_name }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">calibration</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"{{ action_date }}/{{ device }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">flats</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">autofocus</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"autofocus/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">calibrate_guiding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"calibrate_guiding/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">pointing_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pointing_model/{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"{{ action_date }}/{{ device }}_{{ filter_name }}_{{ imagetype }}_{{ '</span><span class="si">%.3f</span><span class="s2">'|format(exptime) }}_{{ timestamp }}.fits"</span>
+
+    <span class="n">_compiled_templates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_templates</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_templates</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">:</span>
+            <span class="n">template_str</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_templates</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">template_str</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="JinjaFilenameTemplates.render_filename">
+<a class="viewcode-back" href="../../api/generated/astra.filename_templates.html#astra.filename_templates.JinjaFilenameTemplates.render_filename">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_action_type</span><span class="p">(</span><span class="n">action_type</span><span class="p">)</span>
+
+        <span class="n">imagetype_standardised</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_imagetype</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"imagetype"</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_templates</span><span class="p">[</span><span class="n">action_type</span><span class="p">]</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+            <span class="n">imagetype</span><span class="o">=</span><span class="n">imagetype_standardised</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"{{\s*([\w]+)[^}]*}}"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ACTION_TYPES</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">match</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUPPORTED_ARGS</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Template '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' uses unsupported argument: </span><span class="se">{{{{</span><span class="si">{</span><span class="n">match</span><span class="si">}</span><span class="se">}}}}</span><span class="s2">."</span>
+                    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

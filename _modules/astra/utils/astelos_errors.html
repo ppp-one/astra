@@ -1,0 +1,577 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.utils.astelos_errors &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/utils/astelos_errors';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.1</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.utils.astelos_errors</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""AsTelOS telescope error checking and acknowledgement."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="check_error">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.astelos_errors.html#astra.utils.astelos_errors.check_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_error</span><span class="p">(</span><span class="n">telescope</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">close</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Check AsTelOS telescope status for known acceptable errors.</span>
+
+<span class="sd">    Analyzes telescope status messages to identify errors and determines if they</span>
+<span class="sd">    are in the list of known acceptable errors that can be safely acknowledged.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        telescope (Any): Telescope object with get() method for status commands.</span>
+<span class="sd">        close (bool): Whether to include slit closure errors in acceptable list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, pd.DataFrame, str]: Error analysis as (valid, errors, messages):</span>
+<span class="sd">            - valid: True if all errors are acceptable, False otherwise</span>
+<span class="sd">            - errors: DataFrame with columns ['error', 'detail', 'level', 'component']</span>
+<span class="sd">            - messages: Raw telescope status message string</span>
+<span class="sd">    """</span>
+
+    <span class="n">allowed_err</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis (0) unexpectedly changed to powered on state"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DOME[0]"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis (0) unexpectedly changed to powered on state"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DOME[1]"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis (1) unexpectedly changed to powered on state"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DOME[0]"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis (1) unexpectedly changed to powered on state"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DOME[1]"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis #0</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"HA"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis #0</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DEC"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis #1</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"HA"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span>
+            <span class="s2">"ERR_DeviceError"</span><span class="p">,</span>
+            <span class="s2">"axis #1</span><span class="se">\\</span><span class="s2">| amplifier fault #07H</span><span class="se">\\</span><span class="s2">| safe torque-off circuit fault"</span><span class="p">,</span>
+            <span class="s2">"2"</span><span class="p">,</span>
+            <span class="s2">"DEC"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_RunDevError"</span><span class="p">,</span> <span class="s2">"Working pressure suddenly lost"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"HA"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_RunDevError"</span><span class="p">,</span> <span class="s2">"Working pressure suddenly lost"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"DEC"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_DeviceWarn"</span><span class="p">,</span> <span class="s2">"Malformed telegram from GPS"</span><span class="p">,</span> <span class="s2">"4"</span><span class="p">,</span> <span class="s2">"LOCAL"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_DeviceError"</span><span class="p">,</span> <span class="s2">"axis (1)</span><span class="se">\\</span><span class="s2">| BOTH LIMITS (code=128)"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"DOME[0]"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_DeviceError"</span><span class="p">,</span> <span class="s2">"axis (1)</span><span class="se">\\</span><span class="s2">| BOTH LIMITS (code=128)"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"DOME[1]"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_DeviceError"</span><span class="p">,</span> <span class="s2">"axis (1)</span><span class="se">\\</span><span class="s2">| EXTERN (code=32)"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"DOME[0]"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"ERR_DeviceError"</span><span class="p">,</span> <span class="s2">"axis (1)</span><span class="se">\\</span><span class="s2">| EXTERN (code=32)"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"DOME[1]"</span><span class="p">],</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">close</span><span class="p">:</span>
+        <span class="n">slit_error</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">allowed_err</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">slit_error</span><span class="p">)</span>
+
+    <span class="n">df_allowed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">allowed_err</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"error"</span><span class="p">,</span> <span class="s2">"detail"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"component"</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"error"</span><span class="p">,</span> <span class="s2">"detail"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"component"</span><span class="p">])</span>
+
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CommandString"</span><span class="p">,</span> <span class="n">Command</span><span class="o">=</span><span class="s2">"TELESCOPE.STATUS.LIST"</span><span class="p">,</span> <span class="n">Raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># structure = "&lt;group&gt;|&lt;level&gt;[:&lt;component&gt;|&lt;level&gt;[;&lt;component&gt;...]][:&lt;error&gt;|&lt;detail&gt;|&lt;level&gt;|&lt;component&gt;[;&lt;error&gt;...]][,&lt;group&gt;...]"</span>
+
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
+
+        <span class="c1"># only look parts after "&lt;group&gt;|&lt;level&gt;"</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                <span class="n">error_detail</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">|"</span><span class="p">,</span> <span class="s2">"[ESCAPED_PIPE]"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)</span>
+                <span class="n">error_detail</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"[ESCAPED_PIPE]"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\\</span><span class="s2">|"</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">error_detail</span>
+                <span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_detail</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">detail</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">error_level</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">component</span> <span class="o">=</span> <span class="n">error_detail</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+                        <span class="n">df_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">df_list</span><span class="p">,</span>
+                                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                                    <span class="p">{</span>
+                                        <span class="s2">"error"</span><span class="p">:</span> <span class="p">[</span><span class="n">error</span><span class="p">],</span>
+                                        <span class="s2">"detail"</span><span class="p">:</span> <span class="p">[</span><span class="n">detail</span><span class="p">],</span>
+                                        <span class="s2">"level"</span><span class="p">:</span> <span class="p">[</span><span class="n">error_level</span><span class="p">],</span>
+                                        <span class="s2">"component"</span><span class="p">:</span> <span class="p">[</span><span class="n">component</span><span class="p">],</span>
+                                    <span class="p">}</span>
+                                <span class="p">),</span>
+                            <span class="p">],</span>
+                            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+    <span class="c1"># check all rows of df_list are in df_allowed</span>
+    <span class="n">compare_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">df_allowed</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="s2">"exists"</span><span class="p">)</span>
+    <span class="n">exists</span> <span class="o">=</span> <span class="n">compare_df</span><span class="p">[</span><span class="s2">"exists"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"both"</span>
+
+    <span class="c1"># if all of exists is True</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">df_list</span><span class="p">,</span> <span class="n">messages</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">df_list</span><span class="p">,</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="ack_error">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.astelos_errors.html#astra.utils.astelos_errors.ack_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ack_error</span><span class="p">(</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">valid</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">all_errors</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">close</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Acknowledge acceptable AsTelOS telescope errors.</span>
+
+<span class="sd">    Attempts to clear acceptable telescope errors by sending appropriate</span>
+<span class="sd">    acknowledgement commands. Continues until all errors are cleared or</span>
+<span class="sd">    unacceptable errors are encountered.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        telescope (Any): Telescope object with get() method for commands.</span>
+<span class="sd">        valid (bool): Whether errors are acceptable (from check_error).</span>
+<span class="sd">        all_errors (pd.DataFrame): Error information with 'level' column.</span>
+<span class="sd">        messages (str): Original telescope status messages.</span>
+<span class="sd">        close (bool): Whether to include slit closure errors as acceptable.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, str]: Acknowledgement result as (success, final_messages):</span>
+<span class="sd">            - success: True if all errors cleared, False if unacceptable errors remain</span>
+<span class="sd">            - final_messages: Updated telescope status messages</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TimeoutError: If error clearing takes longer than 2 minutes.</span>
+<span class="sd">    """</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="n">valid</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># derive system eror level</span>
+        <span class="n">sys_level</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_errors</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)))))</span>
+
+        <span class="c1"># clear errors</span>
+        <span class="n">telescope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">"CommandBlind"</span><span class="p">,</span>
+            <span class="n">Command</span><span class="o">=</span><span class="sa">f</span><span class="s2">"TELESCOPE.STATUS.CLEAR_ERROR=</span><span class="si">{</span><span class="n">sys_level</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">Raw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># check telescope status</span>
+        <span class="n">valid</span><span class="p">,</span> <span class="n">all_errors</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">check_error</span><span class="p">(</span><span class="n">telescope</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="n">close</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">:</span>  <span class="c1"># 2 minutes hardcoded limit</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">"Astelos error acknowledgement timed out"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">messages</span>
+
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">messages</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

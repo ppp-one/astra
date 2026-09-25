@@ -1,0 +1,1058 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astra.utils.ephemeris &#8212; Astra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=39058961" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/astra/utils/ephemeris';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/astra-art.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.2.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  <p class="title logo__title">Astra</p>
+  <div class="version-nb">1.2.1</div>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/observatory_configuration.html">Observatory Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/fits_header_configuration.html">FITS Header Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/scheduling.html">Scheduling Syntax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/operation.html">Operation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/core_logic.html">Core Logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/custom_observatories.html">Customising Observatories by Subclassing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/index.html">Module Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.action_configs.html">astra.action_configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.alpaca_device_process.html">astra.alpaca_device_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.autofocus.html">astra.autofocus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.calibrate_guiding.html">astra.calibrate_guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.config.html">astra.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.database_manager.html">astra.database_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.device_manager.html">astra.device_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.filename_templates.html">astra.filename_templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.guiding.html">astra.guiding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.header_manager.html">astra.header_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.image_handler.html">astra.image_handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.logger.html">astra.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.main.html">astra.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.nonsidereal.html">astra.nonsidereal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory_loader.html">astra.observatory_loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.observatory.html">astra.observatory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.paired_devices.html">astra.paired_devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.pointer.html">astra.pointer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.queue_manager.html">astra.queue_manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.safety_monitor.html">astra.safety_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.scheduler.html">astra.scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/generated/astra.thread_manager.html">astra.thread_manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api/generated/astra.utils.html">astra.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.astelos_errors.html">astra.utils.astelos_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.ephemeris.html">astra.utils.ephemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.frames.html">astra.utils.frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.image.html">astra.utils.image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.optics.html">astra.utils.optics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/generated/astra.utils.time.html">astra.utils.time</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/endpoints.html">API Endpoints</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/ppp-one/astra" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for astra.utils.ephemeris</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Solar position analysis and celestial body coordinate lookup.</span>
+
+<span class="sd">Also provides pre-computed ephemerides for non-sidereal (moving) targets,</span>
+<span class="sd">sourced either from astropy's built-in solar system ephemeris or from JPL</span>
+<span class="sd">Horizons (including TLE-defined satellites).</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ICRS</span><span class="p">,</span>
+    <span class="n">AltAz</span><span class="p">,</span>
+    <span class="n">CartesianRepresentation</span><span class="p">,</span>
+    <span class="n">EarthLocation</span><span class="p">,</span>
+    <span class="n">SkyCoord</span><span class="p">,</span>
+    <span class="n">get_body</span><span class="p">,</span>
+    <span class="n">get_body_barycentric</span><span class="p">,</span>
+    <span class="n">get_sun</span><span class="p">,</span>
+    <span class="n">solar_system_ephemeris</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.jplhorizons</span><span class="w"> </span><span class="kn">import</span> <span class="n">Horizons</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_SOLAR_SYSTEM_BODIES</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">solar_system_ephemeris</span><span class="o">.</span><span class="n">bodies</span><span class="p">)</span>
+<span class="n">_SOLAR_TO_SIDEREAL</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"day"</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"sday"</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># The Horizons columns Astra reads: 1 is astrometric RA and Dec, 3 is the rates.</span>
+<span class="c1"># The full set is 81 columns, and asking for all of them doubles the time the</span>
+<span class="c1"># query takes, which delays the schedule load. The debug dump written under</span>
+<span class="c1"># _save_and_log_horizons_output therefore holds these columns rather than all.</span>
+<span class="n">_HORIZONS_QUANTITIES</span> <span class="o">=</span> <span class="s2">"1,3"</span>
+
+<span class="c1"># Ephemeris sampling. The interval is chosen from the target's own sky motion</span>
+<span class="c1"># unless the caller asks for a specific one. A planet crosses a fraction of an</span>
+<span class="c1"># arcsecond in a minute, so the default is ample for it, while the ISS crosses</span>
+<span class="c1"># 30 degrees and its interpolated position lands 8 degrees from the truth.</span>
+<span class="n">_DEFAULT_INTERVAL_MINUTES</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">_MIN_INTERVAL_SECONDS</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="c1"># Largest arc a target may cross between two samples. Cubic interpolation over a</span>
+<span class="c1"># 2 degree arc is accurate to about an arcsecond.</span>
+<span class="n">_MAX_ARC_PER_SAMPLE_DEG</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="c1"># Ceiling on the sample count, so a fast target over a long window cannot turn</span>
+<span class="c1"># into an enormous Horizons query.</span>
+<span class="n">_MAX_SAMPLES</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="c1"># A coarse grid under-reads the peak rate of a satellite pass, so the interval is</span>
+<span class="c1"># chosen again on the finer grid it produces. Three passes is enough to settle.</span>
+<span class="n">_MAX_INTERVAL_REFINEMENTS</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1"># Where the automatic search starts for a satellite. A TLE always describes an</span>
+<span class="c1"># Earth satellite, and one in low orbit crosses about 1 degree a second when it</span>
+<span class="c1"># passes overhead, which is as fast as a satellite gets. Starting here costs one</span>
+<span class="c1"># query instead of two, which keeps the schedule load quick enough for a sequence</span>
+<span class="c1"># that starts seconds later.</span>
+<span class="n">_TLE_INITIAL_INTERVAL_SECONDS</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="c1"># The search goes back to a coarser grid only when the interval is much shorter</span>
+<span class="c1"># than the target needs. A small difference is not worth another query.</span>
+<span class="n">_INTERVAL_COARSEN_FACTOR</span> <span class="o">=</span> <span class="mf">4.0</span>
+
+
+<div class="viewcode-block" id="NotMovingBodyError">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.NotMovingBodyError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotMovingBodyError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when a lookup_name cannot be resolved as a solar system or minor body."""</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_and_log_horizons_output</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eph</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">call_input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Persist Horizons diagnostics only when debug logging is enabled."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astra.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+
+        <span class="n">horizons_dir</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">logs</span> <span class="o">/</span> <span class="s2">"horizons"</span>
+        <span class="n">horizons_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">safe_name</span> <span class="o">=</span> <span class="n">body_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">horizons_dir</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">safe_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y%m</span><span class="si">%d</span><span class="s1">T%H%M%S</span><span class="si">%f</span><span class="s1">'</span><span class="p">)</span><span class="si">}</span><span class="s2">.ecsv"</span>
+        <span class="p">)</span>
+        <span class="n">eph</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"ascii.ecsv"</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Saved raw Horizons output for </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">) to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">context</span><span class="p">,</span>
+            <span class="n">output_path</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Failed to save raw Horizons output for </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">context</span><span class="p">,</span>
+            <span class="n">exc</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Horizons API call input for </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">context</span><span class="p">,</span>
+            <span class="n">call_input</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Failed to log Horizons API call input for </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">context</span><span class="p">,</span>
+            <span class="n">exc</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<span class="c1">## for flat fielding</span>
+<div class="viewcode-block" id="is_sun_rising">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.is_sun_rising">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_sun_rising</span><span class="p">(</span><span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">AltAz</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Determine solar motion and flat field observation readiness.</span>
+
+<span class="sd">    Analyzes sun position and movement to determine if conditions are suitable</span>
+<span class="sd">    for flat field calibration observations, which require specific twilight conditions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obs_location (EarthLocation): Observer's geographic location.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[bool, bool, AltAz]: Solar status as (rising, flat_ready, position):</span>
+<span class="sd">            - rising: True if sun is rising, False if setting</span>
+<span class="sd">            - flat_ready: True if optimal for flats (sun altitude -12° to -1°)</span>
+<span class="sd">            - position: Current sun position in alt-az coordinates</span>
+<span class="sd">    """</span>
+    <span class="c1"># sun's position now</span>
+    <span class="n">obs_time0</span> <span class="o">=</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">sun_position0</span> <span class="o">=</span> <span class="n">get_sun</span><span class="p">(</span><span class="n">obs_time0</span><span class="p">)</span>
+    <span class="n">sun_altaz0</span> <span class="o">=</span> <span class="n">sun_position0</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span>
+        <span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">obs_time0</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">obs_location</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># sun's position in 5 minutes</span>
+    <span class="n">obs_time1</span> <span class="o">=</span> <span class="n">obs_time0</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">minute</span>
+    <span class="n">sun_position1</span> <span class="o">=</span> <span class="n">get_sun</span><span class="p">(</span><span class="n">obs_time1</span><span class="p">)</span>
+    <span class="n">sun_altaz1</span> <span class="o">=</span> <span class="n">sun_position1</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span>
+        <span class="n">AltAz</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">obs_time1</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">obs_location</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># determine if sun is moving up or down by looking at gradient</span>
+    <span class="n">sun_altaz_grad</span> <span class="o">=</span> <span class="p">(</span><span class="n">sun_altaz1</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">degree</span> <span class="o">-</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">obs_time1</span> <span class="o">-</span> <span class="n">obs_time0</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">sec</span>
+
+    <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">sun_altaz_grad</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sun_rising</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">flat_ready</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">deg</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">12</span> <span class="ow">and</span> <span class="n">sun_altaz0</span><span class="o">.</span><span class="n">alt</span><span class="o">.</span><span class="n">deg</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">flat_ready</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">sun_rising</span><span class="p">,</span> <span class="n">flat_ready</span><span class="p">,</span> <span class="n">sun_altaz0</span></div>
+
+
+
+<div class="viewcode-block" id="astrometric_icrs">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.astrometric_icrs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">astrometric_icrs</span><span class="p">(</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">SkyCoord</span><span class="p">,</span> <span class="n">obstime</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the astrometric ICRS direction of a solar system body from the observer.</span>
+
+<span class="sd">    ``get_body`` returns GCRS coordinates. Those include annual aberration, so they</span>
+<span class="sd">    differ from a catalogue (ICRS) direction by up to 20 arcseconds. JPL Horizons</span>
+<span class="sd">    and SIMBAD give astrometric ICRS. This function brings the astropy result onto</span>
+<span class="sd">    the same footing, so every source Astra uses is in one frame.</span>
+
+<span class="sd">    The direction is the light-time corrected barycentric position of the body,</span>
+<span class="sd">    which astropy provides, minus the barycentric position of the observer. Do not</span>
+<span class="sd">    use ``transform_to(ICRS())`` on a ``get_body`` result for this. That returns the</span>
+<span class="sd">    direction from the solar system barycentre, not from the observer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        body: Output of ``get_body``, one or many times.</span>
+<span class="sd">        obstime: The time(s) the body was evaluated at.</span>
+<span class="sd">        obs_location: The observer location used for ``get_body``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SkyCoord in ICRS with no distance, one entry per input time.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">body</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+        <span class="c1"># No distance, so this is already a direction. Nothing to correct.</span>
+        <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">body</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">body</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">"icrs"</span><span class="p">)</span>
+
+    <span class="n">body_bary</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">ICRS</span><span class="p">())</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">without_differentials</span><span class="p">()</span>
+    <span class="n">observer_bary</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">get_body_barycentric</span><span class="p">(</span><span class="s2">"earth"</span><span class="p">,</span> <span class="n">obstime</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">obs_location</span><span class="o">.</span><span class="n">get_gcrs</span><span class="p">(</span><span class="n">obstime</span><span class="p">)</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">without_differentials</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">body_bary</span><span class="o">.</span><span class="n">xyz</span> <span class="o">-</span> <span class="n">observer_bary</span><span class="o">.</span><span class="n">xyz</span><span class="p">)</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">"icrs"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">unit</span><span class="o">.</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">unit</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">"icrs"</span><span class="p">)</span></div>
+
+
+
+<span class="c1">## planet or SIMBAD positions</span>
+<div class="viewcode-block" id="get_body_coordinates">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.get_body_coordinates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_body_coordinates</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">obs_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+    <span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkyCoord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Get the ICRS position of a celestial body (Solar System or Deep Sky).</span>
+
+<span class="sd">    Calculates the astrometric ICRS coordinates of a solar system body as seen</span>
+<span class="sd">    from the observer, or resolves the coordinates of a deep sky object by name.</span>
+<span class="sd">    Both are in the same frame as the schedule's ``ra``/``dec``.</span>
+
+<span class="sd">    This returns a single position and is for targets that are tracked sidereally.</span>
+<span class="sd">    Moving targets that need differential tracking -- minor bodies and TLE-defined</span>
+<span class="sd">    satellites -- go through :func:`precompute_ephemeris` instead, which returns</span>
+<span class="sd">    interpolators over the whole observation window.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        body_name (str): Name of the body (e.g., 'mars', 'jupiter', 'M31', 'Vega').</span>
+<span class="sd">        obs_time (Time): Observation time (used for solar system bodies).</span>
+<span class="sd">        obs_location (EarthLocation): Observer's geographic location (used for solar system bodies).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SkyCoord: Position of the body in the sky.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Check if the body is in the solar system ephemeris (case-insensitive)</span>
+    <span class="c1"># solar_system_ephemeris.bodies normally contains lowercase strings</span>
+    <span class="k">if</span> <span class="n">body_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_SOLAR_SYSTEM_BODIES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">astrometric_icrs</span><span class="p">(</span>
+            <span class="n">get_body</span><span class="p">(</span><span class="n">body_name</span><span class="p">,</span> <span class="n">obs_time</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">),</span> <span class="n">obs_time</span><span class="p">,</span> <span class="n">obs_location</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Otherwise, try to resolve as a deep sky object (ICRS)</span>
+    <span class="k">return</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="n">body_name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="is_solar_system_body">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.is_solar_system_body">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_solar_system_body</span><span class="p">(</span><span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return True if name is a known solar system body in the astropy ephemeris.</span>
+
+<span class="sd">    O(1) lookup on a lowercase name against the ephemeris bodies set.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">body_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_SOLAR_SYSTEM_BODIES</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sample_body</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+    <span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+    <span class="n">interval_minutes</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">tle_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Sample a moving body's position over a window at one sampling interval.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        body_name: Name of the body, or 'TLE' when tle_data is given.</span>
+<span class="sd">        start_time: Start of the window.</span>
+<span class="sd">        duration_hours: Length of the window in hours.</span>
+<span class="sd">        obs_location: Observer EarthLocation.</span>
+<span class="sd">        interval_minutes: Sampling interval in minutes.</span>
+<span class="sd">        tle_data: Two element lines separated by a newline, for a satellite.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (seconds, ra_deg, dec_deg, ra_rate, dec_rate). Seconds are measured from</span>
+<span class="sd">        start_time and RA is unwrapped, so it is continuous across 0/360. The two</span>
+<span class="sd">        rates are the Horizons columns in arcseconds per hour, or None for a body</span>
+<span class="sd">        taken from astropy's built-in ephemeris.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotMovingBodyError: If Horizons cannot resolve the name.</span>
+<span class="sd">        requests.exceptions.RequestException: On a network failure.</span>
+<span class="sd">    """</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration_hours</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">/</span> <span class="n">interval_minutes</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">minutes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration_hours</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">minutes</span><span class="p">,</span> <span class="s2">"min"</span><span class="p">)</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">duration_hours</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">hour</span>
+
+    <span class="n">ra_rate_as_per_hour</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dec_rate_as_per_hour</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">body_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_SOLAR_SYSTEM_BODIES</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">solar_system_ephemeris</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"builtin"</span><span class="p">):</span>
+            <span class="c1"># Astrometric ICRS, the same frame Horizons and SIMBAD return.</span>
+            <span class="n">bodies</span> <span class="o">=</span> <span class="n">astrometric_icrs</span><span class="p">(</span>
+                <span class="n">get_body</span><span class="p">(</span><span class="n">body_name</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">),</span> <span class="n">times</span><span class="p">,</span> <span class="n">obs_location</span>
+            <span class="p">)</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="n">minutes</span> <span class="o">*</span> <span class="mf">60.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"lon"</span><span class="p">:</span> <span class="n">obs_location</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+                <span class="s2">"lat"</span><span class="p">:</span> <span class="n">obs_location</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+                <span class="s2">"elevation"</span><span class="p">:</span> <span class="n">obs_location</span><span class="o">.</span><span class="n">height</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">epochs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"start"</span><span class="p">:</span> <span class="n">start_time</span><span class="o">.</span><span class="n">iso</span><span class="p">,</span>
+                <span class="s2">"stop"</span><span class="p">:</span> <span class="n">stop_time</span><span class="o">.</span><span class="n">iso</span><span class="p">,</span>
+                <span class="s2">"step"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_points</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># Horizons returns n+1 rows for n steps</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Handle TLE data</span>
+            <span class="k">if</span> <span class="n">body_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"TLE"</span> <span class="ow">or</span> <span class="n">tle_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tle_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">"tle_data parameter is required when body_name is 'TLE'"</span>
+                    <span class="p">)</span>
+                <span class="n">call_input</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"TLE"</span><span class="p">,</span>
+                    <span class="s2">"location"</span><span class="p">:</span> <span class="n">location</span><span class="p">,</span>
+                    <span class="s2">"epochs"</span><span class="p">:</span> <span class="n">epochs</span><span class="p">,</span>
+                    <span class="s2">"optional_settings"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"TLE"</span><span class="p">:</span> <span class="n">tle_data</span><span class="p">},</span>
+                    <span class="s2">"quantities"</span><span class="p">:</span> <span class="n">_HORIZONS_QUANTITIES</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">Horizons</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"TLE"</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">)</span>
+                <span class="n">eph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">ephemerides</span><span class="p">(</span>
+                    <span class="n">optional_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">"TLE"</span><span class="p">:</span> <span class="n">tle_data</span><span class="p">},</span>
+                    <span class="n">quantities</span><span class="o">=</span><span class="n">_HORIZONS_QUANTITIES</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">call_input</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">"id"</span><span class="p">:</span> <span class="n">body_name</span><span class="p">,</span>
+                    <span class="s2">"location"</span><span class="p">:</span> <span class="n">location</span><span class="p">,</span>
+                    <span class="s2">"epochs"</span><span class="p">:</span> <span class="n">epochs</span><span class="p">,</span>
+                    <span class="s2">"quantities"</span><span class="p">:</span> <span class="n">_HORIZONS_QUANTITIES</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">Horizons</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">body_name</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">)</span>
+                <span class="n">eph</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">ephemerides</span><span class="p">(</span><span class="n">quantities</span><span class="o">=</span><span class="n">_HORIZONS_QUANTITIES</span><span class="p">)</span>
+            <span class="n">_save_and_log_horizons_output</span><span class="p">(</span>
+                <span class="n">body_name</span><span class="p">,</span> <span class="s2">"precompute_ephemeris"</span><span class="p">,</span> <span class="n">eph</span><span class="p">,</span> <span class="n">call_input</span>
+            <span class="p">)</span>
+
+            <span class="n">bodies</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">eph</span><span class="p">[</span><span class="s2">"RA"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">eph</span><span class="p">[</span><span class="s2">"DEC"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+            <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">Time</span><span class="p">(</span><span class="n">eph</span><span class="p">[</span><span class="s2">"datetime_jd"</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"jd"</span><span class="p">)</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="s2">"RA_rate"</span> <span class="ow">in</span> <span class="n">eph</span><span class="o">.</span><span class="n">colnames</span> <span class="ow">and</span> <span class="s2">"DEC_rate"</span> <span class="ow">in</span> <span class="n">eph</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">ra_rate_as_per_hour</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eph</span><span class="p">[</span><span class="s2">"RA_rate"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">dec_rate_as_per_hour</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eph</span><span class="p">[</span><span class="s2">"DEC_rate"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="c1"># Network/HTTP failures are not evidence that the body is fixed --</span>
+            <span class="c1"># let them propagate so the caller does not silently fall back to</span>
+            <span class="c1"># sidereal tracking for a genuinely moving target.</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotMovingBodyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">body_name</span><span class="si">}</span><span class="s2">' could not be resolved as a solar system or minor body: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="n">ra_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">bodies</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">rad</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">dec_coords</span> <span class="o">=</span> <span class="n">bodies</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+    <span class="k">return</span> <span class="n">seconds</span><span class="p">,</span> <span class="n">ra_coords</span><span class="p">,</span> <span class="n">dec_coords</span><span class="p">,</span> <span class="n">ra_rate_as_per_hour</span><span class="p">,</span> <span class="n">dec_rate_as_per_hour</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_max_sky_rate_deg_per_s</span><span class="p">(</span>
+    <span class="n">seconds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ra_coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">dec_coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ra_rate_as_per_hour</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dec_rate_as_per_hour</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the fastest apparent sky motion in the sampled window, in deg/s.</span>
+
+<span class="sd">    Horizons reports the rate at each sample, which is exact even where the</span>
+<span class="sd">    samples themselves are too far apart to describe the path. Positions from</span>
+<span class="sd">    astropy are differentiated instead, which is accurate because every body in</span>
+<span class="sd">    the built-in ephemeris moves slowly.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">ra_rate_as_per_hour</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dec_rate_as_per_hour</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Both columns are arcseconds per hour, and Horizons already projects the</span>
+        <span class="c1"># RA rate onto the sky by the cos(Dec) factor.</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">ra_rate_as_per_hour</span><span class="p">,</span> <span class="n">dec_rate_as_per_hour</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3600.0</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">cos_dec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">dec_coords</span><span class="p">))</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">ra_coords</span><span class="p">,</span> <span class="n">seconds</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos_dec</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">dec_coords</span><span class="p">,</span> <span class="n">seconds</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rates</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_interval_floor_seconds</span><span class="p">(</span><span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the shortest sampling interval allowed over a window of this length.</span>
+
+<span class="sd">    One second, or longer where that many samples would exceed the ceiling.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="n">_MIN_INTERVAL_SECONDS</span><span class="p">,</span> <span class="n">duration_hours</span> <span class="o">*</span> <span class="mf">3600.0</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">_MAX_SAMPLES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_interval_for_sky_rate</span><span class="p">(</span><span class="n">rate_deg_per_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Choose a sampling interval in minutes for a target moving at this rate.</span>
+
+<span class="sd">    The interval keeps the arc between two samples short enough for the cubic</span>
+<span class="sd">    interpolation to stay accurate. It is never longer than the default, never</span>
+<span class="sd">    shorter than one second, and never fine enough to exceed the sample ceiling.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">rate_deg_per_s</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">wanted_s</span> <span class="o">=</span> <span class="n">_DEFAULT_INTERVAL_MINUTES</span> <span class="o">*</span> <span class="mf">60.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wanted_s</span> <span class="o">=</span> <span class="n">_MAX_ARC_PER_SAMPLE_DEG</span> <span class="o">/</span> <span class="n">rate_deg_per_s</span>
+
+    <span class="n">wanted_s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">wanted_s</span><span class="p">,</span> <span class="n">_interval_floor_seconds</span><span class="p">(</span><span class="n">duration_hours</span><span class="p">)),</span>
+        <span class="n">_DEFAULT_INTERVAL_MINUTES</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">wanted_s</span> <span class="o">/</span> <span class="mf">60.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_initial_interval_minutes</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tle_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the interval the automatic search starts from.</span>
+
+<span class="sd">    A TLE always describes an Earth satellite, so the search starts at an interval</span>
+<span class="sd">    that suits a low orbit. Every other target starts at the default, which already</span>
+<span class="sd">    suits a planet, a comet or an asteroid. Each start is the value the search</span>
+<span class="sd">    settles on for the usual target of its kind, so one query is normally enough.</span>
+<span class="sd">    """</span>
+    <span class="n">is_tle</span> <span class="o">=</span> <span class="n">body_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"TLE"</span> <span class="ow">or</span> <span class="n">tle_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">start_s</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_TLE_INITIAL_INTERVAL_SECONDS</span> <span class="k">if</span> <span class="n">is_tle</span> <span class="k">else</span> <span class="n">_DEFAULT_INTERVAL_MINUTES</span> <span class="o">*</span> <span class="mf">60.0</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">start_s</span><span class="p">,</span> <span class="n">_interval_floor_seconds</span><span class="p">(</span><span class="n">duration_hours</span><span class="p">))</span> <span class="o">/</span> <span class="mf">60.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sample_automatically</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+    <span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+    <span class="n">tle_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Sample a body at an interval that suits how quickly it moves.</span>
+
+<span class="sd">    The search starts from the interval that the kind of target usually needs, and</span>
+<span class="sd">    each sampled grid says whether that interval was correct. A grid that is too</span>
+<span class="sd">    coarse for a satellite is also aliased, and the rate read from it is too low.</span>
+<span class="sd">    So the interval is chosen again from each finer grid, which reads a higher peak</span>
+<span class="sd">    rate, until the choice settles.</span>
+<span class="sd">    """</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="n">_initial_interval_minutes</span><span class="p">(</span><span class="n">body_name</span><span class="p">,</span> <span class="n">tle_data</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">_sample_body</span><span class="p">(</span>
+        <span class="n">body_name</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">tle_data</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_MAX_INTERVAL_REFINEMENTS</span><span class="p">):</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">_max_sky_rate_deg_per_s</span><span class="p">(</span><span class="o">*</span><span class="n">sample</span><span class="p">)</span>
+        <span class="n">wanted</span> <span class="o">=</span> <span class="n">_interval_for_sky_rate</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">)</span>
+        <span class="n">too_coarse</span> <span class="o">=</span> <span class="n">wanted</span> <span class="o">&lt;</span> <span class="n">interval</span> <span class="o">*</span> <span class="mf">0.9</span>
+        <span class="c1"># Much finer than the target needs, which costs query time and memory for</span>
+        <span class="c1"># no accuracy. A small difference is left alone.</span>
+        <span class="n">too_fine</span> <span class="o">=</span> <span class="n">wanted</span> <span class="o">&gt;</span> <span class="n">interval</span> <span class="o">*</span> <span class="n">_INTERVAL_COARSEN_FACTOR</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">too_coarse</span> <span class="ow">or</span> <span class="n">too_fine</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"'</span><span class="si">%s</span><span class="s2">' moves at up to </span><span class="si">%.4f</span><span class="s2"> deg/s. Sampling its ephemeris every </span><span class="si">%.1f</span><span class="s2"> s "</span>
+            <span class="s2">"rather than </span><span class="si">%.1f</span><span class="s2"> s."</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">rate</span><span class="p">,</span>
+            <span class="n">wanted</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">,</span>
+            <span class="n">interval</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="n">wanted</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">_sample_body</span><span class="p">(</span>
+            <span class="n">body_name</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">tle_data</span>
+        <span class="p">)</span>
+
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">_max_sky_rate_deg_per_s</span><span class="p">(</span><span class="o">*</span><span class="n">sample</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">_MAX_ARC_PER_SAMPLE_DEG</span> <span class="o">/</span> <span class="n">rate</span> <span class="o">&lt;</span> <span class="n">_interval_floor_seconds</span><span class="p">(</span>
+        <span class="n">duration_hours</span>
+    <span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"'</span><span class="si">%s</span><span class="s2">' moves at up to </span><span class="si">%.4f</span><span class="s2"> deg/s, which needs an ephemeris sample every "</span>
+            <span class="s2">"</span><span class="si">%.2f</span><span class="s2"> s. That many samples over this </span><span class="si">%.1f</span><span class="s2"> hour window exceeds the "</span>
+            <span class="s2">"ceiling of </span><span class="si">%d</span><span class="s2">, so the interval is held at </span><span class="si">%.1f</span><span class="s2"> s and positions between "</span>
+            <span class="s2">"samples are less accurate. Shorten the window for a target this fast."</span><span class="p">,</span>
+            <span class="n">body_name</span><span class="p">,</span>
+            <span class="n">rate</span><span class="p">,</span>
+            <span class="n">_MAX_ARC_PER_SAMPLE_DEG</span> <span class="o">/</span> <span class="n">rate</span><span class="p">,</span>
+            <span class="n">duration_hours</span><span class="p">,</span>
+            <span class="n">_MAX_SAMPLES</span><span class="p">,</span>
+            <span class="n">interval</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sample</span>
+
+
+<div class="viewcode-block" id="precompute_ephemeris">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.precompute_ephemeris">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">precompute_ephemeris</span><span class="p">(</span>
+    <span class="n">body_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start_time</span><span class="p">:</span> <span class="n">Time</span><span class="p">,</span>
+    <span class="n">duration_hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">obs_location</span><span class="p">:</span> <span class="n">EarthLocation</span><span class="p">,</span>
+    <span class="n">interval_minutes</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">tle_data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_rates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="s2">"interp1d"</span><span class="p">,</span> <span class="s2">"interp1d"</span><span class="p">]</span>
+    <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">"interp1d"</span><span class="p">,</span> <span class="s2">"interp1d"</span><span class="p">,</span> <span class="s2">"interp1d"</span><span class="p">,</span> <span class="s2">"interp1d"</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Pre-compute a moving body's sky positions over a time window.</span>
+
+<span class="sd">    Samples the body's position over the whole window and returns cubic</span>
+<span class="sd">    interpolation functions keyed on seconds since start_time. Planets, the Moon</span>
+<span class="sd">    and the Sun come from vectorised astropy get_body() calls. Minor bodies and</span>
+<span class="sd">    TLE-defined satellites come from JPL Horizons, in one query, or two where the</span>
+<span class="sd">    interval is chosen automatically and the target moves fast enough to need a</span>
+<span class="sd">    finer grid. Reading the interpolators at runtime is much faster than repeated</span>
+<span class="sd">    position lookups.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        body_name: Name of the body (e.g. 'mars', 'moon'). Must be present in</span>
+<span class="sd">            astropy's built-in solar system ephemeris, resolvable by JPL Horizons,</span>
+<span class="sd">            or 'TLE' if tle_data is provided.</span>
+<span class="sd">        start_time: Start of the observation window.</span>
+<span class="sd">        duration_hours: Length of the window in hours.</span>
+<span class="sd">        obs_location: Observer EarthLocation.</span>
+<span class="sd">        interval_minutes: Ephemeris sampling interval in minutes. Pass None to</span>
+<span class="sd">            choose it from the target's own sky motion, which a fast target needs:</span>
+<span class="sd">            sampled once a minute, the ISS lands 8 degrees from its true position</span>
+<span class="sd">            between samples, because cubic interpolation cannot describe an arc it</span>
+<span class="sd">            never sampled. The search starts at a few seconds for a TLE and at one</span>
+<span class="sd">            minute for everything else, so one query is normally enough, and then</span>
+<span class="sd">            checks that against the sampled rates. The interval is held between one</span>
+<span class="sd">            second and one minute, and never fine enough to exceed the sample</span>
+<span class="sd">            ceiling.</span>
+<span class="sd">        tle_data: Two-line element (TLE) data as a string with two lines separated</span>
+<span class="sd">            by newline. Required when body_name is 'TLE'. Example format:</span>
+<span class="sd">            "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927\\n</span>
+<span class="sd">             2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        If return_rates is False (default):</span>
+<span class="sd">            (ra_interp, dec_interp): Two callables mapping elapsed seconds to degrees.</span>
+<span class="sd">            RA is unwrapped (continuous, not modulo 360) to avoid discontinuities at wrap boundaries.</span>
+
+<span class="sd">        If return_rates is True:</span>
+<span class="sd">            (ra_interp, dec_interp, ra_rate_interp, dec_rate_interp), where</span>
+<span class="sd">            ra_rate_interp and dec_rate_interp map elapsed seconds to ASCOM tracking</span>
+<span class="sd">            units (RightAscensionRate in seconds of RA per sidereal second and</span>
+<span class="sd">            DeclinationRate in arcseconds per SI second).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotMovingBodyError: If body cannot be resolved as a solar system body,</span>
+<span class="sd">            minor body, or TLE.</span>
+<span class="sd">        ValueError: If body_name is 'TLE' but tle_data is not provided.</span>
+
+<span class="sd">    Example usage:</span>
+<span class="sd">    --------</span>
+<span class="sd">    Get the position of Mars as observed from Greenwich at the current time:</span>
+<span class="sd">        from astropy.coordinates import get_body, EarthLocation, solar_system_ephemeris</span>
+<span class="sd">        from astropy.time import Time</span>
+<span class="sd">        location = EarthLocation.of_site('greenwich')</span>
+<span class="sd">        ra_interp, dec_interp = precompute_ephemeris('mars', Time.now(), 4, location)</span>
+
+<span class="sd">    Get position of ISS using TLE data:</span>
+<span class="sd">        tle = "1 25544U 98067A   23001.00000000  .00016717  00000-0  29641-3 0  9991\n2 25544  51.6416 339.8014 0002571  235.7582  1.5976 15.54178122381131"</span>
+<span class="sd">        ra_interp, dec_interp = precompute_ephemeris('TLE', start_time, 4, location, tle_data=tle)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">interval_minutes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">seconds</span><span class="p">,</span> <span class="n">ra_coords</span><span class="p">,</span> <span class="n">dec_coords</span><span class="p">,</span> <span class="n">ra_rate_as_per_hour</span><span class="p">,</span> <span class="n">dec_rate_as_per_hour</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_sample_automatically</span><span class="p">(</span>
+                <span class="n">body_name</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration_hours</span><span class="p">,</span> <span class="n">obs_location</span><span class="p">,</span> <span class="n">tle_data</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seconds</span><span class="p">,</span> <span class="n">ra_coords</span><span class="p">,</span> <span class="n">dec_coords</span><span class="p">,</span> <span class="n">ra_rate_as_per_hour</span><span class="p">,</span> <span class="n">dec_rate_as_per_hour</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_sample_body</span><span class="p">(</span>
+                <span class="n">body_name</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="p">,</span>
+                <span class="n">duration_hours</span><span class="p">,</span>
+                <span class="n">obs_location</span><span class="p">,</span>
+                <span class="n">interval_minutes</span><span class="p">,</span>
+                <span class="n">tle_data</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">ra_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="n">ra_coords</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">"extrapolate"</span><span class="p">)</span>
+    <span class="n">dec_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="n">dec_coords</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"cubic"</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">"extrapolate"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">return_rates</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ra_interp</span><span class="p">,</span> <span class="n">dec_interp</span>
+
+    <span class="k">if</span> <span class="n">ra_rate_as_per_hour</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dec_rate_as_per_hour</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Horizons RA_rate is dRA*cos(D) in arcsec/hr — the angular velocity projected</span>
+        <span class="c1"># onto the sky, not the RA coordinate rate.  Divide by cos(Dec) to recover</span>
+        <span class="c1"># d(RA_coord)/dt before converting to ASCOM RightAscensionRate units</span>
+        <span class="c1"># (seconds of RA per sidereal second).  Without this factor the mount tracks at</span>
+        <span class="c1"># cos(Dec) of the required rate, causing steady RA drift between recenters that</span>
+        <span class="c1"># manifests as a visible jump when each recenter slew corrects the error.</span>
+        <span class="n">cos_dec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">dec_coords</span><span class="p">))</span>
+        <span class="c1"># Guard against division by zero within ~0.003° of the celestial poles.</span>
+        <span class="n">cos_dec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cos_dec</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-5</span><span class="p">,</span> <span class="mf">5e-5</span><span class="p">,</span> <span class="n">cos_dec</span><span class="p">)</span>
+        <span class="n">ra_rates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ra_rate_as_per_hour</span> <span class="o">/</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="mf">3600.0</span> <span class="o">*</span> <span class="n">cos_dec</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">_SOLAR_TO_SIDEREAL</span>
+        <span class="c1"># ASCOM DeclinationRate is in arcseconds per SI (solar) second, so no</span>
+        <span class="c1"># sidereal conversion applies here. Only RightAscensionRate is per</span>
+        <span class="c1"># sidereal second.</span>
+        <span class="n">dec_rates</span> <span class="o">=</span> <span class="n">dec_rate_as_per_hour</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fallback for astropy bodies: derive rates from sampled sky positions.</span>
+        <span class="n">ra_rate_deg_per_solar_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">ra_coords</span><span class="p">,</span> <span class="n">seconds</span><span class="p">)</span>
+        <span class="n">dec_rate_deg_per_solar_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">dec_coords</span><span class="p">,</span> <span class="n">seconds</span><span class="p">)</span>
+        <span class="n">ra_rates</span> <span class="o">=</span> <span class="p">(</span><span class="n">ra_rate_deg_per_solar_s</span> <span class="o">*</span> <span class="mf">240.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">_SOLAR_TO_SIDEREAL</span>
+        <span class="n">dec_rates</span> <span class="o">=</span> <span class="n">dec_rate_deg_per_solar_s</span> <span class="o">*</span> <span class="mf">3600.0</span>
+
+    <span class="n">ra_rate_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">seconds</span><span class="p">,</span>
+        <span class="n">ra_rates</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="s2">"extrapolate"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">dec_rate_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">seconds</span><span class="p">,</span>
+        <span class="n">dec_rates</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="s2">"extrapolate"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ra_interp</span><span class="p">,</span> <span class="n">dec_interp</span><span class="p">,</span> <span class="n">ra_rate_interp</span><span class="p">,</span> <span class="n">dec_rate_interp</span></div>
+
+
+
+<div class="viewcode-block" id="compute_nonsidereal_rates_from_interp">
+<a class="viewcode-back" href="../../../api/generated/astra.utils.ephemeris.html#astra.utils.ephemeris.compute_nonsidereal_rates_from_interp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_nonsidereal_rates_from_interp</span><span class="p">(</span>
+    <span class="n">ra_interp</span><span class="p">:</span> <span class="n">interp1d</span><span class="p">,</span>
+    <span class="n">dec_interp</span><span class="p">:</span> <span class="n">interp1d</span><span class="p">,</span>
+    <span class="n">t_seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Compute ASCOM RightAscensionRate and DeclinationRate from pre-computed interpolators.</span>
+
+<span class="sd">    Uses a finite difference on the interpolated ephemeris so no additional</span>
+<span class="sd">    get_body() calls are needed at runtime.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ra_interp: RA interpolator (seconds to degrees, unwrapped/continuous).</span>
+<span class="sd">        dec_interp: Dec interpolator (seconds to degrees).</span>
+<span class="sd">        t_seconds: Elapsed seconds since the ephemeris start_time.</span>
+<span class="sd">        dt: Finite-difference step in seconds (default 60).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (ra_rate, dec_rate) where:</span>
+<span class="sd">          ra_rate  - seconds of time per sidereal second  (ASCOM RightAscensionRate)</span>
+<span class="sd">          dec_rate - arcseconds per SI second             (ASCOM DeclinationRate)</span>
+<span class="sd">    """</span>
+    <span class="c1"># ASCOM RightAscensionRate is per sidereal second. A sidereal second is shorter</span>
+    <span class="c1"># than a solar second, so ``dt`` solar seconds span ``dt * _SOLAR_TO_SIDEREAL``</span>
+    <span class="c1"># sidereal seconds. This matches the ``/ _SOLAR_TO_SIDEREAL`` applied to the RA</span>
+    <span class="c1"># rates in ``precompute_ephemeris``. DeclinationRate is per SI second, so the</span>
+    <span class="c1"># Dec rate uses ``dt`` directly.</span>
+    <span class="n">dt_in_sidereal_s</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">_SOLAR_TO_SIDEREAL</span>
+
+    <span class="n">delta_ra_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ra_interp</span><span class="p">(</span><span class="n">t_seconds</span> <span class="o">+</span> <span class="n">dt</span><span class="p">))</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">ra_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+    <span class="n">delta_dec_deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">t_seconds</span> <span class="o">+</span> <span class="n">dt</span><span class="p">))</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">dec_interp</span><span class="p">(</span><span class="n">t_seconds</span><span class="p">))</span>
+
+    <span class="c1"># Convert to ASCOM units (RA: s/s_sidereal, Dec: as/s_SI)</span>
+    <span class="n">ra_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta_ra_deg</span> <span class="o">*</span> <span class="mf">240.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">dt_in_sidereal_s</span>
+    <span class="n">dec_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta_dec_deg</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">dt</span>
+    <span class="k">return</span> <span class="n">ra_rate</span><span class="p">,</span> <span class="n">dec_rate</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Peter P. Pedersen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, Peter P. Pedersen.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
