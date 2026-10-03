@@ -1,6 +1,7 @@
 import io
 import logging
 import os
+import re
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
@@ -225,11 +226,49 @@ def _build_preview_hdul(original_hdu, downsampled, stride: int):
     header = original_hdu.header.copy()
     header["NAXIS1"] = downsampled.shape[1]
     header["NAXIS2"] = downsampled.shape[0]
+    _bin_wcs(header, stride)
     header["HIERARCH ASTRA PREVIEW"] = True
     header["HIERARCH ASTRA PREVIEW_DOWNSAMPLE"] = stride
     data = np.asarray(downsampled, dtype=np.float32)
     primary = fits.PrimaryHDU(data=data, header=header)
     return fits.HDUList([primary])
+
+
+_SIP_TERM = re.compile(r"^(A|B|AP|BP)_(\d+)_(\d+)$")
+_CD_TERM = re.compile(r"^CD\d_\d$")
+
+
+def _bin_wcs(header, stride: int) -> None:
+    """Rescale WCS keywords in ``header`` for an image block-averaged by ``stride``.
+
+    Preview pixel p (1-based FITS) covers source pixels (p - 1) * stride + 1 to
+    p * stride, so its centre is at source coordinate (p - 0.5) * stride + 0.5.
+    SIP terms act on pixel offsets, so A_p_q scales by stride ** (p + q - 1).
+    TPV (PV) terms act on intermediate world coordinates and do not change.
+    """
+    if stride <= 1 or "CTYPE1" not in header:
+        return
+    for i in (1, 2):
+        if f"CRPIX{i}" in header:
+            header[f"CRPIX{i}"] = (header[f"CRPIX{i}"] - 0.5) / stride + 0.5
+    cd_keys = [k for k in header if _CD_TERM.match(k)]
+    if cd_keys:
+        for key in cd_keys:
+            header[key] = header[key] * stride
+    else:
+        for i in (1, 2):
+            if f"CDELT{i}" in header:
+                header[f"CDELT{i}"] = header[f"CDELT{i}"] * stride
+    for key in list(header):
+        match = _SIP_TERM.match(key)
+        if match:
+            p, q = int(match[2]), int(match[3])
+            header[key] = header[key] * float(stride) ** (p + q - 1)
+    # astrometry.net image size keywords
+    if "IMAGEW" in header:
+        header["IMAGEW"] = header["NAXIS1"]
+    if "IMAGEH" in header:
+        header["IMAGEH"] = header["NAXIS2"]
 
 
 def _has_allowed_extension(name: str) -> bool:
@@ -440,8 +479,6 @@ def create_router(
         )
         if "<base" in html:
             # crude replace to ensure base and script match the request path
-            import re
-
             html = re.sub(r"<base[^>]*>", injected, html, count=1)
         else:
             html = html.replace("<head>", f"<head>\n    {injected}", 1)

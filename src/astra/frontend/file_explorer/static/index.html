@@ -7,8 +7,8 @@
     <script src="/js/tailwind-3.3.5.js"></script>
     <script src="/js/d3-7.9.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="static/js/shared/array_utils.js"></script>
     <script src="static/js/shared/fileTypes.js"></script>
+    <link rel="stylesheet" href="static/js/vendor/simple-fits-viewer/style.css">
     <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
     <link rel="stylesheet" href="static/theme.css"> <!-- Theme variables -->
         <!-- Inline fallback: ensure the explorer root uses theme variables even if external CSS ordering is different -->
@@ -62,85 +62,56 @@
 
     <div id="fits-modal" class="fixed inset-0 items-center justify-center hidden opacity-0 pointer-events-none transition-opacity duration-150" style="z-index: 1000;" aria-hidden="true">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div class="relative bg-neutral-900 rounded-lg border border-gray-700/50 shadow-xl" style="width: min(100vw - 16px, 1200px); max-width: min(100vw - 16px, 1200px); max-height: calc(100vh - 16px); overflow: auto; padding: 32px; display: flex; flex-direction: column; gap: 16px;" role="dialog" aria-modal="true">
-            <button id="close-fits-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-4xl leading-none cursor-pointer bg-transparent border-0" aria-label="Close FITS viewer">&times;</button>
-            <div id="spinner" role="status" aria-live="polite" aria-hidden="true" aria-label="Loading FITS data"></div>
-                <div class="mainContainer" style="display: none;">
-                    <div id="filePathBanner" class="file-path-banner is-empty" role="status" aria-live="polite" title="No file loaded" tabindex="0">No file loaded</div>
-                    <div id="viewerToolbar" class="viewer-toolbar" style="display: none;">
-                        <div class="toolbar-row">
-                            <div class="toolbar-group file-group" role="group" aria-label="File navigation and actions">
-                                <button id="prev-file-btn" class="toolbar-icon-button" title="Previous file" aria-label="Previous file" type="button">
-                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                                </button>
-                                <button id="next-file-btn" class="toolbar-icon-button" title="Next file" aria-label="Next file" type="button">
-                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                                </button>
-                                <button id="loadFullFitsButton" class="toolbar-icon-button" title="Load full FITS" aria-label="Load full FITS" type="button">
-                                    <i class="bi bi-grid-1x2" aria-hidden="true"></i>
-                                </button>
-                                <button id="downloadFitsButton" class="toolbar-icon-button" title="Download FITS file" aria-label="Download FITS file" type="button">
-                                    <i class="bi bi-download" aria-hidden="true"></i>
-                                </button>
-                                <div class="hdu-block">
-                                    <div id="hduLabel" class="hdu-label">HDU</div>
-                                    <select id="hduSelect" class="control-select hdu-compact" title="Select HDU"></select>
-                                </div>
-                                <div class="file-group-actions">
-                                    <button id="logToggleButton" class="toolbar-icon-button log-toggle" type="button" aria-pressed="false" title="Enable log stretch">
-                                        <span>Log</span>
-                                    </button>
-                                    <button id="stretchPanelToggle" class="toolbar-icon-button collapse-button" type="button" aria-expanded="false" title="Show stretch controls">
-                                        <i class="bi bi-sliders" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="toolbar-divider" aria-hidden="true"></div>
-
-                            <div class="toolbar-group stretch-group" role="group" aria-label="Stretch controls">
-                                <div class="stretch-sliders">
-                                    <div class="control-group slider-group range-control control-compact">
-                                        <label for="stretchMin">Range</label>
-                                        <div class="ds-container" id="dualRange"></div>
-                                        <!-- hidden native inputs retained for compatibility -->
-                                        <input type="range" id="stretchMin" min="0" max="1000" value="0" style="display:none;" />
-                                        <input type="range" id="stretchMax" min="0" max="1000" value="1000" style="display:none;" />
-                                        <div class="range-values">
-                                            <span id="stretchMinValue" class="control-value">0</span>
-                                            <span class="range-divider">-</span>
-                                            <span id="stretchMaxValue" class="control-value">0</span>
-                                        </div>
-                                    </div>
-                                    <div class="control-group slider-group gamma-control control-compact">
-                                        <label for="stretchGamma">Gamma</label>
-                                        <input type="range" id="stretchGamma" min="10" max="300" value="100"/>
-                                        <span id="stretchGammaValue" class="control-value">1.0</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <img id="pngImage" style="display:none; max-width:100%; max-height:80vh; object-fit:contain;" alt="PNG preview" />
-                    <div id="imageGridContainer" class="grid-container">
-                        <canvas id="loadedImage"></canvas>
-                        <canvas id="yProfile" width="100"></canvas>
-                        <canvas id="xProfile" height="100"></canvas>
-                        <div class="info-corner">
-                            <p class="text-xs uppercase tracking-wide astra-muted">Pixel</p>
-                            <p id="pixelValue"></p>
-                            <p id="pixelPosition"></p>
-                        </div>
-                    </div>
-                    <div id="headerGridContainer" class="header-grid-container" style="display: grid">
-                        <div class="header-container">
-                            <div class="search-controls">
-                                <input type="text" id="searchInput" placeholder="Filter headers..." />
-                            </div>
-                            <table id="headerTable"></table>
-                        </div>
-                    </div>
+        <div class="fe-viewer-dialog" role="dialog" aria-modal="true" aria-label="FITS viewer" tabindex="-1">
+            <div class="fe-viewer-top">
+                <div id="filePathBanner" class="file-path-banner is-empty" role="status" aria-live="polite" title="No file loaded">No file loaded</div>
+                <button id="close-fits-modal" class="toolbar-icon-button" type="button" title="Close (Esc)" aria-label="Close FITS viewer">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="viewerToolbar" class="viewer-toolbar" role="toolbar" aria-label="Viewer tools">
+                <div class="toolbar-group" role="group" aria-label="File">
+                    <button id="prev-file-btn" class="toolbar-icon-button" type="button" title="Previous file (Left arrow)" aria-label="Previous file">
+                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button id="next-file-btn" class="toolbar-icon-button" type="button" title="Next file (Right arrow)" aria-label="Next file">
+                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <button id="loadFullFitsButton" class="toolbar-icon-button fits-only" type="button" title="Load full resolution (measure stars)" aria-label="Load full resolution">
+                        <i class="bi bi-badge-hd" aria-hidden="true"></i>
+                    </button>
+                    <button id="downloadFitsButton" class="toolbar-icon-button" type="button" title="Download file" aria-label="Download file">
+                        <i class="bi bi-download" aria-hidden="true"></i>
+                    </button>
                 </div>
+                <div class="toolbar-group fits-only" role="group" aria-label="Image tools">
+                    <button id="stretchButton" class="toolbar-icon-button" type="button" title="Stretch (Z-scale)" aria-label="Stretch">
+                        <i class="bi bi-sliders" aria-hidden="true"></i>
+                    </button>
+                    <button id="histogramButton" class="toolbar-icon-button" type="button" title="Histogram" aria-label="Histogram">
+                        <i class="bi bi-bar-chart" aria-hidden="true"></i>
+                    </button>
+                    <button id="headerButton" class="toolbar-icon-button" type="button" title="Show FITS header" aria-label="FITS header" aria-pressed="false">
+                        <i class="bi bi-card-list" aria-hidden="true"></i>
+                    </button>
+                    <button id="resetZoomButton" class="toolbar-icon-button" type="button" title="Fit image (reset zoom)" aria-label="Reset zoom">
+                        <i class="bi bi-arrows-angle-contract" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <label class="hdu-block fits-only" hidden>
+                    <span class="hdu-label">HDU</span>
+                    <select id="hduSelect" class="control-select" title="Select HDU"></select>
+                </label>
+                <p class="toolbar-hint fits-only">
+                    <span class="hint-mouse">Right-click a star to measure it</span>
+                    <span class="hint-touch">Hold a finger on a star to measure it, swipe for next file</span>
+                </p>
+            </div>
+            <div id="fe-stage" class="fe-viewer-stage">
+                <div id="fitsViewerRoot"></div>
+                <img id="pngImage" alt="PNG preview" hidden>
+                <div id="fe-spinner" role="status" aria-label="Loading" hidden></div>
+                <div id="fe-message" role="status" aria-live="polite" hidden></div>
             </div>
         </div>
     </div>
@@ -231,34 +202,6 @@
         }
 
         let currentPath = "";
-        const phoneMediaQuery = typeof window.matchMedia === 'function'
-            ? window.matchMedia('(max-width: 640px)')
-            : null;
-        function applyMobileLayoutOverride() {
-            const grid = document.getElementById('imageGridContainer');
-            if (!grid) return;
-            if (!phoneMediaQuery) {
-                grid.classList.remove('mobile-only-image');
-                return;
-            }
-            grid.classList.toggle('mobile-only-image', phoneMediaQuery.matches);
-        }
-        if (phoneMediaQuery?.addEventListener) {
-            phoneMediaQuery.addEventListener('change', () => {
-                const modal = document.getElementById('fits-modal');
-                if (modal?.classList.contains('flex') && !modal.classList.contains('hidden')) {
-                    applyMobileLayoutOverride();
-                }
-            });
-        } else if (phoneMediaQuery?.addListener) {
-            phoneMediaQuery.addListener(() => {
-                const modal = document.getElementById('fits-modal');
-                if (modal?.classList.contains('flex') && !modal.classList.contains('hidden')) {
-                    applyMobileLayoutOverride();
-                }
-            });
-        }
-
         function isSupportedPreviewFile(name) {
             return !!window.__astraFileTypes?.isSupportedPreviewFile?.(name);
         }
@@ -363,30 +306,25 @@
             renderFileList();
         });
 
+        // Files the viewer can step through, in list order (folders are skipped)
+        function viewableFiles() {
+            return applySorting(window.__fe_last_files || [], window.__fe_sort_mode)
+                .filter(f => !f.is_dir && isSupportedPreviewFile(f.name));
+        }
+
         function updatePrevNextState(filePath) {
-            const idx = findIndexForPath(filePath);
-            const prevBtn = document.getElementById('prev-file-btn');
-            const nextBtn = document.getElementById('next-file-btn');
-            prevBtn.disabled = idx <= 0;
-            // Use __fe_last_files length as sorting preserves array length
-            nextBtn.disabled = idx === -1 || idx >= (window.__fe_last_files || []).length - 1;
+            const files = viewableFiles();
+            const idx = files.findIndex(f => f.path === filePath);
+            document.getElementById('prev-file-btn').disabled = idx <= 0;
+            document.getElementById('next-file-btn').disabled = idx === -1 || idx >= files.length - 1;
         }
 
         // Previous/Next navigation for FITS modal
-        function findIndexForPath(path) {
-            const sortedList = applySorting(window.__fe_last_files || [], window.__fe_sort_mode);
-            return sortedList.findIndex(f => f.path === path);
-        }
-
         function navigateToOffset(offset) {
-            const current = window.__fe_current_file || '';
-            const sortedList = applySorting(window.__fe_last_files || [], window.__fe_sort_mode);
-            const idx = sortedList.findIndex(f => f.path === current);
-            if (idx === -1) return;
-            const nextIdx = idx + offset;
-            if (nextIdx < 0 || nextIdx >= sortedList.length) return;
-            const target = sortedList[nextIdx];
-            if (target && !target.is_dir) {
+            const files = viewableFiles();
+            const idx = files.findIndex(f => f.path === (window.__fe_current_file || ''));
+            const target = idx === -1 ? null : files[idx + offset];
+            if (target) {
                 openFitsModal(target.path);
             }
         }
@@ -431,49 +369,22 @@
         // Modal logic
         function openFitsModal(filePath) {
             const modal = document.getElementById('fits-modal');
-            const mainContainer = document.querySelector('.mainContainer');
-            const spinner = document.getElementById('spinner');
-            if (!modal || !mainContainer) return;
+            if (!modal) return;
             window.__fe_current_file = filePath;
             document.body.style.overflow = 'hidden';
-            mainContainer.style.display = 'grid';
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
+            modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+            modal.classList.add('flex', 'opacity-100', 'pointer-events-auto');
             modal.setAttribute('aria-hidden', 'false');
-            applyMobileLayoutOverride();
             updatePrevNextState(filePath);
-
-            if (spinner) {
-                spinner.style.display = 'grid';
-                spinner.setAttribute('aria-hidden', 'false');
-            }
+            modal.querySelector('[role="dialog"]')?.focus({ preventScroll: true });
 
             if (typeof window.openViewerFile !== 'function') {
-                if (spinner) {
-                    spinner.style.display = 'none';
-                    spinner.setAttribute('aria-hidden', 'true');
-                }
                 console.warn('Viewer module is still initializing; please retry in a moment.');
                 return;
             }
-            const openPromise = window.openViewerFile(filePath);
-
-            if (openPromise && typeof openPromise.then === 'function') {
-                openPromise.then(() => {
-                    if (window.__astraRenderer && typeof window.__astraRenderer.forceResize === 'function') {
-                        window.__astraRenderer.forceResize();
-                    }
-                }).catch(() => {
-                    /* swallow; viewer module reports errors */
-                });
-            }
-
-            const focusable = modal.querySelector('button, select, input');
-            if (focusable) {
-                focusable.focus({ preventScroll: true });
-            }
+            window.openViewerFile(filePath).catch(() => {
+                /* the viewer module reports errors */
+            });
         }
 
         function closeFitsModal() {
@@ -490,16 +401,13 @@
             if (typeof window.cancelViewerLoads === 'function') {
                 window.cancelViewerLoads();
             }
-            const container = document.querySelector('.mainContainer');
-            if (container) {
-                container.style.display = 'none';
-            }
         }
         document.getElementById('close-fits-modal').onclick = closeFitsModal;
         // Click on backdrop (first child div with bg-black/50) to close
         document.getElementById('fits-modal').addEventListener('click', function(e) {
-            // Close if clicking outside the dialog content (e.g. on the backdrop)
-            if (!e.target.closest('[role="dialog"]')) {
+            // Close only for clicks on the backdrop itself. (Testing "outside the
+            // dialog" fails when a click handler replaces the clicked element.)
+            if (e.target === this || e.target === this.firstElementChild) {
                 closeFitsModal();
             }
         });
@@ -531,6 +439,8 @@
         document.addEventListener('keydown', function(event) {
             const modal = document.getElementById('fits-modal');
             const modalOpen = modal && modal.classList.contains('flex') && !modal.classList.contains('hidden');
+            // Keys typed into a field (e.g. the header search) are not shortcuts
+            if (event.target.closest?.('input, textarea, select')) return;
 
             if (event.key === 'Escape') {
                 // Close the modal if it's open

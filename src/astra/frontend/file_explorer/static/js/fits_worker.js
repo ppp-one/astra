@@ -1,7 +1,7 @@
 // WebWorker to parse FITS files off the main thread
-// Expects to receive: {type: 'parse', arrayBuffer: ArrayBuffer}
-// Replies with: {type: 'result', header, width, height, imageData, dataMin, dataMax}
-// The imageData buffer is transferred, not copied.
+// Expects to receive: {type: 'parse', id, arrayBuffer: ArrayBuffer}
+// Replies with: {type: 'result', id, header, width, height, imageData, dataMin, dataMax}
+// or {type: 'error', id, message}. The imageData buffer is transferred, not copied.
 
 const BLOCK_SIZE = 2880;
 const CARD_SIZE = 80;
@@ -12,9 +12,9 @@ self.addEventListener('message', (e) => {
     if (msg && msg.type === 'parse') {
         try {
             const result = parseFITSImage(msg.arrayBuffer);
-            self.postMessage({ type: 'result', ...result }, [result.imageData.buffer]);
+            self.postMessage({ type: 'result', id: msg.id, ...result }, [result.imageData.buffer]);
         } catch (err) {
-            self.postMessage({ type: 'error', message: String(err) });
+            self.postMessage({ type: 'error', id: msg.id, message: String(err) });
         }
     }
 });
@@ -27,9 +27,17 @@ function parseHeader(arrayBuffer) {
         const block = decoder.decode(new Uint8Array(arrayBuffer, offset, BLOCK_SIZE));
         offset += BLOCK_SIZE;
         for (let i = 0; i < BLOCK_SIZE; i += CARD_SIZE) {
-            const keyword = block.substring(i, i + 8).trim();
+            const card = block.substring(i, i + CARD_SIZE);
+            let keyword = card.substring(0, 8).trim();
+            let value = card.substring(10).trim();
             if (keyword === 'END') return { header, dataOffset: offset };
-            if (keyword) header[keyword] = block.substring(i + 10, i + CARD_SIZE).trim();
+            // ESO HIERARCH convention: "HIERARCH LONG KEY NAME = value / comment"
+            const eq = card.indexOf('=');
+            if (keyword === 'HIERARCH' && eq > 8) {
+                keyword = card.substring(8, eq).trim();
+                value = card.substring(eq + 1).trim();
+            }
+            if (keyword) header[keyword] = value;
         }
     }
     throw new Error('FITS header has no END card');

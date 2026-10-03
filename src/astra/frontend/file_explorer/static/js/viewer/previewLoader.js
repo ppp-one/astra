@@ -20,7 +20,9 @@ export async function fetchPreviewFITS(
     const query = params.toString();
     const url = withBase(`preview/${encoded}${query ? `?${query}` : ''}`);
     const response = await fetchOrThrow(url, { signal });
-    return response.arrayBuffer();
+    // Source pixels per preview pixel, so the viewer knows the data is binned
+    const stride = Number(response.headers.get('X-Astra-Preview-Stride')) || 1;
+    return { arrayBuffer: await response.arrayBuffer(), stride };
 }
 
 export async function fetchFullFITS(filePath, { signal, onProgress } = {}) {

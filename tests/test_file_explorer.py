@@ -151,3 +151,53 @@ def test_gzip_uses_fast_compression(fits_root):
     gzip = [m for m in app.user_middleware if m.cls is GZipMiddleware]
     assert len(gzip) == 1
     assert gzip[0].kwargs["compresslevel"] == COMPRESS_LEVEL == 1
+
+
+@pytest.mark.parametrize("use_cd", [True, False])
+def test_preview_wcs_matches_source_blocks(tmp_path, use_cd):
+    from astropy.wcs import WCS
+
+    from astra.frontend.file_explorer.file_explorer import _bin_wcs
+
+    wcs = WCS(naxis=2)
+    wcs.wcs.ctype = ["RA---TAN-SIP", "DEC--TAN-SIP"]
+    wcs.wcs.crval = [83.8, -5.4]
+    wcs.wcs.crpix = [1024.5, 1000.25]
+    scale = 0.78 / 3600
+    theta = np.radians(25)
+    matrix = scale * np.array(
+        [[-np.cos(theta), np.sin(theta)], [np.sin(theta), np.cos(theta)]]
+    )
+    header = wcs.to_header(relax=True)
+    if use_cd:
+        for key in ["PC1_1", "PC1_2", "PC2_1", "PC2_2", "CDELT1", "CDELT2"]:
+            header.remove(key, ignore_missing=True)
+        for (i, j), value in np.ndenumerate(matrix):
+            header[f"CD{i + 1}_{j + 1}"] = value
+    else:
+        header["CDELT1"], header["CDELT2"] = scale, scale
+        for (i, j), value in np.ndenumerate(matrix / scale):
+            header[f"PC{i + 1}_{j + 1}"] = value
+    header.update({"A_ORDER": 2, "B_ORDER": 2, "A_2_0": 2e-6, "A_1_1": -1e-6})
+    header.update({"B_0_2": -1.5e-6, "B_1_1": 5e-7})
+    header["NAXIS"], header["NAXIS1"], header["NAXIS2"] = 2, 2048, 2048
+    source = WCS(header)
+
+    stride = 8
+    binned_header = header.copy()
+    _bin_wcs(binned_header, stride)
+    binned = WCS(binned_header)
+
+    # Preview pixel p (1-based) has its centre at source pixel (p - 0.5) * stride + 0.5
+    preview_pixels = np.array([[1, 1], [128.5, 64], [256, 256], [17.25, 200.75]])
+    expected = source.all_pix2world((preview_pixels - 0.5) * stride + 0.5, 1)
+    actual = binned.all_pix2world(preview_pixels, 1)
+    np.testing.assert_allclose(actual, expected, rtol=0, atol=1e-9)
+
+
+def test_bin_wcs_leaves_headers_without_wcs_alone():
+    from astra.frontend.file_explorer.file_explorer import _bin_wcs
+
+    header = fits.Header({"NAXIS1": 10, "CRPIX1": 5.0})
+    _bin_wcs(header, 4)
+    assert header["CRPIX1"] == 5.0

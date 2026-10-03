@@ -30,6 +30,24 @@
   --explorer-selected-bg: rgba(96,165,250,0.10);
   --explorer-search-bg: rgba(255,255,255,0.03);
   --explorer-search-text: var(--astra-text);
+
+  /* simple-fits-viewer floating panels and context menu */
+  --sfv-panel-bg: #111827;
+  --sfv-panel-fg: var(--astra-text);
+  --sfv-panel-border: rgba(230,238,248,0.14);
+  --sfv-panel-header-bg: #1f2937;
+  --sfv-panel-hover: rgba(96,165,250,0.12);
+  --sfv-panel-muted: var(--astra-muted);
+}
+
+/* simple-fits-viewer inside the explorer */
+#fitsViewerRoot {
+  --sfv-fg: var(--astra-text);
+  --sfv-bg: var(--astra-input-bg);
+  --sfv-border: rgba(230,238,248,0.12);
+  --sfv-row-hover: rgba(96,165,250,0.08);
+  --sfv-accent: var(--astra-accent);
+  --sfv-spinner: var(--astra-spinner-border);
 }
 
 /* Map variables to the main explorer components (override defaults in viewer_style.css) */
@@ -61,10 +79,6 @@ input#searchInput {
   background: rgba(0,0,0,0.25) !important;
 }
 
-#spinner::after {
-  border: 3px solid var(--astra-spinner-border) !important;
-  border-top-color: var(--astra-accent) !important;
-}
 
 
 /* Header table colors */
