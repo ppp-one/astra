@@ -18,7 +18,6 @@ let imageWidth;
 let imageHeight;
 let currentTransform = d3.zoomIdentity;
 let imageData = null;
-let imageDataT = null;
 let resizeObserver = null;
 let imageGridContainer = null;
 let rect = null;
@@ -54,7 +53,13 @@ let stretchDefaults = {
 };
 
 let currentStats = null;
-let latestCanvasData = null;
+let canvasImageData = null;
+let canvasPixels = null; // Uint32 view on canvasImageData, one value per pixel
+let stretchFrame = 0;
+const STRETCH_LUT_SIZE = 65536;
+const stretchLut = new Uint32Array(STRETCH_LUT_SIZE);
+let stretchLutKey = '';
+const HOST_IS_LITTLE_ENDIAN = new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
 let xPixSize = 1;
 let yPixSize = 1;
 let physicalAspect = 1; // (physical height / physical width)
@@ -103,6 +108,7 @@ export function initRenderer(domRefs, state) {
         cancelPending() {
             renderDisabled = true;
             renderToken += 1;
+            cancelScheduledStretch();
         },
         enableRender() {
             renderDisabled = false;
@@ -162,20 +168,15 @@ async function renderArrayBuffer(arrayBuffer) {
     if (parsed.header) {
         const xp = parseFloat(parsed.header['XPIXSZ']);
         const yp = parseFloat(parsed.header['YPIXSZ']);
-        if (Number.isFinite(xp) && xp > 0) xPixSize = xp; else xPixSize = 1;
-        if (Number.isFinite(yp) && yp > 0) yPixSize = yp; else yPixSize = 1;
+        const validX = Number.isFinite(xp) && xp > 0;
+        const validY = Number.isFinite(yp) && yp > 0;
+        // With only one of the two keys, assume square pixels
+        xPixSize = validX ? xp : validY ? yp : 1;
+        yPixSize = validY ? yp : validX ? xp : 1;
     }
     physicalAspect = (imageHeight * yPixSize) / (imageWidth * xPixSize);
 
-    imageDataT = new Array(imageWidth);
-    for (let x = 0; x < imageWidth; x++) {
-        imageDataT[x] = new Array(imageHeight);
-        for (let y = 0; y < imageHeight; y++) {
-            imageDataT[x][y] = imageData[y * imageWidth + x];
-        }
-    }
-
-    currentStats = computeStats(imageData);
+    currentStats = computeStats(imageData, parsed.dataMin, parsed.dataMax);
     stretchDefaults = {
         min: currentStats.autoMin,
         max: currentStats.autoMax,
@@ -203,20 +204,30 @@ function updateStretch(partial) {
         ...stretchSettings,
         ...partial,
     };
-    applyStretchAndRender({ resetGeometry: false });
+    scheduleStretchRender();
+}
+
+// Slider drags and programmatic slider updates fire several input events per
+// frame. Render at most once per frame instead of once per event.
+function scheduleStretchRender() {
+    if (stretchFrame) return;
+    stretchFrame = window.requestAnimationFrame(() => {
+        stretchFrame = 0;
+        if (!renderDisabled) applyStretchAndRender({ resetGeometry: false });
+    });
+}
+
+function cancelScheduledStretch() {
+    if (!stretchFrame) return;
+    window.cancelAnimationFrame(stretchFrame);
+    stretchFrame = 0;
 }
 
 function applyStretchAndRender({ resetGeometry }) {
+    cancelScheduledStretch();
     if (!imageData || !canvas) return;
 
     const { min, max } = ensureStretchBounds();
-    const displayBuffer = buildDisplayBuffer(imageData, {
-        min,
-        max,
-        gamma: stretchSettings.gamma || 1,
-        mode: stretchSettings.mode || 'linear',
-    });
-    latestCanvasData = displayBuffer;
 
     if (resetGeometry || !offscreenCanvas) {
         canvas.width = imageWidth;
@@ -225,18 +236,18 @@ function applyStretchAndRender({ resetGeometry }) {
         offscreenCanvas.width = imageWidth;
         offscreenCanvas.height = imageHeight;
         offscreenCtx = offscreenCanvas.getContext('2d');
+        canvasImageData = offscreenCtx.createImageData(imageWidth, imageHeight);
+        canvasPixels = new Uint32Array(canvasImageData.data.buffer);
     }
 
-    const canvasData = new ImageData(imageWidth, imageHeight);
-    const data = canvasData.data;
-    for (let i = 0; i < displayBuffer.length; i++) {
-        const pixelValue = displayBuffer[i];
-        const index = i * 4;
-        data[index] = data[index + 1] = data[index + 2] = pixelValue;
-        data[index + 3] = 255;
-    }
+    writeStretchedPixels(imageData, canvasPixels, {
+        min,
+        max,
+        gamma: stretchSettings.gamma || 1,
+        mode: stretchSettings.mode || 'linear',
+    });
 
-    offscreenCtx.putImageData(canvasData, 0, 0);
+    offscreenCtx.putImageData(canvasImageData, 0, 0);
     if (zoomInstance) {
         d3.select(canvas).call(zoomInstance.transform, currentTransform);
     } else {
@@ -296,32 +307,47 @@ function ensureStretchBounds() {
     return { min, max };
 }
 
-function buildDisplayBuffer(data, { min, max, gamma, mode }) {
-    const length = data.length;
-    const buffer = new Uint8ClampedArray(length);
-    const range = max - min || 1;
+// Lookup table from normalised value to an opaque grey RGBA pixel. Log and gamma
+// are computed once per table entry instead of once per image pixel.
+function updateStretchLut(gamma, mode) {
+    const key = `${gamma}|${mode}`;
+    if (key === stretchLutKey) return;
+    stretchLutKey = key;
     const invGamma = 1 / Math.max(gamma, 0.01);
-
-    for (let i = 0; i < length; i++) {
-        let norm = (data[i] - min) / range;
-        norm = Math.max(0, Math.min(1, norm));
+    for (let i = 0; i < STRETCH_LUT_SIZE; i++) {
+        let norm = i / (STRETCH_LUT_SIZE - 1);
         if (mode === 'log') {
             norm = Math.log10(9 * norm + 1);
         }
-        norm = Math.pow(norm, invGamma);
-        buffer[i] = Math.round(norm * 255);
+        const c = Math.round(Math.pow(norm, invGamma) * 255);
+        stretchLut[i] = HOST_IS_LITTLE_ENDIAN
+            ? 0xff000000 | (c << 16) | (c << 8) | c
+            : (c << 24) | (c << 16) | (c << 8) | 0xff;
     }
-    return buffer;
 }
 
-function computeStats(data) {
-    let dataMin = Infinity;
-    let dataMax = -Infinity;
+function writeStretchedPixels(data, out, { min, max, gamma, mode }) {
+    updateStretchLut(gamma, mode);
+    const last = STRETCH_LUT_SIZE - 1;
+    const scale = last / (max - min || 1);
     for (let i = 0; i < data.length; i++) {
-        const val = data[i];
-        if (!Number.isFinite(val)) continue;
-        if (val < dataMin) dataMin = val;
-        if (val > dataMax) dataMax = val;
+        const t = (data[i] - min) * scale;
+        // NaN fails `t > 0` and maps to black, as before
+        out[i] = stretchLut[t > 0 ? (t < last ? t | 0 : last) : 0];
+    }
+}
+
+function computeStats(data, knownMin, knownMax) {
+    // The worker already found min/max; scan only for the main-thread fallback
+    let dataMin = Number.isFinite(knownMin) ? knownMin : Infinity;
+    let dataMax = Number.isFinite(knownMax) ? knownMax : -Infinity;
+    if (!Number.isFinite(knownMin) || !Number.isFinite(knownMax)) {
+        for (let i = 0; i < data.length; i++) {
+            const val = data[i];
+            if (!Number.isFinite(val)) continue;
+            if (val < dataMin) dataMin = val;
+            if (val > dataMax) dataMax = val;
+        }
     }
     if (!Number.isFinite(dataMin)) dataMin = 0;
     if (!Number.isFinite(dataMax)) dataMax = 1;
@@ -465,7 +491,14 @@ function imageInteractionHandler(event, width, height) {
         transformedY * width + left,
         transformedY * width + left + xWidth + 1
     );
-    const yProfile = imageDataT[transformedX].slice(top, top + yHeight + 1);
+    // Read the column directly; a transposed copy of the image costs far more
+    // memory and time than this loop over at most `height` pixels.
+    const yStart = Math.max(0, top);
+    const yLength = Math.max(0, Math.min(yHeight + 1, height - yStart));
+    const yProfile = new Float64Array(yLength);
+    for (let i = 0; i < yLength; i++) {
+        yProfile[i] = imageData[(yStart + i) * width + transformedX];
+    }
 
     drawLineProfile(
         xProfileCtx,
@@ -772,11 +805,28 @@ function parseFITSImage(arrayBuffer, dataView) {
     return [header, normalized, width, height, data];
 }
 
+// Dilate a bad-pixel mask like np.convolve(mask, ones(size), mode="same").
+function growMask(mask, size) {
+    const before = Math.floor((size - 1) / 2);
+    const after = size - 1 - before;
+    const grown = new Uint8Array(mask.length);
+    for (let i = 0; i < mask.length; i++) {
+        if (!mask[i]) continue;
+        const end = Math.min(mask.length - 1, i + after);
+        for (let j = Math.max(0, i - before); j <= end; j++) grown[j] = 1;
+    }
+    return grown;
+}
+
+// Same algorithm as astropy.visualization.ZScaleInterval
 function zscale(values, n_samples = 1000, contrast = 0.25, max_reject = 0.5, min_npixels = 5, krej = 2.5, max_iterations = 5) {
+    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
+    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
+
     const stride = Math.max(1, Math.floor(values.length / n_samples));
     const samples = [];
     for (let i = 0; i < values.length && samples.length < n_samples; i += stride) {
-        samples.push(values[i]);
+        if (Number.isFinite(values[i])) samples.push(values[i]);
     }
     samples.sort((a, b) => a - b);
 
@@ -791,14 +841,13 @@ function zscale(values, n_samples = 1000, contrast = 0.25, max_reject = 0.5, min
 
     let ngoodpix = npix;
     let last_ngoodpix = ngoodpix + 1;
-    const badpix = new Array(npix).fill(false);
+    let badpix = new Uint8Array(npix);
     const minpix = Math.max(min_npixels, Math.floor(npix * max_reject));
+    const ngrow = Math.max(1, Math.floor(npix * 0.01));
     let fit = { slope: 0, intercept: 0 };
 
     for (let iter = 0; iter < max_iterations; iter++) {
         if (ngoodpix >= last_ngoodpix || ngoodpix < minpix) break;
-        const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-        if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
         fit = au.linearFit(x, samples, badpix);
         const flat = new Array(npix);
         for (let i = 0; i < npix; i++) {
@@ -808,18 +857,17 @@ function zscale(values, n_samples = 1000, contrast = 0.25, max_reject = 0.5, min
         for (let i = 0; i < npix; i++) {
             if (!badpix[i]) goodPixels.push(flat[i]);
         }
-        const sigma = au.std(goodPixels);
-        const threshold = krej * sigma;
+        const threshold = krej * au.std(goodPixels);
+        // Rejections accumulate over iterations and grow into their neighbours
+        for (let i = 0; i < npix; i++) {
+            if (Math.abs(flat[i]) > threshold) badpix[i] = 1;
+        }
+        badpix = growMask(badpix, ngrow);
+        last_ngoodpix = ngoodpix;
         ngoodpix = 0;
         for (let i = 0; i < npix; i++) {
-            if (Math.abs(flat[i]) > threshold) {
-                badpix[i] = true;
-            } else {
-                badpix[i] = false;
-                ngoodpix++;
-            }
+            if (!badpix[i]) ngoodpix++;
         }
-        last_ngoodpix = ngoodpix;
     }
 
     if (ngoodpix >= minpix) {
@@ -828,19 +876,13 @@ function zscale(values, n_samples = 1000, contrast = 0.25, max_reject = 0.5, min
             slope = slope / contrast;
         }
         const center_pixel = Math.floor((npix - 1) / 2);
-        const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-        const median = au ? au.medianValue(samples) : medianValue(samples);
+        const mid = Math.floor(npix / 2);
+        const median = npix % 2 ? samples[mid] : (samples[mid - 1] + samples[mid]) / 2;
         vmin = Math.max(vmin, median - (center_pixel - 1) * slope);
         vmax = Math.min(vmax, median + (npix - center_pixel) * slope);
     }
 
     return { vmin, vmax };
-}
-
-function medianValue(arr) {
-    const au = (typeof window !== 'undefined' && window.arrayUtils) ? window.arrayUtils : null;
-    if (!au) throw new Error('arrayUtils is required by renderer.js but not available.');
-    return au.medianValue(arr);
 }
 
 

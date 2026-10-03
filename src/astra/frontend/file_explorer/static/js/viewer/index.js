@@ -75,9 +75,15 @@ function beginNewSession() {
         }
     }
     activeControllers = [];
+    renderer.clearMessage();
     loadGeneration += 1;
     return loadGeneration;
 }
+
+// Called when the viewer closes, so downloads stop and no progress text stays
+window.cancelViewerLoads = () => {
+    beginNewSession();
+};
 
 function createSessionController() {
     const controller = new AbortController();
@@ -246,20 +252,48 @@ export async function loadPreview(filePath, { hdu = null } = {}) {
     }
 }
 
+// Abort a full download only when no data arrives for this long, so large
+// files on slow links can still finish.
+const FULL_LOAD_STALL_TIMEOUT_MS = 20000;
+
+function formatDownloadProgress(received, total) {
+    const mb = (bytes) => (bytes / 1e6).toFixed(1);
+    if (total > 0) {
+        const percent = Math.floor((received / total) * 100);
+        return `Downloading full FITS… ${percent}% (${mb(received)} / ${mb(total)} MB)`;
+    }
+    return `Downloading full FITS… ${mb(received)} MB`;
+}
+
 async function loadFullFITS(filePath) {
     const gen = beginNewSession();
     applyFitsLayout();
     state.transition(ViewerMode.FULL_LOADING);
 
     const controller = createSessionController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    let stalled = false;
+    let stallTimer = null;
+    const resetStallTimer = () => {
+        clearTimeout(stallTimer);
+        stallTimer = setTimeout(() => {
+            stalled = true;
+            controller.abort();
+        }, FULL_LOAD_STALL_TIMEOUT_MS);
+    };
+    resetStallTimer();
 
     try {
         const arrayBuffer = await fetchFullFITS(filePath, {
             signal: controller.signal,
+            onProgress: (received, total) => {
+                resetStallTimer();
+                if (isActiveGeneration(gen)) {
+                    renderer.showMessage(formatDownloadProgress(received, total));
+                }
+            },
         });
+        clearTimeout(stallTimer);
         if (!isActiveGeneration(gen)) return;
-        clearTimeout(timeout);
         await renderer.renderFromArrayBuffer(arrayBuffer);
         if (!isActiveGeneration(gen)) return;
         state.transition(ViewerMode.FULL_READY);
@@ -267,11 +301,11 @@ async function loadFullFITS(filePath) {
             renderer.forceResize();
         }
     } catch (err) {
-        clearTimeout(timeout);
+        clearTimeout(stallTimer);
         if (!isActiveGeneration(gen)) return;
-        if (isAbortError(err)) return;
+        if (isAbortError(err) && !stalled) return;
         console.error('Full FITS load failed', err);
-        renderer.showMessage('Failed to load full FITS');
+        renderer.showMessage(stalled ? 'Full FITS download stalled' : 'Failed to load full FITS');
         state.transition(ViewerMode.ERROR, { error: err });
     }
 }

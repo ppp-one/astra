@@ -1,10 +1,14 @@
 import io
 import logging
+import os
+import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Callable, Optional, Tuple, Union
+from urllib.parse import quote
 
 from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 
@@ -21,6 +25,14 @@ ALLOWED_EXTENSIONS = {
 # Maximum number of items to return from a single directory listing. Prevents
 # expensive scans that could cause long blocking I/O.
 LIST_MAX_ITEMS = 1_000_000
+
+# zlib level for HTTP gzip and zip archives. Level 1 is ~13x (int16) to ~150x
+# (float32) faster than Starlette's default of 9 on FITS data, and the output
+# is only a few percent larger. Level 9 made a 67 MB float32 FITS take ~100 s.
+COMPRESS_LEVEL = 1
+
+# Read size used when streaming files into a zip archive.
+ZIP_CHUNK_SIZE = 1024 * 1024
 
 # Static files (UI assets) directory used by both the app factory and router.
 STATIC_DIR = Path(__file__).parent / "static"
@@ -152,8 +164,55 @@ def _downsample_array(arr, max_dim: int = 512) -> Tuple[object, int]:
 
     stride = int(np.ceil(max_axis / max_dim))
     stride = max(1, stride)
-    downsampled = arr[::stride, ::stride]
-    return np.ascontiguousarray(downsampled), stride
+
+    # Average stride x stride blocks instead of keeping every stride-th pixel:
+    # plain decimation drops most stars (a 4k image at stride 8 keeps 1 pixel
+    # in 64). Edge rows/columns that do not fill a whole block are dropped.
+    block_y = min(stride, height)
+    block_x = min(stride, width)
+    out_h, out_w = height // block_y, width // block_x
+    blocks = arr[: out_h * block_y, : out_w * block_x].reshape(
+        out_h, block_y, out_w, block_x
+    )
+    downsampled = blocks.mean(axis=(1, 3), dtype=np.float64)
+    if np.issubdtype(arr.dtype, np.integer):
+        # Whole numbers compress much better under HTTP gzip
+        downsampled = np.rint(downsampled)
+    return np.ascontiguousarray(downsampled, dtype=np.float32), stride
+
+
+_BITPIX_DTYPES = {
+    8: "uint8",
+    16: "int16",
+    32: "int32",
+    64: "int64",
+    -32: "float32",
+    -64: "float64",
+}
+
+
+def _hdu_shape_and_dtype(header) -> tuple[list[int], str]:
+    """Return the data shape (numpy order) and dtype name using only the header."""
+    naxis = int(header.get("NAXIS", 0) or 0)
+    if naxis == 0:
+        return [], ""
+    if str(header.get("XTENSION", "")).strip().upper() in ("BINTABLE", "TABLE"):
+        return [int(header.get("NAXIS2", 0) or 0)], "table"
+
+    shape = [int(header.get(f"NAXIS{i}", 0) or 0) for i in range(naxis, 0, -1)]
+    bitpix = int(header.get("BITPIX", 0) or 0)
+    dtype = _BITPIX_DTYPES.get(bitpix, "")
+    bscale = header.get("BSCALE", 1)
+    bzero = header.get("BZERO", 0)
+    if bitpix > 0 and (bscale != 1 or bzero != 0):
+        # Same rules astropy uses when it scales integer data
+        if bscale == 1 and bitpix > 8 and bzero == 2 ** (bitpix - 1):
+            dtype = f"uint{bitpix}"
+        elif bscale == 1 and bitpix == 8 and bzero == -128:
+            dtype = "int8"
+        else:
+            dtype = "float32" if bitpix <= 16 else "float64"
+    return shape, dtype
 
 
 def _build_preview_hdul(original_hdu, downsampled, stride: int):
@@ -173,54 +232,139 @@ def _build_preview_hdul(original_hdu, downsampled, stride: int):
     return fits.HDUList([primary])
 
 
-def sorting_key(item: Path):
-    # Directory-first, then case-insensitive name sort. This is clear and
-    # predictable for users.
-    return (not item.is_dir(), item.name.lower())
+def _has_allowed_extension(name: str) -> bool:
+    return ALLOWED_EXTENSIONS is None or os.path.splitext(name)[1] in ALLOWED_EXTENSIONS
 
 
-def _list_files_for_path(fits_dir: Path, path: str = ""):
+def _resolve_dir(fits_dir: Path, path: str) -> Optional[Path]:
+    """Resolve ``path`` relative to ``fits_dir``; None if invalid or outside it."""
     current_path = (fits_dir / path).resolve()
-    logger.info(f"Listing files in {current_path}")
-
     # Ensure the resolved path is within the configured fits_dir. This prevents
     # directory traversal or symlink escapes.
     try:
         current_path.relative_to(fits_dir)
     except Exception:
+        return None
+    if not current_path.is_dir():
+        return None
+    return current_path
+
+
+def _list_files_for_path(fits_dir: Path, path: str = ""):
+    current_path = _resolve_dir(fits_dir, path)
+    logger.info(f"Listing files in {current_path}")
+    if current_path is None:
         return None, JSONResponse(content={"error": "Invalid path"}, status_code=400)
 
-    if not current_path.exists() or not current_path.is_dir():
-        return None, JSONResponse(content={"error": "Invalid path"}, status_code=400)
-
-    def should_include(item: Path):
+    def should_include(entry: os.DirEntry):
         # Exclude hidden files/dirs
-        if item.name.startswith("."):
+        if entry.name.startswith("."):
             return False
         # Include directories (we avoid recursive scans here for performance).
-        if item.is_dir():
+        if entry.is_dir():
             return True
         # For files, only include allowed extensions when configured.
-        return ALLOWED_EXTENSIONS is None or item.suffix in ALLOWED_EXTENSIONS
+        return _has_allowed_extension(entry.name)
 
-    iterator = (item for item in current_path.iterdir() if should_include(item))
     items = []
-    for idx, item in enumerate(iterator):
-        if idx >= LIST_MAX_ITEMS:
-            logger.warning(
-                "Directory listing for %s exceeded LIST_MAX_ITEMS (%s)",
-                current_path,
-                LIST_MAX_ITEMS,
-            )
-            return None, JSONResponse(
-                content={
-                    "error": "Too many items in directory; please narrow your path"
-                },
-                status_code=413,
-            )
-        items.append(item)
+    with os.scandir(current_path) as entries:
+        iterator = (entry for entry in entries if should_include(entry))
+        for idx, item in enumerate(iterator):
+            if idx >= LIST_MAX_ITEMS:
+                logger.warning(
+                    "Directory listing for %s exceeded LIST_MAX_ITEMS (%s)",
+                    current_path,
+                    LIST_MAX_ITEMS,
+                )
+                return None, JSONResponse(
+                    content={
+                        "error": "Too many items in directory; please narrow your path"
+                    },
+                    status_code=413,
+                )
+            items.append(item)
 
     return items, None
+
+
+def _collect_zip_members(fits_dir: Path, top: Path) -> list[tuple[Path, str]]:
+    """Return (file, name in archive) pairs for every visible file under ``top``.
+
+    Uses the same rules as the directory listing: hidden entries are skipped and
+    only allowed extensions are included. Directory symlinks are not followed,
+    and files that resolve outside ``fits_dir`` are skipped.
+    """
+    members = []
+    for dirpath, dirnames, filenames in os.walk(top):
+        dirnames[:] = sorted(d for d in dirnames if not d.startswith("."))
+        for name in sorted(filenames):
+            if name.startswith(".") or not _has_allowed_extension(name):
+                continue
+            file_path = Path(dirpath) / name
+            try:
+                file_path.resolve().relative_to(fits_dir)
+            except (OSError, ValueError):
+                continue
+            arcname = file_path.relative_to(top.parent).as_posix()
+            members.append((file_path, arcname))
+    return members
+
+
+class _ZipSink:
+    """Write-only buffer that lets ``zipfile`` stream into a generator."""
+
+    def __init__(self):
+        self._buffer = bytearray()
+
+    def write(self, data) -> int:
+        self._buffer += data
+        return len(data)
+
+    def flush(self):
+        pass
+
+    def __len__(self):
+        return len(self._buffer)
+
+    def take(self) -> bytes:
+        data = bytes(self._buffer)
+        self._buffer.clear()
+        return data
+
+
+def _iter_zip(members: list[tuple[Path, str]]) -> Iterator[bytes]:
+    """Yield a zip archive of ``members`` chunk by chunk.
+
+    Memory use stays around ZIP_CHUNK_SIZE whatever the file sizes. ZIP64 is
+    used where needed, so archives and files larger than 4 GB work.
+    """
+    sink = _ZipSink()
+    with zipfile.ZipFile(sink, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for file_path, arcname in members:
+            try:
+                # from_file sets the file size (for the ZIP64 decision) and mtime
+                zinfo = zipfile.ZipInfo.from_file(
+                    file_path, arcname, strict_timestamps=False
+                )
+            except OSError as exc:
+                logger.warning("Skipping %s in zip download: %s", file_path, exc)
+                continue
+            zinfo.compress_type = zipfile.ZIP_DEFLATED
+            zinfo._compresslevel = COMPRESS_LEVEL  # public name only from 3.13
+            with open(file_path, "rb") as src, zf.open(zinfo, mode="w") as dest:
+                while chunk := src.read(ZIP_CHUNK_SIZE):
+                    dest.write(chunk)
+                    if len(sink) >= ZIP_CHUNK_SIZE:
+                        yield sink.take()
+        # Leaving the block writes the central directory
+    yield sink.take()
+
+
+def _attachment_header(filename: str) -> str:
+    quoted = quote(filename)
+    if quoted != filename:
+        return f"attachment; filename*=utf-8''{quoted}"
+    return f'attachment; filename="{filename}"'
 
 
 def create_app(
@@ -304,27 +448,54 @@ def create_router(
 
         return HTMLResponse(content=html, media_type="text/html")
 
+    # Plain `def` endpoints run in the threadpool, so slow disk I/O (e.g. a NAS)
+    # does not block the event loop the rest of Astra runs on.
     @router.get("/list/")
-    async def list_files(path: str = ""):
-        items, err = _list_files_for_path(get_fits_dir(), path)
+    def list_files(path: str = ""):
+        fits_dir = get_fits_dir()
+        items, err = _list_files_for_path(fits_dir, path)
         if err:
             return err
         if items is None:
             items = []
 
-        return {
-            "files": [
+        files = []
+        for entry in items:
+            try:
+                is_dir = entry.is_dir()
+                mtime = entry.stat().st_mtime
+            except OSError:
+                continue  # removed between listing and stat
+            files.append(
                 {
-                    "name": item.name,
-                    "is_dir": item.is_dir(),
-                    "path": str(item.relative_to(get_fits_dir())),
-                    "mtime": item.stat().st_mtime,
+                    "name": entry.name,
+                    "is_dir": is_dir,
+                    # Forward slashes on every OS, so the UI can split on "/"
+                    "path": Path(entry.path).relative_to(fits_dir).as_posix(),
+                    "mtime": mtime,
                 }
-                for item in items
-            ],
+            )
+
+        return {
+            "files": files,
             "current_path": path,
             "breadcrumbs": path.split("/") if path else [],
         }
+
+    @router.get("/download_zip/")
+    def download_zip(path: str = ""):
+        """Stream a folder (with subfolders) as a zip archive."""
+        fits_dir = get_fits_dir()
+        top = _resolve_dir(fits_dir, path)
+        if top is None:
+            raise HTTPException(status_code=400, detail="Invalid path")
+        members = _collect_zip_members(fits_dir, top)
+        logger.info("Zip download of %s (%d files)", top, len(members))
+        return StreamingResponse(
+            _iter_zip(members),
+            media_type="application/zip",
+            headers={"Content-Disposition": _attachment_header(f"{top.name}.zip")},
+        )
 
     @router.get("/download/{filename:path}")
     def download(filename: str):
@@ -364,14 +535,13 @@ def create_router(
 
             buf = io.BytesIO()
             preview_hdul.writeto(buf, overwrite=True)
-            buf.seek(0)
             headers = {
                 "Content-Disposition": f"inline; filename=preview_{file_path.name}",
                 "X-Astra-Preview-HDU": str(selected),
                 "X-Astra-Preview-Stride": str(stride),
             }
-            return StreamingResponse(
-                buf, media_type="application/fits", headers=headers
+            return Response(
+                content=buf.getvalue(), media_type="application/fits", headers=headers
             )
         except HTTPException:
             raise
@@ -394,9 +564,9 @@ def create_router(
             items = []
             with fits.open(file_path, memmap=False) as hdul:
                 for idx, hdu in enumerate(hdul):
-                    data = getattr(hdu, "data", None)
-                    shape = list(getattr(data, "shape", []))
-                    dtype = str(getattr(data, "dtype", "")) if data is not None else ""
+                    # Read shape and type from the header only. Touching
+                    # hdu.data here would read every HDU's data from disk.
+                    shape, dtype = _hdu_shape_and_dtype(hdu.header)
                     name = getattr(hdu, "name", "") or hdu.header.get("EXTNAME", "")
                     header_preview = {}
                     try:
@@ -415,7 +585,7 @@ def create_router(
                         {
                             "index": idx,
                             "name": name,
-                            "has_data": data is not None,
+                            "has_data": bool(shape),
                             "dtype": dtype,
                             "shape": shape,
                             "naxis": hdu.header.get("NAXIS", 0),
@@ -539,8 +709,11 @@ def include_file_explorer(
 
     if enable_gzip:
         try:
-            # GZip transport compression of HTTP response body
-            app.add_middleware(GZipMiddleware, minimum_size=500)
+            # GZip transport compression of HTTP response body. Note this applies
+            # to every route of the host app, not only the explorer.
+            app.add_middleware(
+                GZipMiddleware, minimum_size=500, compresslevel=COMPRESS_LEVEL
+            )
         except Exception:
             # If middleware cannot be added for any reason, don't fail the
             # include step; log and continue.

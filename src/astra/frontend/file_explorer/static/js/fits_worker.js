@@ -1,98 +1,106 @@
 // WebWorker to parse FITS files off the main thread
 // Expects to receive: {type: 'parse', arrayBuffer: ArrayBuffer}
-// Replies with: {type: 'result', header, normalizedData, width, height, imageData}
+// Replies with: {type: 'result', header, width, height, imageData, dataMin, dataMax}
+// The imageData buffer is transferred, not copied.
+
+const BLOCK_SIZE = 2880;
+const CARD_SIZE = 80;
+const HOST_IS_LITTLE_ENDIAN = new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
 
 self.addEventListener('message', (e) => {
     const msg = e.data;
     if (msg && msg.type === 'parse') {
         try {
-            const arrayBuffer = msg.arrayBuffer;
-            const view = new DataView(arrayBuffer);
-            const result = parseFITSImage(arrayBuffer, view);
-            // Transfer the normalizedData buffer back if possible
-            // If normalizedData is a Float32Array, its buffer can be transferred
-            const [header, normalizedData, width, height, imageData] = result;
-            let transfer = [];
-            if (normalizedData && normalizedData.buffer) transfer.push(normalizedData.buffer);
-            self.postMessage({type: 'result', header, normalizedData, width, height, imageData}, transfer);
+            const result = parseFITSImage(msg.arrayBuffer);
+            self.postMessage({ type: 'result', ...result }, [result.imageData.buffer]);
         } catch (err) {
-            self.postMessage({type: 'error', message: String(err)});
+            self.postMessage({ type: 'error', message: String(err) });
         }
     }
 });
 
-// Copy of parseFITSImage (kept minimal and self-contained)
-function parseFITSImage(arrayBuffer, dataView) {
-    // Very basic FITS header parsing
-    let headerText = "";
-    let offset = 0;
-    const headerSize = 2880;
-    while (true) {
-        const block = new TextDecoder().decode(
-            arrayBuffer.slice(offset, offset + headerSize)
-        );
-        headerText += block;
-        offset += headerSize;
-        if (block.trim().endsWith("END")) break;
-    }
-
-    const headerLines = headerText.match(/.{1,80}/g); // Split into 80-char lines
+function parseHeader(arrayBuffer) {
+    const decoder = new TextDecoder('ascii');
     const header = {};
-    for (const line of headerLines) {
-        const keyword = line.substring(0, 8).trim();
-        const value = line.substring(10, 80).trim();
-        if (keyword === "END") break;
-        header[keyword] = value;
-    }
-
-    const width = parseInt(header["NAXIS1"], 10);
-    const height = parseInt(header["NAXIS2"], 10);
-    const bitpix = parseInt(header["BITPIX"], 10);
-    const bscale = parseFloat(header["BSCALE"]) || 1;
-    const bzero = parseFloat(header["BZERO"]) || 0;
-
-    const dataSize = width * height;
-    const bytesPerPixel = Math.abs(bitpix) / 8;
-
-    let data;
-    if (bitpix === 8 || bitpix === 16 || bitpix === 32) {
-        data = new Int32Array(dataSize);
-    } else if (bitpix === -32) {
-        data = new Float32Array(dataSize);
-    } else if (bitpix === -64) {
-        data = new Float64Array(dataSize);
-    } else {
-        throw new Error(`Unsupported BITPIX: ${bitpix}`);
-    }
-
-    for (let i = 0; i < dataSize; i++) {
-        if (bitpix === 8) {
-            data[i] = dataView.getUint8(offset) * bscale + bzero;
-        } else if (bitpix === 16) {
-            data[i] = dataView.getInt16(offset, false) * bscale + bzero;
-        } else if (bitpix === 32) {
-            data[i] = dataView.getInt32(offset, false) * bscale + bzero;
-        } else if (bitpix === -32) {
-            data[i] = dataView.getFloat32(offset, false) * bscale + bzero;
-        } else if (bitpix === -64) {
-            data[i] = dataView.getFloat64(offset, false) * bscale + bzero;
+    let offset = 0;
+    while (offset + BLOCK_SIZE <= arrayBuffer.byteLength) {
+        const block = decoder.decode(new Uint8Array(arrayBuffer, offset, BLOCK_SIZE));
+        offset += BLOCK_SIZE;
+        for (let i = 0; i < BLOCK_SIZE; i += CARD_SIZE) {
+            const keyword = block.substring(i, i + 8).trim();
+            if (keyword === 'END') return { header, dataOffset: offset };
+            if (keyword) header[keyword] = block.substring(i + 10, i + CARD_SIZE).trim();
         }
-        offset += bytesPerPixel;
+    }
+    throw new Error('FITS header has no END card');
+}
+
+// FITS data is big-endian. Swap it in place to host order so typed arrays can
+// read it directly. The header length is a multiple of 2880, so the data is
+// aligned for every word size.
+function swapToHostOrder(arrayBuffer, offset, count, wordSize) {
+    if (!HOST_IS_LITTLE_ENDIAN || wordSize === 1) return;
+    if (wordSize === 2) {
+        const a = new Uint16Array(arrayBuffer, offset, count);
+        for (let i = 0; i < count; i++) {
+            const x = a[i];
+            a[i] = (x >>> 8) | (x << 8);
+        }
+        return;
+    }
+    const a = new Uint32Array(arrayBuffer, offset, count * (wordSize / 4));
+    const swap32 = (x) => (x >>> 24) | ((x >>> 8) & 0xff00) | ((x & 0xff00) << 8) | (x << 24);
+    if (wordSize === 4) {
+        for (let i = 0; i < a.length; i++) a[i] = swap32(a[i]);
+    } else {
+        for (let i = 0; i < a.length; i += 2) {
+            const hi = a[i];
+            a[i] = swap32(a[i + 1]);
+            a[i + 1] = swap32(hi);
+        }
+    }
+}
+
+function parseFITSImage(arrayBuffer) {
+    const { header, dataOffset } = parseHeader(arrayBuffer);
+
+    const width = parseInt(header['NAXIS1'], 10);
+    const height = parseInt(header['NAXIS2'], 10) || 1;
+    const bitpix = parseInt(header['BITPIX'], 10);
+    const bscale = parseFloat(header['BSCALE']) || 1;
+    const bzero = parseFloat(header['BZERO']) || 0;
+    const count = width * height;
+    if (!(count > 0)) throw new Error('FITS HDU has no image data');
+
+    const RawArray = { 8: Uint8Array, 16: Int16Array, 32: Int32Array, '-32': Float32Array, '-64': Float64Array }[bitpix];
+    if (!RawArray) throw new Error(`Unsupported BITPIX: ${bitpix}`);
+    const wordSize = RawArray.BYTES_PER_ELEMENT;
+    if (dataOffset + count * wordSize > arrayBuffer.byteLength) {
+        throw new Error('FITS file is truncated');
     }
 
-    // Normalize Data (simple min/max)
-    let vmin = Infinity;
-    let vmax = -Infinity;
-    for (let i = 0; i < data.length; i++) {
+    swapToHostOrder(arrayBuffer, dataOffset, count, wordSize);
+    const raw = new RawArray(arrayBuffer, dataOffset, count);
+
+    let data = raw;
+    if (bscale !== 1 || bzero !== 0) {
+        // Floats are scaled in place; scaled integers need a wider array
+        if (bitpix > 0) {
+            data = Number.isInteger(bscale) && Number.isInteger(bzero) && bitpix <= 16
+                ? new Int32Array(count) // e.g. uint16 stored with BZERO=32768
+                : new Float64Array(count); // fractional scaling or 32-bit unsigned
+        }
+        for (let i = 0; i < count; i++) data[i] = raw[i] * bscale + bzero;
+    }
+
+    let dataMin = Infinity;
+    let dataMax = -Infinity;
+    for (let i = 0; i < count; i++) {
         const v = data[i];
-        if (v < vmin) vmin = v;
-        if (v > vmax) vmax = v;
-    }
-    const scale = 255 / (vmax - vmin || 1);
-    const normalizedData = new Float32Array(data.length);
-    for (let i = 0; i < data.length; i++) {
-        normalizedData[i] = (data[i] - vmin) * scale;
+        // NaN fails both comparisons; the extra checks drop +/-Infinity
+        if (v < dataMin && v !== -Infinity) dataMin = v;
+        if (v > dataMax && v !== Infinity) dataMax = v;
     }
 
-    return [header, normalizedData, width, height, data];
+    return { header, width, height, imageData: data, dataMin, dataMax };
 }

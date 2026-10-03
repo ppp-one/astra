@@ -7,8 +7,6 @@
     <script src="/js/tailwind-3.3.5.js"></script>
     <script src="/js/d3-7.9.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script src="static/js/shared/array_utils.js"></script>
     <script src="static/js/shared/fileTypes.js"></script>
     <link rel="stylesheet" href="static/viewer_style.css"> <!-- Link to external CSS file -->
@@ -48,6 +46,9 @@
                     <option value="name-asc">Name (A-Z)</option>
                     <option value="name-desc">Name (Z-A)</option>
                 </select>
+                <button id="zip-folder-btn" type="button" class="p-2 rounded bg-gray-600/20 hover:bg-gray-600/40 transition-colors" title="Download this folder as .zip" aria-label="Download this folder as .zip">
+                    <i class="bi bi-file-earmark-zip block w-5 h-5 leading-5 text-center" aria-hidden="true"></i>
+                </button>
                 <div class="flex-grow min-w-[140px]">
                     <input type="text" id="search" placeholder="Search..." 
                            class="w-full p-2 rounded bg-gray-600/20 text-slate-100 placeholder-gray-400 border border-gray-700/50">
@@ -310,26 +311,42 @@
         function renderFileList() {
             const files = applySorting(window.__fe_last_files || [], window.__fe_sort_mode);
             const fileList = document.getElementById('file-list');
-            fileList.innerHTML = '';
+            // Build off-DOM and insert once, so large folders cause one update
+            const fragment = document.createDocumentFragment();
 
             files.forEach(file => {
                 const item = document.createElement('li');
-                item.textContent = file.name;
                 item.title = file.name;
                 item.classList.add(
-                    'p-2', 'rounded', 'cursor-pointer', 'truncate', 'flex', 'items-center', 'w-full',
+                    'group', 'p-2', 'rounded', 'cursor-pointer', 'flex', 'items-center', 'gap-2', 'w-full',
                     'text-slate-100', 'hover:bg-gray-600/40', 'transition-colors'
                 );
+                const name = document.createElement('span');
+                name.textContent = file.name;
+                name.classList.add('truncate', 'flex-1', 'min-w-0');
+                item.appendChild(name);
 
                 if (file.is_dir) {
                     item.onclick = () => fetchFiles(file.path);
+                    const zipButton = document.createElement('button');
+                    zipButton.type = 'button';
+                    zipButton.title = `Download ${file.name} as .zip`;
+                    zipButton.setAttribute('aria-label', zipButton.title);
+                    zipButton.className = 'shrink-0 px-1 text-gray-400 hover:text-white opacity-60 group-hover:opacity-100 focus:opacity-100';
+                    zipButton.innerHTML = '<i class="bi bi-file-earmark-zip" aria-hidden="true"></i>';
+                    zipButton.onclick = (event) => {
+                        event.stopPropagation();
+                        downloadFolderZip(file.path);
+                    };
+                    item.appendChild(zipButton);
                 } else if (isSupportedPreviewFile(file.name)) {
                     item.onclick = () => openFitsModal(file.path);
                 } else {
                     item.onclick = () => alert(`Selected: ${file.path}`);
                 }
-                fileList.appendChild(item);
+                fragment.appendChild(item);
             });
+            fileList.replaceChildren(fragment);
 
             // refresh prev/next state if modal open
             const modal = document.getElementById('fits-modal');
@@ -470,6 +487,9 @@
             }, 150);
             modal.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            if (typeof window.cancelViewerLoads === 'function') {
+                window.cancelViewerLoads();
+            }
             const container = document.querySelector('.mainContainer');
             if (container) {
                 container.style.display = 'none';
@@ -484,17 +504,28 @@
             }
         });
 
+        function triggerDownload(url, filename = '') {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename; // empty: use the server's filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // Download FITS file button handler
         document.getElementById('downloadFitsButton').addEventListener('click', function() {
             if (!window.__fe_current_file) return;
             const downloadUrl = explorerUrl(`download/${encodePathForQuery(window.__fe_current_file)}`);
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = window.__fe_current_file.split('/').pop();
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            triggerDownload(downloadUrl, window.__fe_current_file.split('/').pop());
         });
+
+        // The server streams the zip, so the download starts at once
+        function downloadFolderZip(path) {
+            const query = path ? `?path=${encodePathForQuery(path)}` : "";
+            triggerDownload(explorerUrl(`download_zip/${query}`));
+        }
+        document.getElementById('zip-folder-btn').addEventListener('click', () => downloadFolderZip(currentPath));
 
 
         document.addEventListener('keydown', function(event) {

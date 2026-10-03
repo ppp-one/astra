@@ -23,10 +23,36 @@ export async function fetchPreviewFITS(
     return response.arrayBuffer();
 }
 
-export async function fetchFullFITS(filePath, { signal } = {}) {
+export async function fetchFullFITS(filePath, { signal, onProgress } = {}) {
     const url = rawFitsUrl(filePath);
     const response = await fetchOrThrow(url, { signal });
-    return response.arrayBuffer();
+    if (!onProgress || !response.body) {
+        return response.arrayBuffer();
+    }
+
+    // With gzip, Content-Length (if any) is the compressed size, not what the
+    // stream yields, so only trust it for unencoded responses.
+    const encoded = response.headers.get('Content-Encoding');
+    const total = encoded ? 0 : Number(response.headers.get('Content-Length')) || 0;
+    const reader = response.body.getReader();
+    const chunks = [];
+    let received = 0;
+    onProgress(received, total);
+    for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.byteLength;
+        onProgress(received, total);
+    }
+
+    const result = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+        result.set(chunk, offset);
+        offset += chunk.byteLength;
+    }
+    return result.buffer;
 }
 
 export async function fetchHeaderData(filePath, { hdu = null, signal } = {}) {
