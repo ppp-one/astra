@@ -1,70 +1,52 @@
+import { FITSViewer } from '../vendor/simple-fits-viewer/fits-viewer.js';
 import { ViewerState, ViewerMode } from './state.js';
-import { initRenderer } from './renderer.js';
-import { initDualSlider } from './dualSlider.js';
 import {
     fetchPreviewFITS,
     fetchFullFITS,
     fetchHeaderData,
     fetchHduList,
 } from './previewLoader.js';
-import { setupInteractions } from './interactions.js';
+import { parseFITS } from './parser.js';
+import { setupToolbar, syncHeaderButton } from './toolbar.js';
 import { rawFitsUrl } from './basePath.js';
 import { isPngFile } from './fileTypes.js';
 
 const state = new ViewerState();
 
 const domRefs = {
-    spinner: document.getElementById('spinner'),
-    canvas: document.getElementById('loadedImage'),
-    xProfileCanvas: document.getElementById('xProfile'),
-    yProfileCanvas: document.getElementById('yProfile'),
-    mainContainer: document.querySelector('.mainContainer'),
-    headerGridContainer: document.getElementById('headerGridContainer'),
-    imageGridContainer: document.getElementById('imageGridContainer'),
-    headerTable: document.getElementById('headerTable'),
-    searchInput: document.getElementById('searchInput'),
-    resetButton: document.getElementById('resetButton'),
-    pixelValueEl: document.getElementById('pixelValue'),
-    pixelPositionEl: document.getElementById('pixelPosition'),
+    spinner: document.getElementById('fe-spinner'),
+    message: document.getElementById('fe-message'),
+    stage: document.getElementById('fe-stage'),
+    viewerRoot: document.getElementById('fitsViewerRoot'),
     viewerToolbar: document.getElementById('viewerToolbar'),
     hduSelect: document.getElementById('hduSelect'),
-    stretchMin: document.getElementById('stretchMin'),
-    stretchMax: document.getElementById('stretchMax'),
-    stretchGamma: document.getElementById('stretchGamma'),
-    stretchMinValue: document.getElementById('stretchMinValue'),
-    stretchMaxValue: document.getElementById('stretchMaxValue'),
-    stretchGammaValue: document.getElementById('stretchGammaValue'),
     loadFullFitsButton: document.getElementById('loadFullFitsButton'),
-    logToggleButton: document.getElementById('logToggleButton'),
-    stretchPanelToggle: document.getElementById('stretchPanelToggle'),
+    stretchButton: document.getElementById('stretchButton'),
+    histogramButton: document.getElementById('histogramButton'),
+    headerButton: document.getElementById('headerButton'),
+    resetZoomButton: document.getElementById('resetZoomButton'),
     pngImage: document.getElementById('pngImage'),
 };
+
+const viewer = new FITSViewer(domRefs.viewerRoot, {
+    // The explorer uses left/right for previous/next file and Escape to close
+    keyboard: false,
+    profileColor: 'rgba(96, 165, 250, 0.85)',
+    gridColor: 'rgba(230, 238, 248, 0.35)',
+});
+window.__astraViewer = viewer;
 
 let loadGeneration = 0;
 let activeControllers = [];
 
-const renderer = initRenderer(domRefs, state);
-window.__astraRenderer = renderer;
-
-// initialize dual-slider
-try {
-    const dualEl = document.getElementById('dualRange');
-    const dual = initDualSlider(dualEl, domRefs.stretchMin, domRefs.stretchMax);
-    if (dualEl) dualEl._dual = dual;
-    if (dual && typeof dual.set === 'function') {
-        dual.set(domRefs.stretchMin.value, domRefs.stretchMax.value);
-    }
-} catch (err) {
-    console.warn('Dual slider init failed', err);
-}
-
-setupInteractions({
+setupToolbar({
     state,
-    renderer,
+    viewer,
     domRefs,
     onRequestFullLoad: ({ filePath }) => loadFullFITS(filePath),
     onRequestPreview: ({ filePath, hdu }) => loadPreview(filePath, { hdu }),
 });
+setupSwipeNavigation();
 
 function beginNewSession() {
     for (const controller of activeControllers) {
@@ -75,9 +57,17 @@ function beginNewSession() {
         }
     }
     activeControllers = [];
+    clearMessage();
+    viewer.closePanels();
     loadGeneration += 1;
     return loadGeneration;
 }
+
+// Called when the viewer closes, so downloads stop and no progress text stays
+window.cancelViewerLoads = () => {
+    beginNewSession();
+    setSpinnerVisible(false);
+};
 
 function createSessionController() {
     const controller = new AbortController();
@@ -96,189 +86,158 @@ function isAbortError(err) {
     return /aborted/i.test(message);
 }
 
-function setToolbarMode(mode) {
-    if (!domRefs.viewerToolbar) return;
-    domRefs.viewerToolbar.classList.toggle('png-mode', mode === 'png');
+function showMessage(text) {
+    if (!domRefs.message) return;
+    domRefs.message.textContent = text;
+    domRefs.message.hidden = false;
 }
 
-function setFitsControlsEnabled(enabled) {
-    if (domRefs.loadFullFitsButton) domRefs.loadFullFitsButton.disabled = !enabled;
-    if (domRefs.logToggleButton) domRefs.logToggleButton.disabled = !enabled;
-    if (domRefs.stretchPanelToggle) domRefs.stretchPanelToggle.disabled = !enabled;
-    if (domRefs.stretchMin) domRefs.stretchMin.disabled = !enabled;
-    if (domRefs.stretchMax) domRefs.stretchMax.disabled = !enabled;
-    if (domRefs.stretchGamma) domRefs.stretchGamma.disabled = !enabled;
-}
-
-function applyFitsLayout() {
-    if (window.__astraRenderer && typeof window.__astraRenderer.enableRender === 'function') {
-        window.__astraRenderer.enableRender();
-    }
-    if (domRefs.pngImage) {
-        domRefs.pngImage.onload = null;
-        domRefs.pngImage.onerror = null;
-        domRefs.pngImage.style.display = 'none';
-        domRefs.pngImage.src = '';
-    }
-    if (domRefs.imageGridContainer) {
-        domRefs.imageGridContainer.style.display = '';
-    }
-    if (domRefs.headerGridContainer) {
-        domRefs.headerGridContainer.style.display = 'grid';
-    }
-    if (domRefs.viewerToolbar) {
-        domRefs.viewerToolbar.style.display = 'block';
-    }
-    setToolbarMode('fits');
-    if (domRefs.hduSelect) {
-        domRefs.hduSelect.disabled = false;
-        const block = domRefs.hduSelect.closest('.hdu-block');
-        if (block) block.style.display = '';
-    }
-    setFitsControlsEnabled(true);
-}
-
-function applyPngLayout() {
-    if (window.__astraRenderer && typeof window.__astraRenderer.cancelPending === 'function') {
-        window.__astraRenderer.cancelPending();
-    }
-    if (domRefs.imageGridContainer) {
-        domRefs.imageGridContainer.style.display = 'none';
-    }
-    if (domRefs.headerGridContainer) {
-        domRefs.headerGridContainer.style.display = 'none';
-    }
-    if (domRefs.viewerToolbar) {
-        domRefs.viewerToolbar.style.display = 'block';
-    }
-    setToolbarMode('png');
-    if (domRefs.hduSelect) {
-        domRefs.hduSelect.disabled = true;
-        domRefs.hduSelect.innerHTML = '';
-        const block = domRefs.hduSelect.closest('.hdu-block');
-        if (block) block.style.display = 'none';
-    }
-    setFitsControlsEnabled(false);
+function clearMessage() {
+    if (domRefs.message) domRefs.message.hidden = true;
 }
 
 function setSpinnerVisible(visible) {
     if (!domRefs.spinner) return;
-    domRefs.spinner.style.display = visible ? 'grid' : 'none';
+    domRefs.spinner.hidden = !visible;
     domRefs.spinner.setAttribute('aria-hidden', visible ? 'false' : 'true');
+}
+
+// FITS-only toolbar buttons are hidden for PNG files
+function setMode(mode) {
+    domRefs.viewerToolbar?.classList.toggle('png-mode', mode === 'png');
+    domRefs.viewerRoot.hidden = mode === 'png';
+    if (domRefs.pngImage) {
+        domRefs.pngImage.hidden = mode !== 'png';
+        if (mode !== 'png') {
+            domRefs.pngImage.onload = null;
+            domRefs.pngImage.onerror = null;
+            domRefs.pngImage.removeAttribute('src');
+        }
+    }
+}
+
+function baseName(filePath) {
+    return String(filePath).split('/').pop().replace(/\.[^.]+$/, '');
+}
+
+// Parse in the worker and hand the pixels to the viewer. `binning` > 1 marks a
+// downsampled preview: the viewer then shows source pixel positions and turns
+// star measurement off.
+async function showFits(gen, arrayBuffer, filePath, binning) {
+    const image = await parseFITS(arrayBuffer);
+    if (!isActiveGeneration(gen)) return false;
+    await viewer.loadImageData(image, baseName(filePath), { binning });
+    // The preview's own header is rewritten (binned size, BITPIX); show the original
+    const header = state.getHeader();
+    if (header && Object.keys(header).length) viewer.setHeaderData(header);
+    syncHeaderButton(domRefs.headerButton, viewer);
+    return true;
 }
 
 export async function loadPreview(filePath, { hdu = null } = {}) {
     const gen = beginNewSession();
-    applyFitsLayout();
+    setMode('fits');
+    setSpinnerVisible(true);
     state.setFile(filePath, hdu);
     state.setHeader({});
     state.setHduList([]);
     state.transition(ViewerMode.PREVIEW_LOADING);
 
     try {
-        const headerController = createSessionController();
-        const hduListController = createSessionController();
-        const previewController = createSessionController();
-
         const headerP = fetchHeaderData(filePath, {
             hdu,
-            signal: headerController.signal,
+            signal: createSessionController().signal,
         }).catch((err) => {
-            if (!isAbortError(err)) {
-                console.warn('Failed to fetch header', err);
-            }
+            if (!isAbortError(err)) console.warn('Failed to fetch header', err);
             return null;
         });
-
         const hduListP = fetchHduList(filePath, {
-            signal: hduListController.signal,
+            signal: createSessionController().signal,
         }).catch((err) => {
-            if (!isAbortError(err)) {
-                console.warn('Failed to fetch HDU list', err);
-            }
+            if (!isAbortError(err)) console.warn('Failed to fetch HDU list', err);
             return { items: [] };
         });
-
         const previewP = fetchPreviewFITS(filePath, {
             hdu,
-            signal: previewController.signal,
+            signal: createSessionController().signal,
         });
 
-        const header = await headerP;
-        const hduList = await hduListP;
-
+        const [header, hduList] = await Promise.all([headerP, hduListP]);
         if (!isActiveGeneration(gen)) return;
-
         if (header) state.setHeader(header);
         state.setHduList(hduList.items || []);
 
-        try {
-            const arrayBuffer = await previewP;
-            if (!isActiveGeneration(gen)) return;
-            await renderer.renderFromArrayBuffer(arrayBuffer);
-            if (!isActiveGeneration(gen)) return;
-            state.transition(ViewerMode.PREVIEW_READY);
-            if (renderer && typeof renderer.forceResize === 'function') {
-                renderer.forceResize();
-            }
-        } catch (imgErr) {
-            if (!isActiveGeneration(gen)) return;
-            if (isAbortError(imgErr)) return;
-            console.error('Preview image/render failed', imgErr);
-            const errEl = document.getElementById('fe-error');
-            if (errEl) {
-                errEl.innerText = `Preview image failed: ${imgErr.message || imgErr}`;
-                errEl.style.display = 'block';
-            }
-            state.transition(ViewerMode.ERROR, { error: imgErr });
-        }
-    } catch (err) {
+        const { arrayBuffer, stride } = await previewP;
         if (!isActiveGeneration(gen)) return;
-        if (isAbortError(err)) return;
-        renderer.showMessage('Failed to load preview');
+        if (!(await showFits(gen, arrayBuffer, filePath, stride))) return;
+        setSpinnerVisible(false);
+        state.transition(ViewerMode.PREVIEW_READY);
+    } catch (err) {
+        if (!isActiveGeneration(gen) || isAbortError(err)) return;
+        setSpinnerVisible(false);
         console.error('Preview load failed', err);
-        const errEl = document.getElementById('fe-error');
-        if (errEl) {
-            errEl.innerText = `Failed to load preview: ${err.message || err}`;
-            errEl.style.display = 'block';
-        }
+        showMessage(`Failed to load preview: ${err.message || err}`);
         state.transition(ViewerMode.ERROR, { error: err });
     }
 }
 
+// Abort a full download only when no data arrives for this long, so large
+// files on slow links can still finish.
+const FULL_LOAD_STALL_TIMEOUT_MS = 20000;
+
+function formatDownloadProgress(received, total) {
+    const mb = (bytes) => (bytes / 1e6).toFixed(1);
+    if (total > 0) {
+        const percent = Math.floor((received / total) * 100);
+        return `Downloading full resolution… ${percent}% (${mb(received)} / ${mb(total)} MB)`;
+    }
+    return `Downloading full resolution… ${mb(received)} MB`;
+}
+
 async function loadFullFITS(filePath) {
     const gen = beginNewSession();
-    applyFitsLayout();
+    setMode('fits');
     state.transition(ViewerMode.FULL_LOADING);
 
     const controller = createSessionController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    let stalled = false;
+    let stallTimer = null;
+    const resetStallTimer = () => {
+        clearTimeout(stallTimer);
+        stallTimer = setTimeout(() => {
+            stalled = true;
+            controller.abort();
+        }, FULL_LOAD_STALL_TIMEOUT_MS);
+    };
+    resetStallTimer();
 
     try {
         const arrayBuffer = await fetchFullFITS(filePath, {
             signal: controller.signal,
+            onProgress: (received, total) => {
+                resetStallTimer();
+                if (isActiveGeneration(gen)) showMessage(formatDownloadProgress(received, total));
+            },
         });
+        clearTimeout(stallTimer);
         if (!isActiveGeneration(gen)) return;
-        clearTimeout(timeout);
-        await renderer.renderFromArrayBuffer(arrayBuffer);
-        if (!isActiveGeneration(gen)) return;
+        showMessage('Preparing full resolution…');
+        if (!(await showFits(gen, arrayBuffer, filePath, 1))) return;
+        clearMessage();
         state.transition(ViewerMode.FULL_READY);
-        if (renderer && typeof renderer.forceResize === 'function') {
-            renderer.forceResize();
-        }
     } catch (err) {
-        clearTimeout(timeout);
+        clearTimeout(stallTimer);
         if (!isActiveGeneration(gen)) return;
-        if (isAbortError(err)) return;
+        if (isAbortError(err) && !stalled) return;
         console.error('Full FITS load failed', err);
-        renderer.showMessage('Failed to load full FITS');
+        showMessage(stalled ? 'Full resolution download stalled' : 'Failed to load full resolution');
         state.transition(ViewerMode.ERROR, { error: err });
     }
 }
 
 async function loadPng(filePath) {
     const gen = beginNewSession();
-    applyPngLayout();
+    setMode('png');
     state.setFile(filePath, null);
     state.setHeader({});
     state.setHduList([]);
@@ -290,34 +249,56 @@ async function loadPng(filePath) {
     }
 
     setSpinnerVisible(true);
-    const src = rawFitsUrl(filePath);
-
     await new Promise((resolve) => {
         domRefs.pngImage.onload = () => {
-            if (!isActiveGeneration(gen)) {
-                resolve();
-                return;
+            if (isActiveGeneration(gen)) {
+                setSpinnerVisible(false);
+                state.transition(ViewerMode.PNG_READY);
             }
-            domRefs.pngImage.style.display = 'block';
-            setSpinnerVisible(false);
-            state.transition(ViewerMode.PNG_READY);
             resolve();
         };
-
         domRefs.pngImage.onerror = () => {
-            if (!isActiveGeneration(gen)) {
-                resolve();
-                return;
+            if (isActiveGeneration(gen)) {
+                setSpinnerVisible(false);
+                showMessage('Failed to load PNG');
+                state.transition(ViewerMode.ERROR, { error: new Error('Failed to load PNG') });
             }
-            setSpinnerVisible(false);
-            state.transition(ViewerMode.ERROR, {
-                error: new Error('Failed to load PNG preview'),
-            });
             resolve();
         };
-
-        domRefs.pngImage.src = src;
+        domRefs.pngImage.src = rawFitsUrl(filePath);
     });
+}
+
+// Touch: swipe left/right on the image for the next/previous file, when the
+// image is not zoomed in (then a swipe pans instead)
+function setupSwipeNavigation() {
+    const stage = domRefs.stage;
+    if (!stage) return;
+    const touches = new Set(); // touch pointers currently down
+    let start = null; // the single-finger touch that may become a swipe
+    stage.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'touch') return;
+        touches.add(e.pointerId);
+        start = touches.size === 1
+            ? { x: e.clientX, y: e.clientY, t: performance.now(), id: e.pointerId }
+            : null; // a second finger: pinch, not a swipe
+    });
+    // On window: the finger can lift over something else (e.g. the context menu)
+    const onEnd = (e) => {
+        if (e.pointerType !== 'touch') return;
+        touches.delete(e.pointerId);
+        const s = start;
+        if (!s || e.pointerId !== s.id) return;
+        start = null;
+        if (e.type !== 'pointerup' || viewer.zoomLevel > 1 || viewer.headerVisible) return;
+        const dx = e.clientX - s.x;
+        const dy = e.clientY - s.y;
+        if (Math.abs(dx) > 60 && Math.abs(dy) < 50 && performance.now() - s.t < 700) {
+            window.navigateToOffset?.(dx < 0 ? 1 : -1);
+        }
+    };
+    window.addEventListener('pointerup', onEnd);
+    window.addEventListener('pointercancel', onEnd);
 }
 
 export async function openViewerFile(filePath) {
