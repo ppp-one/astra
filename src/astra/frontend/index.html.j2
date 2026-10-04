@@ -152,6 +152,12 @@
                     class="{{ '' if loop.first else 'hidden' }} w-full space-y-4 flex flex-col h-full">
                     {% if nav == 'Summary'%}
 
+                    <div class="flex justify-end">
+                        <a href="/history"
+                            class="px-3 py-1 bg-gray-700/80 hover:bg-gray-600/80 rounded text-xs transition-colors"
+                            title="Plots of all polled data and schedule history for the last days">History</a>
+                    </div>
+
                     <table id="summary-table-0"
                         class="text-left w-full table-auto rounded-lg bg-gray-600/20">
                         <thead>

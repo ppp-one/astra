@@ -39,12 +39,14 @@ from fastapi.responses import (
     FileResponse,
     HTMLResponse,
     RedirectResponse,
+    Response,
     StreamingResponse,
 )
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 
 from astra import Config, __version__
+from astra import history as history_db
 from astra.action_configs import ACTION_CONFIGS, action_value_schema
 from astra.frontend.file_explorer.file_explorer import include_file_explorer
 from astra.image_handler import HeaderManager
@@ -99,6 +101,13 @@ SCHEDULE_SCHEMAS = {}
 #   "cached_at"       : datetime      – UTC timestamp of last DB fetch
 POLLING_CACHE: dict = {}
 POLLING_CACHE_LOCK = asyncio.Lock()
+
+# History page: at most this many database reads run at the same time, so many
+# open pages cannot load the server
+HISTORY_SEMAPHORE = asyncio.Semaphore(2)
+# List of polled series, refreshed after HISTORY_PARAMETERS_TTL_S seconds
+HISTORY_PARAMETERS_CACHE: dict = {"parameters": None, "cached_at": 0.0}
+HISTORY_PARAMETERS_TTL_S = 600
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -1320,23 +1329,25 @@ def _query_raw_polling_df(
     db = observatory_db()
 
     if since_str is not None:
-        q = f"SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > '{since_str}'"
+        time_filter = "datetime > ?"
+        time_param = since_str
     else:
-        q = f"SELECT * FROM polling WHERE device_type = '{device_type}' AND datetime > datetime('now', '-{day} day')"
+        time_filter = "datetime > datetime('now', ?)"
+        time_param = f"-{float(day)} day"
 
-    df = pd.read_sql_query(q, db)
+    def query(where: str, params: tuple) -> pd.DataFrame:
+        return pd.read_sql_query(
+            f"SELECT * FROM polling WHERE {where} AND {time_filter}",
+            db,
+            params=(*params, time_param),
+        )
+
+    df = query("device_type = ?", (device_type,))
 
     if device_type == "ObservingConditions":
         if "SafetyMonitor" in obs.config:
-            if since_str is not None:
-                q_isSafe = f"SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND datetime > '{since_str}'"
-                q_weather_safe = f"SELECT * FROM polling WHERE device_type = 'WeatherSafe' AND datetime > '{since_str}'"
-            else:
-                q_isSafe = f"SELECT * FROM polling WHERE device_type = 'SafetyMonitor' AND datetime > datetime('now', '-{day} day')"
-                q_weather_safe = f"SELECT * FROM polling WHERE device_type = 'WeatherSafe' AND datetime > datetime('now', '-{day} day')"
-
-            df_isSafe = pd.read_sql_query(q_isSafe, db)
-            df_weather_safe = pd.read_sql_query(q_weather_safe, db)
+            df_isSafe = query("device_type = ?", ("SafetyMonitor",))
+            df_weather_safe = query("device_type = ?", ("WeatherSafe",))
 
             if not df_isSafe.empty:
                 df = pd.concat([df, df_isSafe], ignore_index=True)
@@ -1344,17 +1355,44 @@ def _query_raw_polling_df(
                 df = pd.concat([df, df_weather_safe], ignore_index=True)
 
         if "Dome" in obs.config:
-            if since_str is not None:
-                q_dome = f"SELECT * FROM polling WHERE device_type = 'Dome' AND device_command = 'ShutterStatus' AND datetime > '{since_str}'"
-            else:
-                q_dome = f"SELECT * FROM polling WHERE device_type = 'Dome' AND device_command = 'ShutterStatus' AND datetime > datetime('now', '-{day} day')"
-
-            df_dome = pd.read_sql_query(q_dome, db)
+            df_dome = query(
+                "device_type = ? AND device_command = ?", ("Dome", "ShutterStatus")
+            )
             if not df_dome.empty:
                 df = pd.concat([df, df_dome], ignore_index=True)
 
     db.close()
     return df
+
+
+def weather_safety_limits(obs) -> dict:
+    """Get the strictest upper and lower closing limit of each weather parameter.
+
+    Args:
+        obs: Observatory instance (used to read the config).
+
+    Returns:
+        dict: Parameter name mapped to ``{"upper": float | None,
+        "lower": float | None}``. Empty if no closing limits are configured.
+    """
+    if "ObservingConditions" not in obs.config:
+        return {}
+
+    safety_limits: dict = {}
+    closing_limits = obs.config["ObservingConditions"][0].get("closing_limits", {})
+    for key in closing_limits:
+        upper_val = float("inf")
+        lower_val = float("-inf")
+        for item in closing_limits[key]:
+            if item.get("upper", float("inf")) < upper_val:
+                upper_val = item["upper"]
+            if item.get("lower", float("-inf")) > lower_val:
+                lower_val = item["lower"]
+        safety_limits[key] = {
+            "upper": upper_val if upper_val != float("inf") else None,
+            "lower": lower_val if lower_val != float("-inf") else None,
+        }
+    return safety_limits
 
 
 def _process_polling_raw(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
@@ -1463,8 +1501,8 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
                 overlap_time = last_ts - datetime.timedelta(minutes=OVERLAP_MINUTES)
                 since_str = overlap_time.strftime("%Y-%m-%d %H:%M:%S")
 
-                df_new_raw = _query_raw_polling_df(
-                    device_type, obs, since_str=since_str
+                df_new_raw = await asyncio.to_thread(
+                    _query_raw_polling_df, device_type, obs, since_str=since_str
                 )
 
                 if not df_new_raw.empty:
@@ -1497,7 +1535,9 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
 
             else:
                 # ---- full query ------------------------------------------------
-                df_raw = _query_raw_polling_df(device_type, obs, day=day)
+                df_raw = await asyncio.to_thread(
+                    _query_raw_polling_df, device_type, obs, day=day
+                )
 
                 if df_raw.empty:
                     return {
@@ -1510,26 +1550,11 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
                 df_groupby, latest = _process_polling_raw(df_raw)
 
                 # Safety limits are config-derived and therefore static.
-                safety_limits: dict = {}
-                if (
-                    device_type == "ObservingConditions"
-                    and "ObservingConditions" in obs.config
-                ):
-                    closing_limits = obs.config["ObservingConditions"][0][
-                        "closing_limits"
-                    ]
-                    for key in closing_limits:
-                        upper_val = float("inf")
-                        lower_val = float("-inf")
-                        for item in closing_limits[key]:
-                            if item.get("upper", float("inf")) < upper_val:
-                                upper_val = item["upper"]
-                            if item.get("lower", float("-inf")) > lower_val:
-                                lower_val = item["lower"]
-                        safety_limits[key] = {
-                            "upper": upper_val if upper_val != float("inf") else None,
-                            "lower": lower_val if lower_val != float("-inf") else None,
-                        }
+                safety_limits: dict = (
+                    weather_safety_limits(obs)
+                    if device_type == "ObservingConditions"
+                    else {}
+                )
 
                 cache = {
                     "df_groupby": df_groupby,
@@ -1605,18 +1630,27 @@ async def guiding_data(
         dict: JSON response with guiding data including datetime,
               telescope_name, post_pid_x, and post_pid_y values.
     """
-    db = observatory_db()
-    telescope_filter = f"AND telescope_name = '{telescope}'" if telescope else ""
-
     if since is not None:
-        q = f"""SELECT datetime, telescope_name, post_pid_x, post_pid_y FROM autoguider_log 
-                WHERE datetime > '{since}' {telescope_filter} ORDER BY datetime ASC"""
+        where = "datetime > ?"
+        params: list = [since]
     else:
-        q = f"""SELECT datetime, telescope_name, post_pid_x, post_pid_y FROM autoguider_log 
-                WHERE datetime > datetime('now', '-{day} day') {telescope_filter} ORDER BY datetime ASC"""
+        where = "datetime > datetime('now', ?)"
+        params = [f"-{float(day)} day"]
+    if telescope:
+        where += " AND telescope_name = ?"
+        params.append(telescope)
 
-    df = pd.read_sql_query(q, db)
-    db.close()
+    q = f"""SELECT datetime, telescope_name, post_pid_x, post_pid_y FROM autoguider_log
+            WHERE {where} ORDER BY datetime ASC"""
+
+    def read() -> pd.DataFrame:
+        db = observatory_db()
+        try:
+            return pd.read_sql_query(q, db, params=params)
+        finally:
+            db.close()
+
+    df = await asyncio.to_thread(read)
 
     if df.empty:
         return {"status": "success", "data": [], "message": "No guiding data available"}
@@ -1642,14 +1676,244 @@ async def log(datetime: str, limit: int = 100):
     Returns:
         list: Log entries as dictionary records.
     """
-    db = observatory_db()
-    q = f"""SELECT * FROM (SELECT * FROM log WHERE datetime < '{datetime}' ORDER BY datetime DESC LIMIT {limit}) a ORDER BY datetime ASC"""
+    q = """SELECT * FROM (SELECT * FROM log WHERE datetime < ? ORDER BY datetime DESC LIMIT ?) a ORDER BY datetime ASC"""
 
-    df = pd.read_sql_query(q, db)
+    def read() -> pd.DataFrame:
+        db = observatory_db()
+        try:
+            return pd.read_sql_query(q, db, params=(datetime, int(limit)))
+        finally:
+            db.close()
 
-    db.close()
+    df = await asyncio.to_thread(read)
 
     return df.to_dict(orient="records")
+
+
+def _history_extra_labels() -> dict:
+    """Use the filter names as labels for each filter wheel position."""
+    labels = {}
+    for fw_name, names in FWS.items():
+        if isinstance(names, (list, tuple)) and names:
+            key = history_db.SeriesKey("FilterWheel", fw_name, "Position")
+            labels[key] = {-1: "Moving", **dict(enumerate(names))}
+    return labels
+
+
+def _history_parameters() -> list[dict]:
+    """Describe every polled series. Cached, because it scans the index."""
+    cache = HISTORY_PARAMETERS_CACHE
+    if (
+        cache["parameters"] is not None
+        and time.monotonic() - cache["cached_at"] < HISTORY_PARAMETERS_TTL_S
+    ):
+        return cache["parameters"]
+
+    obs = OBSERVATORY
+    conn = obs.database_manager.read_only_connection()
+    try:
+        parameters = history_db.list_parameters(
+            conn, obs.fits_config, _history_extra_labels()
+        )
+    finally:
+        conn.close()
+
+    limits = weather_safety_limits(obs)
+    for parameter in parameters:
+        if parameter["device_type"] == "ObservingConditions":
+            parameter["limits"] = limits.get(parameter["device_command"])
+
+    cache["parameters"] = parameters
+    cache["cached_at"] = time.monotonic()
+    return parameters
+
+
+def _history_range(
+    start: str | None, end: str | None
+) -> tuple[datetime.datetime, datetime.datetime]:
+    """Parse and limit a requested range. The default is the last 24 hours."""
+    end_dt = (
+        history_db.parse_time(end)
+        if end
+        else datetime.datetime.now(UTC).replace(tzinfo=None)
+    )
+    start_dt = (
+        history_db.parse_time(start) if start else end_dt - datetime.timedelta(days=1)
+    )
+    return history_db.clamp_range(start_dt, end_dt)
+
+
+def _history_series(
+    device_type: str,
+    device_name: str,
+    device_command: str,
+    start: datetime.datetime,
+    end: datetime.datetime,
+    max_points: int,
+) -> dict:
+    """Find the series description and query its data."""
+    parameter = next(
+        (
+            p
+            for p in _history_parameters()
+            if p["device_type"] == device_type
+            and p["device_name"] == device_name
+            and p["device_command"] == device_command
+        ),
+        None,
+    )
+    if parameter is None:
+        raise ValueError(
+            f"No polled data for {device_type} {device_name} {device_command}"
+        )
+
+    conn = OBSERVATORY.database_manager.read_only_connection()
+    try:
+        return history_db.query_series(conn, parameter, start, end, max_points)
+    finally:
+        conn.close()
+
+
+def _history_schedule(start: datetime.datetime, end: datetime.datetime) -> dict:
+    """Query schedule history and add twilight periods if a telescope exists."""
+    obs = OBSERVATORY
+    conn = obs.database_manager.read_only_connection()
+    try:
+        result = history_db.query_schedule(conn, start, end)
+    finally:
+        conn.close()
+
+    result["twilight_periods"] = []
+    if "Telescope" in obs.devices:
+        try:
+            now = datetime.datetime.now(UTC)
+            result["twilight_periods"] = calculate_twilight_periods(
+                now - datetime.timedelta(days=history_db.RETENTION_DAYS),
+                now,
+                obs.get_observatory_location(),  # type: ignore
+            )
+        except Exception as e:
+            logger.warning(f"Error calculating twilight periods: {e}")
+    return result
+
+
+def _history_snapshot(snapshot_id: int) -> str | None:
+    conn = OBSERVATORY.database_manager.read_only_connection()
+    try:
+        return history_db.get_snapshot(conn, snapshot_id)
+    finally:
+        conn.close()
+
+
+async def _run_history_query(func, *args):
+    """Run a blocking history query in a thread, limited by HISTORY_SEMAPHORE."""
+    async with HISTORY_SEMAPHORE:
+        return await asyncio.to_thread(func, *args)
+
+
+@app.get("/api/history/parameters")
+async def history_parameters():
+    """List every polled series with its data type, unit and value labels.
+
+    Returns:
+        dict: ``data`` is a list of series descriptions. ``retention_days`` is
+        how many days of history the database keeps.
+    """
+    try:
+        parameters = await _run_history_query(_history_parameters)
+    except Exception as e:
+        logger.warning(f"Error listing history parameters: {e}", exc_info=True)
+        return {"status": "error", "data": [], "message": str(e)}
+
+    return {
+        "status": "success",
+        "data": parameters,
+        "retention_days": history_db.RETENTION_DAYS,
+        "message": "",
+    }
+
+
+@app.get("/api/history/series")
+async def history_series(
+    device_type: str,
+    device_name: str,
+    device_command: str,
+    start: str | None = None,
+    end: str | None = None,
+    max_points: int = 1500,
+):
+    """Get one polled series, reduced on the server.
+
+    Numeric series are averaged into time buckets with their minimum and
+    maximum. Boolean, state and text series return only their changes.
+
+    Args:
+        device_type (str): Device type, for example ``'Telescope'``.
+        device_name (str): Device name from the observatory config.
+        device_command (str): Polled property, for example ``'Altitude'``.
+        start (str): ISO start time (UTC if no timezone). Defaults to 24 h ago.
+        end (str): ISO end time (UTC if no timezone). Defaults to now.
+        max_points (int): Maximum number of numeric buckets, up to 3000.
+
+    Returns:
+        dict: ``data`` holds the series description and its columns.
+    """
+    max_points = min(max(max_points, 10), 3000)
+    try:
+        start_dt, end_dt = _history_range(start, end)
+        data = await _run_history_query(
+            _history_series,
+            device_type,
+            device_name,
+            device_command,
+            start_dt,
+            end_dt,
+            max_points,
+        )
+    except Exception as e:
+        logger.warning(f"Error querying history series: {e}")
+        return {"status": "error", "data": None, "message": str(e)}
+
+    return {"status": "success", "data": to_json_safe(data), "message": ""}
+
+
+@app.get("/api/history/schedule")
+async def history_schedule(start: str | None = None, end: str | None = None):
+    """Get schedule events, loaded schedules and twilight periods for a range.
+
+    Args:
+        start (str): ISO start time (UTC if no timezone). Defaults to 24 h ago.
+        end (str): ISO end time (UTC if no timezone). Defaults to now.
+    """
+    try:
+        start_dt, end_dt = _history_range(start, end)
+        data = await _run_history_query(_history_schedule, start_dt, end_dt)
+    except Exception as e:
+        logger.warning(f"Error querying schedule history: {e}")
+        return {"status": "error", "data": None, "message": str(e)}
+
+    return {"status": "success", "data": to_json_safe(data), "message": ""}
+
+
+@app.get("/api/history/schedule/{snapshot_id}")
+async def history_schedule_snapshot(snapshot_id: int):
+    """Download a schedule that was loaded in the past, as JSONL."""
+    try:
+        jsonl = await _run_history_query(_history_snapshot, snapshot_id)
+    except Exception as e:
+        logger.warning(f"Error reading schedule snapshot {snapshot_id}: {e}")
+        return HTMLResponse(status_code=500, content=str(e))
+
+    if jsonl is None:
+        return HTMLResponse(status_code=404, content="Not Found")
+
+    return Response(
+        content=jsonl + "\n",
+        media_type="application/x-ndjson",
+        headers={
+            "Content-Disposition": f'attachment; filename="schedule_{snapshot_id}.jsonl"'
+        },
+    )
 
 
 @app.websocket("/ws/log")
@@ -2344,6 +2608,20 @@ async def get_schedule(request: Request):
             "schedule_schemas": json.dumps(SCHEDULE_SCHEMAS),
             "filters": filters_by_camera(cameras),
             "cameras": cameras,
+        },
+    )
+
+
+@app.get("/history", include_in_schema=False)
+async def get_history(request: Request):
+    """Serve the History page with plots of polled data and schedule history."""
+    return FRONTEND.TemplateResponse(
+        request=request,
+        name="history.html.j2",
+        context={
+            "request": request,
+            "observatory": OBSERVATORY.name,
+            "retention_days": history_db.RETENTION_DAYS,
         },
     )
 

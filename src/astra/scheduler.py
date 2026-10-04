@@ -8,6 +8,7 @@ Key capabilities:
 
 """
 
+import hashlib
 import json
 import os
 from dataclasses import dataclass
@@ -464,6 +465,18 @@ class Schedule(list[Action]):
         return action_value
 
 
+def _now_str() -> str:
+    """Return the current UTC time in the format used by the database."""
+    return datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S.%f")
+
+
+def _to_db_str(value: datetime) -> str:
+    """Convert a datetime to the UTC string format used by the database."""
+    if value.tzinfo is not None:
+        value = value.astimezone(UTC)
+    return value.strftime("%Y-%m-%d %H:%M:%S.%f")
+
+
 class ScheduleManager:
     def __init__(
         self,
@@ -471,12 +484,16 @@ class ScheduleManager:
         truncate_factor: float | None,
         logger: ObservatoryLogger,
         device_manager=None,
+        database_manager=None,
     ):
         self.schedule = None
         self.schedule_path = Path(schedule_path)
         self.truncate_factor = truncate_factor
         self.logger = logger
         self.device_manager = device_manager
+        self.database_manager = database_manager
+        # id of the loaded schedule in the schedule_snapshots table
+        self.snapshot_id: int | None = None
         self.running = False
         self.schedule_mtime = self.get_mtime()
 
@@ -654,6 +671,7 @@ class ScheduleManager:
                         nonsidereal_supported=self.get_nonsidereal_support(),
                     )
                     self.schedule = schedule
+                    self.record_snapshot(schedule)
 
                     return schedule
                 except Exception as e:
@@ -669,6 +687,83 @@ class ScheduleManager:
             self.logger.report_device_issue(
                 "Schedule", "", "Error reading schedule", exception=e
             )
+
+    def record_snapshot(self, schedule: Schedule) -> None:
+        """Store the loaded schedule in the database and record a 'loaded' event.
+
+        A schedule with the same content is stored only once. Errors are
+        logged and never raised, so recording cannot stop a schedule.
+        """
+        if self.database_manager is None:
+            return
+
+        try:
+            jsonl = schedule.to_jsonl_string()
+            sha256 = hashlib.sha256(jsonl.encode()).hexdigest()
+            start_time = min(action.start_time for action in schedule)
+            end_time = max(action.end_time for action in schedule)
+            self.database_manager.execute(
+                "INSERT OR IGNORE INTO schedule_snapshots "
+                "(datetime, sha256, n_actions, start_time, end_time, jsonl) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    _now_str(),
+                    sha256,
+                    len(schedule),
+                    _to_db_str(start_time),
+                    _to_db_str(end_time),
+                    jsonl,
+                ),
+            )
+            rows = self.database_manager.execute_select(
+                "SELECT id FROM schedule_snapshots WHERE sha256 = ?", (sha256,)
+            )
+            self.snapshot_id = rows[0][0] if rows else None
+        except Exception as e:
+            self.snapshot_id = None
+            self.logger.warning(f"Could not record schedule snapshot: {e}")
+            return
+
+        self.record_event("loaded")
+
+    def record_event(
+        self, event: str, action: Action | None = None, message: str = ""
+    ) -> None:
+        """Record a schedule or action event in the schedule_events table.
+
+        Errors are logged and never raised, so recording cannot stop a schedule.
+
+        Args:
+            event (str): Event name, for example 'schedule_started' or
+                'action_finished'.
+            action (Action | None): The action the event is about, if any.
+            message (str): Extra text, for example an error message.
+        """
+        if self.database_manager is None:
+            return
+
+        try:
+            action_index = None
+            if action is not None and self.schedule is not None:
+                action_index = next(
+                    (i for i, a in enumerate(self.schedule) if a is action), None
+                )
+            self.database_manager.execute(
+                "INSERT INTO schedule_events (datetime, event, snapshot_id, "
+                "action_index, device_name, action_type, message) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    _now_str(),
+                    event,
+                    self.snapshot_id,
+                    action_index,
+                    action.device_name if action is not None else None,
+                    action.action_type if action is not None else None,
+                    message,
+                ),
+            )
+        except Exception as e:
+            self.logger.warning(f"Could not record schedule event {event}: {e}")
 
     def reload_if_updated(self) -> bool:
         """

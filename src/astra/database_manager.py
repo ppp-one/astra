@@ -8,6 +8,7 @@ Key capabilities:
 
 import os
 import sqlite3
+import time
 from datetime import UTC, datetime
 
 import pandas as pd
@@ -64,10 +65,31 @@ class DatabaseManager:
 
         return self._cursor
 
-    def execute(self, query: str):
-        return self.cursor.execute(query)
+    def execute(self, query: str, values: tuple | None = None):
+        return self.cursor.execute(query, values)
 
-    def execute_select(self, query: str) -> list[tuple]:
+    def read_only_connection(self, timeout_s: float = 5) -> sqlite3.Connection:
+        """Open a read-only connection that aborts queries after ``timeout_s``.
+
+        Use it for reads that come from the web interface, so a slow query
+        cannot write to the database or hold up the server for long.
+        The caller must close the connection.
+
+        Args:
+            timeout_s (float): Seconds after which a running query is aborted
+                with ``sqlite3.OperationalError: interrupted``.
+        """
+        conn = sqlite3.connect(
+            f"file:{self.db_path}?mode=ro", uri=True, timeout=timeout_s
+        )
+        conn.execute("PRAGMA query_only=ON")
+
+        deadline = time.monotonic() + timeout_s
+        # A non-zero return value aborts the running query
+        conn.set_progress_handler(lambda: int(time.monotonic() > deadline), 10000)
+        return conn
+
+    def execute_select(self, query: str, values: tuple | None = None) -> list[tuple]:
         """
         Execute a SELECT query and return the result as a list of tuples.
         Only SELECT queries are allowed.
@@ -75,14 +97,14 @@ class DatabaseManager:
         For static type checking to ensure the return type is always a list of tuples.
         """
         assert query.strip().lower().startswith("select"), "Only SELECT queries allowed"
-        result = self.cursor.execute(query)  # type: ignore
+        result = self.cursor.execute(query, values)  # type: ignore
         if not isinstance(result, list):
             raise TypeError("Expected a list of tuples as the result")
 
         return result
 
     def execute_select_to_df(
-        self, query: str, table: str | None = None
+        self, query: str, table: str | None = None, values: tuple | None = None
     ) -> pd.DataFrame:
         """
         Execute a SELECT query and return the result as a pandas DataFrame.
@@ -117,7 +139,7 @@ class DatabaseManager:
         else:
             raise ValueError(f"Unknown table: {table}")
 
-        poll_records = self.execute_select(query)
+        poll_records = self.execute_select(query, values)
         return pd.DataFrame(
             poll_records,
             columns=columns,
@@ -202,6 +224,40 @@ class DatabaseManager:
                 message TEXT)"""
 
         cursor.execute(db_command_2)
+
+        # Index for queries on one polled series over a time range
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_polling_series ON polling "
+            "(device_type, device_name, device_command, datetime)"
+        )
+
+        # Each loaded schedule, stored once per unique content
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS schedule_snapshots (
+                id INTEGER PRIMARY KEY,
+                datetime TEXT,
+                sha256 TEXT UNIQUE,
+                n_actions INTEGER,
+                start_time TEXT,
+                end_time TEXT,
+                jsonl TEXT)"""
+        )
+
+        # Schedule and action run events
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS schedule_events (
+                datetime TEXT,
+                event TEXT,
+                snapshot_id INTEGER,
+                action_index INTEGER,
+                device_name TEXT,
+                action_type TEXT,
+                message TEXT)"""
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_schedule_events_datetime "
+            "ON schedule_events (datetime)"
+        )
 
         return cursor
 

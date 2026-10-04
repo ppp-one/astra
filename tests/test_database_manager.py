@@ -81,3 +81,44 @@ def test_maybe_run_backup(db_manager):
     with patch.object(db_manager, "is_now_backup_time", return_value=False):
         db_manager.maybe_run_backup(thread_manager)
         assert db_manager.run_backup
+
+
+def test_create_database_adds_history_tables_and_index(db_manager):
+    cursor = db_manager.create_database()
+    names = {
+        row[0]
+        for row in cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type IN ('table', 'index')"
+        )
+    }
+    assert {"schedule_snapshots", "schedule_events"} <= names
+    assert {"idx_polling_series", "idx_schedule_events_datetime"} <= names
+
+
+def test_read_only_connection_rejects_writes(db_manager):
+    import sqlite3
+
+    db_manager.create_database()
+    conn = db_manager.read_only_connection()
+    try:
+        assert conn.execute("SELECT COUNT(*) FROM polling").fetchone() is not None
+        with pytest.raises(sqlite3.OperationalError):
+            conn.execute("DELETE FROM polling")
+    finally:
+        conn.close()
+
+
+def test_read_only_connection_aborts_slow_query(db_manager):
+    import sqlite3
+
+    db_manager.create_database()
+    conn = db_manager.read_only_connection(timeout_s=0.2)
+    slow = (
+        "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n) "
+        "SELECT COUNT(*) FROM n"
+    )
+    try:
+        with pytest.raises(sqlite3.OperationalError, match="interrupted"):
+            conn.execute(slow).fetchone()
+    finally:
+        conn.close()

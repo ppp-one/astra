@@ -557,8 +557,9 @@ class HeaderManager:
         t0 = df_images_filt["date_obs"].iloc[0] - pd.Timedelta("10 sec")
         t1 = df_images_filt["date_obs"].iloc[-1] + pd.Timedelta("10 sec")
         df_poll = database_manager.execute_select_to_df(
-            f'SELECT * FROM polling WHERE datetime BETWEEN "{str(t0)}" AND "{str(t1)}";',
+            "SELECT * FROM polling WHERE datetime BETWEEN ? AND ?;",
             table="polling",
+            values=(str(t0), str(t1)),
         )
         df_poll["jd"] = pd.to_datetime(
             df_poll["datetime"], format="%Y-%m-%d %H:%M:%S.%f"

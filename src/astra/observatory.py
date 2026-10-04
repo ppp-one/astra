@@ -69,7 +69,7 @@ from astra.paired_devices import PairedDevices
 from astra.pointer import calculate_pointing_correction_from_fits
 from astra.queue_manager import QueueManager
 from astra.safety_monitor import SafetyMonitor
-from astra.scheduler import Action, BaseActionConfig, ScheduleManager
+from astra.scheduler import Action, ActionStatus, BaseActionConfig, ScheduleManager
 from astra.thread_manager import ThreadManager
 from astra.utils import ephemeris, frames
 
@@ -261,6 +261,7 @@ class Observatory:
             truncate_factor=truncate_factor,
             logger=self.logger,
             device_manager=self.device_manager,
+            database_manager=self.database_manager,
         )
 
         self._image_handlers: dict[str, ImageHandler] = {}
@@ -1385,6 +1386,7 @@ class Observatory:
         """
         self.schedule_manager.running = True
         self.logger.info("Running schedule")
+        self.schedule_manager.record_event("schedule_started")
 
         t0 = time.time()
         while self.weather_safe is None and (time.time() - t0) < 120:
@@ -1396,6 +1398,9 @@ class Observatory:
                 device_type="SafetyMonitor",
                 device_name="",
                 message="Weather safety check timed out",
+            )
+            self.schedule_manager.record_event(
+                "schedule_stopped", message="Weather safety check timed out"
             )
             return
 
@@ -1460,9 +1465,12 @@ class Observatory:
             )
 
         self.schedule_manager.running = False
+        completed_percentage = self.schedule_manager.get_completed_percentage()
         self.logger.info(
-            "Schedule stopped. "
-            f"{self.schedule_manager.get_completed_percentage()}% of actions completed."
+            f"Schedule stopped. {completed_percentage}% of actions completed."
+        )
+        self.schedule_manager.record_event(
+            "schedule_stopped", message=f"{completed_percentage}% of actions completed"
         )
 
     def run_action(self, action: Action) -> None:
@@ -1483,6 +1491,8 @@ class Observatory:
 
         """
         self.logger.info(f"Starting {action.device_name} {action.action_type}")
+        action.set_status("RUNNING")
+        self.schedule_manager.record_event("action_started", action)
         try:
             if action.device_name in self.devices["Camera"]:
                 paired_devices = PairedDevices.from_observatory(
@@ -1580,6 +1590,7 @@ class Observatory:
                 ) or self.weather_safe:
                     action.completed = True
                     action.set_status("FINISHED")
+                    self.schedule_manager.record_event("action_finished", action)
             self.logger.info(
                 f"{action.action_type} sequence ended for {action.device_name}"
             )
@@ -1588,9 +1599,17 @@ class Observatory:
             )
         except Exception as e:
             self.schedule_manager.running = False
+            action.set_status("FAILED")
+            self.schedule_manager.record_event("action_failed", action, str(e))
             self.logger.report_device_issue(
                 "Schedule", action.device_name, "Run action error.", exception=e
             )
+        finally:
+            # The action ended without finishing or failing (for example, the
+            # conditions were not met), so it can start again later
+            if action.status == ActionStatus.RUNNING:
+                action.set_status("PENDING")
+                self.schedule_manager.record_event("action_stopped", action)
 
     def cool_camera(
         self,

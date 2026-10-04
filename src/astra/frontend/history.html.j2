@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - {{ observatory }}</title>
+    <script src="/js/tailwind-3.3.5.js"></script>
+    <script src="/js/d3-7.9.0.min.js"></script>
+    <script src="/js/plot-0.6.17.min.js"></script>
+    <script src="/js/weather.js"></script>
+    <link rel="icon" href="/favicon.svg">
+    <style>
+        g[aria-label="tip"] {
+            fill: rgb(23 23 23);
+        }
+
+        .history-plot svg {
+            display: block;
+            width: 100%;
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgb(226 232 240 / 0.5);
+            pointer-events: none;
+            display: none;
+        }
+
+        .preset.active {
+            background-color: rgb(37 99 235 / 0.8);
+        }
+    </style>
+</head>
+
+<body class="bg-neutral-950 text-slate-100 w-full min-h-screen text-sm">
+    <div id="history-app" class="max-w-screen-xl mx-auto px-4 py-4 md:py-8"
+        data-retention-days="{{ retention_days }}">
+
+        <header class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+                <h1 class="text-xl font-semibold">History</h1>
+                <p class="text-gray-400 text-xs">{{ observatory }} · last {{ retention_days }} days of polled data and
+                    schedules · times in your local time zone</p>
+            </div>
+            <a href="/" class="px-3 py-1 bg-gray-700/80 hover:bg-gray-600/80 rounded text-xs">Back to dashboard</a>
+        </header>
+
+        {# range controls #}
+        <section class="flex flex-wrap items-end gap-2 mb-3 rounded-lg bg-gray-600/20 p-3">
+            <div class="flex gap-1" role="group" aria-label="Time range">
+                <button type="button" class="preset px-3 py-1 rounded bg-gray-700/80 hover:bg-gray-600/80"
+                    data-hours="6">6 h</button>
+                <button type="button" class="preset px-3 py-1 rounded bg-gray-700/80 hover:bg-gray-600/80"
+                    data-hours="12">12 h</button>
+                <button type="button" class="preset px-3 py-1 rounded bg-gray-700/80 hover:bg-gray-600/80"
+                    data-hours="24">24 h</button>
+                <button type="button" class="preset px-3 py-1 rounded bg-gray-700/80 hover:bg-gray-600/80"
+                    data-hours="{{ retention_days * 24 }}">{{ retention_days }} d</button>
+            </div>
+            <label class="flex flex-col text-xs text-gray-400">From
+                <input id="range-start" type="datetime-local"
+                    class="bg-neutral-900 text-slate-100 rounded px-2 py-1 border border-gray-700">
+            </label>
+            <label class="flex flex-col text-xs text-gray-400">To
+                <input id="range-end" type="datetime-local"
+                    class="bg-neutral-900 text-slate-100 rounded px-2 py-1 border border-gray-700">
+            </label>
+            <button id="apply-range" type="button"
+                class="px-3 py-1 rounded bg-gray-700/80 hover:bg-gray-600/80">Apply</button>
+            <div class="flex-1"></div>
+            <label class="flex items-center gap-1 text-xs text-gray-300">
+                <input id="auto-refresh" type="checkbox" class="accent-blue-600"> Auto-refresh (60 s)
+            </label>
+            <button id="refresh" type="button"
+                class="px-3 py-1 rounded bg-blue-600/80 hover:bg-blue-700/80">Refresh</button>
+        </section>
+
+        {# parameter picker #}
+        <details id="picker" class="mb-4 rounded-lg bg-gray-600/20">
+            <summary class="cursor-pointer select-none p-3">
+                Parameters <span id="picker-count" class="text-gray-400"></span>
+            </summary>
+            <div class="px-3 pb-3">
+                <div class="flex gap-2 mb-2">
+                    <button id="select-defaults" type="button"
+                        class="px-2 py-0.5 rounded bg-gray-700/80 hover:bg-gray-600/80 text-xs">Defaults</button>
+                    <button id="select-none" type="button"
+                        class="px-2 py-0.5 rounded bg-gray-700/80 hover:bg-gray-600/80 text-xs">None</button>
+                </div>
+                <div id="picker-groups" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+            </div>
+        </details>
+
+        <p id="status" class="text-xs text-gray-400 mb-2" role="status"></p>
+
+        {# schedule timeline #}
+        <section class="mb-4 rounded-lg bg-gray-600/20 p-3">
+            <h2 class="text-sm font-medium text-gray-300 mb-1">Schedule</h2>
+            <div id="timeline" class="history-plot relative"></div>
+            <div id="snapshots" class="flex flex-wrap gap-2 mt-2"></div>
+            <div id="snapshot-detail" class="hidden mt-3 overflow-x-auto"></div>
+        </section>
+
+        {# one plot per selected series #}
+        <section id="plots" class="flex flex-col gap-2"></section>
+    </div>
+
+    <script src="/js/history.js"></script>
+</body>
+
+</html>

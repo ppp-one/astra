@@ -249,3 +249,97 @@ class TestNonsiderealSupport:
         telescope.get.side_effect = ConnectionError("mount unreachable")
         manager = self._manager({"tel1": telescope})
         assert manager.get_nonsidereal_support() is None
+
+
+class TestScheduleHistory:
+    """ScheduleManager stores loaded schedules and run events in the database."""
+
+    def _write_schedule(self, path, device_name="cam1"):
+        start = datetime.now(UTC) + timedelta(hours=1)
+        rows = [
+            {
+                "device_name": device_name,
+                "action_type": "open",
+                "action_value": {},
+                "start_time": start.isoformat(),
+                "end_time": (start + timedelta(minutes=10)).isoformat(),
+            },
+            {
+                "device_name": device_name,
+                "action_type": "close",
+                "action_value": {},
+                "start_time": (start + timedelta(minutes=20)).isoformat(),
+                "end_time": (start + timedelta(minutes=30)).isoformat(),
+            },
+        ]
+        path.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+
+    def _database(self):
+        from uuid import uuid4
+
+        from astra.database_manager import DatabaseManager
+
+        return DatabaseManager(f"history_{uuid4().hex}", logger=MagicMock())
+
+    def test_snapshot_stored_once_per_content(self, tmp_path):
+        db = self._database()
+        path = tmp_path / "schedule.jsonl"
+        self._write_schedule(path)
+
+        manager = ScheduleManager(path, None, MagicMock(), database_manager=db)
+        first_id = manager.snapshot_id
+        assert first_id is not None
+
+        # Read the same content again
+        manager.schedule = None
+        manager.read()
+        assert manager.snapshot_id == first_id
+
+        assert db.execute_select("SELECT COUNT(*) FROM schedule_snapshots") == [(1,)]
+        events = db.execute_select(
+            "SELECT event, snapshot_id FROM schedule_events ORDER BY datetime"
+        )
+        assert events == [("loaded", first_id), ("loaded", first_id)]
+
+        # New content gives a new snapshot
+        self._write_schedule(path, device_name="cam2")
+        manager.schedule = None
+        manager.read()
+        assert manager.snapshot_id != first_id
+        assert db.execute_select("SELECT COUNT(*) FROM schedule_snapshots") == [(2,)]
+
+    def test_record_event_stores_action_index(self, tmp_path):
+        db = self._database()
+        path = tmp_path / "schedule.jsonl"
+        self._write_schedule(path)
+        manager = ScheduleManager(path, None, MagicMock(), database_manager=db)
+
+        action = manager.schedule[1]
+        manager.record_event("action_failed", action, "it broke")
+
+        row = db.execute_select(
+            "SELECT snapshot_id, action_index, device_name, action_type, message "
+            "FROM schedule_events WHERE event = 'action_failed'"
+        )
+        assert row == [(manager.snapshot_id, 1, "cam1", "close", "it broke")]
+
+    def test_recording_errors_do_not_raise(self, tmp_path):
+        path = tmp_path / "schedule.jsonl"
+        self._write_schedule(path)
+        db = MagicMock()
+        db.execute.side_effect = RuntimeError("database is gone")
+        logger = MagicMock()
+
+        manager = ScheduleManager(path, None, logger, database_manager=db)
+
+        assert manager.schedule is not None
+        assert manager.snapshot_id is None
+        manager.record_event("schedule_started")
+        assert logger.warning.call_count >= 2
+
+    def test_no_database_manager_records_nothing(self, tmp_path):
+        path = tmp_path / "schedule.jsonl"
+        self._write_schedule(path)
+        manager = ScheduleManager(path, None, MagicMock())
+        manager.record_event("schedule_started")
+        assert manager.snapshot_id is None

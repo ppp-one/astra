@@ -138,6 +138,16 @@ The interface is organized into four main operational views:
 - **Weather**: Detailed environmental monitoring including 3-day graph history, current values, and safety limit thresholds used by the internal safety monitor logic (defined in the [observatory configuration](observatory_configuration.md#observingconditions-configuration)).
 - **Controls**: Sky map showing telescope position and some manual override controls.
 
+### History Page
+
+The **History** page ([http://localhost:8000/history](http://localhost:8000/history)) shows the data that _Astra_ keeps in its database: the last 3 days. Open it with the **History** button at the top of the Summary view.
+
+- **Plots**: Pick the polled values to show from the **Parameters** list. Numbers show as a line (the average) with a band (the minimum and maximum). True/false values and states (for example camera state, shutter status or filter) show as colored bars. Times with no data show as gaps.
+- **Schedule**: For each device, the top bar shows the planned actions of the loaded schedule. The bottom bar shows when each action actually ran (red if it failed). Vertical lines show when a schedule was loaded (dashed blue), started (green) and stopped (orange).
+- **Loaded schedules**: Click a loaded schedule below the timeline to see its actions or to download it as JSONL.
+
+The server reduces the data before it sends it, so a plot has at most about 1,500 points for any time range. Each schedule that is loaded is stored once in the database, so you can see old versions after the schedule file has changed.
+
 ## Startup Options
 
 Following [Quickstart](../quickstart), `astra` has a few optional startup options:
