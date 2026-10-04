@@ -461,10 +461,22 @@
         const logScrollParent = document.getElementById("log-0-parent");
         const logJumpButton = document.getElementById("log-jump-latest");
         let logStickToBottom = true;
+        // Only user input may unstick the log. Layout changes (e.g. the guiding chart
+        // appearing or re-rendering above the log) also fire scroll events with a large
+        // gap, and these must not stop the auto-scroll.
+        let logPointerDown = false;
+        let logUserScrollUntil = 0;
+        function markLogUserScroll() {
+            logUserScrollUntil = performance.now() + 250;
+        }
         logScrollParent.addEventListener('scroll', () => {
             const gap = logScrollParent.scrollHeight - logScrollParent.scrollTop - logScrollParent.clientHeight;
-            logStickToBottom = gap < 30;
-            if (logStickToBottom) logJumpButton.hidden = true;
+            if (gap < 30) {
+                logStickToBottom = true;
+                logJumpButton.hidden = true;
+            } else if (logPointerDown || performance.now() < logUserScrollUntil) {
+                logStickToBottom = false;
+            }
         }, { passive: true });
 
         function scrollLogToBottom() {
@@ -474,8 +486,19 @@
         }
         // A wheel-up shows intent to leave the bottom before the scroll event fires
         logScrollParent.addEventListener('wheel', (e) => {
+            markLogUserScroll();
             if (e.deltaY < 0) logStickToBottom = false;
         }, { passive: true });
+        logScrollParent.addEventListener('touchmove', markLogUserScroll, { passive: true });
+        logScrollParent.addEventListener('keydown', markLogUserScroll);
+        // Covers dragging the scrollbar
+        logScrollParent.addEventListener('pointerdown', () => { logPointerDown = true; });
+        window.addEventListener('pointerup', () => { logPointerDown = false; });
+        window.addEventListener('pointercancel', () => { logPointerDown = false; });
+        // Keep the newest message in view when the log area changes size
+        new ResizeObserver(() => {
+            if (logStickToBottom) logScrollParent.scrollTop = logScrollParent.scrollHeight;
+        }).observe(logScrollParent);
 
         let lastMousePosition = { x: 0, y: 0 };
         let activeRowIndex = -1;
