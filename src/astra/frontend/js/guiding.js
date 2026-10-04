@@ -106,16 +106,16 @@ function plotAllGuidingData(activeTelescopeNames) {
         return;
     }
 
-    // Remove all existing charts
-    plotContainer.innerHTML = '';
-
-    // Plot each active telescope
+    // Build the new charts off-DOM, then swap them in at once. Clearing the container
+    // first lets it collapse for one layout pass, which makes the log below jump.
+    const fragment = document.createDocumentFragment();
     for (const telescopeName of activeTelescopeNames) {
         const data = guidingDataCache[telescopeName];
         if (data && data.length > 0) {
-            plotGuidingData(telescopeName, data, plotContainer);
+            plotGuidingData(telescopeName, data, fragment);
         }
     }
+    plotContainer.replaceChildren(fragment);
 }
 
 /**
