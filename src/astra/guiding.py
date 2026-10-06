@@ -27,7 +27,7 @@ Components:
 import os
 import time
 from datetime import UTC, datetime
-from math import cos, radians
+from math import cos, radians, sin
 from shutil import copyfile
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -369,6 +369,9 @@ class Guider:
         # RA axis alignment along x or y
         self.RA_AXIS = params["RA_AXIS"]
 
+        # camera rotation from the mount axes, measured by the calibration
+        self.ANGLE = float(params.get("ANGLE", 0.0))
+
         # PID loop coefficients
         self.PID_COEFFS = params["PID_COEFFS"]
 
@@ -502,8 +505,8 @@ class Guider:
         pier side changes.
 
         Parameters:
-            x (float): Guide correction needed in X direction (pixels).
-            y (float): Guide correction needed in Y direction (pixels).
+            x (float): Guide correction needed in X direction (pixels), in camera axes.
+            y (float): Guide correction needed in Y direction (pixels), in camera axes.
             images_to_stabilise (int): Images remaining in stabilization period.
                 Negative values indicate stable operation.
             camera_name (str): Name of the camera for logging.
@@ -518,6 +521,14 @@ class Guider:
                 - pidx, pidy (float): Actual corrections sent to mount
                 - sigma_x, sigma_y (float): Buffer standard deviations
         """
+
+        if self.ANGLE:
+            # turn the shift from the camera axes into the mount axes
+            angle = radians(self.ANGLE)
+            x, y = (
+                cos(angle) * x + sin(angle) * y,
+                -sin(angle) * x + cos(angle) * y,
+            )
 
         if gem:
             current_pierside = self.telescope.get("SideOfPier")

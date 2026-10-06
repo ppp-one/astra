@@ -14,6 +14,7 @@ Telescope:
         +y: 71.62775367838461
         -y: 71.62771750106279
       RA_AXIS: "x"
+      ANGLE: 0.0 # degrees, camera rotation from the mount axes
       DIRECTIONS:
         +x: East
         -x: West
