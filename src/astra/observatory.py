@@ -2380,6 +2380,7 @@ class Observatory:
         # Start exposure
         exposure_start_time = time.time()
         exposure_end_time = time.time()
+        image_handler.exposure_timeline.exposure_started()
         camera.get("StartExposure", Duration=exptime, Light=use_light)
 
         # Wait for the image to be ready
@@ -2472,6 +2473,8 @@ class Observatory:
                     wcs=wcs,
                     sequence_counter=sequence_counter,
                 )
+
+            image_handler.exposure_timeline.image_saved(filepath)
 
             self.logger.info(
                 f"Image saved as {os.path.basename(filepath)}. "
