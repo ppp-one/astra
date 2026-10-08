@@ -29,6 +29,18 @@
             margin: 15px 0px;
             width: 100%;
         }
+
+        /* latest image headers: show only with the info button, so hover, tap
+           or zoom never covers the image */
+        #summary-last-image-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #summary-last-image-overlay.show {
+            opacity: 0.8;
+            pointer-events: auto;
+        }
     </style>
 </head>
 
@@ -173,20 +185,33 @@
                     <div class="grid w-full gap-2 grid-cols-1 md:grid-cols-2">
                         {# latest image - always first #}
                         <div id="summary-last-image-parent" class="flex justify-center w-full relative">
-                            <img id="summary-last-image" alt="latest image" class="object-contain h-full w-full hidden">
+                            <img id="summary-last-image" alt="latest image" title="Open full screen"
+                                class="object-contain h-full w-full hidden cursor-zoom-in" onclick="openImageViewer()">
                             <svg xmlns="http://www.w3.org/2000/svg" id="summary-last-image-placeholder" viewBox="0 0 24 24" fill="currentColor" class="w-full p-12 opacity-20">
                                 <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
                             </svg>
 
-                            <div class="flex opacity-0 hover:opacity-80 bg-black duration-100 absolute h-full w-full text-white justify-center items-center">
+                            <button type="button" title="Show image headers"
+                                class="absolute top-2 left-2 z-10 rounded bg-black/50 p-1 text-white/80 hover:bg-black/70 hover:text-white"
+                                onclick="document.getElementById('summary-last-image-overlay').classList.toggle('show')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                </svg>
+                            </button>
+
+                            <a href="/fits_explorer" title="Open FITS Explorer"
+                                class="absolute top-2 right-2 z-10 rounded bg-black/50 p-1 text-white/80 hover:bg-black/70 hover:text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
+                                </svg>
+                            </a>
+
+                            <div id="summary-last-image-overlay"
+                                class="flex bg-black duration-100 absolute h-full w-full text-white justify-center items-center"
+                                onclick="this.classList.remove('show')">
                                 <div id="summary-last-image-text" class="whitespace-break-spaces md:text-base text-xs text-wrap truncate">
                                     <!-- Add text here, if needed -->
                                 </div>
-                                <a href="/fits_explorer" class="absolute top-2 right-2 text-white/80 hover:text-white" title="Open FITS Explorer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
-                                    </svg>
-                                </a>
                             </div>
                         </div>
 
@@ -1326,6 +1351,9 @@
                     // Use the new preview endpoint with cache-busting timestamp
                     let imageUrl = '/api/latest_image_preview?' + (lastImage['timestamp'] || Date.now());
                     document.getElementById("summary-last-image").src = imageUrl;
+                    if (!document.getElementById("image-viewer").hidden) {
+                        document.getElementById("image-viewer-image").src = imageUrl;
+                    }
                     document.getElementById("summary-last-image-text").innerHTML = syntaxHighlight(lastImage['headers']);
                     lastImageDiv.href = imageUrl;
 
@@ -1515,6 +1543,22 @@
             return `/api/timelapse/${encodeURIComponent(timelapseCamera)}/${encodeURIComponent(timelapseFrames[index].file)}`;
         }
 
+        function openImageViewer() {
+            // show the latest image full screen
+            document.getElementById('image-viewer-image').src = document.getElementById('summary-last-image').src;
+            document.getElementById('image-viewer').hidden = false;
+        }
+
+        function closeImageViewer() {
+            document.getElementById('image-viewer').hidden = true;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('image-viewer').hidden) {
+                closeImageViewer();
+            }
+        });
+
         async function openTimelapse(cameraId, name) {
             stopTimelapse();
             timelapseCamera = cameraId;
@@ -1672,6 +1716,20 @@
         {% endif %}
 
     </script>
+
+    <div id="image-viewer" hidden class="fixed inset-0 z-50 bg-black/90 px-4 py-4"
+        onclick="if (event.target === this) closeImageViewer()">
+        <div class="flex h-full flex-col gap-3" onclick="if (event.target === this) closeImageViewer()">
+            <div class="flex items-center justify-between text-gray-200">
+                <span class="font-medium">Latest image</span>
+                <button type="button" onclick="closeImageViewer()" title="Close (Esc)"
+                    class="rounded px-2 text-2xl leading-none text-gray-300 hover:bg-white/10">&times;</button>
+            </div>
+            <div class="flex min-h-0 flex-1 items-center justify-center" onclick="if (event.target === this) closeImageViewer()">
+                <img id="image-viewer-image" class="max-h-full max-w-full object-contain" alt="Latest image">
+            </div>
+        </div>
+    </div>
 
     <div id="timelapse-modal" hidden class="fixed inset-0 z-50 bg-black/80 px-4 py-4"
         onclick="if (event.target === this) closeTimelapse()">
