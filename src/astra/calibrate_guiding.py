@@ -13,7 +13,7 @@ Classes:
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import numpy as np
 from alpaca.telescope import GuideDirections
@@ -26,6 +26,92 @@ from astra.image_handler import ImageHandler
 from astra.paired_devices import PairedDevices
 from astra.scheduler import Action
 from astra.utils.image import CustomImageClass
+
+GUIDE_DIRECTION_NAMES = ("North", "South", "East", "West")
+
+# largest allowed difference between the rotation of the RA and the Dec moves;
+# a larger difference means that the moves are not perpendicular
+MAX_AXIS_ANGLE_DIFFERENCE = 20.0  # degrees
+
+
+def calibration_from_shifts(
+    shifts: dict[str, Any], pulse_time: float, binning: int = 1
+) -> dict[str, Any]:
+    """
+    Guider calibration from the star shift that each guide direction causes.
+
+    The camera axes do not need to be aligned with RA and Dec. Each mount axis
+    is assigned to the camera axis it is closest to, and the remaining
+    rotation is returned as ANGLE, which the guider removes before it computes
+    the corrections.
+
+    Parameters:
+        shifts (dict): For "North", "South", "East" and "West", the mean shift
+            (x, y) in pixels that Donuts measured after a pulse of
+            ``pulse_time`` milliseconds in that direction.
+        pulse_time (float): Pulse duration in milliseconds.
+        binning (int, optional): Camera binning during the calibration.
+
+    Returns:
+        dict: PIX2TIME, RA_AXIS, DIRECTIONS and ANGLE (degrees) for the guider
+            configuration.
+
+    Raises:
+        ValueError: If the shifts do not fit two perpendicular axes.
+    """
+    v = {name: np.asarray(shifts[name], dtype=float) for name in GUIDE_DIRECTION_NAMES}
+    for a, b in (("East", "West"), ("North", "South")):
+        if np.dot(v[a], v[b]) >= 0:
+            raise ValueError(
+                f"{a} and {b} pulses did not move the stars in opposite directions "
+                f"({a}: {v[a].round(2)}, {b}: {v[b].round(2)} pixels)."
+            )
+
+    # each mount axis goes to the camera axis it is closest to, RA first, so
+    # that the two never share an axis
+    ra_axis = (
+        "x"
+        if abs(v["East"][0] - v["West"][0]) >= abs(v["East"][1] - v["West"][1])
+        else "y"
+    )
+    dec_axis = "y" if ra_axis == "x" else "x"
+
+    # a pulse that gives a positive shift on its axis is the "-" direction
+    directions = {}
+    for name, opposite, axis in (
+        ("East", "West", ra_axis),
+        ("North", "South", dec_axis),
+    ):
+        i = 0 if axis == "x" else 1
+        sign, other = ("-", "+") if v[name][i] - v[opposite][i] > 0 else ("+", "-")
+        directions[sign + axis] = name
+        directions[other + axis] = opposite
+
+    pix2time = {
+        label: float(pulse_time / np.linalg.norm(v[name]) / binning)
+        for label, name in directions.items()
+    }
+
+    # rotation of the move of a "+x" and a "+y" pulse from the camera axes
+    angles = []
+    for axis, ideal in (("x", (-1.0, 0.0)), ("y", (0.0, -1.0))):
+        move = v[directions["+" + axis]] - v[directions["-" + axis]]
+        cross = ideal[0] * move[1] - ideal[1] * move[0]
+        angles.append(np.arctan2(cross, ideal[0] * move[0] + ideal[1] * move[1]))
+    difference = np.degrees(np.angle(np.exp(1j * (angles[0] - angles[1]))))
+    if abs(difference) > MAX_AXIS_ANGLE_DIFFERENCE:
+        raise ValueError(
+            f"RA and Dec pulses did not move the stars at right angles "
+            f"(difference {difference:.1f} degrees). Check the calibration images."
+        )
+    angle = np.degrees(np.angle(np.exp(1j * angles[0]) + np.exp(1j * angles[1])))
+
+    return {
+        "PIX2TIME": pix2time,
+        "RA_AXIS": ra_axis,
+        "DIRECTIONS": directions,
+        "ANGLE": round(float(angle), 3),
+    }
 
 
 class GuidingCalibrator:
@@ -75,8 +161,7 @@ class GuidingCalibrator:
             "number_of_cycles", number_of_cycles
         )
         self.binning = action.action_value.get("bin", 1)
-        self._directions = defaultdict(list)
-        self._scales = defaultdict(list)
+        self._shifts = defaultdict(list)
         self._calibration_config = {}
         self._camera = astra_observatory.devices["Camera"][action.device_name]
         self._telescope = astra_observatory.devices["Telescope"][
@@ -177,26 +262,22 @@ class GuidingCalibrator:
                     return success
 
                 shift = donuts_ref.measure_shift(image_path)
-                direction_literal, magnitude = self._determine_shift_direction(
-                    shift, self.astra_observatory.logger
-                )
 
                 direction_name = direction.name.removeprefix(
                     "guide"
                 )  # North, South, East, West
-                self._directions[direction_name].append(direction_literal)
-                self._scales[direction_name].append(magnitude)
+                self._shifts[direction_name].append(
+                    (float(shift.x.value), float(shift.y.value))
+                )
                 self.astra_observatory.logger.info(
-                    f"Shift {direction_name} results in direction {direction_literal} "
-                    f"of {magnitude:.2f} pixels (raw: x={shift.x.value:.2f}, y={shift.y.value:.2f})"
+                    f"Shift {direction_name}: x={shift.x.value:.2f}, "
+                    f"y={shift.y.value:.2f} pixels"
                 )
 
                 donuts_ref = self._apply_donuts(image_path)
 
         self.astra_observatory.logger.info("Calibration cycles complete.")
-        self.astra_observatory.logger.info(
-            f"Directions: {str(self._directions)}; Scales: {str(self._scales)}"
-        )
+        self.astra_observatory.logger.info(f"Shifts: {dict(self._shifts)}")
 
         success = True
 
@@ -205,61 +286,27 @@ class GuidingCalibrator:
     def complete_calibration_config(self) -> None:
         """Generate final calibration configuration from measurements.
 
-        Processes collected direction and scale measurements to create
-        PIX2TIME conversion factors, determine RA axis orientation,
-        and validate measurement consistency across cycles.
+        Averages the shift of each guide direction over all cycles and derives
+        PIX2TIME, RA_AXIS, DIRECTIONS and the camera ANGLE from them.
 
         Raises:
-            ValueError: If direction measurements are inconsistent across cycles.
+            ValueError: If a direction has no measurements, or the shifts do
+                not fit two perpendicular axes.
         """
-        calibration_config = {
-            "PIX2TIME": {"+x": None, "-x": None, "+y": None, "-y": None},
-            "RA_AXIS": None,
-            "DIRECTIONS": {"+x": None, "-x": None, "+y": None, "-y": None},
+        missing = [name for name in GUIDE_DIRECTION_NAMES if not self._shifts[name]]
+        if missing:
+            raise ValueError(f"Calibration error: no shifts measured for {missing}.")
+
+        mean_shifts = {
+            name: np.mean(self._shifts[name], axis=0) for name in GUIDE_DIRECTION_NAMES
         }
-
-        self.astra_observatory.logger.info("Checking directions...")
-
-        # Validate that we have all four cardinal directions
-        detected_directions = set()
-        for direction_name in self._directions:
-            # Check that the directions are the same every time for each orientation
-            if len(set(self._directions[direction_name])) != 1:
-                raise ValueError(
-                    "Directions must be the same across all cycles. "
-                    f"Direction number {direction_name} has {self._directions[direction_name]}."
-                )
-
-            direction_literal = self._directions[direction_name][0]
-            detected_directions.add(direction_literal)
-
-            if direction_name == "East":
-                calibration_config["RA_AXIS"] = "x" if "x" in direction_literal else "y"
-
-            calibration_config["PIX2TIME"][direction_literal] = float(
-                (self.pulse_time / np.average(self._scales[direction_name]))
-                / self.binning
-            )
-            calibration_config["DIRECTIONS"][direction_literal] = direction_name
-
-        # Validate that we detected movements on both axes
-        has_x_axis = any("x" in d for d in detected_directions)
-        has_y_axis = any("y" in d for d in detected_directions)
-
-        if not (has_x_axis and has_y_axis):
-            self.astra_observatory.logger.error(
-                f"Calibration failed: Only detected movements on one axis. "
-                f"Detected directions: {detected_directions}. "
-                f"North/South/East/West mappings: {dict(self._directions)}"
-            )
-            raise ValueError(
-                f"Calibration error: movements detected on only one camera axis. "
-                f"Expected movements on both x and y axes, but got: {detected_directions}. "
-                f"This suggests an issue with camera orientation, mount behavior, or shift detection. "
-                f"Check the raw shift values in the logs."
-            )
-
-        self.astra_observatory.logger.info("Directions are consistent")
+        calibration_config = calibration_from_shifts(
+            mean_shifts, self.pulse_time, self.binning
+        )
+        self.astra_observatory.logger.info(
+            f"Guiding calibration: RA on the camera {calibration_config['RA_AXIS']} "
+            f"axis, camera angle {calibration_config['ANGLE']:.2f} degrees"
+        )
         self._calibration_config.update(calibration_config)
 
     def save_calibration_config(self) -> None:
@@ -295,42 +342,6 @@ class GuidingCalibrator:
         telescope_config["guider"].update(self._calibration_config)
         paired_devices.observatory_config.save()
         self.astra_observatory.logger.info("Observatory config updated.")
-
-    @staticmethod
-    def _determine_shift_direction(shift: Any, logger: Any = None) -> Tuple[str, float]:
-        """Analyze donuts shift measurement to determine direction and magnitude.
-
-        Processes shift measurements to identify the primary axis of movement
-        and calculate the pixel displacement magnitude for calibration.
-
-        Args:
-            shift (Any): Donuts shift measurement object with x and y value attributes.
-            logger (Any): Optional logger for debug output.
-
-        Returns:
-            Tuple[str, float]: Direction literal ('+x', '-x', '+y', '-y') and
-                              pixel displacement magnitude.
-        """
-        sx = shift.x.value
-        sy = shift.y.value
-
-        if logger:
-            logger.debug(f"Raw shift values: sx={sx:.4f}, sy={sy:.4f}")
-
-        if abs(sx) > abs(sy):
-            if sx > 0:
-                direction_literal = "-x"
-            else:
-                direction_literal = "+x"
-            magnitude = abs(sx)
-        else:
-            if sy > 0:
-                direction_literal = "-y"
-            else:
-                direction_literal = "+y"
-            magnitude = abs(sy)
-
-        return direction_literal, magnitude
 
     def _pulse_guide_telescope(
         self, guide_direction: GuideDirections, duration: float

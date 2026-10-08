@@ -31,6 +31,7 @@ from astropy.io import fits
 from astropy.wcs.utils import WCS
 
 from astra.config import Config, ObservatoryConfig
+from astra.exposure_timeline import ExposureTimeline
 from astra.filename_templates import FilenameTemplates
 from astra.header_manager import HeaderManager, ObservatoryHeader
 from astra.logger import ObservatoryLogger
@@ -99,6 +100,7 @@ class ImageHandler:
         self._image_directory = Path(image_directory) if image_directory else None
         self.last_image_path: Path | None = None
         self.last_image_timestamp: datetime.datetime | None = None
+        self.exposure_timeline = ExposureTimeline()
 
         if observing_date is not None:
             self.observing_date = observing_date

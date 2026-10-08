@@ -27,7 +27,7 @@ Components:
 import os
 import time
 from datetime import UTC, datetime
-from math import cos, radians
+from math import cos, radians, sin
 from shutil import copyfile
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -38,6 +38,7 @@ from donuts import Donuts
 
 from astra.config import Config
 from astra.database_manager import DatabaseManager
+from astra.exposure_timeline import ExposureTimeline
 from astra.image_handler import ImageHandler
 from astra.logger import ObservatoryLogger
 from astra.paired_devices import PairedDevices
@@ -368,6 +369,9 @@ class Guider:
         # RA axis alignment along x or y
         self.RA_AXIS = params["RA_AXIS"]
 
+        # camera rotation from the mount axes, measured by the calibration
+        self.ANGLE = float(params.get("ANGLE", 0.0))
+
         # PID loop coefficients
         self.PID_COEFFS = params["PID_COEFFS"]
 
@@ -490,6 +494,7 @@ class Guider:
         camera_name: str,
         binning: int = 1,
         gem: bool = False,
+        timeline: ExposureTimeline | None = None,
     ) -> Tuple[bool, float, float, float, float]:
         """
         Apply telescope guiding corrections using PID control with outlier rejection.
@@ -500,13 +505,15 @@ class Guider:
         pier side changes.
 
         Parameters:
-            x (float): Guide correction needed in X direction (pixels).
-            y (float): Guide correction needed in Y direction (pixels).
+            x (float): Guide correction needed in X direction (pixels), in camera axes.
+            y (float): Guide correction needed in Y direction (pixels), in camera axes.
             images_to_stabilise (int): Images remaining in stabilization period.
                 Negative values indicate stable operation.
             camera_name (str): Name of the camera for logging.
             binning (int, optional): Image binning factor. Defaults to 1.
             gem (bool, optional): Whether telescope is German Equatorial Mount. Defaults to False.
+            timeline (ExposureTimeline, optional): Exposures of the guiding camera.
+                If given, the end of the pulses is recorded in it. Defaults to None.
 
         Returns:
             tuple: (success, pidx, pidy, sigma_x, sigma_y) where:
@@ -514,6 +521,14 @@ class Guider:
                 - pidx, pidy (float): Actual corrections sent to mount
                 - sigma_x, sigma_y (float): Buffer standard deviations
         """
+
+        if self.ANGLE:
+            # turn the shift from the camera axes into the mount axes
+            angle = radians(self.ANGLE)
+            x, y = (
+                cos(angle) * x + sin(angle) * y,
+                -sin(angle) * x + cos(angle) * y,
+            )
 
         if gem:
             current_pierside = self.telescope.get("SideOfPier")
@@ -577,6 +592,8 @@ class Guider:
                 pidy = -CURRENT_MAX_SHIFT
         self.logMessageToDb(camera_name, "PID: {0:.2f}  {1:.2f}".format(pidx, pidy))
 
+        pulse_sent = False
+
         # make another check that the post PID values are not > Max allowed
         # using >= allows for the stabilising runs to get through
         # abs() on -ve duration otherwise throws back an error
@@ -600,6 +617,7 @@ class Guider:
             self.telescope.get(
                 "PulseGuide", Direction=y_p_dir, Duration=int(guide_time_y)
             )
+            pulse_sent = True
 
         if pidy < 0 and pidy >= -CURRENT_MAX_SHIFT and self.running:
             guide_time_y = abs(pidy * self.PIX2TIME["-y"] * binning)
@@ -621,6 +639,7 @@ class Guider:
             self.telescope.get(
                 "PulseGuide", Direction=y_n_dir, Duration=int(guide_time_y)
             )
+            pulse_sent = True
 
         start_time = time.time()
         while self.telescope.get("IsPulseGuiding") and self.running:
@@ -651,6 +670,7 @@ class Guider:
             self.telescope.get(
                 "PulseGuide", Direction=x_p_dir, Duration=int(guide_time_x)
             )
+            pulse_sent = True
 
         if pidx < 0 and pidx >= -CURRENT_MAX_SHIFT and self.running:
             guide_time_x = abs(pidx * self.PIX2TIME["-x"] * binning)
@@ -672,6 +692,7 @@ class Guider:
             self.telescope.get(
                 "PulseGuide", Direction=x_n_dir, Duration=int(guide_time_x)
             )
+            pulse_sent = True
 
         start_time = time.time()
         while self.telescope.get("IsPulseGuiding") and self.running:
@@ -681,6 +702,9 @@ class Guider:
                 )
                 break
             time.sleep(0.01)
+
+        if pulse_sent and timeline is not None:
+            timeline.pulse_finished()
 
         if self.running:
             self.logMessageToDb(camera_name, "Guide correction Applied")
@@ -879,6 +903,23 @@ class Guider:
                 last_image_timestamp != orig_last_image_timestamp
             ):
                 newest_image = image_handler.last_image_path
+
+                timeline = image_handler.exposure_timeline
+                exposure_start = timeline.exposure_start_of(newest_image)
+                if exposure_start is None and timeline.has_exposures():
+                    # the exposure loop has not recorded this image yet
+                    time.sleep(0.05)
+                    continue
+                if (
+                    exposure_start is not None
+                    and exposure_start < timeline.last_pulse_end
+                ):
+                    # exposed before the last correction had finished, so the
+                    # image still shows the error that was corrected
+                    orig_last_image_timestamp = last_image_timestamp
+                    time.sleep(0.1)
+                    continue
+
                 try:
                     header = fits.getheader(newest_image)
                     newest_filter = str(header["FILTER"]).strip("'")
@@ -1117,6 +1158,7 @@ class Guider:
                                     camera_name,
                                     binning,
                                     gem,
+                                    timeline=image_handler.exposure_timeline,
                                 )
                             else:
                                 break
