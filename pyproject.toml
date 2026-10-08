@@ -53,7 +53,8 @@ dependencies = [
   "ruamel.yaml",
   "cabaret>=0.5.4",
   "astroquery>=0.4.11",
-  "requests"
+  "requests",
+  "opencv-python"
 ]
 description = "Automated Survey observaTory Robotised with Alpaca"
 license = {text = "GPL-3.0"}

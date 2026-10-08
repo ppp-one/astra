@@ -444,8 +444,17 @@ class ImageStarMapping:
 
         Returns:
             ImageStarMapping: New instance with computed WCS and transformed coordinates.
+
+        Raises:
+            Exception: If twirl finds no match between the image stars and the
+                Gaia stars.
         """
         wcs = twirl.compute_wcs(stars_in_image, gaia_stars)
+        if wcs is None:
+            raise Exception(
+                f"Plate solve failed: no match between the {len(stars_in_image)} "
+                f"image stars and the {len(gaia_stars)} Gaia stars"
+            )
         gaia_stars_in_image = np.array(SkyCoord(gaia_stars, unit="deg").to_pixel(wcs)).T
         return cls(wcs, stars_in_image, gaia_stars_in_image)
 
