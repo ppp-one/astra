@@ -504,6 +504,22 @@
         let activeRowIndex = -1;
         let activeTableId = null;
 
+        function formatTimeSafe(timeToSafe, utcTime) {
+            // timeToSafe: backend value, e.g. "12.34 mins"
+            // utcTime: backend utc time, "YYYY-MM-DD HH:MM:SS"
+            // returns "(HH:MM:SS) HH:MM:SS", the countdown and the utc safe time
+            const now = new Date(utcTime.replace(' ', 'T') + 'Z');
+            const remaining = Math.round(parseFloat(timeToSafe) * 60);
+
+            if (isNaN(remaining) || isNaN(now) || remaining <= 0) return "now";
+
+            const safeAt = new Date(now.getTime() + remaining * 1000);
+
+            const pad = (n) => String(n).padStart(2, '0');
+            const countdown = `${pad(Math.floor(remaining / 3600))}:${pad(Math.floor(remaining % 3600 / 60))}:${pad(remaining % 60)}`;
+            return `(in ${countdown}) ${safeAt.toISOString().substring(11, 19).replace('T', ' ')}`;
+        }
+
         function updatePopupContent(rowData) {
              // Create a deep copy to sort and filter keys
              let dataCopy = JSON.parse(JSON.stringify(rowData));
@@ -1173,17 +1189,28 @@
 
                 }
 
+                // hide rows already shown in the top bar
+                let hiddenItems = ["watchdog", "schedule", "robotic switch", "threads"];
+
                 // make summary table 1 smaller if error free
-                if (message['table1'][0]['item'] == "error free") {
-                    if (message['table1'][0]['value'] == true) {
-                        // remove error free status
-                        message['table1'].splice(0, 1);
-                        // remove weather safe, error source
-                        message['table1'].splice(4, 2);
-                    }
+                if (message['table1'][0]['item'] == "error free" && message['table1'][0]['value'] == true) {
+                    hiddenItems.push("error free", "weather safe", "error source");
                 }
 
-                updateTable("summary-table-1", message['table1'], { "item": "item", "value": "value" }, false);
+                let utcTime = message['table1'].find(row => row['item'] == "utc time")['value'];
+                let timeToSafe = message['table1'].find(row => row['item'] == "time to safe");
+
+                let table1Rows = message['table1']
+                    .filter(row => !hiddenItems.includes(row['item']) && row !== timeToSafe);
+
+                // show time safe below utc time
+                if (timeToSafe) {
+                    let utcIndex = table1Rows.findIndex(row => row['item'] == "utc time");
+                    table1Rows.splice(utcIndex + 1, 0,
+                        { ...timeToSafe, "item": "time safe", "value": formatTimeSafe(timeToSafe['value'], utcTime) });
+                }
+
+                updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
 
                 // update last image
                 let lastImageDiv = document.getElementById("summary-last-image-parent");
