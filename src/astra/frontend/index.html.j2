@@ -581,6 +581,8 @@
 
         // site location from /api/sky_data, null until loaded
         let siteLocation = null;
+        // last summary message from the websocket, null until the first one
+        let lastSummary = null;
 
         async function loadSiteLocation() {
             try {
@@ -588,6 +590,8 @@
                 const result = await response.json();
                 if (result.status === "success") {
                     siteLocation = result.data.observatory;
+                    // show the sun and moon rows now, not at the next summary message
+                    if (lastSummary !== null) updateSummaryTable1(lastSummary);
                 }
             } catch (error) {
                 console.error("Error loading site location:", error);
@@ -1171,19 +1175,25 @@
             });
         }
 
-        // websocket types that are not connected now
-        const disconnectedSockets = new Set();
+        // websocket type -> time it closed, for sockets that are not connected now
+        const disconnectedSockets = new Map();
+        // a socket closed for a shorter time is not shown. This hides closes that
+        // the page reload or a quick reconnect cause; the reconnect waits 3 s.
+        const DISCONNECTED_GRACE_MS = 5000;
         // the server sends a summary message about every second, so no message
         // for this long means the data on the page is old
         const SUMMARY_STALE_MS = 10000;
         let lastSummaryMessage = Date.now();
 
         function updateConnectionStatus() {
-            const secondsSinceSummary = Math.round((Date.now() - lastSummaryMessage) / 1000);
-            const summaryStale = disconnectedSockets.has('summary') || secondsSinceSummary * 1000 > SUMMARY_STALE_MS;
+            const now = Date.now();
+            const disconnected = [...disconnectedSockets.values()].some(t => now - t > DISCONNECTED_GRACE_MS);
+            const summaryDisconnected = disconnectedSockets.has('summary') && now - disconnectedSockets.get('summary') > DISCONNECTED_GRACE_MS;
+            const secondsSinceSummary = Math.round((now - lastSummaryMessage) / 1000);
+            const summaryStale = summaryDisconnected || secondsSinceSummary * 1000 > SUMMARY_STALE_MS;
 
             const banner = document.getElementById('connection-banner');
-            if (disconnectedSockets.size > 0) {
+            if (disconnected) {
                 banner.textContent = 'Connection to Astra lost, reconnecting… Data on this page is not live.';
                 banner.hidden = false;
             } else if (summaryStale) {
@@ -1209,7 +1219,8 @@
 
             socket.onclose = function (event) {
                 console.log('WebSocket connection closed:', event);
-                disconnectedSockets.add(type);
+                // keep the first close time while the reconnects fail
+                if (!disconnectedSockets.has(type)) disconnectedSockets.set(type, Date.now());
                 updateConnectionStatus();
                 // Handle the closure, initiate reconnection logic.
                 reconnectWebSocket(url, type);
@@ -1234,6 +1245,34 @@
             setTimeout(function () {
                 connectWebSocket(url, type);
             }, 3000); // You can adjust the time interval between reconnection attempts.
+        }
+
+        function updateSummaryTable1(message) {
+            // summary table 1: errors (only if any), weather, then sun and moon
+            let status = Object.fromEntries(message['table1'].map(row => [row['item'], row]));
+            let utcTime = status["utc time"]['value'];
+            let table1Rows = [];
+
+            if (status["error free"] && status["error free"]['value'] == false) {
+                let sources = status["error source"] ? status["error source"]['error_source'] : [];
+                table1Rows.push({
+                    "item": "errors",
+                    "value": sources.length ? `${sources.length} source${sources.length == 1 ? "" : "s"}, hover to see` : "yes",
+                    "error_source": sources,
+                    "valid": false,
+                });
+            }
+
+            table1Rows.push(weatherRow(status["weather safe"], status["time to safe"], utcTime));
+
+            // show new backend rows too; the rest are above or in the top bar
+            let handledItems = ["error free", "error source", "utc time", "watchdog", "schedule",
+                "robotic switch", "weather safe", "threads", "time to safe"];
+            table1Rows.push(...message['table1'].filter(row => !handledItems.includes(row['item'])));
+
+            table1Rows.push(...skyPeriodRows(utcTime));
+
+            updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
         }
 
         function onMessageFunc(type, event) {
@@ -1378,30 +1417,8 @@
 
                 }
 
-                // summary table 1: errors (only if any), weather, then sun and moon
-                let utcTime = status["utc time"]['value'];
-                let table1Rows = [];
-
-                if (status["error free"] && status["error free"]['value'] == false) {
-                    let sources = status["error source"] ? status["error source"]['error_source'] : [];
-                    table1Rows.push({
-                        "item": "errors",
-                        "value": sources.length ? `${sources.length} source${sources.length == 1 ? "" : "s"}, hover to see` : "yes",
-                        "error_source": sources,
-                        "valid": false,
-                    });
-                }
-
-                table1Rows.push(weatherRow(status["weather safe"], status["time to safe"], utcTime));
-
-                // show new backend rows too; the rest are above or in the top bar
-                let handledItems = ["error free", "error source", "utc time", "watchdog", "schedule",
-                    "robotic switch", "weather safe", "threads", "time to safe"];
-                table1Rows.push(...message['table1'].filter(row => !handledItems.includes(row['item'])));
-
-                table1Rows.push(...skyPeriodRows(utcTime));
-
-                updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
+                lastSummary = message;
+                updateSummaryTable1(message);
 
                 // update last image
                 let lastImage = message['last_image'];
