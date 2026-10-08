@@ -340,8 +340,31 @@
 
                     <div class="flex flex-col flex-grow place-content-start items-center my-auto overflow-y-auto">
                         <!-- Sky Chart -->
-                        <div id="sky-chart-container" class="w-full flex justify-center">
-                            <div id="sky-chart" class="flex justify-center items-center"></div>
+                        <div class="flex w-full flex-col gap-3 pt-2">
+                            <div id="sky-legend" class="flex flex-wrap gap-x-3 gap-y-1 px-4 text-xs text-gray-400 md:text-sm"></div>
+
+                            <div id="sky-chart-container" class="relative flex w-full justify-center">
+                                <div id="sky-chart" class="flex items-center justify-center" style="-webkit-touch-callout: none"></div>
+                                <div id="sky-toast" hidden role="status" aria-live="polite"
+                                    class="pointer-events-none absolute bottom-0 left-4 whitespace-nowrap rounded-lg bg-gray-900/95 px-3 py-1.5 text-sm shadow-lg"></div>
+                                <div class="absolute right-4 top-0 flex flex-col gap-1">
+                                    <button type="button" onclick="skyZoomIn()" title="Zoom in"
+                                        class="h-8 w-8 rounded bg-black/50 text-lg leading-none text-white/80 hover:bg-black/70 hover:text-white">+</button>
+                                    <button type="button" onclick="skyZoomOut()" title="Zoom out"
+                                        class="h-8 w-8 rounded bg-black/50 text-lg leading-none text-white/80 hover:bg-black/70 hover:text-white">&minus;</button>
+                                    <button type="button" onclick="skyZoomReset()" title="Show the whole sky"
+                                        class="h-8 w-8 rounded bg-black/50 text-base leading-none text-white/80 hover:bg-black/70 hover:text-white">&#8634;</button>
+                                    <button type="button" title="How to use the sky map" aria-controls="sky-help"
+                                        onclick="document.getElementById('sky-help').hidden = !document.getElementById('sky-help').hidden"
+                                        class="h-8 w-8 rounded bg-black/50 text-sm font-semibold leading-none text-white/80 hover:bg-black/70 hover:text-white">?</button>
+                                </div>
+                                <div id="sky-help" hidden onclick="this.hidden = true"
+                                    class="absolute right-14 top-0 z-10 w-64 rounded-lg bg-gray-900/95 p-3 text-xs leading-relaxed text-gray-300 shadow-lg">
+                                    <p><span class="text-gray-100">Copy a name:</span> right-click an object, or long-press it on a touch screen and release.</p>
+                                    <p class="mt-1"><span class="text-gray-100">Zoom:</span> pinch, Ctrl + scroll, double-click, or + and &minus;. More objects and names appear as you zoom in.</p>
+                                    <p class="mt-1"><span class="text-gray-100">Move:</span> drag when zoomed in. &#8634; shows the whole sky.</p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Control Buttons -->
@@ -998,9 +1021,6 @@
 
                 // Update the latest values
                 weatherLatest = { ...weatherLatest, ...newLatest };
-                if (weatherDataCache) {
-                    weatherDataCache.latest = { ...weatherDataCache.latest, ...newLatest };
-                }
                 // Update the weather table display without re-plotting charts
                 updateWeatherTableOnly();
             }
@@ -1079,7 +1099,6 @@
                             } else {
                                 weatherDataCache.data = cached.concat(newData.data);
                             }
-                            weatherDataCache.latest = newData.latest;
                             mergeWeatherLatest(newData.latest);
                             weatherDataCache.twilight_periods = newData.twilight_periods || [];
                             weatherLatestTimestamp = newData.data[newData.data.length - 1].datetime;
