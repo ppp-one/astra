@@ -10,6 +10,7 @@
     <script src="/js/particles.min.js"></script>
     <script src="/js/d3-7.9.0.min.js"></script>
     <script src="/js/plot-0.6.17.min.js"></script>
+    <script src="/js/suncalc-1.9.0.js"></script>
 
     <script type="text/javascript" src="/js/weather.js"></script>
     <script type="text/javascript" src="/js/guiding.js"></script>
@@ -153,7 +154,7 @@
                     {% if nav == 'Summary'%}
 
                     <table id="summary-table-0"
-                        class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                        class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                         <thead>
                         </thead>
                         <tbody>
@@ -161,7 +162,7 @@
                     </table>
 
                     <table id="summary-table-1"
-                        class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                        class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                         <thead>
                         </thead>
                         <tbody>
@@ -268,7 +269,7 @@
                                 </a>
                             </div>
                             <table id="schedule-table-0"
-                                class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                                class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                                 <thead>
                                 </thead>
                                 <tbody>
@@ -504,20 +505,103 @@
         let activeRowIndex = -1;
         let activeTableId = null;
 
-        function formatTimeSafe(timeToSafe, utcTime) {
-            // timeToSafe: backend value, e.g. "12.34 mins"
+        function weatherRow(weatherSafe, timeToSafe, utcTime) {
+            // weatherSafe: backend "weather safe" row, value "safe" or "unsafe"
+            // timeToSafe: backend "time to safe" row, value e.g. "12.34 mins"
             // utcTime: backend utc time, "YYYY-MM-DD HH:MM:SS"
-            // returns "(HH:MM:SS) HH:MM:SS", the countdown and the utc safe time
+            // returns one row, e.g. "unsafe until 12:31:20 (in 0:59)"
             const now = new Date(utcTime.replace(' ', 'T') + 'Z');
-            const remaining = Math.round(parseFloat(timeToSafe) * 60);
+            const remaining = timeToSafe ? Math.round(parseFloat(timeToSafe['value']) * 60) : NaN;
+            const row = { "item": "weather", "time to safe": timeToSafe ? timeToSafe['value'] : null };
 
-            if (isNaN(remaining) || isNaN(now) || remaining <= 0) return "now";
+            if (isNaN(remaining) || isNaN(now) || remaining <= 0) {
+                const safe = weatherSafe ? weatherSafe['value'] : "unknown";
+                return { ...row, "value": safe, "valid": safe == "safe" ? true : safe == "unsafe" ? false : undefined };
+            }
 
-            const safeAt = new Date(now.getTime() + remaining * 1000);
+            const safeAt = new Date(now.getTime() + remaining * 1000).toISOString().substring(11, 19);
+            const hours = Math.floor(remaining / 3600);
+            const minutes = Math.floor(remaining % 3600 / 60);
+            const seconds = String(remaining % 60).padStart(2, '0');
+            const countdown = hours > 0
+                ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+                : `${minutes}:${seconds}`;
 
-            const pad = (n) => String(n).padStart(2, '0');
-            const countdown = `${pad(Math.floor(remaining / 3600))}:${pad(Math.floor(remaining % 3600 / 60))}:${pad(remaining % 60)}`;
-            return `(in ${countdown}) ${safeAt.toISOString().substring(11, 19).replace('T', ' ')}`;
+            return { ...row, "value": `unsafe until ${safeAt} (in ${countdown})`, "safe at": safeAt, "valid": false };
+        }
+
+        // site location from /api/sky_data, null until loaded
+        let siteLocation = null;
+
+        async function loadSiteLocation() {
+            try {
+                const response = await fetch("/api/sky_data");
+                const result = await response.json();
+                if (result.status === "success") {
+                    siteLocation = result.data.observatory;
+                }
+            } catch (error) {
+                console.error("Error loading site location:", error);
+            }
+            // the telescope may not be connected yet, so try again later
+            if (siteLocation === null) setTimeout(loadSiteLocation, 60000);
+        }
+        loadSiteLocation();
+
+        function nextEvent(dates, now) {
+            // returns the first valid date after now, or null
+            return dates
+                .filter(d => d instanceof Date && !isNaN(d) && d > now)
+                .sort((a, b) => a - b)[0] || null;
+        }
+
+        function skyPeriodRows(utcTime) {
+            // returns summary rows for the current or next sun up, astro night and
+            // moon up periods, e.g. "18:39 – 03:56" or "now – 03:56", times in utc
+            if (siteLocation === null) return [];
+
+            const now = new Date(utcTime.replace(' ', 'T') + 'Z');
+            if (isNaN(now)) return [];
+
+            const { lat, lon } = siteLocation;
+            const dayMs = 24 * 60 * 60 * 1000;
+            const days = [-1, 0, 1, 2].map(i => new Date(now.getTime() + i * dayMs));
+
+            const sunTimes = days.map(day => SunCalc.getTimes(day, lat, lon));
+            const moonTimes = days.map(day => SunCalc.getMoonTimes(day, lat, lon, true));
+            const sunAltitude = SunCalc.getPosition(now, lat, lon).altitude * 180 / Math.PI;
+            const moonAltitude = SunCalc.getMoonPosition(now, lat, lon).altitude * 180 / Math.PI;
+
+            const formatEvent = (date) => date.toISOString().substring(11, 16);
+
+            function periodRow(item, startDates, endDates, inPeriod, note) {
+                // inPeriod: true if the period is on now, used when no start or end is found
+                const start = nextEvent(startDates, now);
+                const end = nextEvent(endDates, now);
+                let value;
+
+                if (end && (!start || end < start)) {
+                    value = `now – ${formatEvent(end)}`;
+                } else if (start) {
+                    const endAfterStart = nextEvent(endDates, start);
+                    value = endAfterStart
+                        ? `${formatEvent(start)} – ${formatEvent(endAfterStart)}`
+                        : `from ${formatEvent(start)}`;
+                } else {
+                    value = inPeriod ? "all day" : "none";
+                }
+
+                return { "item": item, "value": value, "note": note };
+            }
+
+            return [
+                periodRow("sun up", sunTimes.map(t => t.sunrise), sunTimes.map(t => t.sunset),
+                    sunAltitude > -0.833, "sunrise to sunset"),
+                periodRow("astro night", sunTimes.map(t => t.night), sunTimes.map(t => t.nightEnd),
+                    sunAltitude < -18, "astronomical night: sun more than 18° below the horizon, sky fully dark"),
+                periodRow("moon up", moonTimes.map(t => t.rise), moonTimes.map(t => t.set),
+                    moonAltitude > 0, "moonrise to moonset"),
+            ];
         }
 
         function updatePopupContent(rowData) {
@@ -797,15 +881,15 @@
                     if ((j == headerKeys.length - 1) && right_align) {
                         cell.classList.add("text-right");
                         cell.classList.add("text-blue-300");
-                        cell.classList.add("font-variant-numeric");
-                        cell.classList.add("proportional-nums");
                     }
 
-                    // if status column, colour the cell
-                    if (headerKeys[j] == "status") {
-                        if (data[i]['valid'] == true) {
+                    // if status or value column, colour the cell by valid
+                    if (headerKeys[j] == "status" || headerKeys[j] == "value") {
+                        if (data[i]['valid'] === true) {
+                            cell.classList.remove("text-blue-300");
                             cell.classList.add("text-green-500");
-                        } else if (data[i]['valid'] == false) {
+                        } else if (data[i]['valid'] === false) {
+                            cell.classList.remove("text-blue-300");
                             cell.classList.add("text-red-500");
                         }
                     }
@@ -1060,9 +1144,12 @@
                 // Update weather latest values from websocket
                 updateWeatherLatestFromWebsocket( message['table0']);
 
+                // find table1 rows by name, so the row order does not matter
+                let status = Object.fromEntries(message['table1'].map(row => [row['item'], row]));
+
                 // update title color if error found in astra
-                if (message['table1'][0]['item'] == "error free") {
-                    if (message['table1'][0]['value'] == false) {
+                if (status["error free"]) {
+                    if (status["error free"]['value'] == false) {
                         document.getElementById("title").classList.add('text-red-700');
                     } else {
                         document.getElementById("title").classList.remove('text-red-700');
@@ -1070,18 +1157,18 @@
                 }
 
                 // update utc time
-                if (message['table1'][1]['item'] == "utc time") {
+                if (status["utc time"]) {
 
-                    document.getElementById("time").innerText = message['table1'][1]['value'].substring(10);
+                    document.getElementById("time").innerText = status["utc time"]['value'].substring(10);
 
                 }
 
                 // update watchdog icon
-                if (message['table1'][2]['item'] == "watchdog") {
+                if (status["watchdog"]) {
 
                     let watchdog_icon = document.getElementById("watchdog-icon");
 
-                    if (message['table1'][2]['value'] == "stopped") {
+                    if (status["watchdog"]['value'] == "stopped") {
                         watchdog_icon.classList.add('text-red-700');
                         watchdog_icon.classList.add('hover:text-red-600');
                         watchdog_icon.classList.remove('text-green-500');
@@ -1096,10 +1183,10 @@
                 }
 
                 // update schedule icon
-                if (message['table1'][3]['item'] == "schedule") {
+                if (status["schedule"]) {
 
                     let schedule_icon = document.getElementById("schedule-icon");
-                    if (message['table1'][3]['value'] == "stopped") {
+                    if (status["schedule"]['value'] == "stopped") {
                         schedule_icon.classList.add('text-gray-500');
                         schedule_icon.classList.add('hover:text-gray-400')
                         schedule_icon.classList.remove('text-green-500');
@@ -1136,11 +1223,11 @@
                 }
 
                 // update robotic switch toggle
-                if (message['table1'][4]['item'] == "robotic switch") {
+                if (status["robotic switch"]) {
 
                     let robotic_switch = document.getElementById("robotic-switch-icon");
 
-                    if (message['table1'][4]['value'] == "on") {
+                    if (status["robotic switch"]['value'] == "on") {
                         document.getElementById('robotic-switch').checked = true;
                     } else {
                         document.getElementById('robotic-switch').checked = false;
@@ -1149,11 +1236,11 @@
                 }
 
                 // update weather safe icon
-                if (message['table1'][5]['item'] == "weather safe") {
+                if (status["weather safe"]) {
 
                     let weather_safe_icon = document.getElementById("weather-safe-icon");
 
-                    if (message['table1'][5]['value'] == "unsafe") {
+                    if (status["weather safe"]['value'] == "unsafe") {
                         weather_safe_icon.classList.add('text-red-700');
                         weather_safe_icon.classList.add('hover:text-red-600');
                         weather_safe_icon.classList.remove('text-green-500');
@@ -1170,9 +1257,9 @@
                 }
 
                 // loop through rows of schedule table and change color of row that matches thread id
-                if (message['table1'][7]['item'] == "threads") {
+                if (status["threads"]) {
 
-                    let threads = message['table1'][7]['threads'];
+                    let threads = status["threads"]['threads'];
                     let table = document.getElementById("schedule-table-0");
                     let rows = table.getElementsByTagName("tr");
 
@@ -1189,26 +1276,28 @@
 
                 }
 
-                // hide rows already shown in the top bar
-                let hiddenItems = ["watchdog", "schedule", "robotic switch", "threads"];
+                // summary table 1: errors (only if any), weather, then sun and moon
+                let utcTime = status["utc time"]['value'];
+                let table1Rows = [];
 
-                // make summary table 1 smaller if error free
-                if (message['table1'][0]['item'] == "error free" && message['table1'][0]['value'] == true) {
-                    hiddenItems.push("error free", "weather safe", "error source");
+                if (status["error free"] && status["error free"]['value'] == false) {
+                    let sources = status["error source"] ? status["error source"]['error_source'] : [];
+                    table1Rows.push({
+                        "item": "errors",
+                        "value": sources.length ? `${sources.length} source${sources.length == 1 ? "" : "s"}, hover to see` : "yes",
+                        "error_source": sources,
+                        "valid": false,
+                    });
                 }
 
-                let utcTime = message['table1'].find(row => row['item'] == "utc time")['value'];
-                let timeToSafe = message['table1'].find(row => row['item'] == "time to safe");
+                table1Rows.push(weatherRow(status["weather safe"], status["time to safe"], utcTime));
 
-                let table1Rows = message['table1']
-                    .filter(row => !hiddenItems.includes(row['item']) && row !== timeToSafe);
+                // show new backend rows too; the rest are above or in the top bar
+                let handledItems = ["error free", "error source", "utc time", "watchdog", "schedule",
+                    "robotic switch", "weather safe", "threads", "time to safe"];
+                table1Rows.push(...message['table1'].filter(row => !handledItems.includes(row['item'])));
 
-                // show time safe below utc time
-                if (timeToSafe) {
-                    let utcIndex = table1Rows.findIndex(row => row['item'] == "utc time");
-                    table1Rows.splice(utcIndex + 1, 0,
-                        { ...timeToSafe, "item": "time safe", "value": formatTimeSafe(timeToSafe['value'], utcTime) });
-                }
+                table1Rows.push(...skyPeriodRows(utcTime));
 
                 updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
 

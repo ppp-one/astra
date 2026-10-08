@@ -99,7 +99,7 @@ function generateWeatherTable(weather_parameters, latest_values, weather_safety_
 
     return `
         <div class="flex-initial overflow-x-scroll">
-        <table class="table-auto w-full proportional-nums font-variant-numeric rounded-lg bg-gray-600/20" id="weather-table" title="Last refreshed: ${new Date().toISOString().slice(0, 19).replace("T", " ")}">
+        <table class="table-auto w-full tabular-nums rounded-lg bg-gray-600/20" id="weather-table" title="Last refreshed: ${new Date().toISOString().slice(0, 19).replace("T", " ")}">
         <thead>
             <tr class="border-b-2 border-b-slate-500">
                 <td class="py-1.5 px-3" style="text-align: left;">Parameter</td>
