@@ -647,13 +647,18 @@
                 return { "item": item, "value": value, "note": note };
             }
 
+            // phase: 0 new moon, 0.5 full moon, below 0.5 the moon is waxing
+            const moonIllumination = SunCalc.getMoonIllumination(now);
+            const moonPercent = Math.round(moonIllumination.fraction * 100);
+            const moonTrend = moonIllumination.phase < 0.5 ? "waxing" : "waning";
+
             return [
                 periodRow("sun up", sunTimes.map(t => t.sunrise), sunTimes.map(t => t.sunset),
-                    sunAltitude > -0.833, "sunrise to sunset"),
+                    sunAltitude > -0.833, "sunrise to sunset, times in UTC"),
                 periodRow("astro night", sunTimes.map(t => t.night), sunTimes.map(t => t.nightEnd),
-                    sunAltitude < -18, "astronomical night: sun more than 18° below the horizon, sky fully dark"),
+                    sunAltitude < -18, "astronomical night: sun more than 18° below the horizon, sky fully dark, times in UTC"),
                 periodRow("moon up", moonTimes.map(t => t.rise), moonTimes.map(t => t.set),
-                    moonAltitude > 0, "moonrise to moonset"),
+                    moonAltitude > 0, `moonrise to moonset, times in UTC, moon ${moonPercent}% illuminated (${moonTrend})`),
             ];
         }
 
