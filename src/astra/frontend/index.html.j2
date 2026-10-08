@@ -16,7 +16,6 @@
     <script type="text/javascript" src="/js/guiding.js"></script>
     <script type="text/javascript" src="/js/sky_projection.js"></script>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         g[aria-label="tip"] {
             fill: rgb(23 23 23);
@@ -45,6 +44,8 @@
 </head>
 
 <body class="bg-black/90 text-slate-100 select-none w-full h-full text-sm md:text-base">
+    <div id="connection-banner" hidden role="status"
+        class="fixed inset-x-0 top-0 z-40 bg-red-900/90 px-4 py-1 text-center text-sm text-white"></div>
     {% set navigation = ['Summary', 'Log', 'Weather', 'Controls'] %}
 
     <div id="popup"
@@ -813,7 +814,6 @@
         function handleRowClick(e) {
             const popup = document.querySelector('#popup');
             // toggle
-            console.log("clicked");
             if (popup.classList.contains('hidden')) {
                 movePopup(e);
                 popup.classList.remove('hidden');
@@ -1142,29 +1142,59 @@
             });
         }
 
+        // websocket types that are not connected now
+        const disconnectedSockets = new Set();
+        // the server sends a summary message about every second, so no message
+        // for this long means the data on the page is old
+        const SUMMARY_STALE_MS = 10000;
+        let lastSummaryMessage = Date.now();
+
+        function updateConnectionStatus() {
+            const secondsSinceSummary = Math.round((Date.now() - lastSummaryMessage) / 1000);
+            const summaryStale = disconnectedSockets.has('summary') || secondsSinceSummary * 1000 > SUMMARY_STALE_MS;
+
+            const banner = document.getElementById('connection-banner');
+            if (disconnectedSockets.size > 0) {
+                banner.textContent = 'Connection to Astra lost, reconnecting… Data on this page is not live.';
+                banner.hidden = false;
+            } else if (summaryStale) {
+                banner.textContent = `No updates from Astra for ${secondsSinceSummary} s. Data on this page is not live.`;
+                banner.hidden = false;
+            } else {
+                banner.hidden = true;
+            }
+
+            // grey out the summary while its data is old
+            document.getElementById('summary-content').classList.toggle('opacity-50', summaryStale);
+        }
+        setInterval(updateConnectionStatus, 1000);
+
         function connectWebSocket(url, type) {
             let socket = new WebSocket(url);
 
             socket.onopen = function () {
                 console.log('WebSocket connection established.');
-                // Perform any necessary actions upon successful connection.
+                disconnectedSockets.delete(type);
+                updateConnectionStatus();
             };
 
             socket.onclose = function (event) {
                 console.log('WebSocket connection closed:', event);
+                disconnectedSockets.add(type);
+                updateConnectionStatus();
                 // Handle the closure, initiate reconnection logic.
                 reconnectWebSocket(url, type);
             };
 
             socket.onmessage = function (event) {
+                if (type == 'summary') lastSummaryMessage = Date.now();
                 onMessageFunc(type, event);
                 // Process incoming messages.
             };
 
             socket.onerror = function (error) {
+                // onclose follows, which shows the banner and reconnects
                 console.log('WebSocket error:', error);
-                // Handle any errors that occur.
-                alert('WebSocket error see browser console');
             };
 
             return socket;
@@ -1309,8 +1339,10 @@
                     }
 
                     // loop through threads and find id that are numeric
+                    // skip ids with no row, e.g. after the schedule reloads with fewer
+                    // actions, so an error here does not stop the rest of this update
                     for (let i = 0; i < threads.length; i++) {
-                        if (!isNaN(threads[i]['id'])) {
+                        if (!isNaN(threads[i]['id']) && rows[threads[i]['id'] + 1]) {
                             rows[threads[i]['id'] + 1].classList.add('bg-slate-600');
                         }
                     }
@@ -1343,7 +1375,6 @@
                 updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
 
                 // update last image
-                let lastImageDiv = document.getElementById("summary-last-image-parent");
                 let lastImage = message['last_image'];
                 if (lastImage && lastImage['available']) {
                     document.getElementById("summary-last-image").classList.remove('hidden');
@@ -1355,13 +1386,11 @@
                         document.getElementById("image-viewer-image").src = imageUrl;
                     }
                     document.getElementById("summary-last-image-text").innerHTML = syntaxHighlight(lastImage['headers']);
-                    lastImageDiv.href = imageUrl;
 
                 } else {
                     document.getElementById("summary-last-image").classList.add('hidden');
                     document.getElementById("summary-last-image-placeholder").classList.remove('hidden');
                     document.getElementById("summary-last-image-text").innerHTML = syntaxHighlight({ 'image': 'no image found' });
-                    lastImageDiv.href = '#';
                 }
 
 
