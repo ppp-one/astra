@@ -203,13 +203,32 @@ function generateWeatherTable(weather_parameters, latest_values, weather_safety_
         </div>`;
 }
 
-// Function to update only the weather table (called from websocket updates)
-function updateWeatherTableOnly() {
-    if (!weatherDataCache || !weatherDataCache.latest) return;
+// Safety limits for the table, from the closing limits in the observatory config
+// (WEATHER_CLOSING_LIMITS, set by the page). Like the backend, it uses the
+// strictest limit: the lowest upper and the highest lower.
+function tableSafetyLimits(weather_parameters) {
+    const weather_safety_limits = {};
+    weather_parameters.forEach((parameter) => {
+        const limits = WEATHER_CLOSING_LIMITS[parameter] || [];
+        const uppers = limits.map((limit) => limit.upper).filter((value) => value !== undefined && value !== null);
+        const lowers = limits.map((limit) => limit.lower).filter((value) => value !== undefined && value !== null);
+        weather_safety_limits[parameter] = {
+            upper: uppers.length ? Math.min(...uppers) : null,
+            lower: lowers.length ? Math.max(...lowers) : null,
+        };
+        addUnits(parameter, weather_safety_limits);
+    });
+    return weather_safety_limits;
+}
 
-    const weather_safety_limits = weatherDataCache.safety_limits;
-    const latest_values = weatherDataCache.latest;
+// Function to update only the weather table (called from websocket updates),
+// so the table does not wait for the chart data
+function updateWeatherTableOnly() {
+    if (!weatherLatest || Object.keys(weatherLatest).length === 0) return;
+
+    const latest_values = weatherLatest;
     const weather_parameters = Object.keys(latest_values).filter(param => param !== 'datetime');
+    const weather_safety_limits = tableSafetyLimits(weather_parameters);
 
     // Sort parameters same way as in plotWeather
     weather_parameters.sort((a, b) => {
@@ -270,9 +289,6 @@ function plotWeather(data, update) {
         return (priority[a] || Infinity) - (priority[b] || Infinity);
     });
 
-
-    const latest_values = data['latest'];
-
     weather_parameters.forEach((parameter) => {
         // find min and max values for each parameter
         const values = weather_data.map((d) => d[parameter]);
@@ -313,9 +329,8 @@ function plotWeather(data, update) {
     });
 
 
-    // Generate and display the weather table
-    const tableHtml = generateWeatherTable(weather_parameters, latest_values, weather_safety_limits);
-    document.getElementById(`weather-latest`).innerHTML = tableHtml;
+    // Display the weather table, in case the websocket has not filled it yet
+    updateWeatherTableOnly();
 
     // Remove loading indicator if present
     const loadingIndicator = document.getElementById('weather-loading');

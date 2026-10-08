@@ -930,13 +930,24 @@
         let weatherLatestTimestamp;
         let weatherChartsInitialized = false;
 
+        // latest weather values for the weather table, from the websocket and the chart data
+        let weatherLatest = {};
+        // closing limits from the observatory config, for the weather table
+        const WEATHER_CLOSING_LIMITS = {{ (config['ObservingConditions'][0]['closing_limits'] if 'ObservingConditions' in config and 'closing_limits' in config['ObservingConditions'][0] else {}) | tojson }};
+
+        function mergeWeatherLatest(fetchedLatest) {
+            // websocket values are newer, so they win over values from the chart data
+            weatherLatest = { ...(fetchedLatest || {}), ...weatherLatest };
+            updateWeatherTableOnly();
+        }
+
         function updateWeatherLatestFromWebsocket(deviceData) {
             // Find ObservingConditions device data
             const weatherDevice = deviceData.find(device =>
                 device.item === 'ObservingConditions' && device.polled
             );
 
-            if (weatherDevice && weatherDataCache) {
+            if (weatherDevice) {
                 // Extract the latest values from the polled data
                 const newLatest = {};
                 for (const [key, value] of Object.entries(weatherDevice.polled)) {
@@ -950,8 +961,11 @@
                     newLatest.RelativeSkyTemp = newLatest.SkyTemperature - newLatest.Temperature;
                 }
 
-                // Update the cached latest values
-                weatherDataCache.latest = { ...weatherDataCache.latest, ...newLatest };
+                // Update the latest values
+                weatherLatest = { ...weatherLatest, ...newLatest };
+                if (weatherDataCache) {
+                    weatherDataCache.latest = { ...weatherDataCache.latest, ...newLatest };
+                }
                 // Update the weather table display without re-plotting charts
                 updateWeatherTableOnly();
             }
@@ -968,6 +982,7 @@
                         if (data.data && data.data.length > 0) {
                             weatherLatestTimestamp = data.data[data.data.length - 1].datetime;
                         }
+                        mergeWeatherLatest(data.latest);
                         plotWeather(data, update);
                     })
                     .then(() => {
@@ -1030,6 +1045,7 @@
                                 weatherDataCache.data = cached.concat(newData.data);
                             }
                             weatherDataCache.latest = newData.latest;
+                            mergeWeatherLatest(newData.latest);
                             weatherDataCache.twilight_periods = newData.twilight_periods || [];
                             weatherLatestTimestamp = newData.data[newData.data.length - 1].datetime;
                         }
