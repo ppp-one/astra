@@ -10,12 +10,12 @@
     <script src="/js/particles.min.js"></script>
     <script src="/js/d3-7.9.0.min.js"></script>
     <script src="/js/plot-0.6.17.min.js"></script>
+    <script src="/js/suncalc-1.9.0.js"></script>
 
     <script type="text/javascript" src="/js/weather.js"></script>
     <script type="text/javascript" src="/js/guiding.js"></script>
     <script type="text/javascript" src="/js/sky_projection.js"></script>
     <link rel="icon" href="/favicon.svg">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         g[aria-label="tip"] {
             fill: rgb(23 23 23);
@@ -28,10 +28,24 @@
             margin: 15px 0px;
             width: 100%;
         }
+
+        /* latest image headers: show only with the info button, so hover, tap
+           or zoom never covers the image */
+        #summary-last-image-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #summary-last-image-overlay.show {
+            opacity: 0.8;
+            pointer-events: auto;
+        }
     </style>
 </head>
 
 <body class="bg-black/90 text-slate-100 select-none w-full h-full text-sm md:text-base">
+    <div id="connection-banner" hidden role="status"
+        class="fixed inset-x-0 top-0 z-40 bg-red-900/90 px-4 py-1 text-center text-sm text-white"></div>
     {% set navigation = ['Summary', 'Log', 'Weather', 'Controls'] %}
 
     <div id="popup"
@@ -153,7 +167,7 @@
                     {% if nav == 'Summary'%}
 
                     <table id="summary-table-0"
-                        class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                        class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                         <thead>
                         </thead>
                         <tbody>
@@ -161,7 +175,7 @@
                     </table>
 
                     <table id="summary-table-1"
-                        class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                        class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                         <thead>
                         </thead>
                         <tbody>
@@ -172,20 +186,33 @@
                     <div class="grid w-full gap-2 grid-cols-1 md:grid-cols-2">
                         {# latest image - always first #}
                         <div id="summary-last-image-parent" class="flex justify-center w-full relative">
-                            <img id="summary-last-image" alt="latest image" class="object-contain h-full w-full hidden">
+                            <img id="summary-last-image" alt="latest image" title="Open full screen"
+                                class="object-contain h-full w-full hidden cursor-zoom-in" onclick="openImageViewer()">
                             <svg xmlns="http://www.w3.org/2000/svg" id="summary-last-image-placeholder" viewBox="0 0 24 24" fill="currentColor" class="w-full p-12 opacity-20">
                                 <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
                             </svg>
 
-                            <div class="flex opacity-0 hover:opacity-80 bg-black duration-100 absolute h-full w-full text-white justify-center items-center">
+                            <button type="button" title="Show image headers"
+                                class="absolute top-2 left-2 z-10 rounded bg-black/50 p-1 text-white/80 hover:bg-black/70 hover:text-white"
+                                onclick="document.getElementById('summary-last-image-overlay').classList.toggle('show')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                </svg>
+                            </button>
+
+                            <a href="/fits_explorer" title="Open FITS Explorer"
+                                class="absolute top-2 right-2 z-10 rounded bg-black/50 p-1 text-white/80 hover:bg-black/70 hover:text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
+                                </svg>
+                            </a>
+
+                            <div id="summary-last-image-overlay"
+                                class="flex bg-black duration-100 absolute h-full w-full text-white justify-center items-center"
+                                onclick="this.classList.remove('show')">
                                 <div id="summary-last-image-text" class="whitespace-break-spaces md:text-base text-xs text-wrap truncate">
                                     <!-- Add text here, if needed -->
                                 </div>
-                                <a href="/fits_explorer" class="absolute top-2 right-2 text-white/80 hover:text-white" title="Open FITS Explorer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6.878V6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 0 0 4.5 9v.878m13.5-3A2.25 2.25 0 0 1 19.5 9v.878m0 0a2.246 2.246 0 0 0-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0 1 21 12v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6c0-.98.626-1.813 1.5-2.122" />
-                                    </svg>
-                                </a>
                             </div>
                         </div>
 
@@ -268,7 +295,7 @@
                                 </a>
                             </div>
                             <table id="schedule-table-0"
-                                class="text-left w-full table-auto rounded-lg bg-gray-600/20">
+                                class="text-left w-full table-auto rounded-lg bg-gray-600/20 tabular-nums">
                                 <thead>
                                 </thead>
                                 <tbody>
@@ -313,8 +340,31 @@
 
                     <div class="flex flex-col flex-grow place-content-start items-center my-auto overflow-y-auto">
                         <!-- Sky Chart -->
-                        <div id="sky-chart-container" class="w-full flex justify-center">
-                            <div id="sky-chart" class="flex justify-center items-center"></div>
+                        <div class="flex w-full flex-col gap-3 pt-2">
+                            <div id="sky-legend" class="flex flex-wrap gap-x-3 gap-y-1 px-4 text-xs text-gray-400 md:text-sm"></div>
+
+                            <div id="sky-chart-container" class="relative flex w-full justify-center">
+                                <div id="sky-chart" class="flex items-center justify-center" style="-webkit-touch-callout: none"></div>
+                                <div id="sky-toast" hidden role="status" aria-live="polite"
+                                    class="pointer-events-none absolute bottom-0 left-4 whitespace-nowrap rounded-lg bg-gray-900/95 px-3 py-1.5 text-sm shadow-lg"></div>
+                                <div class="absolute right-4 top-0 flex flex-col gap-1">
+                                    <button type="button" onclick="skyZoomIn()" title="Zoom in"
+                                        class="h-8 w-8 rounded bg-black/50 text-lg leading-none text-white/80 hover:bg-black/70 hover:text-white">+</button>
+                                    <button type="button" onclick="skyZoomOut()" title="Zoom out"
+                                        class="h-8 w-8 rounded bg-black/50 text-lg leading-none text-white/80 hover:bg-black/70 hover:text-white">&minus;</button>
+                                    <button type="button" onclick="skyZoomReset()" title="Show the whole sky"
+                                        class="h-8 w-8 rounded bg-black/50 text-base leading-none text-white/80 hover:bg-black/70 hover:text-white">&#8634;</button>
+                                    <button type="button" title="How to use the sky map" aria-controls="sky-help"
+                                        onclick="document.getElementById('sky-help').hidden = !document.getElementById('sky-help').hidden"
+                                        class="h-8 w-8 rounded bg-black/50 text-sm font-semibold leading-none text-white/80 hover:bg-black/70 hover:text-white">?</button>
+                                </div>
+                                <div id="sky-help" hidden onclick="this.hidden = true"
+                                    class="absolute right-14 top-0 z-10 w-64 rounded-lg bg-gray-900/95 p-3 text-xs leading-relaxed text-gray-300 shadow-lg">
+                                    <p><span class="text-gray-100">Copy a name:</span> right-click an object, or long-press it on a touch screen and release.</p>
+                                    <p class="mt-1"><span class="text-gray-100">Zoom:</span> pinch, Ctrl + scroll, double-click, or + and &minus;. More objects and names appear as you zoom in.</p>
+                                    <p class="mt-1"><span class="text-gray-100">Move:</span> drag when zoomed in. &#8634; shows the whole sky.</p>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Control Buttons -->
@@ -504,6 +554,114 @@
         let activeRowIndex = -1;
         let activeTableId = null;
 
+        function weatherRow(weatherSafe, timeToSafe, utcTime) {
+            // weatherSafe: backend "weather safe" row, value "safe" or "unsafe"
+            // timeToSafe: backend "time to safe" row, value e.g. "12.34 mins"
+            // utcTime: backend utc time, "YYYY-MM-DD HH:MM:SS"
+            // returns one row, e.g. "unsafe until 12:31:20 (in 0:59)"
+            const now = new Date(utcTime.replace(' ', 'T') + 'Z');
+            const remaining = timeToSafe ? Math.round(parseFloat(timeToSafe['value']) * 60) : NaN;
+            const row = { "item": "weather", "time to safe": timeToSafe ? timeToSafe['value'] : null };
+
+            if (isNaN(remaining) || isNaN(now) || remaining <= 0) {
+                const safe = weatherSafe ? weatherSafe['value'] : "unknown";
+                return { ...row, "value": safe, "valid": safe == "safe" ? true : safe == "unsafe" ? false : undefined };
+            }
+
+            const safeAt = new Date(now.getTime() + remaining * 1000).toISOString().substring(11, 19);
+            const hours = Math.floor(remaining / 3600);
+            const minutes = Math.floor(remaining % 3600 / 60);
+            const seconds = String(remaining % 60).padStart(2, '0');
+            const countdown = hours > 0
+                ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+                : `${minutes}:${seconds}`;
+
+            return { ...row, "value": `unsafe until ${safeAt} (in ${countdown})`, "safe at": safeAt, "valid": false };
+        }
+
+        // site location from /api/sky_data, null until loaded
+        let siteLocation = null;
+        // last summary message from the websocket, null until the first one
+        let lastSummary = null;
+
+        async function loadSiteLocation() {
+            try {
+                const response = await fetch("/api/sky_data");
+                const result = await response.json();
+                if (result.status === "success") {
+                    siteLocation = result.data.observatory;
+                    // show the sun and moon rows now, not at the next summary message
+                    if (lastSummary !== null) updateSummaryTable1(lastSummary);
+                }
+            } catch (error) {
+                console.error("Error loading site location:", error);
+            }
+            // the telescope may not be connected yet, so try again later
+            if (siteLocation === null) setTimeout(loadSiteLocation, 60000);
+        }
+        loadSiteLocation();
+
+        function nextEvent(dates, now) {
+            // returns the first valid date after now, or null
+            return dates
+                .filter(d => d instanceof Date && !isNaN(d) && d > now)
+                .sort((a, b) => a - b)[0] || null;
+        }
+
+        function skyPeriodRows(utcTime) {
+            // returns summary rows for the current or next sun up, astro night and
+            // moon up periods, e.g. "18:39 – 03:56" or "now – 03:56", times in utc
+            if (siteLocation === null) return [];
+
+            const now = new Date(utcTime.replace(' ', 'T') + 'Z');
+            if (isNaN(now)) return [];
+
+            const { lat, lon } = siteLocation;
+            const dayMs = 24 * 60 * 60 * 1000;
+            const days = [-1, 0, 1, 2].map(i => new Date(now.getTime() + i * dayMs));
+
+            const sunTimes = days.map(day => SunCalc.getTimes(day, lat, lon));
+            const moonTimes = days.map(day => SunCalc.getMoonTimes(day, lat, lon, true));
+            const sunAltitude = SunCalc.getPosition(now, lat, lon).altitude * 180 / Math.PI;
+            const moonAltitude = SunCalc.getMoonPosition(now, lat, lon).altitude * 180 / Math.PI;
+
+            const formatEvent = (date) => date.toISOString().substring(11, 16);
+
+            function periodRow(item, startDates, endDates, inPeriod, note) {
+                // inPeriod: true if the period is on now, used when no start or end is found
+                const start = nextEvent(startDates, now);
+                const end = nextEvent(endDates, now);
+                let value;
+
+                if (end && (!start || end < start)) {
+                    value = `now – ${formatEvent(end)}`;
+                } else if (start) {
+                    const endAfterStart = nextEvent(endDates, start);
+                    value = endAfterStart
+                        ? `${formatEvent(start)} – ${formatEvent(endAfterStart)}`
+                        : `from ${formatEvent(start)}`;
+                } else {
+                    value = inPeriod ? "all day" : "none";
+                }
+
+                return { "item": item, "value": value, "note": note };
+            }
+
+            // phase: 0 new moon, 0.5 full moon, below 0.5 the moon is waxing
+            const moonIllumination = SunCalc.getMoonIllumination(now);
+            const moonPercent = Math.round(moonIllumination.fraction * 100);
+            const moonTrend = moonIllumination.phase < 0.5 ? "waxing" : "waning";
+
+            return [
+                periodRow("sun up", sunTimes.map(t => t.sunrise), sunTimes.map(t => t.sunset),
+                    sunAltitude > -0.833, "sunrise to sunset, times in UTC"),
+                periodRow("astro night", sunTimes.map(t => t.night), sunTimes.map(t => t.nightEnd),
+                    sunAltitude < -18, "astronomical night: sun more than 18° below the horizon, sky fully dark, times in UTC"),
+                periodRow("moon up", moonTimes.map(t => t.rise), moonTimes.map(t => t.set),
+                    moonAltitude > 0, `moonrise to moonset, times in UTC, moon ${moonPercent}% illuminated (${moonTrend})`),
+            ];
+        }
+
         function updatePopupContent(rowData) {
              // Create a deep copy to sort and filter keys
              let dataCopy = JSON.parse(JSON.stringify(rowData));
@@ -688,7 +846,6 @@
         function handleRowClick(e) {
             const popup = document.querySelector('#popup');
             // toggle
-            console.log("clicked");
             if (popup.classList.contains('hidden')) {
                 movePopup(e);
                 popup.classList.remove('hidden');
@@ -698,6 +855,9 @@
                 popup.classList.add('hidden');
             }
         }
+
+        // device data older than this many seconds is shown red in the "last update" column
+        const STALE_DEVICE_S = 120;
 
         function updateTable(tableId, data, headers, thead_display = true, right_align = true) {
             // tableId: id of the table to update
@@ -781,17 +941,24 @@
                     if ((j == headerKeys.length - 1) && right_align) {
                         cell.classList.add("text-right");
                         cell.classList.add("text-blue-300");
-                        cell.classList.add("font-variant-numeric");
-                        cell.classList.add("proportional-nums");
                     }
 
-                    // if status column, colour the cell
-                    if (headerKeys[j] == "status") {
-                        if (data[i]['valid'] == true) {
+                    // if status or value column, colour the cell by valid
+                    if (headerKeys[j] == "status" || headerKeys[j] == "value") {
+                        if (data[i]['valid'] === true) {
+                            cell.classList.remove("text-blue-300");
                             cell.classList.add("text-green-500");
-                        } else if (data[i]['valid'] == false) {
+                        } else if (data[i]['valid'] === false) {
+                            cell.classList.remove("text-blue-300");
                             cell.classList.add("text-red-500");
                         }
+                    }
+
+                    // if last update column, colour the cell red when the device data is
+                    // stale, using the same limit as the backend safety monitor check
+                    if (headerKeys[j] == "last_update" && parseFloat(data[i]['last_update']) > STALE_DEVICE_S) {
+                        cell.classList.remove("text-blue-300");
+                        cell.classList.add("text-red-500");
                     }
                 }
 
@@ -830,13 +997,24 @@
         let weatherLatestTimestamp;
         let weatherChartsInitialized = false;
 
+        // latest weather values for the weather table, from the websocket and the chart data
+        let weatherLatest = {};
+        // closing limits from the observatory config, for the weather table
+        const WEATHER_CLOSING_LIMITS = {{ (config['ObservingConditions'][0]['closing_limits'] if 'ObservingConditions' in config and 'closing_limits' in config['ObservingConditions'][0] else {}) | tojson }};
+
+        function mergeWeatherLatest(fetchedLatest) {
+            // websocket values are newer, so they win over values from the chart data
+            weatherLatest = { ...(fetchedLatest || {}), ...weatherLatest };
+            updateWeatherTableOnly();
+        }
+
         function updateWeatherLatestFromWebsocket(deviceData) {
             // Find ObservingConditions device data
             const weatherDevice = deviceData.find(device =>
                 device.item === 'ObservingConditions' && device.polled
             );
 
-            if (weatherDevice && weatherDataCache) {
+            if (weatherDevice) {
                 // Extract the latest values from the polled data
                 const newLatest = {};
                 for (const [key, value] of Object.entries(weatherDevice.polled)) {
@@ -850,8 +1028,8 @@
                     newLatest.RelativeSkyTemp = newLatest.SkyTemperature - newLatest.Temperature;
                 }
 
-                // Update the cached latest values
-                weatherDataCache.latest = { ...weatherDataCache.latest, ...newLatest };
+                // Update the latest values
+                weatherLatest = { ...weatherLatest, ...newLatest };
                 // Update the weather table display without re-plotting charts
                 updateWeatherTableOnly();
             }
@@ -868,6 +1046,7 @@
                         if (data.data && data.data.length > 0) {
                             weatherLatestTimestamp = data.data[data.data.length - 1].datetime;
                         }
+                        mergeWeatherLatest(data.latest);
                         plotWeather(data, update);
                     })
                     .then(() => {
@@ -929,7 +1108,7 @@
                             } else {
                                 weatherDataCache.data = cached.concat(newData.data);
                             }
-                            weatherDataCache.latest = newData.latest;
+                            mergeWeatherLatest(newData.latest);
                             weatherDataCache.twilight_periods = newData.twilight_periods || [];
                             weatherLatestTimestamp = newData.data[newData.data.length - 1].datetime;
                         }
@@ -1001,29 +1180,66 @@
             });
         }
 
+        // websocket type -> time it closed, for sockets that are not connected now
+        const disconnectedSockets = new Map();
+        // a socket closed for a shorter time is not shown. This hides closes that
+        // the page reload or a quick reconnect cause; the reconnect waits 3 s.
+        const DISCONNECTED_GRACE_MS = 5000;
+        // the server sends a summary message about every second, so no message
+        // for this long means the data on the page is old
+        const SUMMARY_STALE_MS = 10000;
+        let lastSummaryMessage = Date.now();
+
+        function updateConnectionStatus() {
+            const now = Date.now();
+            const disconnected = [...disconnectedSockets.values()].some(t => now - t > DISCONNECTED_GRACE_MS);
+            const summaryDisconnected = disconnectedSockets.has('summary') && now - disconnectedSockets.get('summary') > DISCONNECTED_GRACE_MS;
+            const secondsSinceSummary = Math.round((now - lastSummaryMessage) / 1000);
+            const summaryStale = summaryDisconnected || secondsSinceSummary * 1000 > SUMMARY_STALE_MS;
+
+            const banner = document.getElementById('connection-banner');
+            if (disconnected) {
+                banner.textContent = 'Connection to Astra lost, reconnecting… Data on this page is not live.';
+                banner.hidden = false;
+            } else if (summaryStale) {
+                banner.textContent = `No updates from Astra for ${secondsSinceSummary} s. Data on this page is not live.`;
+                banner.hidden = false;
+            } else {
+                banner.hidden = true;
+            }
+
+            // grey out the summary while its data is old
+            document.getElementById('summary-content').classList.toggle('opacity-50', summaryStale);
+        }
+        setInterval(updateConnectionStatus, 1000);
+
         function connectWebSocket(url, type) {
             let socket = new WebSocket(url);
 
             socket.onopen = function () {
                 console.log('WebSocket connection established.');
-                // Perform any necessary actions upon successful connection.
+                disconnectedSockets.delete(type);
+                updateConnectionStatus();
             };
 
             socket.onclose = function (event) {
                 console.log('WebSocket connection closed:', event);
+                // keep the first close time while the reconnects fail
+                if (!disconnectedSockets.has(type)) disconnectedSockets.set(type, Date.now());
+                updateConnectionStatus();
                 // Handle the closure, initiate reconnection logic.
                 reconnectWebSocket(url, type);
             };
 
             socket.onmessage = function (event) {
+                if (type == 'summary') lastSummaryMessage = Date.now();
                 onMessageFunc(type, event);
                 // Process incoming messages.
             };
 
             socket.onerror = function (error) {
+                // onclose follows, which shows the banner and reconnects
                 console.log('WebSocket error:', error);
-                // Handle any errors that occur.
-                alert('WebSocket error see browser console');
             };
 
             return socket;
@@ -1036,6 +1252,34 @@
             }, 3000); // You can adjust the time interval between reconnection attempts.
         }
 
+        function updateSummaryTable1(message) {
+            // summary table 1: errors (only if any), weather, then sun and moon
+            let status = Object.fromEntries(message['table1'].map(row => [row['item'], row]));
+            let utcTime = status["utc time"]['value'];
+            let table1Rows = [];
+
+            if (status["error free"] && status["error free"]['value'] == false) {
+                let sources = status["error source"] ? status["error source"]['error_source'] : [];
+                table1Rows.push({
+                    "item": "errors",
+                    "value": sources.length ? `${sources.length} source${sources.length == 1 ? "" : "s"}, hover to see` : "yes",
+                    "error_source": sources,
+                    "valid": false,
+                });
+            }
+
+            table1Rows.push(weatherRow(status["weather safe"], status["time to safe"], utcTime));
+
+            // show new backend rows too; the rest are above or in the top bar
+            let handledItems = ["error free", "error source", "utc time", "watchdog", "schedule",
+                "robotic switch", "weather safe", "threads", "time to safe"];
+            table1Rows.push(...message['table1'].filter(row => !handledItems.includes(row['item'])));
+
+            table1Rows.push(...skyPeriodRows(utcTime));
+
+            updateTable("summary-table-1", table1Rows, { "item": "item", "value": "value" }, false);
+        }
+
         function onMessageFunc(type, event) {
             let message = JSON.parse(event.data);
             if (type == 'summary') {
@@ -1044,9 +1288,12 @@
                 // Update weather latest values from websocket
                 updateWeatherLatestFromWebsocket( message['table0']);
 
+                // find table1 rows by name, so the row order does not matter
+                let status = Object.fromEntries(message['table1'].map(row => [row['item'], row]));
+
                 // update title color if error found in astra
-                if (message['table1'][0]['item'] == "error free") {
-                    if (message['table1'][0]['value'] == false) {
+                if (status["error free"]) {
+                    if (status["error free"]['value'] == false) {
                         document.getElementById("title").classList.add('text-red-700');
                     } else {
                         document.getElementById("title").classList.remove('text-red-700');
@@ -1054,18 +1301,18 @@
                 }
 
                 // update utc time
-                if (message['table1'][1]['item'] == "utc time") {
+                if (status["utc time"]) {
 
-                    document.getElementById("time").innerText = message['table1'][1]['value'].substring(10);
+                    document.getElementById("time").innerText = status["utc time"]['value'].substring(10);
 
                 }
 
                 // update watchdog icon
-                if (message['table1'][2]['item'] == "watchdog") {
+                if (status["watchdog"]) {
 
                     let watchdog_icon = document.getElementById("watchdog-icon");
 
-                    if (message['table1'][2]['value'] == "stopped") {
+                    if (status["watchdog"]['value'] == "stopped") {
                         watchdog_icon.classList.add('text-red-700');
                         watchdog_icon.classList.add('hover:text-red-600');
                         watchdog_icon.classList.remove('text-green-500');
@@ -1080,10 +1327,10 @@
                 }
 
                 // update schedule icon
-                if (message['table1'][3]['item'] == "schedule") {
+                if (status["schedule"]) {
 
                     let schedule_icon = document.getElementById("schedule-icon");
-                    if (message['table1'][3]['value'] == "stopped") {
+                    if (status["schedule"]['value'] == "stopped") {
                         schedule_icon.classList.add('text-gray-500');
                         schedule_icon.classList.add('hover:text-gray-400')
                         schedule_icon.classList.remove('text-green-500');
@@ -1120,11 +1367,11 @@
                 }
 
                 // update robotic switch toggle
-                if (message['table1'][4]['item'] == "robotic switch") {
+                if (status["robotic switch"]) {
 
                     let robotic_switch = document.getElementById("robotic-switch-icon");
 
-                    if (message['table1'][4]['value'] == "on") {
+                    if (status["robotic switch"]['value'] == "on") {
                         document.getElementById('robotic-switch').checked = true;
                     } else {
                         document.getElementById('robotic-switch').checked = false;
@@ -1133,11 +1380,11 @@
                 }
 
                 // update weather safe icon
-                if (message['table1'][5]['item'] == "weather safe") {
+                if (status["weather safe"]) {
 
                     let weather_safe_icon = document.getElementById("weather-safe-icon");
 
-                    if (message['table1'][5]['value'] == "unsafe") {
+                    if (status["weather safe"]['value'] == "unsafe") {
                         weather_safe_icon.classList.add('text-red-700');
                         weather_safe_icon.classList.add('hover:text-red-600');
                         weather_safe_icon.classList.remove('text-green-500');
@@ -1154,9 +1401,9 @@
                 }
 
                 // loop through rows of schedule table and change color of row that matches thread id
-                if (message['table1'][7]['item'] == "threads") {
+                if (status["threads"]) {
 
-                    let threads = message['table1'][7]['threads'];
+                    let threads = status["threads"]['threads'];
                     let table = document.getElementById("schedule-table-0");
                     let rows = table.getElementsByTagName("tr");
 
@@ -1165,28 +1412,20 @@
                     }
 
                     // loop through threads and find id that are numeric
+                    // skip ids with no row, e.g. after the schedule reloads with fewer
+                    // actions, so an error here does not stop the rest of this update
                     for (let i = 0; i < threads.length; i++) {
-                        if (!isNaN(threads[i]['id'])) {
+                        if (!isNaN(threads[i]['id']) && rows[threads[i]['id'] + 1]) {
                             rows[threads[i]['id'] + 1].classList.add('bg-slate-600');
                         }
                     }
 
                 }
 
-                // make summary table 1 smaller if error free
-                if (message['table1'][0]['item'] == "error free") {
-                    if (message['table1'][0]['value'] == true) {
-                        // remove error free status
-                        message['table1'].splice(0, 1);
-                        // remove weather safe, error source
-                        message['table1'].splice(4, 2);
-                    }
-                }
-
-                updateTable("summary-table-1", message['table1'], { "item": "item", "value": "value" }, false);
+                lastSummary = message;
+                updateSummaryTable1(message);
 
                 // update last image
-                let lastImageDiv = document.getElementById("summary-last-image-parent");
                 let lastImage = message['last_image'];
                 if (lastImage && lastImage['available']) {
                     document.getElementById("summary-last-image").classList.remove('hidden');
@@ -1194,14 +1433,15 @@
                     // Use the new preview endpoint with cache-busting timestamp
                     let imageUrl = '/api/latest_image_preview?' + (lastImage['timestamp'] || Date.now());
                     document.getElementById("summary-last-image").src = imageUrl;
+                    if (!document.getElementById("image-viewer").hidden) {
+                        document.getElementById("image-viewer-image").src = imageUrl;
+                    }
                     document.getElementById("summary-last-image-text").innerHTML = syntaxHighlight(lastImage['headers']);
-                    lastImageDiv.href = imageUrl;
 
                 } else {
                     document.getElementById("summary-last-image").classList.add('hidden');
                     document.getElementById("summary-last-image-placeholder").classList.remove('hidden');
                     document.getElementById("summary-last-image-text").innerHTML = syntaxHighlight({ 'image': 'no image found' });
-                    lastImageDiv.href = '#';
                 }
 
 
@@ -1383,6 +1623,22 @@
             return `/api/timelapse/${encodeURIComponent(timelapseCamera)}/${encodeURIComponent(timelapseFrames[index].file)}`;
         }
 
+        function openImageViewer() {
+            // show the latest image full screen
+            document.getElementById('image-viewer-image').src = document.getElementById('summary-last-image').src;
+            document.getElementById('image-viewer').hidden = false;
+        }
+
+        function closeImageViewer() {
+            document.getElementById('image-viewer').hidden = true;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('image-viewer').hidden) {
+                closeImageViewer();
+            }
+        });
+
         async function openTimelapse(cameraId, name) {
             stopTimelapse();
             timelapseCamera = cameraId;
@@ -1540,6 +1796,20 @@
         {% endif %}
 
     </script>
+
+    <div id="image-viewer" hidden class="fixed inset-0 z-50 bg-black/90 px-4 py-4"
+        onclick="if (event.target === this) closeImageViewer()">
+        <div class="flex h-full flex-col gap-3" onclick="if (event.target === this) closeImageViewer()">
+            <div class="flex items-center justify-between text-gray-200">
+                <span class="font-medium">Latest image</span>
+                <button type="button" onclick="closeImageViewer()" title="Close (Esc)"
+                    class="rounded px-2 text-2xl leading-none text-gray-300 hover:bg-white/10">&times;</button>
+            </div>
+            <div class="flex min-h-0 flex-1 items-center justify-center" onclick="if (event.target === this) closeImageViewer()">
+                <img id="image-viewer-image" class="max-h-full max-w-full object-contain" alt="Latest image">
+            </div>
+        </div>
+    </div>
 
     <div id="timelapse-modal" hidden class="fixed inset-0 z-50 bg-black/80 px-4 py-4"
         onclick="if (event.target === this) closeTimelapse()">

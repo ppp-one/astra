@@ -1274,8 +1274,12 @@ def calculate_celestial_data(obs_location: EarthLocation) -> dict:
 
 
 @app.get("/api/sky_data")
-async def sky_data():
+def sky_data():
     """Get celestial body positions for all-sky projection.
+
+    A plain ``def``, so FastAPI runs it in a worker thread. The astropy
+    calculation and the telescope location read can take seconds on the first
+    call, and in the event loop they would stop the websocket messages.
 
     Returns:
         dict: JSON response with observatory location, time, and celestial body positions
