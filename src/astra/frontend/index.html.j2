@@ -824,6 +824,9 @@
             }
         }
 
+        // device data older than this many seconds is shown red in the "last update" column
+        const STALE_DEVICE_S = 120;
+
         function updateTable(tableId, data, headers, thead_display = true, right_align = true) {
             // tableId: id of the table to update
             // data: array of objects containing the data to be displayed
@@ -917,6 +920,13 @@
                             cell.classList.remove("text-blue-300");
                             cell.classList.add("text-red-500");
                         }
+                    }
+
+                    // if last update column, colour the cell red when the device data is
+                    // stale, using the same limit as the backend safety monitor check
+                    if (headerKeys[j] == "last_update" && parseFloat(data[i]['last_update']) > STALE_DEVICE_S) {
+                        cell.classList.remove("text-blue-300");
+                        cell.classList.add("text-red-500");
                     }
                 }
 
