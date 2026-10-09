@@ -14,7 +14,7 @@ from dataclasses import MISSING, dataclass, field
 from dataclasses import fields as dataclass_fields
 from enum import Enum
 from pathlib import Path
-from typing import Any, ClassVar, List, Optional, Union
+from typing import Any, ClassVar, Union
 
 import astropy.units as u
 import numpy as np
@@ -497,11 +497,11 @@ class BaseActionConfig:
                             f, value_type, type(v), specifier="values"
                         )
         # Handle enums
-        elif isinstance(expected_type, type) and issubclass(expected_type, Enum):
-            if not isinstance(val, expected_type):
-                return self.format_type_error(f, expected_type, type(val))
-        # Handle all other types (non-parameterized)
-        elif isinstance(expected_type, type):
+        elif (
+            isinstance(expected_type, type)
+            and issubclass(expected_type, Enum)
+            or isinstance(expected_type, type)
+        ):
             if not isinstance(val, expected_type):
                 return self.format_type_error(f, expected_type, type(val))
         # Otherwise, skip type check
@@ -536,7 +536,7 @@ class BaseActionConfig:
     def __contains__(self, key: str):
         return hasattr(self, key)
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """Return list of field names in the dataclass."""
         return [
             item
@@ -637,7 +637,7 @@ class BaseActionConfig:
 
         Only implemented for object actions; override in subclasses as needed.
         """
-        return None
+        return
 
     def has_subframe(self) -> bool:
         """Check if subframing is enabled.
@@ -844,32 +844,32 @@ class ObjectActionConfig(BaseActionConfig):
 
     # object may be left out when lookup_name is given; validate() fills it in.
     # exptime needs a default only because it now follows a field that has one.
-    object: Optional[str] = None
+    object: str | None = None
     exptime: float = field(default=None, metadata={"required": True})
-    ra: Optional[float] = None
-    dec: Optional[float] = None
-    alt: Optional[float] = None
-    az: Optional[float] = None
-    lookup_name: Optional[str] = None
-    tle: Optional[str] = None
-    filter: Optional[str] = None
-    focus_shift: Optional[float] = None
-    focus_position: Optional[float] = None
-    n: Optional[int] = None
+    ra: float | None = None
+    dec: float | None = None
+    alt: float | None = None
+    az: float | None = None
+    lookup_name: str | None = None
+    tle: str | None = None
+    filter: str | None = None
+    focus_shift: float | None = None
+    focus_position: float | None = None
+    n: int | None = None
     guiding: bool = False
     pointing: bool = False
     bin: int = 1
-    dir: Optional[str] = None
+    dir: str | None = None
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
     reset_guiding_reference: bool = True
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
     nonsidereal_recenter_interval: int = 0
     nonsidereal_start_lead_time_seconds: float = 0.0
-    nonsidereal_rate_update_interval: Optional[float] = None
+    nonsidereal_rate_update_interval: float | None = None
     _nonsidereal: bool = field(default=False, init=False, repr=False)
     _ra_interp: Any = field(default=None, init=False, repr=False)
     _dec_interp: Any = field(default=None, init=False, repr=False)
@@ -1333,14 +1333,14 @@ class ObjectActionConfig(BaseActionConfig):
 class CalibrationActionConfig(BaseActionConfig):
     """Capture a sequence of calibration images (bias/dark)."""
 
-    exptime: List[float] = field(default_factory=list, metadata={"required": True})
-    n: List[int] = field(default_factory=list, metadata={"required": True})
-    filter: Optional[str] = None
-    dir: Optional[str] = None
+    exptime: list[float] = field(default_factory=list, metadata={"required": True})
+    n: list[int] = field(default_factory=list, metadata={"required": True})
+    filter: str | None = None
+    dir: str | None = None
     bin: int = 1
     execute_parallel: bool = False
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -1404,14 +1404,14 @@ class FlatsActionConfig(BaseActionConfig):
         4. Iterate through requested filters while auto-adjusting exposure times
     """
 
-    filter: List[str] = field(default_factory=list, metadata={"required": True})
-    n: List[int] = field(default_factory=list, metadata={"required": True})
-    dir: Optional[str] = None
+    filter: list[str] = field(default_factory=list, metadata={"required": True})
+    n: list[int] = field(default_factory=list, metadata={"required": True})
+    dir: str | None = None
     bin: int = 1
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
 
@@ -1476,16 +1476,16 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
 
     """
 
-    filter: Optional[str] = None
+    filter: str | None = None
     pulse_time: int = 5000
     exptime: float = 1.0
     settle_time: float = 1.0
     number_of_cycles: int = 10
-    focus_shift: Optional[float] = None
-    focus_position: Optional[float] = None
+    focus_shift: float | None = None
+    focus_position: float | None = None
     bin: int = 1
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
 
@@ -1536,13 +1536,13 @@ class PointingModelActionConfig(BaseActionConfig):
     dark_subtraction: bool = False
     object: str = "Pointing Model"
     use_local_db: bool = False
-    filter: Optional[str] = None
-    focus_shift: Optional[float] = None
-    focus_position: Optional[float] = None
+    filter: str | None = None
+    focus_shift: float | None = None
+    focus_position: float | None = None
     bin: int = 1
-    dir: Optional[str] = None
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    dir: str | None = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
 
@@ -1596,19 +1596,19 @@ class SelectionMethod(Enum):
 class AutofocusCalibrationFieldConfig(BaseActionConfig):
     """Configuration for automated autofocus calibration field selection."""
 
-    maximal_zenith_angle: Optional[float | int | Angle] = None
+    maximal_zenith_angle: float | int | Angle | None = None
     airmass_threshold: float = 1.01
-    g_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
-    j_mag_range: List[float | int] = field(default_factory=lambda: [0, 10])
+    g_mag_range: list[float | int] = field(default_factory=lambda: [0, 10])
+    j_mag_range: list[float | int] = field(default_factory=lambda: [0, 10])
     fov_height: float | int = 0
     fov_width: float | int = 0
     selection_method: SelectionMethod | str = "single"
     use_gaia: bool = True
-    observation_time: Optional[Time] = None
+    observation_time: Time | None = None
     maximal_number_of_stars: int = 100_000
-    ra: Optional[float | int] = None
-    dec: Optional[float | int] = None
-    _coordinates: Optional[SkyCoord] = None
+    ra: float | int | None = None
+    dec: float | int | None = None
+    _coordinates: SkyCoord | None = None
 
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "maximal_zenith_angle": "Maximum zenith angle allowed when selecting autofocus fields.",
@@ -1699,22 +1699,22 @@ class AutofocusConfig(BaseActionConfig):
     """
 
     exptime: float | int = field(default=3.0)
-    filter: Optional[str] = None
+    filter: str | None = None
     bin: int = 1
     reduce_exposure_time: bool = False
-    search_range: Optional[List[int] | int] = None
-    search_range_is_relative: bool = False
-    n_steps: List[int] = field(default_factory=lambda: [30, 20])
-    n_exposures: List[int] | int = field(default_factory=lambda: [1, 1])
+    search_range: list[int] | int | None = None
+    search_range_is_relative: bool = True
+    n_steps: list[int] = field(default_factory=lambda: [30, 20])
+    n_exposures: list[int] | int = field(default_factory=lambda: [1, 1])
     decrease_search_range: bool = True
     star_find_threshold: float | int = 5.0
-    fwhm: Optional[int] = None
+    fwhm: int | None = None
     percent_to_cut: int = 60
     focus_measure_operator: str = "HFR"
     save: bool = True
     extremum_estimator: str = "LOWESS"
     extremum_estimator_kwargs: dict[str, Any] = field(default_factory=dict)
-    secondary_focus_measure_operators: List[str] = field(
+    secondary_focus_measure_operators: list[str] = field(
         default_factory=lambda: [
             "fft",
             "normalized_variance",
@@ -1725,9 +1725,9 @@ class AutofocusConfig(BaseActionConfig):
         default_factory=AutofocusCalibrationFieldConfig,
         metadata={"required": True, "flatten": True},
     )
-    save_path: Optional[Path] = None
-    subframe_width: Optional[int] = None
-    subframe_height: Optional[int] = None
+    save_path: Path | None = None
+    subframe_width: int | None = None
+    subframe_height: int | None = None
     subframe_center_x: float = 0.5
     subframe_center_y: float = 0.5
     _focus_measure_operator = None
