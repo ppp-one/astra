@@ -79,6 +79,11 @@ ALLSKY_FEEDS = []  # List of {name, path} dicts
 TIMELAPSE: TimelapseRecorder | None = None  # Set when a camera has a `timelapse` key
 # Makes "check, then start" atomic for the watchdog start and device reconnect
 WATCHDOG_CONTROL_LOCK = threading.Lock()
+# Runs the schedule control requests (close, robotic switch, start and stop
+# schedule) one at a time. A stop waits for the schedule thread to end, so the
+# next request, for example a close, never runs while an action can still move
+# the devices.
+SCHEDULE_CONTROL_LOCK = threading.Lock()
 
 # Twilight calculation cache: stores (timestamp, start_time, end_time, periods)
 TWILIGHT_CACHE = None
@@ -98,7 +103,7 @@ SCHEDULE_SCHEMAS = {}
 #   "day"             : float         – days of history currently held
 #   "cached_at"       : datetime      – UTC timestamp of last DB fetch
 POLLING_CACHE: dict = {}
-POLLING_CACHE_LOCK = asyncio.Lock()
+POLLING_CACHE_LOCK = threading.Lock()
 
 
 def observatory_db() -> sqlite3.Connection:
@@ -531,11 +536,12 @@ def close_observatory():
 
     obs.logger.info("User initiated closing of observatory from web interface")
 
-    if obs.schedule_manager.running:
-        obs.logger.info("Stopping schedule for safety.")
-        obs.schedule_manager.stop_schedule(obs.thread_manager)
+    with SCHEDULE_CONTROL_LOCK:
+        if obs.schedule_manager.running:
+            obs.logger.info("Stopping schedule for safety.")
+            obs.schedule_manager.stop_schedule(obs.thread_manager)
 
-    val = obs.close_observatory()
+        val = obs.close_observatory()
 
     if val:
         obs.logger.info("Observatory closed.")
@@ -747,7 +753,7 @@ async def stop_watchdog():
 
 
 @app.post("/api/roboticswitch")
-async def roboticswitch():
+def roboticswitch():
     """Toggle observatory robotic operation mode.
 
     Returns:
@@ -757,13 +763,14 @@ async def roboticswitch():
 
     obs.logger.info("User initiated robotic switch from web interface")
 
-    obs.toggle_robotic_switch()
+    with SCHEDULE_CONTROL_LOCK:
+        obs.toggle_robotic_switch()
 
     return {"status": "success", "data": obs.robotic_switch, "message": ""}
 
 
 @app.post("/api/startschedule")
-async def start_schedule():
+def start_schedule():
     """Start executing the observatory's observation schedule.
 
     Returns:
@@ -773,13 +780,14 @@ async def start_schedule():
 
     obs.logger.info("User initiated starting of schedule from web interface")
 
-    obs.start_schedule()
+    with SCHEDULE_CONTROL_LOCK:
+        obs.start_schedule()
 
     return {"status": "success", "data": "null", "message": ""}
 
 
 @app.post("/api/stopschedule")
-async def stop_schedule():
+def stop_schedule():
     """Stop executing the observatory's observation schedule.
 
     Returns:
@@ -789,13 +797,14 @@ async def stop_schedule():
 
     obs.logger.info("User initiated stopping of schedule from web interface")
 
-    obs.schedule_manager.stop_schedule(obs.thread_manager)
+    with SCHEDULE_CONTROL_LOCK:
+        obs.schedule_manager.stop_schedule(obs.thread_manager)
 
     return {"status": "success", "data": "null", "message": ""}
 
 
 @app.get("/api/schedule")
-async def schedule():
+def schedule():
     """Get current observatory schedule with formatted times.
 
     Returns:
@@ -947,7 +956,7 @@ def validate_schedule_items(schedule_items: list[dict]) -> list[dict]:
 
 
 @app.post("/api/validateschedule")
-async def validate_schedule(schedule_data: str = Body(..., media_type="text/plain")):
+def validate_schedule(schedule_data: str = Body(..., media_type="text/plain")):
     """Check a schedule from the web editor without saving it.
 
     Args:
@@ -998,7 +1007,7 @@ def parse_schedule_jsonl(schedule_data: str) -> list[dict]:
 
 
 @app.post("/api/editschedule")
-async def edit_schedule(
+def edit_schedule(
     schedule_data: str = Body(..., media_type="text/plain"), force: bool = False
 ):
     """Update observatory schedule from web editor.
@@ -1414,7 +1423,7 @@ def _process_polling_raw(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 
 @app.get("/api/db/polling/{device_type}")
-async def polling(device_type: str, day: float = 1, since: str | None = None):
+def polling(device_type: str, day: float = 1, since: str | None = None):
     """Get device polling data from observatory database.
 
     Uses an append-only in-memory cache keyed by *device_type*:
@@ -1425,7 +1434,7 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
       ``last_cached_timestamp - 2 min``, reprocess that overlap window to
       ensure the most-recent 60 s bucket is complete, merge into the cache,
       and prune rows older than the requested ``day`` window.
-    * Concurrent requests share a single ``asyncio.Lock`` so only one DB
+    * Concurrent requests share a single ``threading.Lock`` so only one DB
       fetch runs at a time; any waiter re-uses the freshly-updated cache.
 
     Args:
@@ -1447,7 +1456,7 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
     obs = OBSERVATORY
     now = datetime.datetime.now(UTC)
 
-    async with POLLING_CACHE_LOCK:
+    with POLLING_CACHE_LOCK:
         cache = POLLING_CACHE.get(device_type)
 
         cache_covers_day = (
@@ -1592,7 +1601,7 @@ async def polling(device_type: str, day: float = 1, since: str | None = None):
 
 
 @app.get("/api/db/guiding")
-async def guiding_data(
+def guiding_data(
     day: float = 1, since: str | None = None, telescope: str | None = None
 ):
     """Get autoguider log data for plotting guiding performance.
@@ -1636,7 +1645,7 @@ async def guiding_data(
 
 
 @app.get("/api/log")
-async def log(datetime: str, limit: int = 100):
+def log(datetime: str, limit: int = 100):
     """Get observatory log entries before specified datetime.
 
     Args:
@@ -1656,6 +1665,15 @@ async def log(datetime: str, limit: int = 100):
     return df.to_dict(orient="records")
 
 
+def read_log(q: str) -> pd.DataFrame:
+    """Run a log query with its own connection, so it works in any thread."""
+    db = observatory_db()
+    try:
+        return pd.read_sql_query(q, db)
+    finally:
+        db.close()
+
+
 @app.websocket("/ws/log")
 async def websocket_log(websocket: WebSocket):
     """WebSocket endpoint for real-time log streaming.
@@ -1669,9 +1687,8 @@ async def websocket_log(websocket: WebSocket):
     await websocket.accept()
     obs = OBSERVATORY
 
-    db = observatory_db()
     q = """SELECT * FROM (SELECT * FROM log ORDER BY datetime DESC LIMIT 100) a ORDER BY datetime ASC"""
-    initial_df = pd.read_sql_query(q, db)
+    initial_df = await asyncio.to_thread(read_log, q)
 
     last_time = initial_df.datetime.iloc[-1]
 
@@ -1693,7 +1710,7 @@ async def websocket_log(websocket: WebSocket):
         if len(initial_log) > 0:
             q = f"""SELECT * FROM log WHERE datetime > '{last_time}'"""
 
-        df = pd.read_sql_query(q, db)
+        df = await asyncio.to_thread(read_log, q)
         data = df.to_dict(orient="records")
 
         data_dict = {}
@@ -1706,7 +1723,6 @@ async def websocket_log(websocket: WebSocket):
             await websocket.send_json(data_dict)
             await asyncio.sleep(1)
         except Exception:
-            db.close()
             logging.info("log socket closed")
             socket = False
 
@@ -2231,7 +2247,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 LAST_IMAGE = most_recent_path
                 LAST_IMAGE_TIME = most_recent_time
                 try:
-                    jpeg_bytes, headers = convert_fits_to_preview(str(LAST_IMAGE))
+                    jpeg_bytes, headers = await asyncio.to_thread(
+                        convert_fits_to_preview, str(LAST_IMAGE)
+                    )
                     LAST_IMAGE_PREVIEW = (jpeg_bytes, headers)
                 except Exception as e:
                     logger.error(f"Error converting FITS to preview: {e}")
