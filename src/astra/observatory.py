@@ -1499,6 +1499,7 @@ class Observatory:
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
+                        schedule_sensitive=True,
                     )
             else:
                 self.robotic_switch = False
@@ -1529,6 +1530,7 @@ class Observatory:
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
+                        schedule_sensitive=True,
                     )
                 else:
                     self.open_observatory()
@@ -1540,6 +1542,7 @@ class Observatory:
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
+                        schedule_sensitive=True,
                     )
                 else:
                     self.close_observatory()
@@ -1550,6 +1553,7 @@ class Observatory:
                         set_temperature,
                         temperature_tolerance,
                         cooling_timeout,
+                        schedule_sensitive=True,
                     )
             elif "complete_headers" == action.action_type:
                 HeaderManager.final_headers(
@@ -1598,6 +1602,7 @@ class Observatory:
         set_temperature: float,
         temperature_tolerance: float = 1,
         cooling_timeout: int = 30,
+        schedule_sensitive: bool = False,
     ) -> None:
         """
         Cool a camera to the specified temperature.
@@ -1614,6 +1619,9 @@ class Observatory:
                 deviation from target in degrees Celsius. Defaults to 1.
             cooling_timeout (int, optional): Time in minutes to wait for cooling
                 before raising error. Defaults to 30.
+            schedule_sensitive (bool, optional): Stop waiting when the schedule
+                stops. Set it when a schedule action cools the camera, so a
+                schedule stop does not wait for the cooling. Defaults to False.
 
         Process:
             1. Turns on the camera cooler
@@ -1639,6 +1647,7 @@ class Observatory:
             device_name=device_name,
             log_message=f"Turning on camera cooler for {device_name}",
             weather_sensitive=False,
+            schedule_sensitive=schedule_sensitive,
         )
 
         # set temperature
@@ -1653,6 +1662,7 @@ class Observatory:
             log_message=f"Setting camera {device_name} temperature to {set_temperature}C with tolerance of {temperature_tolerance}C",
             timeout=60 * cooling_timeout,
             weather_sensitive=False,
+            schedule_sensitive=schedule_sensitive,
         )
 
     def pre_sequence(
@@ -3970,6 +3980,7 @@ class Observatory:
         timeout: float = 120,
         error_sensitive: bool = True,
         weather_sensitive: bool = True,
+        schedule_sensitive: bool = False,
     ) -> None:
         """
         Monitor a device property and execute commands to achieve desired conditions.
@@ -3999,6 +4010,9 @@ class Observatory:
                 Defaults to True.
             weather_sensitive (bool, optional): Whether to abort on unsafe weather.
                 Defaults to True.
+            schedule_sensitive (bool, optional): Whether to abort when the
+                schedule stops. Use it only for tasks that a schedule action
+                runs. Defaults to False.
 
         Safety Features:
             - Continuous monitoring of weather and error conditions
@@ -4042,6 +4056,8 @@ class Observatory:
             ):
                 if not check_safe():
                     return
+                if schedule_sensitive and not self.schedule_manager.running:
+                    return
                 time.sleep(0.5)
                 self.logger.debug(
                     f"Monitor action: Waiting {device_type} {device_name} {monitor_command}"
@@ -4068,6 +4084,8 @@ class Observatory:
                 )
 
                 if not check_safe():
+                    return
+                if schedule_sensitive and not self.schedule_manager.running:
                     return
 
                 if time.time() - start_time > timeout:
