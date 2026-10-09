@@ -37,6 +37,7 @@ import math
 import os
 import threading
 import time
+import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -4076,21 +4077,20 @@ class Observatory:
             f"Monitor action: Starting {device_type} {device_name} {monitor_command} {desired_condition} {run_command} {run_command_type} {abs_tol} {log_message} {timeout}"
         )
 
-        # create unique key for monitor action and add to queue for device_name
-        unique_key = f"{device_type}{monitor_command}{desired_condition}{run_command}{run_command_type}"
-        self.device_manager.device_task_monitor_queue[device_name][unique_key] = (
-            start_time
+        # Add this call to the queue for device_name. The key must be unique per
+        # call: two identical calls, such as the web cool button and a schedule
+        # action both turning on the cooler, would otherwise share one entry, and
+        # the first to finish would delete it while the other still waits.
+        unique_key = (
+            f"{device_type}{monitor_command}{desired_condition}{run_command}"
+            f"{run_command_type}-{uuid.uuid4().hex}"
         )
+        queue = self.device_manager.device_task_monitor_queue[device_name]
+        queue[unique_key] = start_time
 
         try:
-            # Wait for turn
-            while any(
-                value
-                < self.device_manager.device_task_monitor_queue[device_name][unique_key]
-                for value in self.device_manager.device_task_monitor_queue[
-                    device_name
-                ].values()
-            ):
+            # Wait for turn. Read a copy, as other threads add and remove entries.
+            while any(value < start_time for value in list(queue.values())):
                 if not check_safe():
                     return
                 if schedule_sensitive and not self.schedule_manager.running:
