@@ -780,18 +780,41 @@ class CoolCameraActionConfig(BaseActionConfig):
 
     Activates the camera cooler and sets the target temperature with specified tolerance
     and timeout from observatory configuration.
+
+    A ``temperature`` given here is written to the observatory configuration as
+    the camera's new set temperature before cooling starts. Every later action
+    cools to it, also in later schedules, until it is changed again.
     """
+
+    temperature: float | None = None
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "temperature": (
+            "New set temperature in degrees Celsius. It is saved to the observatory "
+            "configuration, so later actions and later schedules also use it. "
+            "Leave it out to cool to the temperature already in the configuration."
+        ),
+    }
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
         "device_name": "camera_name",
         "action_type": "cool_camera",
-        "action_value": {},
+        "action_value": {"temperature": -10},
         "start_time": "2025-01-01 00:00:00.000",
         "end_time": "2025-02-01 00:00:00.000",
     }
 
     def validate(self):
-        pass
+        # The base type check skips "float | None", and a value that is not a
+        # number would only fail when the camera is asked to cool to it.
+        if self.temperature is not None and (
+            isinstance(self.temperature, bool)
+            or not isinstance(self.temperature, (int, float))
+        ):
+            raise TypeError(
+                f"temperature: expected a number of degrees Celsius, "
+                f"got {self.temperature!r}"
+            )
 
 
 @dataclass

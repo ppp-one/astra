@@ -98,6 +98,7 @@ class TestScheduleSensitiveTask:
             config={"Camera": []},
             logger=MagicMock(error_free=True),
             cool_camera=MagicMock(),
+            save_set_temperature=MagicMock(),
             check_conditions=lambda action: True,
             schedule_manager=SimpleNamespace(running=True),
             watchdog_running=True,

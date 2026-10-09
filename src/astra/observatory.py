@@ -1490,6 +1490,13 @@ class Observatory:
                     camera_name=action.device_name,
                 )
                 camera_config = paired_devices.get_device_config("Camera")
+                if action.action_type == "cool_camera":
+                    # Save first, so the cooling below already uses it
+                    self.save_set_temperature(
+                        action.device_name,
+                        action.action_value.get("temperature"),
+                        paired_devices,
+                    )
                 set_temperature = camera_config["temperature"]
                 temperature_tolerance = camera_config.get("temperature_tolerance", 1)
                 cooling_timeout = camera_config.get("cooling_timeout", 30)
@@ -1595,6 +1602,36 @@ class Observatory:
             self.logger.report_device_issue(
                 "Schedule", action.device_name, "Run action error.", exception=e
             )
+
+    def save_set_temperature(
+        self,
+        device_name: str,
+        temperature: float | None,
+        paired_devices: PairedDevices,
+    ) -> None:
+        """
+        Save a new camera set temperature to the observatory configuration.
+
+        All later actions read the set temperature from the configuration, so
+        they cool to the new value too. The value stays after the schedule ends.
+
+        Parameters:
+            device_name (str): Name of the camera.
+            temperature (float | None): New set temperature in degrees Celsius.
+                None, or the value already configured, changes nothing.
+            paired_devices (PairedDevices): Paired devices of the camera.
+        """
+        camera_config = paired_devices.get_device_config("Camera")
+        old_temperature = camera_config.get("temperature")
+        if temperature is None or temperature == old_temperature:
+            return
+
+        self.logger.info(
+            f"Changing set temperature of {device_name} from {old_temperature}C "
+            f"to {temperature}C in the observatory config"
+        )
+        camera_config["temperature"] = temperature
+        paired_devices.observatory_config.save()
 
     def cool_camera(
         self,
