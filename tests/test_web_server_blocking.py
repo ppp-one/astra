@@ -5,6 +5,8 @@ Covers:
       waiting when the schedule stops. Other tasks, such as the close
       sequence, do not stop. A schedule action cools the camera with
       `schedule_sensitive`.
+    - Two identical device tasks, such as the web cool button and a schedule
+      action, each keep their own place in the device task queue.
     - `/api/close` closes only after the schedule thread has ended, also when
       a robotic switch request is still waiting for it, so no action can move
       the devices during the close.
@@ -98,6 +100,7 @@ class TestScheduleSensitiveTask:
             config={"Camera": []},
             logger=MagicMock(error_free=True),
             cool_camera=MagicMock(),
+            save_set_temperature=MagicMock(),
             check_conditions=lambda action: True,
             schedule_manager=SimpleNamespace(running=True),
             watchdog_running=True,
@@ -111,6 +114,59 @@ class TestScheduleSensitiveTask:
         assert len(calls) == 2
         for call in calls:
             assert call.kwargs["schedule_sensitive"] is True
+
+
+class TestSameTaskTwice:
+    def test_identical_tasks_do_not_share_a_queue_entry(self, monkeypatch):
+        # The web cool button and a schedule action both turn on the cooler.
+        # The button's task waits behind a task that is still running. The
+        # schedule's task comes next and finishes while the button's task sleeps.
+        obs, camera = _monitor_observatory(running=True)
+        camera.get.return_value = True  # the cooler is already on
+        queue = obs.device_manager.device_task_monitor_queue["cam0"]
+        queue["earlier task"] = 0.0
+
+        release = Event()
+        sleepers = []
+
+        def sleep(seconds):
+            # Hold every wait until the test releases it
+            sleepers.append(threading.current_thread())
+            release.wait(5)
+
+        monkeypatch.setattr(
+            observatory_module, "time", SimpleNamespace(time=time.time, sleep=sleep)
+        )
+
+        def cooler_on():
+            Observatory.execute_and_monitor_device_task(
+                obs, "Camera", "CoolerOn", True, "CoolerOn", device_name="cam0"
+            )
+
+        button = threading.Thread(target=cooler_on)
+        button.start()
+        deadline = time.monotonic() + 5
+        while not sleepers and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert sleepers, "the button's task did not wait for the earlier task"
+
+        del queue["earlier task"]
+        schedule = threading.Thread(target=cooler_on)
+        schedule.start()
+        # The schedule's task either finishes or waits for the button's task
+        deadline = time.monotonic() + 5
+        while schedule.is_alive() and len(sleepers) < 2 and time.monotonic() < deadline:
+            time.sleep(0.01)
+        # The schedule queues its next task, so the queue is not empty
+        queue["next schedule task"] = time.time()
+
+        release.set()
+        button.join(5)
+        schedule.join(5)
+
+        assert not button.is_alive() and not schedule.is_alive()
+        obs.logger.report_device_issue.assert_not_called()
+        assert list(queue) == ["next schedule task"]
 
 
 @pytest.fixture

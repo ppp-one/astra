@@ -113,7 +113,7 @@ class TestActionValueSchema:
         assert schema_by_name(FlatsActionConfig)["filter"]["type"] == "array"
 
     def test_actions_without_settings_have_an_empty_schema(self):
-        for action_type in ("open", "close", "cool_camera", "complete_headers"):
+        for action_type in ("open", "close", "complete_headers"):
             assert action_value_schema(ACTION_CONFIGS[action_type]) == []
 
     def test_every_action_type_produces_a_serialisable_schema(self):

@@ -37,6 +37,7 @@ import math
 import os
 import threading
 import time
+import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -1490,6 +1491,13 @@ class Observatory:
                     camera_name=action.device_name,
                 )
                 camera_config = paired_devices.get_device_config("Camera")
+                if action.action_type == "cool_camera":
+                    # Save first, so the cooling below already uses it
+                    self.save_set_temperature(
+                        action.device_name,
+                        action.action_value.get("temperature"),
+                        paired_devices,
+                    )
                 set_temperature = camera_config["temperature"]
                 temperature_tolerance = camera_config.get("temperature_tolerance", 1)
                 cooling_timeout = camera_config.get("cooling_timeout", 30)
@@ -1595,6 +1603,36 @@ class Observatory:
             self.logger.report_device_issue(
                 "Schedule", action.device_name, "Run action error.", exception=e
             )
+
+    def save_set_temperature(
+        self,
+        device_name: str,
+        temperature: float | None,
+        paired_devices: PairedDevices,
+    ) -> None:
+        """
+        Save a new camera set temperature to the observatory configuration.
+
+        All later actions read the set temperature from the configuration, so
+        they cool to the new value too. The value stays after the schedule ends.
+
+        Parameters:
+            device_name (str): Name of the camera.
+            temperature (float | None): New set temperature in degrees Celsius.
+                None, or the value already configured, changes nothing.
+            paired_devices (PairedDevices): Paired devices of the camera.
+        """
+        camera_config = paired_devices.get_device_config("Camera")
+        old_temperature = camera_config.get("temperature")
+        if temperature is None or temperature == old_temperature:
+            return
+
+        self.logger.info(
+            f"Changing set temperature of {device_name} from {old_temperature}C "
+            f"to {temperature}C in the observatory config"
+        )
+        camera_config["temperature"] = temperature
+        paired_devices.observatory_config.save()
 
     def cool_camera(
         self,
@@ -4039,21 +4077,20 @@ class Observatory:
             f"Monitor action: Starting {device_type} {device_name} {monitor_command} {desired_condition} {run_command} {run_command_type} {abs_tol} {log_message} {timeout}"
         )
 
-        # create unique key for monitor action and add to queue for device_name
-        unique_key = f"{device_type}{monitor_command}{desired_condition}{run_command}{run_command_type}"
-        self.device_manager.device_task_monitor_queue[device_name][unique_key] = (
-            start_time
+        # Add this call to the queue for device_name. The key must be unique per
+        # call: two identical calls, such as the web cool button and a schedule
+        # action both turning on the cooler, would otherwise share one entry, and
+        # the first to finish would delete it while the other still waits.
+        unique_key = (
+            f"{device_type}{monitor_command}{desired_condition}{run_command}"
+            f"{run_command_type}-{uuid.uuid4().hex}"
         )
+        queue = self.device_manager.device_task_monitor_queue[device_name]
+        queue[unique_key] = start_time
 
         try:
-            # Wait for turn
-            while any(
-                value
-                < self.device_manager.device_task_monitor_queue[device_name][unique_key]
-                for value in self.device_manager.device_task_monitor_queue[
-                    device_name
-                ].values()
-            ):
+            # Wait for turn. Read a copy, as other threads add and remove entries.
+            while any(value < start_time for value in list(queue.values())):
                 if not check_safe():
                     return
                 if schedule_sensitive and not self.schedule_manager.running:

@@ -780,18 +780,41 @@ class CoolCameraActionConfig(BaseActionConfig):
 
     Activates the camera cooler and sets the target temperature with specified tolerance
     and timeout from observatory configuration.
+
+    A ``temperature`` given here is written to the observatory configuration as
+    the camera's new set temperature before cooling starts. Every later action
+    cools to it, also in later schedules, until it is changed again.
     """
+
+    temperature: Optional[float] = None
+
+    FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
+        "temperature": (
+            "New set temperature in degrees Celsius. It is saved to the observatory "
+            "configuration, so later actions and later schedules also use it. "
+            "Leave it out to cool to the temperature already in the configuration."
+        ),
+    }
 
     EXAMPLE_SCHEDULE: ClassVar[dict] = {
         "device_name": "camera_name",
         "action_type": "cool_camera",
-        "action_value": {},
+        "action_value": {"temperature": -10},
         "start_time": "2025-01-01 00:00:00.000",
         "end_time": "2025-02-01 00:00:00.000",
     }
 
     def validate(self):
-        pass
+        # The base type check would reject a whole number such as -10, which is
+        # how JSON gives most temperatures, so accept any number here.
+        if self.temperature is not None and (
+            isinstance(self.temperature, bool)
+            or not isinstance(self.temperature, (int, float))
+        ):
+            raise TypeError(
+                f"temperature: expected a number of degrees Celsius, "
+                f"got {self.temperature!r}"
+            )
 
 
 @dataclass
@@ -1703,7 +1726,7 @@ class AutofocusConfig(BaseActionConfig):
     bin: int = 1
     reduce_exposure_time: bool = False
     search_range: Optional[List[int] | int] = None
-    search_range_is_relative: bool = False
+    search_range_is_relative: bool = True
     n_steps: List[int] = field(default_factory=lambda: [30, 20])
     n_exposures: List[int] | int = field(default_factory=lambda: [1, 1])
     decrease_search_range: bool = True
