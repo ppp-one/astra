@@ -1619,6 +1619,10 @@
         let timelapseIndex = 0;
         let timelapseTimer = null;
 
+        // SVG icons, because mobile browsers draw the ▶ character as a colour emoji
+        const TIMELAPSE_PLAY_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="mx-auto h-4 w-4" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>';
+        const TIMELAPSE_PAUSE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="mx-auto h-4 w-4" aria-hidden="true"><path d="M6 4.5h4v15H6zM14 4.5h4v15h-4z"/></svg>';
+
         function timelapseFrameUrl(index) {
             return `/api/timelapse/${encodeURIComponent(timelapseCamera)}/${encodeURIComponent(timelapseFrames[index].file)}`;
         }
@@ -1732,7 +1736,7 @@
             }, 1000 / fps);
 
             const playButton = document.getElementById('timelapse-play');
-            playButton.innerHTML = '&#10074;&#10074;';
+            playButton.innerHTML = TIMELAPSE_PAUSE_ICON;
             playButton.title = 'Pause (Space)';
         }
 
@@ -1740,7 +1744,7 @@
             clearInterval(timelapseTimer);
             timelapseTimer = null;
             const playButton = document.getElementById('timelapse-play');
-            playButton.innerHTML = '&#9654;';
+            playButton.innerHTML = TIMELAPSE_PLAY_ICON;
             playButton.title = 'Play (Space)';
         }
 
@@ -1838,7 +1842,7 @@
                             <button type="button" onclick="stepTimelapse(-1)" title="Previous frame (Left arrow)"
                                 class="rounded px-2 py-1 hover:bg-white/10">&#8249;</button>
                             <button type="button" id="timelapse-play" onclick="toggleTimelapsePlay()" title="Play (Space)"
-                                class="w-10 rounded px-2 py-1 hover:bg-white/10">&#9654;</button>
+                                class="w-10 self-stretch rounded px-2 py-1 hover:bg-white/10"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="mx-auto h-4 w-4" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
                             <button type="button" onclick="stepTimelapse(1)" title="Next frame (Right arrow)"
                                 class="rounded px-2 py-1 hover:bg-white/10">&#8250;</button>
                             <select id="timelapse-speed" onchange="changeTimelapseSpeed()" aria-label="Playback speed"
