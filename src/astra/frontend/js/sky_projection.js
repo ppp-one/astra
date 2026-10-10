@@ -88,6 +88,7 @@ const SKY_LABEL_ZOOM = 3; // from this zoom on, label NGC objects and stars
 // a proper star name: capitalised words, and no constellation abbreviation at the end
 const STAR_PROPER_NAME = /^(?![^]* [A-Z][a-z]{2}$)[A-Z][a-z']+( [A-Z][a-z']+)*$/;
 let skyView = { cx: 0, cy: 0, scale: 1 };
+let skyChartView = skyView; // the view skyChart was drawn with
 let skyRedrawPending = false;
 
 function setSkyView(cx, cy, scale) {
@@ -122,12 +123,16 @@ function redrawSky() {
     });
 }
 
-function clientToSky(clientX, clientY) {
-    // screen position to plot units, using the scales of the current plot
+function clientToSky(clientX, clientY, view = skyView) {
+    // Screen position to plot units in the given view. The drawn plot can be
+    // one frame behind skyView (redraws wait for the next frame), so convert
+    // with its scales, then move from the drawn view to the given view.
     const rect = skyChart.getBoundingClientRect();
+    const drawn = skyChartView;
+    const keep = drawn.scale / view.scale;
     return {
-        x: skyChart.scale("x").invert(clientX - rect.left),
-        y: skyChart.scale("y").invert(clientY - rect.top),
+        x: view.cx + (skyChart.scale("x").invert(clientX - rect.left) - drawn.cx) * keep,
+        y: view.cy + (skyChart.scale("y").invert(clientY - rect.top) - drawn.cy) * keep,
     };
 }
 
@@ -651,6 +656,7 @@ function plotSkyProjection() {
 
     // Keep the plot for its scales, used by zoom and pan
     skyChart = plot;
+    skyChartView = skyView;
 
     // Objects that a right-click or long-press can copy, and a grab hand when
     // the map can be moved
@@ -864,7 +870,7 @@ function initializeSkyChart() {
         const pointers = new Map(); // pointerId -> last { x, y }
         let dragStart = null;
         let dragMoved = false;
-        let pinchDistance = null;
+        let pinch = null; // at the start of a pinch: { distance, view, point }
 
         // Long-press on touch screens copies the name of the object under the
         // finger. Browsers only allow the clipboard right after the user acts,
@@ -897,12 +903,26 @@ function initializeSkyChart() {
                 updateMousePos(event);
                 if (event.pointerType === "mouse") event.stopPropagation();
                 if (event.pointerType === "mouse" && event.button !== 0) return;
+                // the first finger (or the mouse) starts a new gesture, so drop
+                // pointers whose pointerup never arrived
+                if (event.isPrimary) pointers.clear();
                 if (pointers.size === 0) {
                     dragStart = { x: event.clientX, y: event.clientY };
                     dragMoved = false;
                 }
                 pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-                if (pointers.size === 2) pinchDistance = pinchState().distance;
+                if (pointers.size === 2) {
+                    // Zoom from the state at the start of the pinch, not step by
+                    // step, so small errors in each step do not add up
+                    const { distance, middle } = pinchState();
+                    pinch = { distance, view: skyView, point: clientToSky(middle.x, middle.y) };
+                    // Each redraw replaces the SVG. A touch stays on the element it
+                    // started on, so without capture, the moves of a finger that
+                    // started on the old SVG no longer reach the container.
+                    for (const id of pointers.keys()) {
+                        if (!container.hasPointerCapture(id)) container.setPointerCapture(id);
+                    }
+                }
 
                 cancelLongPress();
                 if (event.pointerType !== "mouse" && pointers.size === 1) {
@@ -921,6 +941,9 @@ function initializeSkyChart() {
         );
 
         container.addEventListener("pointermove", (event) => {
+            // Not the event that a redraw sends to restore the hover. It has
+            // pointerId 0, which can be the id of a real finger.
+            if (!event.isTrusted) return;
             const last = pointers.get(event.pointerId);
             if (!last || !skyChart) return;
             const now = { x: event.clientX, y: event.clientY };
@@ -932,9 +955,11 @@ function initializeSkyChart() {
 
             if (pointers.size === 2) {
                 pointers.set(event.pointerId, now);
+                // keep the sky point that was between the fingers between them
                 const { distance, middle } = pinchState();
-                zoomSkyAt(clientToSky(middle.x, middle.y), distance / pinchDistance);
-                pinchDistance = distance;
+                const scale = Math.min(SKY_MAX_ZOOM, Math.max(1, (pinch.view.scale * distance) / pinch.distance));
+                const offset = clientToSky(middle.x, middle.y, { cx: 0, cy: 0, scale });
+                setSkyView(pinch.point.x - offset.x, pinch.point.y - offset.y, scale);
                 dragMoved = true;
                 return;
             }
@@ -954,9 +979,20 @@ function initializeSkyChart() {
             setSkyView(skyView.cx - (to.x - from.x), skyView.cy - (to.y - from.y), skyView.scale);
         });
 
+        // At full view, touch-action is pan-y so one finger scrolls the page.
+        // The browser can then take a two-finger gesture as a scroll (or zoom
+        // the whole page) and cancel our pointers. Block that for two fingers.
+        container.addEventListener(
+            "touchmove",
+            (event) => {
+                if (event.touches.length > 1 && event.cancelable) event.preventDefault();
+            },
+            { passive: false },
+        );
+
         const endPointer = (event) => {
             pointers.delete(event.pointerId);
-            if (pointers.size < 2) pinchDistance = null;
+            if (pointers.size < 2) pinch = null;
             if (pointers.size === 0) container.style.cursor = "";
         };
         container.addEventListener("pointerup", (event) => {
