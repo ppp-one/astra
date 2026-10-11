@@ -61,7 +61,7 @@ from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.stats import sigma_clipped_stats
 from astropy.units import Quantity
-from astropy.wcs.utils import WCS, pixel_to_skycoord
+from astropy.wcs.utils import WCS, pixel_to_skycoord, proj_plane_pixel_scales
 from matplotlib import pyplot as plt
 from photutils.detection import DAOStarFinder
 
@@ -78,9 +78,8 @@ def calculate_pointing_correction_from_fits(
     target_ra: float | None = None,
     target_dec: float | None = None,
     filter_band: Optional[str] = None,
-    fraction_of_stars_to_match: float = 0.70,
-    or_min_number_of_stars_to_match: int = 8,
     use_local_db: bool = False,
+    logger: Optional[logging.Logger] = None,
 ):
     """
     Calculate pointing correction from a FITS file.
@@ -97,11 +96,10 @@ def calculate_pointing_correction_from_fits(
         target_dec (float, optional): Target declination in degrees. If not
             provided, it's read from FITS header. Defaults to None.
         filter_band (str, optional): Filter band used for observation. Defaults to None.
-        fraction_of_stars_to_match (float, optional): Fraction of detected stars
-            required to be matched for a valid plate solve. Defaults to 0.70.
-        or_min_number_of_stars_to_match (int, optional): Minimum number of stars
-            required to be matched for a valid plate solve. Defaults to 8.
         use_local_db (bool, optional): Whether to use the local Gaia database. Defaults to False.
+        logger (logging.Logger, optional): Logger for progress messages, for
+            example the observatory logger so the messages reach the UI.
+            Defaults to the module logger.
 
     Returns:
         Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
@@ -111,8 +109,9 @@ def calculate_pointing_correction_from_fits(
 
     Raises:
         Exception: If insufficient stars are detected for plate solving,
-            if the offset is larger than the field of view, or if too few
-            stars are matched.
+            or if the offset is larger than the field of view.
+        PlateSolveError: If no solution passes the checks in
+            ``_verify_plate_solve``.
     """
     image, header = _read_fits_file(filepath)
 
@@ -134,9 +133,8 @@ def calculate_pointing_correction_from_fits(
         dateobs=dateobs,
         plate_scale=plate_scale,
         filter_band=filter_band,
-        fraction_of_stars_to_match=fraction_of_stars_to_match,
-        or_min_number_of_stars_to_match=or_min_number_of_stars_to_match,
         use_local_db=use_local_db,
+        logger=logger,
     )
 
 
@@ -147,9 +145,8 @@ def calculate_pointing_correction_from_image(
     dateobs: datetime,
     plate_scale: float,
     filter_band: Optional[str] = None,
-    fraction_of_stars_to_match: float = 0.70,
-    or_min_number_of_stars_to_match: int = 8,
     use_local_db: bool = False,
+    logger: Optional[logging.Logger] = None,
 ):
     """
     Calculate pointing correction from an image array.
@@ -164,11 +161,10 @@ def calculate_pointing_correction_from_image(
         dateobs (datetime): Observation date for proper motion corrections.
         plate_scale (float): Image plate scale in degrees per pixel.
         filter_band (str, optional): Filter band used for observation.
-        fraction_of_stars_to_match (float, optional): Fraction of detected stars
-            required to be matched for a valid plate solve. Defaults to 0.70.
-        or_min_number_of_stars_to_match (int, optional): Minimum number of stars
-            required to be matched for a valid plate solve. Defaults to 8.
         use_local_db (bool, optional): Whether to use the local Gaia database. Defaults to False.
+        logger (logging.Logger, optional): Logger for progress messages, for
+            example the observatory logger so the messages reach the UI.
+            Defaults to the module logger.
 
     Returns:
         Tuple[PointingCorrection, ImageStarMapping, int]: A tuple containing:
@@ -178,9 +174,11 @@ def calculate_pointing_correction_from_image(
 
     Raises:
         Exception: If insufficient stars are detected for plate solving,
-            if the offset is larger than the field of view, or if too few
-            stars are matched.
+            or if the offset is larger than the field of view.
+        PlateSolveError: If no solution passes the checks in
+            ``_verify_plate_solve``.
     """
+    logger = logging.getLogger(__name__) if logger is None else logger
     image_clean = clean_image(image)
 
     # assume 2" FWHM
@@ -211,11 +209,12 @@ def calculate_pointing_correction_from_image(
         fov_scale=1.25,
         limit=int(2 * stars_in_image_used),
         use_local_db=use_local_db,
+        logger=logger,
     )
     logger.debug(f"Queried {len(gaia_star_coordinates)} Gaia stars for plate solving")
 
     image_star_mapping = ImageStarMapping.from_gaia_coordinates(
-        stars_in_image, gaia_star_coordinates
+        stars_in_image, gaia_star_coordinates, plate_scale=plate_scale, logger=logger
     )
 
     plating_ra, plating_dec = image_star_mapping.get_plating_center(
@@ -230,12 +229,6 @@ def calculate_pointing_correction_from_image(
     )
 
     _verify_offset_within_fov(pointing_correction, plate_scale, image_clean.shape)
-
-    _verify_plate_solve(
-        image_star_mapping,
-        fraction_of_stars_to_match=fraction_of_stars_to_match,
-        or_min_number_of_stars_to_match=or_min_number_of_stars_to_match,
-    )
 
     return pointing_correction, image_star_mapping, stars_in_image_used
 
@@ -293,6 +286,10 @@ def find_stars(
     )
 
     return coordinates
+
+
+class PlateSolveError(Exception):
+    """Raised when twirl finds no solution, or no solution passes the checks."""
 
 
 @dataclass
@@ -431,32 +428,85 @@ class ImageStarMapping:
     gaia_stars_in_image: np.ndarray
 
     @classmethod
-    def from_gaia_coordinates(cls, stars_in_image: np.ndarray, gaia_stars: np.ndarray):
+    def from_gaia_coordinates(
+        cls,
+        stars_in_image: np.ndarray,
+        gaia_stars: np.ndarray,
+        plate_scale: Optional[float] = None,
+        logger: Optional[logging.Logger] = None,
+    ):
         """
         Create an ImageStarMapping instance from detected stars and Gaia coordinates.
 
         Computes the World Coordinate System (WCS) transformation using the twirl
         library to map between pixel and sky coordinates.
 
+        If ``plate_scale`` is given, twirl first matches triangles of stars,
+        which is fast. If that gives no solution, raises, or the solution
+        fails ``_verify_plate_solve``, it tries once more with quads of stars
+        (the twirl defaults). Triangles can give wrong solutions that only the
+        checks catch, so without ``plate_scale`` only quads are used and the
+        solution is not checked.
+
         Parameters:
             stars_in_image (np.ndarray): Array of detected star coordinates in pixels (x, y).
             gaia_stars (np.ndarray): Array of Gaia star coordinates in degrees (ra, dec).
+            plate_scale (float, optional): Expected plate scale in degrees per
+                pixel. If given, each solution must pass ``_verify_plate_solve``.
+            logger (logging.Logger, optional): Logger for the result of each
+                attempt. Defaults to the module logger.
 
         Returns:
             ImageStarMapping: New instance with computed WCS and transformed coordinates.
 
         Raises:
-            Exception: If twirl finds no match between the image stars and the
-                Gaia stars.
+            PlateSolveError: If no attempt gives a solution that passes the
+                checks.
         """
-        wcs = twirl.compute_wcs(stars_in_image, gaia_stars)
-        if wcs is None:
-            raise Exception(
-                f"Plate solve failed: no match between the {len(stars_in_image)} "
-                f"image stars and the {len(gaia_stars)} Gaia stars"
-            )
-        gaia_stars_in_image = np.array(SkyCoord(gaia_stars, unit="deg").to_pixel(wcs)).T
-        return cls(wcs, stars_in_image, gaia_stars_in_image)
+        logger = logging.getLogger(__name__) if logger is None else logger
+        if plate_scale is None:
+            attempts = {"quads": {}}
+        else:
+            attempts = {
+                "triangles": {"asterism": 3, "min_match": 0.5},
+                "quads": {},
+            }
+        failures = []
+        for name, kwargs in attempts.items():
+            try:
+                wcs = twirl.compute_wcs(stars_in_image, gaia_stars, **kwargs)
+            except Exception as e:
+                # e.g. fit_wcs_from_points raises on a bad match
+                failures.append(f"{name}: {e}")
+                logger.info(f"Plate solve with {name} raised: {e}")
+                continue
+            if wcs is None:
+                failures.append(
+                    f"{name}: no match between the {len(stars_in_image)} "
+                    f"image stars and the {len(gaia_stars)} Gaia stars"
+                )
+                logger.info(f"Plate solve with {name} found no match")
+                continue
+
+            gaia_stars_in_image = np.array(
+                SkyCoord(gaia_stars, unit="deg").to_pixel(wcs)
+            ).T
+            mapping = cls(wcs, stars_in_image, gaia_stars_in_image)
+            if plate_scale is None:
+                return mapping
+
+            try:
+                summary = _verify_plate_solve(mapping, plate_scale)
+            except PlateSolveError as e:
+                failures.append(f"{name}: {e}")
+                logger.info(f"Plate solve with {name} rejected: {e}")
+                continue
+
+            fallback = "quads fallback" if failures else "no fallback"
+            logger.info(f"Plate solved with {name} ({fallback}): {summary}")
+            return mapping
+
+        raise PlateSolveError("Plate solve failed. " + "; ".join(failures))
 
     def get_plating_center(self, image_shape: Tuple[int, int]) -> Tuple[float, float]:
         """
@@ -523,12 +573,12 @@ class ImageStarMapping:
 
         return self.gaia_stars_in_image[match_index], distance
 
-    def number_of_matched_stars(self, pixel_threshold: int = 10):
+    def number_of_matched_stars(self, pixel_threshold: float = 10):
         """
         Count the number of stars matched within a pixel threshold.
 
         Parameters:
-            pixel_threshold (int, optional): Maximum distance in pixels to consider
+            pixel_threshold (float, optional): Maximum distance in pixels to consider
                 a match valid. Defaults to 10.
 
         Returns:
@@ -668,6 +718,7 @@ def _get_gaia_star_coordinates(
     fov_scale=1.1,
     limit=24,
     use_local_db: bool = False,
+    logger: Optional[logging.Logger] = None,
 ):
     """
     Get Gaia star coordinates for a given field of view.
@@ -682,10 +733,13 @@ def _get_gaia_star_coordinates(
         fov_scale (float, optional): Factor to scale field of view. Defaults to 1.1.
         limit (int, optional): Maximum number of stars to query. Defaults to 24.
         use_local_db (bool, optional): Whether to use the local Gaia database. Defaults to False.
+        logger (logging.Logger, optional): Logger for progress messages.
+            Defaults to the module logger.
 
     Returns:
         np.ndarray: Array of Gaia star coordinates.
     """
+    logger = logging.getLogger(__name__) if logger is None else logger
     # Get fov from image shape and plate scale
     fov = optics.fov_from_plate_scale(image_clean.shape, plate_scale) * fov_scale
     gaia_tmass_filter = _map_filter_band_to_gaia_tmass(filter_band)
@@ -752,51 +806,89 @@ def _verify_offset_within_fov(
 
 def _verify_plate_solve(
     image_star_mapping: ImageStarMapping,
-    pixel_threshold: int = 20,
-    fraction_of_stars_to_match: float = 0.70,
-    or_min_number_of_stars_to_match: int = 8,
+    plate_scale: float,
+    scale_tolerance: float = 0.05,
+    max_axis_ratio: float = 1.02,
+    max_skew_deg: float = 1.0,
+    match_radius_arcsec: float = 3.5,
+    min_matched_stars: int = 4,
 ):
     """
-    Verify the plate solve by checking the number of matched stars.
+    Verify that the WCS from a plate solve is physically plausible.
+
+    A wrong solution can match a few stars by chance, but it seldom also has
+    the correct plate scale and square pixels. The solve is accepted only if
+    all of these checks pass:
+
+    - Each axis of the fitted plate scale is within ``scale_tolerance`` of
+      ``plate_scale``.
+    - The pixels are square: the ratio of the two axis scales is below
+      ``max_axis_ratio`` and the axes are within ``max_skew_deg`` of 90 degrees.
+    - At least ``min_matched_stars`` detected stars have a Gaia star within
+      ``match_radius_arcsec``.
 
     Parameters:
         image_star_mapping (ImageStarMapping): The image-star mapping object.
-        pixel_threshold (int, optional): Pixel distance threshold for a match.
-            Defaults to 20.
-        fraction_of_stars_to_match (float, optional): Minimum fraction of stars
-            that must be matched. Defaults to 0.70.
-        or_min_number_of_stars_to_match (int, optional): Minimum absolute number
-            of stars that must be matched. Defaults to 8.
+        plate_scale (float): Expected plate scale in degrees per pixel, for
+            example from FOCALLEN and XPIXSZ.
+        scale_tolerance (float, optional): Allowed fractional difference
+            between the fitted and expected plate scale. Defaults to 0.05.
+        max_axis_ratio (float, optional): Largest allowed ratio between the two
+            axis scales. Defaults to 1.02.
+        max_skew_deg (float, optional): Largest allowed difference in degrees
+            between the angle of the two axes and 90 degrees. Defaults to 1.0.
+        match_radius_arcsec (float, optional): Largest distance in arcseconds
+            between a detected star and its Gaia match. Defaults to 3.5, which
+            is about 10 pixels at 0.35"/pixel.
+        min_matched_stars (int, optional): Smallest number of detected stars
+            that must have a Gaia match. Defaults to 4.
+
+    Returns:
+        str: A one-line summary of the measured values, for the log.
 
     Raises:
-        Exception: If too few stars are matched.
+        PlateSolveError: If one of the checks fails.
     """
+    wcs = image_star_mapping.wcs
+
+    fitted_scales = proj_plane_pixel_scales(wcs)  # deg/pixel, one per axis
+    scale_errors = fitted_scales / plate_scale - 1
+    if np.any(np.abs(scale_errors) > scale_tolerance):
+        raise PlateSolveError(
+            f'fitted plate scale {fitted_scales[0] * 3600:.3f}"/px x '
+            f'{fitted_scales[1] * 3600:.3f}"/px is not within '
+            f'{scale_tolerance:.0%} of the expected {plate_scale * 3600:.3f}"/px'
+        )
+
+    axis_ratio = fitted_scales.max() / fitted_scales.min()
+    cd = wcs.pixel_scale_matrix
+    cos_angle = np.dot(cd[:, 0], cd[:, 1]) / np.prod(fitted_scales)
+    skew_deg = np.degrees(np.arcsin(min(abs(cos_angle), 1.0)))
+    if axis_ratio >= max_axis_ratio or skew_deg >= max_skew_deg:
+        raise PlateSolveError(
+            f"pixels are not square: axis ratio {axis_ratio:.3f} "
+            f"(limit {max_axis_ratio}), skew {skew_deg:.2f} deg "
+            f"(limit {max_skew_deg} deg)"
+        )
+
+    match_radius_px = match_radius_arcsec / 3600 / plate_scale
     number_of_matched_stars = image_star_mapping.number_of_matched_stars(
-        pixel_threshold=pixel_threshold
+        pixel_threshold=match_radius_px
     )
-
-    num_gaia_stars = len(image_star_mapping.gaia_stars_in_image)
-    num_image_stars = len(image_star_mapping.stars_in_image)
-
-    # Check if match criteria are met (fraction OR absolute minimum)
-    match_fraction = number_of_matched_stars / num_image_stars
-    meets_fraction_threshold = match_fraction >= fraction_of_stars_to_match
-    meets_absolute_threshold = (
-        number_of_matched_stars >= or_min_number_of_stars_to_match
-    )
-
-    if not (meets_fraction_threshold or meets_absolute_threshold):
-        raise Exception(
-            f"Plate solve failed: only {match_fraction:.2%} ({number_of_matched_stars}/{num_image_stars}) stars matched. "
-            f"Required: {fraction_of_stars_to_match:.0%} or minimum {or_min_number_of_stars_to_match} stars."
+    if number_of_matched_stars < min_matched_stars:
+        raise PlateSolveError(
+            f"only {number_of_matched_stars} of "
+            f"{len(image_star_mapping.stars_in_image)} detected stars have a "
+            f'Gaia star within {match_radius_arcsec}" ({match_radius_px:.1f} px). '
+            f"Required: {min_matched_stars}."
         )
 
-    # Check if we have fewer Gaia stars than detected image stars (only fail if min threshold not met)
-    if num_gaia_stars < num_image_stars and not meets_absolute_threshold:
-        raise Exception(
-            f"Plate solve failed: not enough Gaia stars in image. "
-            f"Only {num_gaia_stars} Gaia stars found, whereas {num_image_stars} stars detected in image."
-        )
+    return (
+        f"plate scale error {scale_errors[0]:+.1%} x {scale_errors[1]:+.1%}, "
+        f"axis ratio {axis_ratio:.3f}, skew {skew_deg:.2f} deg, "
+        f"{number_of_matched_stars}/{len(image_star_mapping.stars_in_image)} "
+        f'stars matched within {match_radius_arcsec}" ({match_radius_px:.1f} px)'
+    )
 
 
 def local_gaia_db_query(

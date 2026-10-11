@@ -3256,9 +3256,8 @@ class Observatory:
                 target_ra=action_value["ra"],
                 target_dec=action_value["dec"],
                 filter_band=action_value.get("filter", None),
-                fraction_of_stars_to_match=0.70,
-                or_min_number_of_stars_to_match=8,
                 use_local_db=use_local_db,
+                logger=self.logger,
             )
 
             number_of_matched_stars = image_star_mapping.number_of_matched_stars()
