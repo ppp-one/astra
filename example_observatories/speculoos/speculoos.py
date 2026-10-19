@@ -1,4 +1,8 @@
-from typing import List
+import math
+import threading
+import time
+from collections.abc import Callable
+from typing import Any, List
 
 import astra.utils.astelos_errors as astelos_errors
 from astra.observatory import Observatory
@@ -17,6 +21,27 @@ class SPECULOOS(Observatory):
     """
 
     OBSERVATORY_ALIASES: List[str] = ["ganymede", "europa", "io", "callisto"]
+
+    # Dome shutter commands that the ttTCLM driver runs in a background thread.
+    SHUTTER_COMMANDS = ("OpenShutter", "CloseShutter")
+    # Minimum time between two shutter commands on one dome. One AsTelOS
+    # power-up held its lock for 8.8 s on Europa (2026-10-18).
+    SHUTTER_COMMAND_MIN_GAP = 15.0
+    # How long TELESCOPE.READY_STATE must stay out of a power change before a
+    # shutter command is sent. The lock was held 2.1 s after READY_STATE reached 1.
+    READY_STATE_SETTLE_TIME = 3.0
+    READY_STATE_POLL_INTERVAL = 0.5
+    # The driver gives up a power-up after 5 minutes.
+    SHUTTER_GUARD_TIMEOUT = 300.0
+    # How often the watchdog checks that the driver still talks to AsTelOS.
+    ASTELOS_LINK_CHECK_INTERVAL = 60.0
+
+    def __init__(self, *args, **kwargs):
+        # Set before Observatory.__init__, which can start threads.
+        self._shutter_command_lock = threading.Lock()
+        self._last_shutter_command: dict[str, float] = {}
+        self._last_astelos_link_check = -math.inf
+        super().__init__(*args, **kwargs)
 
     def close_observatory(
         self, paired_devices: PairedDevices | None = None, error_sensitive: bool = True
@@ -193,8 +218,288 @@ class SPECULOOS(Observatory):
                         )
 
                 if not valid:
+                    if astelos_errors.is_status_reply(messages):
+                        message = (
+                            f"AsTelOS errors invalid for {telescope_name}: {messages}"
+                        )
+                    else:
+                        message = self._astelos_link_lost_message(
+                            telescope_name, messages
+                        )
                     self.logger.report_device_issue(
                         device_type="Telescope",
                         device_name=telescope_name,
-                        message=f"AsTelOS errors invalid for {telescope_name}: {messages}",
+                        message=message,
                     )
+
+    def execute_and_monitor_device_task(
+        self,
+        device_type: str,
+        monitor_command: str,
+        desired_condition: Any,
+        run_command: str,
+        device_name: str,
+        run_command_type: str = "",
+        abs_tol: float = 0,
+        log_message: str = "",
+        timeout: float = 120,
+        error_sensitive: bool = True,
+        weather_sensitive: bool = True,
+        schedule_sensitive: bool = False,
+    ) -> None:
+        """Run a monitor-action, and guard dome shutter commands first.
+
+        See Observatory.execute_and_monitor_device_task. For OpenShutter and
+        CloseShutter, this first waits until no AsTelOS power change is in
+        progress (see _wait_before_shutter_command).
+        """
+        is_shutter_command = (
+            device_type == "Dome" and run_command in self.SHUTTER_COMMANDS
+        )
+        if is_shutter_command and not self._wait_before_shutter_command(
+            device_name,
+            run_command,
+            desired_condition,
+            error_sensitive=error_sensitive,
+            weather_sensitive=weather_sensitive,
+        ):
+            return
+
+        super().execute_and_monitor_device_task(
+            device_type,
+            monitor_command,
+            desired_condition,
+            run_command,
+            device_name,
+            run_command_type=run_command_type,
+            abs_tol=abs_tol,
+            log_message=log_message,
+            timeout=timeout,
+            error_sensitive=error_sensitive,
+            weather_sensitive=weather_sensitive,
+            schedule_sensitive=schedule_sensitive,
+        )
+
+    def _wait_before_shutter_command(
+        self,
+        dome_name: str,
+        run_command: str,
+        desired_condition: Any,
+        error_sensitive: bool = True,
+        weather_sensitive: bool = True,
+    ) -> bool:
+        """Wait until a dome shutter command is safe to send to the ttTCLM driver.
+
+        The ttTCLM driver runs OpenShutter and CloseShutter in a background
+        thread. The thread first sends TELESCOPE.READY=1.0, and AsTelOS locks
+        TELESCOPE.READY until that power-up ends. If another READY command
+        arrives during the lock, AsTelOS replies LOCKEDBY. The driver thread
+        then raises an exception that nothing catches, and the driver closes
+        its connection to AsTelOS for good. After that it keeps answering
+        ASCOM calls with old values and gives no error.
+
+        So before a shutter command, this method waits until:
+            1. SHUTTER_COMMAND_MIN_GAP has passed since the last shutter
+               command on this dome, and
+            2. TELESCOPE.READY_STATE has been out of a power change
+               (not between 0 and 1) for READY_STATE_SETTLE_TIME.
+
+        Parameters:
+            dome_name (str): Dome that gets the command.
+            run_command (str): "OpenShutter" or "CloseShutter".
+            desired_condition (Any): ShutterStatus the command must reach.
+            error_sensitive (bool): Stop waiting if an error occurs.
+            weather_sensitive (bool): Stop waiting if the weather is unsafe.
+
+        Returns:
+            bool: True if the command can be sent. False if it must not be
+                sent: the wait was stopped, or an OpenShutter cannot be done
+                safely.
+        """
+        opening = run_command == "OpenShutter"
+
+        def stop_waiting() -> bool:
+            return (weather_sensitive and not self.weather_safe) or (
+                error_sensitive and not self.logger.error_free
+            )
+
+        # If the shutter is already in the desired state, the monitor-action
+        # sends no command, so there is nothing to guard.
+        try:
+            if (
+                self.devices["Dome"][dome_name].get("ShutterStatus")
+                == desired_condition
+            ):
+                return True
+        except Exception as e:
+            # The monitor-action reads ShutterStatus again and reports errors.
+            self.logger.debug(f"Could not read ShutterStatus of {dome_name}: {e}")
+
+        with self._shutter_command_lock:
+            deadline = time.monotonic() + self.SHUTTER_GUARD_TIMEOUT
+
+            # 1. Minimum gap since the last shutter command on this dome
+            last = self._last_shutter_command.get(dome_name)
+            if last is not None:
+                remaining = last + self.SHUTTER_COMMAND_MIN_GAP - time.monotonic()
+                if remaining > 0:
+                    self.logger.info(
+                        f"Waiting {remaining:.1f} s before {run_command} on "
+                        f"{dome_name}, because the last shutter command was "
+                        f"{time.monotonic() - last:.1f} s ago"
+                    )
+                while time.monotonic() < last + self.SHUTTER_COMMAND_MIN_GAP:
+                    if stop_waiting():
+                        return False
+                    time.sleep(self.READY_STATE_POLL_INTERVAL)
+
+            # 2. No AsTelOS power change in progress
+            result = self._wait_for_stable_ready_state(deadline, stop_waiting)
+            if result is None:
+                if opening:
+                    self.logger.report_device_issue(
+                        device_type="Dome",
+                        device_name=dome_name,
+                        message=f"Not sending {run_command} to {dome_name}: "
+                        "TELESCOPE.READY_STATE could not be read",
+                    )
+                    return False
+                self.logger.warning(
+                    f"TELESCOPE.READY_STATE could not be read. Sending "
+                    f"{run_command} to {dome_name} anyway."
+                )
+            elif result is False:
+                if stop_waiting():
+                    return False
+                if opening:
+                    self.logger.report_device_issue(
+                        device_type="Dome",
+                        device_name=dome_name,
+                        message=f"Not sending {run_command} to {dome_name}: AsTelOS "
+                        f"power change did not end within {self.SHUTTER_GUARD_TIMEOUT:.0f} s",
+                    )
+                    return False
+                self.logger.warning(
+                    f"AsTelOS power change did not end within "
+                    f"{self.SHUTTER_GUARD_TIMEOUT:.0f} s. Sending {run_command} "
+                    f"to {dome_name} anyway."
+                )
+
+            self._last_shutter_command[dome_name] = time.monotonic()
+            return True
+
+    def _wait_for_stable_ready_state(
+        self, deadline: float, stop_waiting: Callable[[], bool]
+    ) -> bool | None:
+        """Wait until no telescope has TELESCOPE.READY_STATE between 0 and 1.
+
+        READY_STATE is 0 when powered down and 1 when powered up. A value
+        between 0 and 1 means a power change is in progress. A negative value
+        is an error or local mode, not a power change.
+
+        Parameters:
+            deadline (float): time.monotonic() value at which to give up.
+            stop_waiting (Callable[[], bool]): Returns True to stop waiting.
+
+        Returns:
+            bool | None: True when READY_STATE has been stable for
+                READY_STATE_SETTLE_TIME. False at the deadline or when
+                stop_waiting() is True. None if READY_STATE could not be read.
+        """
+        stable_since = None
+        logged = False
+        while True:
+            if stop_waiting():
+                return False
+
+            states = self._astelos_ready_states()
+            if states is None:
+                return None
+
+            now = time.monotonic()
+            if all(state <= 0 or state >= 1 for state in states.values()):
+                if stable_since is None:
+                    stable_since = now
+                if now - stable_since >= self.READY_STATE_SETTLE_TIME:
+                    return True
+            else:
+                stable_since = None
+                if not logged:
+                    self.logger.info(
+                        f"Waiting for AsTelOS power change to end before a dome "
+                        f"shutter command (READY_STATE: {states})"
+                    )
+                    logged = True
+
+            if now > deadline:
+                return False
+            time.sleep(self.READY_STATE_POLL_INTERVAL)
+
+    def _astelos_ready_states(self) -> dict[str, float] | None:
+        """Read TELESCOPE.READY_STATE of each telescope.
+
+        Returns:
+            dict[str, float] | None: READY_STATE per telescope name, or None if
+                any value could not be read as a number.
+        """
+        states = {}
+        for telescope_name, telescope in self.devices.get("Telescope", {}).items():
+            try:
+                reply = telescope.get(
+                    "CommandString", Command="TELESCOPE.READY_STATE", Raw=True
+                )
+                states[telescope_name] = float(reply)
+            except Exception:
+                return None
+        return states
+
+    def _watchdog_step(self):
+        """Run the watchdog step, then check the AsTelOS link now and then."""
+        super()._watchdog_step()
+
+        if not self.watchdog_running or not self.logger.error_free:
+            return
+
+        now = time.monotonic()
+        if now - self._last_astelos_link_check < self.ASTELOS_LINK_CHECK_INTERVAL:
+            return
+        self._last_astelos_link_check = now
+        self._check_astelos_link()
+
+    def _check_astelos_link(self) -> None:
+        """Report a telescope error if the driver no longer talks to AsTelOS.
+
+        The ttTCLM driver can lose its connection to AsTelOS without an ASCOM
+        error. It then returns old values for all properties, and
+        CommandString returns "Client not Connected". Only CommandString shows
+        the problem, so it is read here.
+        """
+        for telescope_name, telescope in self.devices.get("Telescope", {}).items():
+            try:
+                reply = telescope.get(
+                    "CommandString", Command="TELESCOPE.STATUS.LIST", Raw=True
+                )
+            except Exception as e:
+                self.logger.report_device_issue(
+                    device_type="Telescope",
+                    device_name=telescope_name,
+                    message=f"Could not read AsTelOS status of {telescope_name}",
+                    exception=e,
+                )
+                continue
+
+            if not astelos_errors.is_status_reply(reply):
+                self.logger.report_device_issue(
+                    device_type="Telescope",
+                    device_name=telescope_name,
+                    message=self._astelos_link_lost_message(telescope_name, reply),
+                )
+
+    @staticmethod
+    def _astelos_link_lost_message(telescope_name: str, reply: Any) -> str:
+        return (
+            f"ttTCLM driver has no working connection to AsTelOS for "
+            f"{telescope_name}: TELESCOPE.STATUS.LIST returned {reply!r}. Values "
+            "from this driver are old. Restart the driver: stop the "
+            "ttTCLM_ASCOM*.exe processes, then restart ASCOM Remote."
+        )
