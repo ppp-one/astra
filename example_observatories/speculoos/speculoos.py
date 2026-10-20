@@ -28,11 +28,16 @@ class SPECULOOS(Observatory):
     # power-up held its lock for 8.8 s on Europa (2026-10-18).
     SHUTTER_COMMAND_MIN_GAP = 15.0
     # How long TELESCOPE.READY_STATE must stay out of a power change before a
-    # shutter command is sent. The lock was held 2.1 s after READY_STATE reached 1.
-    READY_STATE_SETTLE_TIME = 3.0
+    # shutter command is sent. During a power-down, READY_STATE stays at 1.0 for
+    # the whole lock: up to 5.75 s on Callisto (TSI-IO logs, Sept-Oct 2026).
+    READY_STATE_SETTLE_TIME = 10.0
     READY_STATE_POLL_INTERVAL = 0.5
     # The driver gives up a power-up after 5 minutes.
     SHUTTER_GUARD_TIMEOUT = 300.0
+    # How long a CloseShutter waits for an opening to end. AsTelOS locks the dome
+    # target while the shutter moves, and refuses a close during an opening.
+    # Longest power-up (78 s) plus shutter move (41 s) on Callisto, x1.5.
+    OPENING_WAIT_TIMEOUT = 180.0
     # How often the watchdog checks that the driver still talks to AsTelOS.
     ASTELOS_LINK_CHECK_INTERVAL = 60.0
 
@@ -298,10 +303,17 @@ class SPECULOOS(Observatory):
         its connection to AsTelOS for good. After that it keeps answering
         ASCOM calls with old values and gives no error.
 
+        AsTelOS also locks AUXILIARY.DOME.TARGETPOS while the shutter moves. A
+        CloseShutter during an opening is then refused, and the driver drops it
+        without an error. AsTelOS does not handle repeated commands well, so
+        the close is not repeated: it waits for the opening to end instead.
+
         So before a shutter command, this method waits until:
-            1. SHUTTER_COMMAND_MIN_GAP has passed since the last shutter
+            1. For CloseShutter only: the shutter is no longer opening
+               (ShutterStatus 2), for at most OPENING_WAIT_TIMEOUT,
+            2. SHUTTER_COMMAND_MIN_GAP has passed since the last shutter
                command on this dome, and
-            2. TELESCOPE.READY_STATE has been out of a power change
+            3. TELESCOPE.READY_STATE has been out of a power change
                (not between 0 and 1) for READY_STATE_SETTLE_TIME.
 
         Parameters:
@@ -336,9 +348,15 @@ class SPECULOOS(Observatory):
             self.logger.debug(f"Could not read ShutterStatus of {dome_name}: {e}")
 
         with self._shutter_command_lock:
+            # 1. A close waits for an opening to end
+            if run_command == "CloseShutter" and not self._wait_while_opening(
+                dome_name, stop_waiting
+            ):
+                return False
+
             deadline = time.monotonic() + self.SHUTTER_GUARD_TIMEOUT
 
-            # 1. Minimum gap since the last shutter command on this dome
+            # 2. Minimum gap since the last shutter command on this dome
             last = self._last_shutter_command.get(dome_name)
             if last is not None:
                 remaining = last + self.SHUTTER_COMMAND_MIN_GAP - time.monotonic()
@@ -353,7 +371,7 @@ class SPECULOOS(Observatory):
                         return False
                     time.sleep(self.READY_STATE_POLL_INTERVAL)
 
-            # 2. No AsTelOS power change in progress
+            # 3. No AsTelOS power change in progress
             result = self._wait_for_stable_ready_state(deadline, stop_waiting)
             if result is None:
                 if opening:
@@ -387,6 +405,48 @@ class SPECULOOS(Observatory):
 
             self._last_shutter_command[dome_name] = time.monotonic()
             return True
+
+    def _wait_while_opening(
+        self, dome_name: str, stop_waiting: Callable[[], bool]
+    ) -> bool:
+        """Wait while the dome shutter is opening, for at most OPENING_WAIT_TIMEOUT.
+
+        After the time limit this returns True anyway, so that a close is never
+        blocked for good, for example by a driver that reports "opening"
+        forever.
+
+        Parameters:
+            dome_name (str): Dome to watch.
+            stop_waiting (Callable[[], bool]): Returns True to stop waiting.
+
+        Returns:
+            bool: False if stop_waiting() stopped the wait, else True.
+        """
+        dome = self.devices["Dome"][dome_name]
+        deadline = time.monotonic() + self.OPENING_WAIT_TIMEOUT
+        logged = False
+        while True:
+            try:
+                if dome.get("ShutterStatus") != 2:  # 2 = opening
+                    return True
+            except Exception as e:
+                # Do not block the close; the monitor-action reports errors.
+                self.logger.debug(f"Could not read ShutterStatus of {dome_name}: {e}")
+                return True
+            if stop_waiting():
+                return False
+            if time.monotonic() > deadline:
+                self.logger.warning(
+                    f"{dome_name} still opening after "
+                    f"{self.OPENING_WAIT_TIMEOUT:.0f} s. Sending CloseShutter anyway."
+                )
+                return True
+            if not logged:
+                self.logger.info(
+                    f"Waiting for {dome_name} to finish opening before CloseShutter"
+                )
+                logged = True
+            time.sleep(self.READY_STATE_POLL_INTERVAL)
 
     def _wait_for_stable_ready_state(
         self, deadline: float, stop_waiting: Callable[[], bool]

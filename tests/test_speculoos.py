@@ -51,6 +51,7 @@ def obs():
     o.READY_STATE_SETTLE_TIME = 0.1
     o.READY_STATE_POLL_INTERVAL = 0.01
     o.SHUTTER_GUARD_TIMEOUT = 1.0
+    o.OPENING_WAIT_TIMEOUT = 0.3
     o.logger = MagicMock(error_free=True)
     o.safety_monitor = MagicMock(weather_safe=True)
     o.watchdog_running = True
@@ -127,7 +128,7 @@ def test_open_wait_stops_when_weather_unsafe(obs):
 
 
 def test_close_not_weather_sensitive_waits_for_power_change(obs):
-    obs.dome = make_device({"ShutterStatus": 2})
+    obs.dome = make_device({"ShutterStatus": 0})
     obs.device_manager.devices["Dome"]["dome"] = obs.dome
     set_telescope(obs, {"TELESCOPE.READY_STATE": ["0.2", "0.9", "1.0"]})
     obs.safety_monitor.weather_safe = False
@@ -138,6 +139,62 @@ def test_close_not_weather_sensitive_waits_for_power_change(obs):
         )
         is True
     )
+
+
+def use_dome(obs, replies):
+    obs.dome = make_device(replies)
+    obs.device_manager.devices["Dome"]["dome"] = obs.dome
+
+
+def shutter_reads(obs):
+    return [c for c in obs.dome.get.call_args_list if c.args[0] == "ShutterStatus"]
+
+
+def test_close_waits_for_opening_to_end(obs):
+    # First read is the "already closed?" check, then opening twice, then open.
+    use_dome(obs, {"ShutterStatus": [2, 2, 2, 0]})
+    set_telescope(obs, {"TELESCOPE.READY_STATE": "1.0"})
+
+    assert obs._wait_before_shutter_command("dome", "CloseShutter", 1) is True
+
+    assert len(shutter_reads(obs)) == 4
+    obs.logger.warning.assert_not_called()
+    assert "dome" in obs._last_shutter_command
+
+
+def test_close_sent_after_opening_wait_timeout(obs):
+    use_dome(obs, {"ShutterStatus": 2})
+    set_telescope(obs, {"TELESCOPE.READY_STATE": "1.0"})
+
+    start = time.monotonic()
+    assert obs._wait_before_shutter_command("dome", "CloseShutter", 1) is True
+
+    assert time.monotonic() - start >= obs.OPENING_WAIT_TIMEOUT
+    assert "still opening" in obs.logger.warning.call_args.args[0]
+
+
+def test_close_opening_wait_stops_on_error(obs):
+    use_dome(obs, {"ShutterStatus": 2})
+    obs.logger.error_free = False
+
+    assert obs._wait_before_shutter_command("dome", "CloseShutter", 1) is False
+    assert "dome" not in obs._last_shutter_command
+
+
+def test_close_opening_wait_survives_read_error(obs):
+    obs.dome = MagicMock()
+    obs.dome.get.side_effect = [2, RuntimeError("no reply")]
+    obs.device_manager.devices["Dome"]["dome"] = obs.dome
+    set_telescope(obs, {"TELESCOPE.READY_STATE": "1.0"})
+
+    assert obs._wait_before_shutter_command("dome", "CloseShutter", 1) is True
+
+
+def test_open_does_not_wait_for_opening(obs):
+    use_dome(obs, {"ShutterStatus": 2})
+
+    assert obs._wait_before_shutter_command("dome", "OpenShutter", 0) is True
+    obs.logger.warning.assert_not_called()
 
 
 def test_open_refused_when_power_change_does_not_end(obs):
