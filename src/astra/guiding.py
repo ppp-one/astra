@@ -60,6 +60,9 @@ MAX_ERROR_PIXELS = 20
 # max alloed shift to correct during stabilisation
 MAX_ERROR_STABIL_PIXELS = 40
 
+# shifts > MAX_ERROR_PIXELS in a row before the field is stabilised again
+MAX_CULLED_IN_A_ROW = 3
+
 # IsPulseGuiding timeout
 IS_PULSE_GUIDING_TIMEOUT = 120  # seconds
 
@@ -521,6 +524,14 @@ class Guider:
                 - pidx, pidy (float): Actual corrections sent to mount
                 - sigma_x, sigma_y (float): Buffer standard deviations
         """
+
+        if not (np.isfinite(x) and np.isfinite(y)):
+            # a NaN would stay in the PID integrator and the buffer, and
+            # stop all later corrections
+            self.logMessageToDb(
+                camera_name, f"Shift not finite ({x}, {y}), applying no correction"
+            )
+            return False, 0.0, 0.0, 0.0, 0.0
 
         if self.ANGLE:
             # turn the shift from the camera axes into the mount axes
@@ -1007,6 +1018,7 @@ class Guider:
 
                 images_to_stabilise = IMAGES_TO_STABILISE
                 stabilised = "n"
+                culled_in_a_row = 0
 
                 # Main guiding loop
                 while self.running:
@@ -1037,6 +1049,40 @@ class Guider:
                             camera_name,
                             f"REF: {ref_file} CHECK: {check_file} [{current_filter}]",
                         )
+                        # Load comparison image and measure shift
+                        try:
+                            h2 = fits.open(check_file)
+                            del h2
+                        except IOError:
+                            self.logMessageToDb(
+                                camera_name,
+                                f"Problem opening CHECK: {check_file}...",
+                            )
+                            self.logMessageToDb(
+                                camera_name, "Breaking back to look for new file..."
+                            )
+                            continue
+
+                        # work out shift here
+                        shift = donuts_ref.measure_shift(check_file)
+                        shift_x = shift.x.value  # type: ignore
+                        shift_y = shift.y.value  # type: ignore
+                        self.logMessageToDb(
+                            camera_name, f"x shift: {float(shift_x):.2f}"
+                        )
+                        self.logMessageToDb(
+                            camera_name, f"y shift: {float(shift_y):.2f}"
+                        )
+
+                        # Donuts gives NaN when too few stars are left after
+                        # cleaning, skip the image before it counts
+                        if not (np.isfinite(shift_x) and np.isfinite(shift_y)):
+                            self.logger.warning(
+                                f"Guider could not measure a shift on {os.path.basename(check_file)}, "
+                                "too few stars? Skipping image."
+                            )
+                            continue
+
                         images_to_stabilise -= 1
                         # PID reset logic
                         if images_to_stabilise == 0:
@@ -1056,34 +1102,10 @@ class Guider:
                             self.PIDy = PID(1.0, 0.0, 0.0)
                             self.PIDx.initialize_set_point(self.PID_COEFFS["set_x"])
                             self.PIDy.initialize_set_point(self.PID_COEFFS["set_y"])
-                        # Load comparison image and measure shift
-                        try:
-                            h2 = fits.open(check_file)
-                            del h2
-                        except IOError:
-                            self.logMessageToDb(
-                                camera_name,
-                                f"Problem opening CHECK: {check_file}...",
-                            )
-                            self.logMessageToDb(
-                                camera_name, "Breaking back to look for new file..."
-                            )
-                            continue
 
                         # reset culled tags
                         culled_max_shift_x = "n"
                         culled_max_shift_y = "n"
-
-                        # work out shift here
-                        shift = donuts_ref.measure_shift(check_file)
-                        shift_x = shift.x.value  # type: ignore
-                        shift_y = shift.y.value  # type: ignore
-                        self.logMessageToDb(
-                            camera_name, f"x shift: {float(shift_x):.2f}"
-                        )
-                        self.logMessageToDb(
-                            camera_name, f"y shift: {float(shift_y):.2f}"
-                        )
 
                         # revoke stabilisation early if shift less than 2 pixels
                         if (
@@ -1132,8 +1154,8 @@ class Guider:
                             else:
                                 pre_pid_y = shift_y
 
-                        # if either axis is off by > MAX error then stop everything, no point guiding
-                        # in 1 axis, need to figure out the source of the problem and run again
+                        # if either axis is off by > MAX error then apply no correction, no point
+                        # guiding in 1 axis
                         if culled_max_shift_x == "y" or culled_max_shift_y == "y":
                             (
                                 pre_pid_x,
@@ -1143,7 +1165,20 @@ class Guider:
                                 std_buff_x,
                                 std_buff_y,
                             ) = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+                            # the field has moved too far to guide, pull it back
+                            # to the reference with the wider stabilisation limit
+                            culled_in_a_row += 1
+                            if culled_in_a_row >= MAX_CULLED_IN_A_ROW:
+                                self.logger.warning(
+                                    f"Guider shift > {MAX_ERROR_PIXELS} pixels for "
+                                    f"{culled_in_a_row} images in a row "
+                                    f"({shift_x:.1f}, {shift_y:.1f}), stabilising field again"
+                                )
+                                images_to_stabilise = IMAGES_TO_STABILISE
+                                culled_in_a_row = 0
                         else:
+                            culled_in_a_row = 0
                             if self.running:
                                 (
                                     applied,
