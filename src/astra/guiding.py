@@ -206,7 +206,10 @@ class GuiderManager:
 
                 # Try to get field info from the most recent header
                 field = image_handler.header.get("OBJECT")
+                # stored without quotes by the guider loop, e.g. z' as z
                 filt = image_handler.header.get("FILTER")
+                if filt:
+                    filt = str(filt).strip("'")
                 exptime = str(image_handler.header.get("EXPTIME"))
                 pierside = paired_devices.telescope.get("SideOfPier")
 
@@ -466,11 +469,10 @@ class Guider:
             pre_pid_x, pre_pid_y, post_pid_x, post_pid_y, std_buff_x,
             std_buff_y, culled_max_shift_x, culled_max_shift_y)
             VALUES
-            ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
-        self.database_manager.execute(qry % qry_args)
+        self.database_manager.execute(qry, qry_args)
 
     def logMessageToDb(self, camera_name: str, message: str) -> None:
         """
@@ -484,10 +486,10 @@ class Guider:
             INSERT INTO autoguider_info_log
             (camera, message)
             VALUES
-            ('%s', '%s')
+            (?, ?)
             """
         qry_args = (camera_name, message)
-        self.database_manager.execute(qry % qry_args)
+        self.database_manager.execute(qry, qry_args)
 
     def guide(
         self,
@@ -760,19 +762,27 @@ class Guider:
         qry = """
             SELECT ref_image
             FROM autoguider_ref
-            WHERE field = '%s'
-            AND filter = '%s'
-            AND exptime = '%s'
-            AND valid_from <= '%s'
-            AND camera = '%s'
-            AND pierside = %d
-            AND (valid_until IS NULL OR valid_until > '%s')
+            WHERE field = ?
+            AND filter = ?
+            AND exptime = ?
+            AND valid_from <= ?
+            AND camera = ?
+            AND pierside = ?
+            AND (valid_until IS NULL OR valid_until > ?)
             ORDER BY valid_from DESC
             LIMIT 1
             """
-        qry_args = (field, filt, exptime, tnow, camera, pierside, tnow)
+        qry_args = (
+            str(field),
+            str(filt),
+            str(exptime),
+            tnow,
+            camera,
+            int(pierside),
+            tnow,
+        )
 
-        result = self.database_manager.execute(qry % qry_args)
+        result = self.database_manager.execute(qry, qry_args)
 
         if not result:
             ref_image = None
@@ -810,16 +820,16 @@ class Guider:
         tnow = datetime.now(UTC).isoformat().split(".")[0].replace("T", " ")
         qry = """
             UPDATE autoguider_ref
-            SET valid_until = '%s'
-            WHERE field = '%s'
-            AND filter = '%s'
-            AND exptime = '%s'
-            AND camera = '%s'
-            AND pierside = %d
+            SET valid_until = ?
+            WHERE field = ?
+            AND filter = ?
+            AND exptime = ?
+            AND camera = ?
+            AND pierside = ?
             AND valid_until IS NULL
             """
-        qry_args = (tnow, field, filt, exptime, camera, pierside)
-        self.database_manager.execute(qry % qry_args)
+        qry_args = (tnow, str(field), str(filt), str(exptime), camera, int(pierside))
+        self.database_manager.execute(qry, qry_args)
         self.logMessageToDb(
             camera,
             f"Reference cleared for field={field}, filter={filt}, pierside={pierside}",
@@ -854,18 +864,18 @@ class Guider:
             (field, camera, ref_image,
             filter, exptime, valid_from, pierside)
             VALUES
-            ('%s', '%s', '%s', '%s', '%s', '%s', %d)
+            (?, ?, ?, ?, ?, ?, ?)
             """
         qry_args = (
-            field,
+            str(field),
             camera,
             os.path.split(ref_image)[-1],
-            filt,
-            exptime,
+            str(filt),
+            str(exptime),
             tnow,
-            pierside,
+            int(pierside),
         )
-        self.database_manager.execute(qry % qry_args)
+        self.database_manager.execute(qry, qry_args)
 
         # copy the file to the autoguider_ref location
         self.logger.info(f"Copying reference image {ref_image} to {self.reference_dir}")

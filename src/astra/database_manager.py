@@ -64,8 +64,9 @@ class DatabaseManager:
 
         return self._cursor
 
-    def execute(self, query: str):
-        return self.cursor.execute(query)
+    def execute(self, query: str, values: tuple | None = None):
+        """Execute a query, with ``values`` bound to its ``?`` placeholders."""
+        return self.cursor.execute(query, values)
 
     def execute_select(self, query: str) -> list[tuple]:
         """
