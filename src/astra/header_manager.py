@@ -131,23 +131,31 @@ class ObservatoryHeader(fits.Header):
 
     def set_imagetype(self, action_type: str, use_light: bool) -> bool:
         """Set the IMAGETYP header based on action type.
-        Returns True if the image is a light frame, False otherwise.
+
+        Calibration actions always take bias or dark frames. Other actions take
+        a dark frame when ``use_light`` is False, for example the darks of a
+        pointing model. Returns True if the image is a light frame, False otherwise.
         """
-        use_light = True
-        if action_type == "calibration":
+        if action_type == "calibration" or not use_light:
             if self["EXPTIME"] == 0:
                 self["IMAGETYP"] = "Bias Frame"
             else:
                 self["IMAGETYP"] = "Dark Frame"
-            use_light = False
-        elif action_type == "flats":
+            return False
+
+        if action_type == "flats":
             self["IMAGETYP"] = "Flat Frame"
-        elif action_type in ["object", "autofocus", "calibrate_guiding", "pointing"]:
+        elif action_type in [
+            "object",
+            "autofocus",
+            "calibrate_guiding",
+            "pointing_model",
+        ]:
             self["IMAGETYP"] = "Light Frame"
         else:
             self["IMAGETYP"] = "Unknown Frame"
 
-        return use_light
+        return True
 
     def set_action_type(self, action: Action) -> None:
         """Set the action type related headers based on the Action object."""

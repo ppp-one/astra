@@ -253,9 +253,21 @@ class TestImageHandler:
         use_light = handler.header.set_imagetype("calibration", use_light)
         assert handler.header["IMAGETYP"] == "Dark Frame"
         assert use_light is False
-        use_light = handler.header.set_imagetype("object", use_light)
+        use_light = handler.header.set_imagetype("object", True)
         assert handler.header["IMAGETYP"] == "Light Frame"
         assert use_light is True
+
+    def test_set_imagetype_pointing_model(self):
+        header = ObservatoryHeader.get_test_header()
+        handler = ImageHandler(header)
+        handler.header["EXPTIME"] = 3
+
+        assert handler.header.set_imagetype("pointing_model", True) is True
+        assert handler.header["IMAGETYP"] == "Light Frame"
+
+        # the darks a pointing model takes for itself
+        assert handler.header.set_imagetype("pointing_model", False) is False
+        assert handler.header["IMAGETYP"] == "Dark Frame"
 
     def test_get_observatory_location(self):
         header = ObservatoryHeader.get_test_header()

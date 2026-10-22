@@ -3004,9 +3004,15 @@ class Observatory:
         Action Value Parameters (from ``row['action_value']``):
             - ``n`` (`int`, optional): Number of pointing positions. Defaults to 20.
             - ``exptime`` (`float`, optional): Exposure time in seconds. Defaults to 1.
+            - ``dark_subtraction`` (`bool`, optional): Take ``n_darks`` darks first
+              and subtract their median before each plate solve. Defaults to False.
+            - ``dark_filter`` (`str`, optional): Filter for the darks, for example a
+              blank filter for a camera without a shutter. Defaults to None.
             - Additional standard action parameters (``ra``, ``dec``, etc.)
 
         Process:
+            0. If dark subtraction is enabled, takes the darks (see
+               :meth:`take_master_dark`)
             1. Creates pointing_model directory for image storage
             2. Generates spiral pattern of sky coordinates from zenith
             3. For each position (if not too close to Moon):
@@ -3045,27 +3051,18 @@ class Observatory:
         # Get the image handler for this camera
         image_handler = self.get_image_handler(camera.device_name)
 
-        # find dark frame
+        # take the darks before the dome opens
         dark_frame = None
         if action_value.get("dark_subtraction", False):
-            self.logger.info(
-                f"Dark subtraction enabled. Looking for matching dark frame for {action.device_name}"
-                f" with exposure time {exptime} s in {image_handler.image_directory}"
+            dark_frame = self.take_master_dark(
+                action,
+                paired_devices,
+                camera,
+                exptime,
+                maxadu,
+                n=action_value.get("n_darks", 5),
+                dark_filter=action_value.get("dark_filter"),
             )
-            # TODO is this also just the last image?
-            darks = list(
-                Path(image_handler.image_directory).glob(
-                    f"*Dark Frame_{exptime:.3f}*.fits"
-                )
-            )
-
-            if len(darks) > 0:
-                dark_frame = darks[-1]
-                self.logger.info(f"Using dark frame {dark_frame}")
-            else:
-                self.logger.warning(
-                    f"No dark frame found in {image_handler.image_directory}. Dark subtraction will not be applied."
-                )
 
         # get location
         obs_location = image_handler.get_observatory_location()
@@ -3172,6 +3169,99 @@ class Observatory:
             wcs_solve = None
 
             counter += 1
+
+    def take_master_dark(
+        self,
+        action: Action,
+        paired_devices: PairedDevices,
+        camera: AlpacaDevice,
+        exptime: float,
+        maxadu,
+        n: int,
+        dark_filter: str | None = None,
+    ) -> Path | None:
+        """
+        Take ``n`` darks and save their median as a master dark next to them.
+
+        The darks are saved like the other images of the action, with
+        IMAGETYP "Dark Frame". If ``dark_filter`` is given, the filter wheel
+        moves to it for the darks and then back to where it was.
+
+        Parameters:
+            action (Action): The action the darks are for.
+            paired_devices (PairedDevices): The devices of the action.
+            camera (AlpacaDevice): The camera to take the darks with.
+            exptime (float): Exposure time of each dark in seconds.
+            maxadu: Maximum ADU value of the camera.
+            n (int): Number of darks to take.
+            dark_filter (str, optional): Filter to use for the darks, for
+                example a blank filter for a camera without a shutter.
+
+        Returns:
+            Path | None: The master dark, or None if the darks could not be
+                taken. The reason is logged as a warning.
+        """
+        no_dark = "Dark subtraction will not be applied."
+        filter_wheel_position = None
+        if dark_filter is not None:
+            if "FilterWheel" not in paired_devices:
+                self.logger.warning(
+                    f"Dark filter {dark_filter} requested, but {action.device_name} "
+                    f"has no filter wheel. {no_dark}"
+                )
+                return None
+            filter_wheel_position = paired_devices.filter_wheel.get("Position")
+
+        try:
+            if dark_filter is not None:
+                self._configure_filter(paired_devices, {"filter": dark_filter}, 0)
+
+            darks = []
+            for i in range(n):
+                success, filepath = self.perform_exposure(
+                    camera,
+                    exptime,
+                    maxadu,
+                    action,
+                    use_light=False,
+                    log_option=f"{i + 1}/{n}",
+                    sequence_counter=i,
+                )
+                if not success or filepath is None:
+                    self.logger.warning(f"Dark {i + 1}/{n} failed. {no_dark}")
+                    return None
+                darks.append(Path(filepath))
+
+            master = np.median(
+                np.stack([fits.getdata(p).astype(np.float32) for p in darks]), axis=0
+            )
+            header = fits.getheader(darks[0])
+            for key in ("BZERO", "BSCALE", "BLANK"):
+                header.remove(key, ignore_missing=True)
+            header["NCOMBINE"] = (n, "Number of darks median-combined")
+            master_path = (
+                darks[0].parent / f"{camera.device_name}_master_dark_{exptime:.3f}.fits"
+            )
+            fits.PrimaryHDU(master, header=header).writeto(master_path, overwrite=True)
+            self.logger.info(f"Master dark of {n} darks saved as {master_path}")
+            return master_path
+        except Exception as e:
+            self.logger.warning(f"Could not take darks: {e}. {no_dark}")
+            return None
+        finally:
+            if filter_wheel_position is not None:
+                self.execute_and_monitor_device_task(
+                    "FilterWheel",
+                    "Position",
+                    filter_wheel_position,
+                    "Position",
+                    device_name=paired_devices["FilterWheel"],
+                    log_message=(
+                        f"Setting FilterWheel {paired_devices['FilterWheel']} "
+                        f"back to position {filter_wheel_position} after the darks"
+                    ),
+                    weather_sensitive=False,
+                )
 
     def pointing_correction(
         self,

@@ -1557,6 +1557,8 @@ class PointingModelActionConfig(BaseActionConfig):
     n: int = 50
     exptime: float = 3.0
     dark_subtraction: bool = False
+    n_darks: int = 5
+    dark_filter: Optional[str] = None
     object: str = "Pointing Model"
     use_local_db: bool = False
     filter: Optional[str] = None
@@ -1572,7 +1574,15 @@ class PointingModelActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "n": "Number of points to include in the model.",
         "exptime": "Exposure time for each pointing image.",
-        "dark_subtraction": "Enable dark subtraction using previously taken calibration frames of same exposure time in the same date folder.",
+        "dark_subtraction": (
+            "Take darks with the same exposure time at the start of the sequence and "
+            "subtract their median from each image before plate solving."
+        ),
+        "n_darks": "Number of darks to take for dark subtraction.",
+        "dark_filter": (
+            "Filter to use while taking the darks, for example a blank filter for a "
+            "camera without a shutter. Defaults to no filter change."
+        ),
         "object": "Descriptive label for the pointing run.",
         "use_local_db": "Use local star catalog database for plate solving (faster).",
         "filter": "Filter to use for exposures.",
@@ -1595,6 +1605,10 @@ class PointingModelActionConfig(BaseActionConfig):
     }
 
     def validate(self):
+        if self.n_darks < 1:
+            raise ValueError(f"n_darks must be at least 1, got {self.n_darks}")
+        if self.dark_filter is not None and not self.dark_subtraction:
+            raise ValueError("dark_filter is only used with dark_subtraction: true")
         self.validate_subframe()
 
 
