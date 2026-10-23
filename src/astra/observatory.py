@@ -3419,14 +3419,15 @@ class Observatory:
                 # re-slew to target
                 self.setup_observatory(paired_devices, action_value)
         else:
-            # new_ra = action_value["ra"] - (real_center.ra - action_value["ra"])
-            # The proxy target is ICRS; the offset is the same in any frame to
-            # first order, so convert the proxy as a whole.
-            new_ra, new_dec = self.to_mount_coordinates(
-                paired_devices["Telescope"],
-                pointing_correction.proxy_ra,
-                pointing_correction.proxy_dec,
-            )
+            # Correct from where the mount points now, not from the target.
+            # After an earlier correction the mount is no longer at the
+            # target, and a slew to target - offset would undo that correction
+            # and make the loop swing back and forth. The offset is the same
+            # in any frame to first order, so it applies to the mount frame.
+            new_ra = (
+                telescope.get("RightAscension") * 15 - pointing_correction.offset_ra
+            ) % 360
+            new_dec = telescope.get("Declination") - pointing_correction.offset_dec
 
             if slew:
                 # slew to target
