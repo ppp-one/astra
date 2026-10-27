@@ -1,10 +1,31 @@
 """AsTelOS telescope error checking and acknowledgement."""
 
+import re
 import time
 from typing import Any, Tuple
 
 import numpy as np
 import pandas as pd
+
+# A TELESCOPE.STATUS.LIST reply starts with "<group>|<level>:", e.g. "DRIVES|0::".
+_STATUS_REPLY_START = re.compile(r"^[A-Z][A-Z_]*\|-?\d+:")
+
+
+def is_status_reply(messages: Any) -> bool:
+    """Return True if messages has the format of a TELESCOPE.STATUS.LIST reply.
+
+    When the ttTCLM driver has lost its connection to AsTelOS, CommandString
+    returns plain text such as "Client not Connected", with no ASCOM error.
+    That text has no error entries, so without this check it would count as
+    "no errors".
+
+    Args:
+        messages (Any): Reply of CommandString("TELESCOPE.STATUS.LIST").
+
+    Returns:
+        bool: True if the reply starts with a "<group>|<level>:" entry.
+    """
+    return isinstance(messages, str) and bool(_STATUS_REPLY_START.match(messages))
 
 
 def check_error(telescope: Any, close: bool = False) -> Tuple[bool, pd.DataFrame, str]:
@@ -91,6 +112,9 @@ def check_error(telescope: Any, close: bool = False) -> Tuple[bool, pd.DataFrame
     df_list = pd.DataFrame(columns=["error", "detail", "level", "component"])
 
     messages = telescope.get("CommandString", Command="TELESCOPE.STATUS.LIST", Raw=True)
+    if not is_status_reply(messages):
+        return False, df_list, messages
+
     # structure = "<group>|<level>[:<component>|<level>[;<component>...]][:<error>|<detail>|<level>|<component>[;<error>...]][,<group>...]"
 
     for message in messages.split(","):
