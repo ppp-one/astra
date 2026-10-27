@@ -59,7 +59,7 @@ All devices share these required parameters:
 Additional parameters for telescope mounts:
 
 - `pointing_threshold`: Maximum acceptable pointing error in arcminutes before pointing correction is applied (float, default: 0.1)
-- `settle_factor`: Exposure multiplier for calculated settle time after pointing - useful for continuous acquisition type cameras (float, default: 0.0)
+- `settle_factor`: Deprecated. Set `settle_factor` in the camera config instead. Astra still reads this value if the camera config does not set one, and logs a warning.
 - `meridian_flip`: Enable automated meridian flips (boolean, default: false)
 - `meridian_flip_min`: Buffer time in minutes past meridian to trigger flip (float, default: 5)
 - `equatorial_system`: Coordinate frame the mount expects for slews and syncs (string, default: `auto`). With `auto`, Astra reads the ASCOM `EquatorialSystem` property once at first use. Set `J2000`, `JNow`, `J2050` or `B1950` to override a driver that reports the wrong value. Astra works in ICRS (J2000) internally and converts to the mount's frame just before each slew. A mount that reports J2000, or whose property cannot be read, receives the ICRS coordinates unchanged. A JNow mount that is sent J2000 coordinates misses by about 20 arcminutes, so check the log line `Telescope <name> expects TOPOCENTRIC coordinates` on first use if your mount is JNow.
@@ -70,7 +70,7 @@ Additional parameters for telescope mounts:
 Focuser-specific parameters:
 
 - `focus_position`: Best known absolute focus position (integer)
-- `focus_tolerance`: Maximum deviation in steps from the target position before a focuser move is issued (integer, default: 0). Moves are skipped when the current position is within this many steps of the target, avoiding unnecessary mechanical motion when thermal drift is small.
+- `focus_tolerance`: Maximum deviation in steps from the target position before a focuser move is issued (integer, default: 0). Moves are skipped when the current position is within this many steps of the target, avoiding unnecessary mechanical motion when thermal drift is small. A focuser that ends a move within this many steps of the target counts as on target, so no warning is logged.
 - `settle_time`: Time in seconds to wait after focus position move (integer)
 
 ## Camera Configuration
@@ -82,6 +82,10 @@ Camera-specific parameters for cooling and imaging:
 - `temperature`: Target cooling temperature in Celsius (float)
 - `temperature_tolerance`: Acceptable temperature tolerance from target in Celsius (float)
 - `cooling_timeout`: Time in minutes to wait to reach target temperature before timing out (int, default: 30)
+
+**Settle Parameters:**
+
+- `settle_factor`: Exposure multiplier for the extra wait after a move, before the next exposure (float, default: 0.0). Astra waits `settle_factor × exptime` after each pointing correction slew, each pointing model slew, and each focus move during autofocus. Use it for cameras that capture continuously, such as SPIRIT, so that the next frame starts after the move. Set it to 1.0 to discard about one frame.
 
 **Sky Flat Parameters:**
 

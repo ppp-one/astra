@@ -142,7 +142,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "alpyca", specifier = ">=3.1.2,<4" },
-    { name = "astrafocus", specifier = ">=0.2.0" },
+    { name = "astrafocus", specifier = ">=0.2.1" },
     { name = "astropy" },
     { name = "astroquery", specifier = ">=0.4.11" },
     { name = "cabaret", specifier = ">=0.5.4" },
@@ -185,7 +185,7 @@ test = [
 
 [[package]]
 name = "astrafocus"
-version = "0.2.0"
+version = "0.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
@@ -199,9 +199,9 @@ dependencies = [
     { name = "statsmodels" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/c1/68a133b7b175f31f5c04002cb6ec765d9cd05d2d4a815282ac1325768e10/astrafocus-0.2.0.tar.gz", hash = "sha256:c4e37467aa2be8dae8f13111d79a6b4ae324d2671ed524e6df0c46b8484c36b3", size = 870811, upload-time = "2026-10-27T13:19:28.189Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/19/fb650829925f2745915aac4bcc54770d2811016fb3b99772a7992fa95911/astrafocus-0.2.1.tar.gz", hash = "sha256:a5c00de4176a282055b2d8dee6744c91497b36da4a99377970ef223168a5f134", size = 871698, upload-time = "2026-10-27T15:50:28.563Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/f6/b1394cec9cd25e75cb2d441bb44f13292ad50055c222ab918c0220a13e66/astrafocus-0.2.0-py3-none-any.whl", hash = "sha256:56ec00c68aceb8954156a4c8b91b454f4a55de42a64f65661ef2941d64341fc2", size = 91533, upload-time = "2026-10-27T13:19:26.478Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/c8/d9e46008a34b6a071ddb318905df256ee1adfb4fb770cb7ed70fd6e80253/astrafocus-0.2.1-py3-none-any.whl", hash = "sha256:fb5938423133affa61178fad185178dafbb62f791fb385079cdb6da22eb9aadc", size = 91812, upload-time = "2026-10-27T15:50:27.117Z" },
 ]
 
 [[package]]

@@ -187,6 +187,9 @@ class AstraFocuser(FocuserInterface):
         observatory (astra.Observatory): Main Astra instance for system coordination.
         alpaca_device_focuser (AlpacaDevice): ALPACA focuser device interface.
         action (Action): Action configuration for the focuser.
+        settle_time (int): Time in seconds to wait after each move.
+        focus_tolerance (int): Number of steps the focuser may end away from
+            the requested position without a warning.
     """
 
     def __init__(
@@ -195,6 +198,7 @@ class AstraFocuser(FocuserInterface):
         alpaca_device_focuser: AlpacaDevice,
         action: Optional[Action] = None,
         settle_time: int = 3,
+        focus_tolerance: int = 0,
     ) -> None:
         if not alpaca_device_focuser.get("Absolute"):
             raise ValueError("Focuser must be absolute for autofocusing to work.")
@@ -203,30 +207,57 @@ class AstraFocuser(FocuserInterface):
         self.action = action
         self.alpaca_device_focuser = alpaca_device_focuser
         self.settle_time = settle_time
+        self.focus_tolerance = focus_tolerance
 
         current_position = self.get_current_position()
         allowed_range = (0, alpaca_device_focuser.get("MaxStep"))
         super().__init__(current_position=current_position, allowed_range=allowed_range)
 
     def move_focuser_to_position(
-        self, new_position: int, hard_timeout: float = 120
+        self, new_position: int, hard_timeout: float = 120, start_timeout: float = 5
     ) -> None:
         """Move focuser to specified position with timeout protection.
 
         Moves the focuser to the target position and waits for completion.
         Includes range checking and timeout protection.
 
+        Some drivers still report ``IsMoving`` as False just after ``Move``, before
+        the motor has started. So the move only counts as started once the focuser
+        is moving or more than ``focus_tolerance`` steps from its old position,
+        so that a jittering position reading does not count as a start, and only
+        then as finished when it
+        stops moving. A warning is logged if the focuser does not start within
+        ``start_timeout`` or ends more than ``focus_tolerance`` steps from the
+        target position. A move within ``focus_tolerance`` steps of the old
+        position does not wait for the focuser to start, because some focusers
+        do not move for such small steps.
+
         Args:
             new_position (int): Target focuser position.
             hard_timeout (float): Maximum time to wait for movement in seconds.
+            start_timeout (float): Maximum time to wait for the movement to start
+                in seconds.
 
         Raises:
             TimeoutError: If movement takes longer than hard_timeout.
         """
         new_position = self._project_to_allowed_range(new_position)
+        old_position = self.get_current_position()
 
         self.alpaca_device_focuser.get("Move", Position=new_position)
         start_time = time.time()
+        while abs(new_position - old_position) > self.focus_tolerance and not (
+            self.alpaca_device_focuser.get("IsMoving")
+            or abs(self.get_current_position() - old_position) > self.focus_tolerance
+        ):
+            if time.time() - start_time > start_timeout:
+                self.observatory.logger.warning(
+                    f"Focuser did not start moving from {old_position} to "
+                    f"{new_position} within {start_timeout} s."
+                )
+                break
+            time.sleep(0.1)
+
         while self.alpaca_device_focuser.get("IsMoving"):
             if time.time() - start_time > hard_timeout:
                 raise TimeoutError("Slew timeout")
@@ -234,6 +265,13 @@ class AstraFocuser(FocuserInterface):
                 break
 
             time.sleep(0.1)
+
+        position = self.get_current_position()
+        if abs(position - new_position) > self.focus_tolerance:
+            self.observatory.logger.warning(
+                f"Focuser is at {position} after moving, not at the requested "
+                f"{new_position}."
+            )
 
         time.sleep(self.settle_time)
         return None
@@ -341,6 +379,9 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         astra_camera (AstraCamera): Camera interface for image capture.
         astra_focuser (AstraFocuser): Focuser interface for position control.
         astra_telescope (Optional[AstraTelescope]): Telescope interface for positioning.
+        settle_factor (float): Exposure time multiplier to wait after each focus
+            move before the exposure. Use it for cameras that capture
+            continuously, such as SPIRIT, so that the image starts after the move.
     """
 
     def __init__(
@@ -351,10 +392,12 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
         astra_camera: AstraCamera,
         astra_focuser: AstraFocuser,
         astra_telescope: Optional[AstraTelescope] = None,
+        settle_factor: float = 0.0,
     ) -> None:
         self.observatory = observatory
         self.action_value = action_value
         self.action = action
+        self.settle_factor = settle_factor
         super().__init__(
             camera=astra_camera, focuser=astra_focuser, telescope=astra_telescope
         )
@@ -394,13 +437,13 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
             alpaca_device_camera=alpaca_device_camera,
             action=action,
         )
+        focuser_config = paired_devices.get_device_config("Focuser")
         astra_focuser = AstraFocuser(
             observatory,
             alpaca_device_focuser=alpaca_device_focuser,
             action=action,
-            settle_time=paired_devices.get_device_config("Focuser").get(
-                "settle_time", 3
-            ),
+            settle_time=focuser_config.get("settle_time", 3),
+            focus_tolerance=focuser_config.get("focus_tolerance", 0),
         )
         astra_telescope = AstraTelescope(
             observatory, alpaca_device_telescope=alpaca_device_telescope, action=action
@@ -413,7 +456,19 @@ class AstraAutofocusDeviceManager(AutofocusDeviceManager):
             astra_camera=astra_camera,
             astra_focuser=astra_focuser,
             astra_telescope=astra_telescope,
+            settle_factor=observatory.get_settle_factor(paired_devices),
         )
+
+    def perform_exposure_at(self, focus_position: int, texp: float):
+        """Move the focuser, wait ``settle_factor * texp``, then take an exposure.
+
+        Args:
+            focus_position (int): Target focuser position.
+            texp (float): Exposure time in seconds.
+        """
+        self.focuser.position = focus_position
+        time.sleep(texp * self.settle_factor)
+        return self.camera.perform_exposure(texp=texp)
 
     def check_conditions(self) -> bool:
         """Check if observatory conditions are suitable for autofocus.
@@ -446,14 +501,16 @@ class Defocuser:
         self.action = action
         self.paired_devices = paired_devices
 
+        focuser_config = self.paired_devices.get_device_config("Focuser")
+        self.focus_tolerance: int = focuser_config.get("focus_tolerance", 0)
         self._focuser = AstraFocuser(
             observatory=observatory,
             alpaca_device_focuser=paired_devices.focuser,
             action=action,
+            settle_time=focuser_config.get("settle_time", 3),
+            focus_tolerance=self.focus_tolerance,
         )
         self.best_focus_position = self.load_best_focus_position_from_config()
-        focuser_config = self.paired_devices.get_device_config("Focuser")
-        self.focus_tolerance: int = focuser_config.get("focus_tolerance", 0)
 
     @property
     def focuser_name(self) -> str:
