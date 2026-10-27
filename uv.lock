@@ -160,7 +160,7 @@ requires-dist = [
     { name = "ruamel-yaml" },
     { name = "scipy" },
     { name = "sqlite3worker" },
-    { name = "twirl", specifier = ">=0.5.2" },
+    { name = "twirl", specifier = ">=0.6.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -1819,7 +1819,7 @@ wheels = [
 
 [[package]]
 name = "twirl"
-version = "0.5.2"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astropy" },
@@ -1830,9 +1830,9 @@ dependencies = [
     { name = "scikit-image" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/96/c6/c8c09d64f1a17a7d7c4ccade027cf11eb4c0e82b43f2f0d3125752e1648c/twirl-0.5.2.tar.gz", hash = "sha256:04919415ad4d323f1263587c4f81e864733eddf8e37edb751153a70f0557a321", size = 14275, upload-time = "2026-07-21T07:23:19.891Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/41/9d7217e04943cf584dd2f48bcaa6b321c33f75af876fde290199e35b9c64/twirl-0.6.0.tar.gz", hash = "sha256:baf806dca9d81d9496c44e640c7173a5b714d6c184bbc01563f3770c8e2d092f", size = 17075, upload-time = "2026-10-26T12:02:15.532Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5b/fe/445e873c7f72c544e67248a90ee361bba0dc2ce0c372d7a480e44b54865a/twirl-0.5.2-py3-none-any.whl", hash = "sha256:f286b50c18f66a67d1d4e61c22a56d36ae58fee26d2cb01a59022828c8c705b3", size = 12780, upload-time = "2026-07-21T07:23:19.049Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/93/9e9a388045c46c7b7244f3d4196fc15611305bedc783ffb6ed3fa48d8f16/twirl-0.6.0-py3-none-any.whl", hash = "sha256:031bb49456dcba32892b790c33dae2a5d072d2b97e9f3c587c372486dcb1bc9b", size = 14692, upload-time = "2026-10-26T12:02:14.375Z" },
 ]
 
 [[package]]

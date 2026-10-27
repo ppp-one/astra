@@ -39,7 +39,7 @@ dependencies = [
   "astropy",
   "photutils>=3.0.0",
   "scipy",
-  "twirl>=0.5.2",
+  "twirl>=0.6.0",
   "sqlite3worker",
   "alpyca>=3.1.2,<4",
   "psutil",
