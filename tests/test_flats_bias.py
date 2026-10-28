@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from astropy.io import fits
 
 from astra.observatory import Observatory
 from astra.utils import ephemeris
@@ -51,9 +50,8 @@ def _run_flats(master_bias, flats_config=None):
     return obs, order
 
 
-def test_flats_use_the_median_of_the_master_bias(tmp_path):
-    master_bias = tmp_path / "Cam1_master_bias_0.000.fits"
-    fits.PrimaryHDU(np.full((4, 6), 312.0, dtype=np.float32)).writeto(master_bias)
+def test_flats_use_the_median_of_the_master_bias():
+    master_bias = np.full((4, 6), 312.0, dtype=np.float32)
 
     obs, order = _run_flats(master_bias)
 
@@ -70,9 +68,8 @@ def test_flats_without_master_bias_use_a_bias_level_of_zero():
     obs.logger.warning.assert_called_once()
 
 
-def test_old_bias_offset_is_ignored_with_a_warning(tmp_path):
-    master_bias = tmp_path / "Cam1_master_bias_0.000.fits"
-    fits.PrimaryHDU(np.full((4, 6), 312.0, dtype=np.float32)).writeto(master_bias)
+def test_old_bias_offset_is_ignored_with_a_warning():
+    master_bias = np.full((4, 6), 312.0, dtype=np.float32)
     flats_config = {
         "target_adu": 30000,
         "bias_offset": 300,

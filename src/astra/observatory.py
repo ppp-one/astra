@@ -1528,7 +1528,7 @@ class Observatory:
             elif "calibrate_guiding" == action.action_type:
                 self.guiding_calibration_sequence(action, paired_devices)
             elif "calibration" == action.action_type:
-                self.image_sequence(action, paired_devices)
+                self.calibration_sequence(action, paired_devices)
             elif "flats" == action.action_type:
                 self.flats_sequence(action, paired_devices)
             elif "pointing_model" == action.action_type:
@@ -3018,6 +3018,44 @@ class Observatory:
         finally:
             self._sequence_teardown(guiding_enabled, paired_devices, nonsidereal)
 
+    def calibration_sequence(
+        self, action: Action, paired_devices: PairedDevices
+    ) -> None:
+        """
+        Take the bias and dark frames of a calibration action.
+
+        The frames are taken with :meth:`image_sequence`. If the action has no
+        filter and the camera config has a ``dark_filter``, the filter wheel
+        moves to the dark filter before the sequence and back to where it was
+        after it, so that the next actions do not use the dark filter.
+
+        Parameters:
+            action (Action): Schedule action with the calibration settings.
+            paired_devices (PairedDevices): Devices for the sequence.
+        """
+        dark_filter = paired_devices.get_device_config("Camera").get("dark_filter")
+        if action.action_value.get("filter") is not None or dark_filter is None:
+            self.image_sequence(action, paired_devices)
+            return
+
+        if "FilterWheel" not in paired_devices:
+            self.logger.warning(
+                f"Dark filter {dark_filter} is set, but {action.device_name} has "
+                "no filter wheel. Taking the calibration frames without it."
+            )
+            self.image_sequence(action, paired_devices)
+            return
+
+        # move before the sequence, so that the FILTER header is the dark filter
+        filter_wheel_position = paired_devices.filter_wheel.get("Position")
+        try:
+            self._configure_filter(paired_devices, {"filter": dark_filter}, 0)
+            self.image_sequence(action, paired_devices)
+        finally:
+            self._restore_filter_position(
+                paired_devices, filter_wheel_position, "the calibration frames"
+            )
+
     def pointing_model_sequence(
         self, action: Action, paired_devices: PairedDevices
     ) -> None:
@@ -3209,14 +3247,15 @@ class Observatory:
         maxadu,
         n: int,
         dark_filter: str | None = None,
-    ) -> Path | None:
+    ) -> np.ndarray | None:
         """
-        Take ``n`` darks and save their median as a master dark next to them.
+        Take ``n`` darks and return their median as a master dark.
 
         The darks are saved like the other images of the action, with
-        IMAGETYP "Dark Frame". With ``exptime`` 0 they are bias frames, and
-        the master is a master bias. If a dark filter is given, the filter
-        wheel moves to it for the darks and then back to where it was.
+        IMAGETYP "Dark Frame". The master dark is not saved. With ``exptime``
+        0 they are bias frames, and the master is a master bias. If a dark
+        filter is given, the filter wheel moves to it for the darks and then
+        back to where it was.
 
         Parameters:
             action (Action): The action the darks are for.
@@ -3230,8 +3269,8 @@ class Observatory:
                 Defaults to ``dark_filter`` in the camera config, if set.
 
         Returns:
-            Path | None: The master dark, or None if the darks could not be
-                taken. The reason is logged as a warning.
+            np.ndarray | None: The master dark, or None if the darks could not
+                be taken. The reason is logged as a warning.
         """
         kind = "bias" if exptime == 0 else "dark"
         no_dark = f"No master {kind} will be used."
@@ -3272,42 +3311,40 @@ class Observatory:
             master = np.median(
                 np.stack([fits.getdata(p).astype(np.float32) for p in darks]), axis=0
             )
-            header = fits.getheader(darks[0])
-            for key in ("BZERO", "BSCALE", "BLANK"):
-                header.remove(key, ignore_missing=True)
-            header["NCOMBINE"] = (n, f"Number of {kind} frames median-combined")
-            master_path = (
-                darks[0].parent
-                / f"{camera.device_name}_master_{kind}_{exptime:.3f}.fits"
-            )
-            fits.PrimaryHDU(master, header=header).writeto(master_path, overwrite=True)
-            self.logger.info(f"Master {kind} of {n} frames saved as {master_path}")
-            return master_path
+            self.logger.info(f"Master {kind} made from {n} frames")
+            return master
         except Exception as e:
             self.logger.warning(f"Could not take {kind} frames: {e}. {no_dark}")
             return None
         finally:
             if filter_wheel_position is not None:
-                self.execute_and_monitor_device_task(
-                    "FilterWheel",
-                    "Position",
-                    filter_wheel_position,
-                    "Position",
-                    device_name=paired_devices["FilterWheel"],
-                    log_message=(
-                        f"Setting FilterWheel {paired_devices['FilterWheel']} "
-                        f"back to position {filter_wheel_position} after the "
-                        f"{kind} frames"
-                    ),
-                    weather_sensitive=False,
+                self._restore_filter_position(
+                    paired_devices, filter_wheel_position, f"the {kind} frames"
                 )
+
+    def _restore_filter_position(
+        self, paired_devices: PairedDevices, position: int, after: str
+    ) -> None:
+        """Move the filter wheel back to ``position`` after a dark filter was used."""
+        self.execute_and_monitor_device_task(
+            "FilterWheel",
+            "Position",
+            position,
+            "Position",
+            device_name=paired_devices["FilterWheel"],
+            log_message=(
+                f"Setting FilterWheel {paired_devices['FilterWheel']} "
+                f"back to position {position} after {after}"
+            ),
+            weather_sensitive=False,
+        )
 
     def pointing_correction(
         self,
         action: Action,
         filepath: str | Path | None,
         paired_devices: PairedDevices,
-        dark_frame: str | Path | None = None,
+        dark_frame: str | Path | np.ndarray | None = None,
         sync: bool = False,
         slew: bool = True,
     ) -> tuple[bool, WCS | None]:
@@ -3324,8 +3361,9 @@ class Observatory:
             filepath (str | Path): Path to the FITS image file for plate solving.
             paired_devices (PairedDevices): Object containing telescope and other
                 devices for the correction.
-            dark_frame (str | Path | None, optional): Path to a dark frame for calibration.
-                Defaults to None (no dark subtraction).
+            dark_frame (str | Path | np.ndarray | None, optional): Dark frame for
+                calibration, as a path or as image data. Defaults to None (no dark
+                subtraction).
             sync (bool, optional): If True, only sync the telescope without slewing.
                 Defaults to False.
             slew (bool, optional): If True, allows slewing to correct large errors.
@@ -3719,7 +3757,7 @@ class Observatory:
         if master_bias is None:
             self.logger.warning("No master bias for the flats, using a bias level of 0")
         else:
-            offset = float(np.nanmedian(fits.getdata(master_bias)))
+            offset = float(np.nanmedian(master_bias))
             self.logger.info(f"Bias level for the flats is {offset:.1f} ADU")
 
         # get location to determine if sun is up
