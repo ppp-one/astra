@@ -136,7 +136,7 @@ class TestImageStarMapping:
 
 class TestPointingCorrectionFromImage:
     @pytest.fixture(autouse=True)
-    def setup_pointing(self, temp_config):
+    def setup_pointing(self, temp_config, gaia_tap_source, requires_gaia):
         # if the file at Config().gaia_db is empty skip the test
         if not temp_config.gaia_db or temp_config.gaia_db.stat().st_size == 0:
             pytest.skip("Skipping as gaia_db is not set up")
@@ -159,6 +159,7 @@ class TestPointingCorrectionFromImage:
             dec=self.real_dec,
             exp_time=30,
             dateobs=self.dateobs,
+            tap_source=gaia_tap_source,
         )
         (
             self.pointing_correction,
