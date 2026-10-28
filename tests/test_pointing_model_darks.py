@@ -7,6 +7,7 @@ import pytest
 from astropy.coordinates import EarthLocation
 from astropy.io import fits
 
+from astra import pointer
 from astra.action_configs import PointingModelActionConfig
 from astra.observatory import Observatory
 
@@ -43,13 +44,13 @@ def _fake_observatory(tmp_path, fail_at=None):
     return obs
 
 
-def _take(obs, paired_devices, n=3, dark_filter=None, exptime=3.0):
+def _take(obs, paired_devices, n=3, dark_filter=None):
     return Observatory.take_master_dark(
         obs,
         SimpleNamespace(device_name="Cam1"),
         paired_devices,
         SimpleNamespace(device_name="Cam1"),
-        exptime=exptime,
+        exptime=3.0,
         maxadu=65535,
         n=n,
         dark_filter=dark_filter,
@@ -61,10 +62,9 @@ def test_master_dark_is_the_median_of_the_darks(tmp_path):
 
     master = _take(obs, FakePairedDevices(), n=3)
 
-    assert master == tmp_path / "pointing_model" / "Cam1_master_dark_3.000.fits"
-    with fits.open(master) as hdul:
-        np.testing.assert_array_equal(hdul[0].data, np.full((4, 6), 20.0))
-        assert hdul[0].header["NCOMBINE"] == 3
+    np.testing.assert_array_equal(master, np.full((4, 6), 20.0))
+    # only the darks are saved, not the master dark
+    assert len(list((tmp_path / "pointing_model").iterdir())) == 3
     assert [e["use_light"] for e in obs.exposures] == [False] * 3
     obs._configure_filter.assert_not_called()
     obs._restore_filter_position.assert_not_called()
@@ -93,14 +93,6 @@ def test_dark_filter_comes_from_the_camera_config(tmp_path):
     assert obs._configure_filter.call_args.args[1] == {"filter": "Dark"}
 
 
-def test_master_of_zero_second_darks_is_a_master_bias(tmp_path):
-    obs = _fake_observatory(tmp_path)
-
-    master = _take(obs, FakePairedDevices(), exptime=0)
-
-    assert master == tmp_path / "pointing_model" / "Cam1_master_bias_0.000.fits"
-
-
 def test_dark_filter_without_filter_wheel_takes_no_darks(tmp_path):
     obs = _fake_observatory(tmp_path)
 
@@ -124,7 +116,7 @@ def test_pointing_model_subtracts_its_own_darks(tmp_path):
     """The darks come before the dome opens, and each plate solve uses them."""
     obs = MagicMock()
     order = []
-    master = tmp_path / "master.fits"
+    master = np.zeros((4, 6))
     obs.take_master_dark.side_effect = lambda *a, **k: order.append("darks") or master
     obs.open_observatory.side_effect = lambda *a: order.append("open")
     obs.check_conditions.side_effect = [True, False]
@@ -155,7 +147,7 @@ def test_pointing_model_subtracts_its_own_darks(tmp_path):
     assert order == ["darks", "open"]
     kwargs = obs.take_master_dark.call_args.kwargs
     assert (kwargs["n"], kwargs["dark_filter"]) == (4, "Dark")
-    assert obs.pointing_correction.call_args.kwargs["dark_frame"] == master
+    assert obs.pointing_correction.call_args.kwargs["dark_frame"] is master
 
 
 def test_config_defaults_and_validation():
@@ -171,3 +163,26 @@ def test_config_defaults_and_validation():
         PointingModelActionConfig(dark_filter="Dark")
     with pytest.raises(ValueError, match="n_darks"):
         PointingModelActionConfig(dark_subtraction=True, n_darks=0)
+
+
+@pytest.mark.parametrize("as_file", [False, True])
+def test_plate_solve_subtracts_a_dark_array_or_file(tmp_path, monkeypatch, as_file):
+    light = tmp_path / "light.fits"
+    header = fits.Header({"RA": 10.0, "DEC": -20.0})
+    fits.PrimaryHDU(np.full((4, 6), 100.0), header=header).writeto(light)
+    dark = np.full((4, 6), 30.0, dtype=np.float32)
+    if as_file:
+        fits.PrimaryHDU(dark).writeto(tmp_path / "dark.fits")
+        dark = tmp_path / "dark.fits"
+    monkeypatch.setattr(
+        pointer, "_extract_plate_scale_and_dateobs", lambda header: (1e-4, None)
+    )
+    monkeypatch.setattr(
+        pointer,
+        "calculate_pointing_correction_from_image",
+        lambda image, **kwargs: image,
+    )
+
+    image = pointer.calculate_pointing_correction_from_fits(light, dark_frame=dark)
+
+    np.testing.assert_array_equal(image, np.full((4, 6), 70.0))

@@ -74,7 +74,7 @@ logger = logging.getLogger(__name__)
 
 def calculate_pointing_correction_from_fits(
     filepath: str | Path | None,
-    dark_frame: str | Path | None = None,
+    dark_frame: str | Path | np.ndarray | None = None,
     target_ra: float | None = None,
     target_dec: float | None = None,
     filter_band: Optional[str] = None,
@@ -89,8 +89,8 @@ def calculate_pointing_correction_from_fits(
 
     Parameters:
         filepath (str or Path): Path to the FITS file.
-        dark_frame (str or Path, optional): Path to a dark frame for subtraction.
-            Defaults to None.
+        dark_frame (str, Path or np.ndarray, optional): Dark frame for
+            subtraction, as a path or as image data. Defaults to None.
         target_ra (float, optional): Target right ascension in degrees. If not
             provided, it's read from FITS header. Defaults to None.
         target_dec (float, optional): Target declination in degrees. If not
@@ -116,8 +116,9 @@ def calculate_pointing_correction_from_fits(
     image, header = _read_fits_file(filepath)
 
     if dark_frame is not None:
-        dark_image, _ = _read_fits_file(dark_frame)
-        image = image - dark_image
+        if not isinstance(dark_frame, np.ndarray):
+            dark_frame, _ = _read_fits_file(dark_frame)
+        image = image - dark_frame
 
     if target_ra is None:
         target_ra = header["RA"]

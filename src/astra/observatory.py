@@ -3247,14 +3247,15 @@ class Observatory:
         maxadu,
         n: int,
         dark_filter: str | None = None,
-    ) -> Path | None:
+    ) -> np.ndarray | None:
         """
-        Take ``n`` darks and save their median as a master dark next to them.
+        Take ``n`` darks and return their median as a master dark.
 
         The darks are saved like the other images of the action, with
-        IMAGETYP "Dark Frame". With ``exptime`` 0 they are bias frames, and
-        the master is a master bias. If a dark filter is given, the filter
-        wheel moves to it for the darks and then back to where it was.
+        IMAGETYP "Dark Frame". The master dark is not saved. With ``exptime``
+        0 they are bias frames, and the master is a master bias. If a dark
+        filter is given, the filter wheel moves to it for the darks and then
+        back to where it was.
 
         Parameters:
             action (Action): The action the darks are for.
@@ -3268,8 +3269,8 @@ class Observatory:
                 Defaults to ``dark_filter`` in the camera config, if set.
 
         Returns:
-            Path | None: The master dark, or None if the darks could not be
-                taken. The reason is logged as a warning.
+            np.ndarray | None: The master dark, or None if the darks could not
+                be taken. The reason is logged as a warning.
         """
         kind = "bias" if exptime == 0 else "dark"
         no_dark = f"No master {kind} will be used."
@@ -3310,17 +3311,8 @@ class Observatory:
             master = np.median(
                 np.stack([fits.getdata(p).astype(np.float32) for p in darks]), axis=0
             )
-            header = fits.getheader(darks[0])
-            for key in ("BZERO", "BSCALE", "BLANK"):
-                header.remove(key, ignore_missing=True)
-            header["NCOMBINE"] = (n, f"Number of {kind} frames median-combined")
-            master_path = (
-                darks[0].parent
-                / f"{camera.device_name}_master_{kind}_{exptime:.3f}.fits"
-            )
-            fits.PrimaryHDU(master, header=header).writeto(master_path, overwrite=True)
-            self.logger.info(f"Master {kind} of {n} frames saved as {master_path}")
-            return master_path
+            self.logger.info(f"Master {kind} made from {n} frames")
+            return master
         except Exception as e:
             self.logger.warning(f"Could not take {kind} frames: {e}. {no_dark}")
             return None
@@ -3352,7 +3344,7 @@ class Observatory:
         action: Action,
         filepath: str | Path | None,
         paired_devices: PairedDevices,
-        dark_frame: str | Path | None = None,
+        dark_frame: str | Path | np.ndarray | None = None,
         sync: bool = False,
         slew: bool = True,
     ) -> tuple[bool, WCS | None]:
@@ -3369,8 +3361,9 @@ class Observatory:
             filepath (str | Path): Path to the FITS image file for plate solving.
             paired_devices (PairedDevices): Object containing telescope and other
                 devices for the correction.
-            dark_frame (str | Path | None, optional): Path to a dark frame for calibration.
-                Defaults to None (no dark subtraction).
+            dark_frame (str | Path | np.ndarray | None, optional): Dark frame for
+                calibration, as a path or as image data. Defaults to None (no dark
+                subtraction).
             sync (bool, optional): If True, only sync the telescope without slewing.
                 Defaults to False.
             slew (bool, optional): If True, allows slewing to correct large errors.
@@ -3764,7 +3757,7 @@ class Observatory:
         if master_bias is None:
             self.logger.warning("No master bias for the flats, using a bias level of 0")
         else:
-            offset = float(np.nanmedian(fits.getdata(master_bias)))
+            offset = float(np.nanmedian(master_bias))
             self.logger.info(f"Bias level for the flats is {offset:.1f} ADU")
 
         # get location to determine if sun is up
