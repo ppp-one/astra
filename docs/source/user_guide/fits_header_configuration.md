@@ -68,3 +68,10 @@ You can customize the FITS headers by modifying the CSV configuration file:
 - **Adding headers:** Add new rows to include additional metadata
 - **Removing headers:** Delete rows to exclude certain keywords
 - **Timing control:** Set `fixed=True` for immediate values, `fixed=False` for post-exposure interpolated values
+
+For example, to record the camera gain and readout mode that an action sets with `gain` and `readout_mode`, add these rows. Add them only if your camera driver implements `Gain` and `ReadoutMode`. If the driver does not, the header cannot be created.
+
+```text
+GAIN,int,true,Camera,Gain,Camera gain (index into Gains or gain value)
+READOUTM,int,true,Camera,ReadoutMode,Camera readout mode (index into ReadoutModes)
+```

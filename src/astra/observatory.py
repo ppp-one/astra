@@ -2056,11 +2056,36 @@ class Observatory:
         paired_devices: PairedDevices,
         action_value: BaseActionConfig,
     ) -> None:
-        """Set camera binning and subframe for the upcoming sequence."""
+        """Set camera readout mode, gain, binning and subframe for the upcoming sequence."""
         if "Camera" not in paired_devices:
             return
 
         camera = paired_devices.camera
+
+        # ReadoutMode goes first, because in ASCOM a readout mode can change the gain.
+        # A name is replaced by its index in the list; a number is sent unchanged.
+        # The driver rejects a value it does not accept.
+        for key, prop, names_prop in (
+            ("readout_mode", "ReadoutMode", "ReadoutModes"),
+            ("gain", "Gain", "Gains"),
+        ):
+            value = action_value.get(key)
+            if value is None:
+                continue
+            if isinstance(value, str):
+                names = camera.get(names_prop)
+                if value not in names:
+                    raise ValueError(
+                        f"{key} {value!r} is not in the camera's {names_prop}: {names}"
+                    )
+                value = names.index(value)
+            if camera.get(prop) != value:
+                self.logger.info(
+                    f"Setting Camera {paired_devices['Camera']} {prop} to "
+                    f"{action_value[key]!r}"
+                )
+                camera.set(prop, value)
+
         bin_val = action_value.get("bin", 1)
 
         if bin_val != camera.get("BinX") or bin_val != camera.get("BinY"):

@@ -49,6 +49,20 @@ _EPHEMERIS_PAD_FRACTION = 0.25
 _EPHEMERIS_PAD_MIN_HOURS = 5.0 / 60.0
 _EPHEMERIS_PAD_MAX_HOURS = 0.5
 
+# Descriptions of the camera mode fields, shared by every action that takes images.
+_READOUT_MODE_DESCRIPTION = (
+    "ASCOM camera ReadoutMode, as a name from the camera's ReadoutModes list "
+    "(for example 'Fast') or as an index into that list. Not available on a "
+    "camera with CanFastReadout true. Leave it out to keep the mode the camera "
+    "is in."
+)
+_GAIN_DESCRIPTION = (
+    "ASCOM camera Gain. In gains-index mode, give a name from the camera's Gains "
+    "list (for example 'High') or an index into that list. In gains-value mode, "
+    "give a number between GainMin and GainMax. Leave it out to keep the gain "
+    "the camera is set to."
+)
+
 
 def ephemeris_window_hours(start_time: Time, end_time: Time) -> float:
     """Return how many hours of ephemeris an action needs.
@@ -192,7 +206,8 @@ def example_value(annotation, default, curated=None):
     Args:
         annotation: The type annotation of the field.
         default: The field's declared default.
-        curated: The value this field has in the class's EXAMPLE_SCHEDULE.
+        curated: The value this field has in the class's EXAMPLE_SCHEDULE, or
+            the example in the field's metadata.
 
     Returns:
         A JSON-serializable example, or None when nothing useful can be shown.
@@ -280,7 +295,9 @@ def action_value_schema(config, _defaults: dict | None = None) -> list[dict]:
                 "choices": choices,
                 "example": _jsonable_default(
                     example_value(
-                        annotations.get(f.name), default, examples.get(f.name)
+                        annotations.get(f.name),
+                        default,
+                        examples.get(f.name, f.metadata.get("example")),
                     )
                 ),
                 "group": None,
@@ -622,6 +639,25 @@ class BaseActionConfig:
                 f"Got: width={subframe_width}, height={subframe_height}"
             )
 
+    def validate_camera_modes(self) -> None:
+        """Check that readout_mode and gain are a name or a whole number.
+
+        The values themselves are checked by the camera driver when the
+        sequence starts, because the valid range is only known there.
+
+        Raises:
+            TypeError: If a value is not a name or a whole number.
+        """
+        for name in ("readout_mode", "gain"):
+            value = self.get(name)
+            # bool is a subclass of int, but true is not a mode.
+            if value is not None and (
+                isinstance(value, bool) or not isinstance(value, (int, str))
+            ):
+                raise TypeError(
+                    f"{name}: expected a mode name or a whole number, got {value!r}"
+                )
+
     def validate_visibility(
         self,
         start_time: Time,
@@ -882,6 +918,10 @@ class ObjectActionConfig(BaseActionConfig):
     guiding: bool = False
     pointing: bool = False
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     dir: Optional[str] = None
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
@@ -923,6 +963,8 @@ class ObjectActionConfig(BaseActionConfig):
         "nonsidereal_rate_update_interval": "Minimum interval in seconds between differential rate commands sent to the mount. Astra will not issue a new rate more often than this, however rapidly the ephemeris changes. Lengthen it for mounts that stutter when a rate is applied; shorten it for targets whose rate changes over seconds, such as satellites in low orbit. Defaults to 10 seconds.",
         "pointing": "Perform pointing correction with twirl before imaging.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "dir": "Base directory path for saving images.",
         "execute_parallel": "Execute action in parallel mode when supported.",
         "disable_telescope_movement": "Prevent any telescope motion during the sequence.",
@@ -1004,6 +1046,7 @@ class ObjectActionConfig(BaseActionConfig):
 
         # Subframe validation
         self.validate_subframe()
+        self.validate_camera_modes()
 
         if self.nonsidereal_start_lead_time_seconds < 0:
             raise ValueError(
@@ -1361,6 +1404,10 @@ class CalibrationActionConfig(BaseActionConfig):
     filter: Optional[str] = None
     dir: Optional[str] = None
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     execute_parallel: bool = False
     subframe_width: Optional[int] = None
     subframe_height: Optional[int] = None
@@ -1378,6 +1425,8 @@ class CalibrationActionConfig(BaseActionConfig):
         ),
         "dir": "Base directory path for saving images.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "execute_parallel": "Execute action in parallel mode when supported.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
@@ -1417,6 +1466,7 @@ class CalibrationActionConfig(BaseActionConfig):
 
         # Subframe validation
         self.validate_subframe()
+        self.validate_camera_modes()
 
 
 @dataclass
@@ -1435,6 +1485,10 @@ class FlatsActionConfig(BaseActionConfig):
     n: List[int] = field(default_factory=list, metadata={"required": True})
     dir: Optional[str] = None
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     execute_parallel: bool = False
     disable_telescope_movement: bool = False
     subframe_width: Optional[int] = None
@@ -1447,6 +1501,8 @@ class FlatsActionConfig(BaseActionConfig):
         "n": "Number of flats to capture per filter.",
         "dir": "Base directory path for saving images.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "execute_parallel": "Execute action in parallel mode when supported.",
         "disable_telescope_movement": "Prevent telescope motion during the sequence.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
@@ -1487,6 +1543,7 @@ class FlatsActionConfig(BaseActionConfig):
 
         # Subframe validation
         self.validate_subframe()
+        self.validate_camera_modes()
 
 
 @dataclass
@@ -1511,6 +1568,10 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     subframe_width: Optional[int] = None
     subframe_height: Optional[int] = None
     subframe_center_x: float = 0.5
@@ -1525,6 +1586,8 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
         "focus_shift": "Focus offset relative to best focus.",
         "focus_position": "Absolute focus position override.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
         "subframe_center_x": "Horizontal subframe center (0=left, 1=right).",
@@ -1541,6 +1604,7 @@ class CalibrateGuidingActionConfig(BaseActionConfig):
 
     def validate(self):
         self.validate_subframe()
+        self.validate_camera_modes()
 
 
 @dataclass
@@ -1569,6 +1633,10 @@ class PointingModelActionConfig(BaseActionConfig):
     focus_shift: Optional[float] = None
     focus_position: Optional[float] = None
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     dir: Optional[str] = None
     subframe_width: Optional[int] = None
     subframe_height: Optional[int] = None
@@ -1594,6 +1662,8 @@ class PointingModelActionConfig(BaseActionConfig):
         "focus_shift": "Focus offset relative to best focus.",
         "focus_position": "Absolute focus position override.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "dir": "Directory path for saving images.",
         "subframe_width": "Width of the requested subframe in binned pixels.",
         "subframe_height": "Height of the requested subframe in binned pixels.",
@@ -1615,6 +1685,7 @@ class PointingModelActionConfig(BaseActionConfig):
         if self.dark_filter is not None and not self.dark_subtraction:
             raise ValueError("dark_filter is only used with dark_subtraction: true")
         self.validate_subframe()
+        self.validate_camera_modes()
 
 
 class SelectionMethod(Enum):
@@ -1743,6 +1814,10 @@ class AutofocusConfig(BaseActionConfig):
     exptime: float | int = field(default=3.0)
     filter: Optional[str] = None
     bin: int = 1
+    readout_mode: Optional[int | str] = field(
+        default=None, metadata={"example": "Fast"}
+    )
+    gain: Optional[int | str] = field(default=None, metadata={"example": "High"})
     reduce_exposure_time: bool = False
     search_range: Optional[List[int] | int] = None
     search_range_is_relative: bool = True
@@ -1779,6 +1854,8 @@ class AutofocusConfig(BaseActionConfig):
         "exptime": "Exposure time for focus frames in seconds.",
         "filter": "Filter to use during autofocus procedure.",
         "bin": "Camera binning factor.",
+        "readout_mode": _READOUT_MODE_DESCRIPTION,
+        "gain": _GAIN_DESCRIPTION,
         "search_range": "Range of focus positions to search. Accepts a single width or explicit bounds.",
         "search_range_is_relative": "Interpret search_range relative to the current focus position.",
         "n_steps": "Number of steps for each sweep.",
@@ -1844,6 +1921,7 @@ class AutofocusConfig(BaseActionConfig):
         self.validate()
         # Validate subframe after base validation
         self.validate_subframe()
+        self.validate_camera_modes()
 
     @classmethod
     def from_dict(

@@ -955,6 +955,38 @@ class TestScheduleActionTypes:
             )
             assert completed > 0, "No actions were completed"
 
+    def test_calibration_action_sets_readout_mode_and_gain(
+        self, observatory, schedule_manager, server_url, temp_config
+    ):
+        """A calibration action sets the camera readout mode and gain by name."""
+        schedule_data = create_schedule_data("calibration", temp_config)
+        camera = observatory.devices["Camera"][schedule_data["device_name"]]
+        readout_mode = camera.get("ReadoutModes").index("Fast")
+        schedule_data["action_value"] = {
+            **schedule_data["action_value"],
+            "readout_mode": "Fast",
+            "gain": camera.get("Gains")[1],
+        }
+
+        with schedule_manager(schedule_data):
+            success, completed, error_free_maintained = wait_for_schedule_completion(
+                observatory, schedule_data, server_url, temp_config
+            )
+
+            assert error_free_maintained, (
+                "error_free became False during calibration action. "
+                f"Error sources: {observatory.logger.error_source}"
+            )
+            assert success, (
+                "calibration action did not complete successfully. "
+                f"Error sources: {observatory.logger.error_source}"
+            )
+            assert completed > 0, "No actions were completed"
+            assert camera.get("ReadoutMode") == readout_mode
+            # Gain is not read back: the simulator stores a set gain index plus
+            # one. A gain name the camera does not know fails the action, so
+            # success above shows that the name was found and set.
+
     def test_close_action(self, observatory, schedule_manager, server_url, temp_config):
         """Test close action type."""
         schedule_data = create_schedule_data("close", temp_config)
