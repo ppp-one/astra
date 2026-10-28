@@ -1036,6 +1036,7 @@ class TestScheduleActionTypes:
             )
             assert completed > 0, "No actions were completed"
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_object_action(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1058,6 +1059,7 @@ class TestScheduleActionTypes:
             )
             assert completed > 0, "No actions were completed"
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_object_action_with_weather_alert(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1081,6 +1083,7 @@ class TestScheduleActionTypes:
             )
             assert completed > 0, "No actions were completed"
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_nonsidereal_object_action(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1126,6 +1129,7 @@ class TestScheduleActionTypes:
             f"DeclinationRate was not reset after sequence: {dec_rate}"
         )
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_nonsidereal_object_action_with_weather_alert(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1182,6 +1186,7 @@ class TestScheduleActionTypes:
             f"DeclinationRate was not reset after weather alert: {dec_rate}"
         )
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_jpl_horizons_object_action(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1227,6 +1232,7 @@ class TestScheduleActionTypes:
             f"DeclinationRate was not reset after sequence: {dec_rate}"
         )
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_tle_object_action(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1276,6 +1282,7 @@ class TestScheduleActionTypes:
             f"DeclinationRate was not reset after sequence: {dec_rate}"
         )
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_tle_object_action_with_weather_alert(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1650,6 +1657,7 @@ class TestScheduleActionTypes:
                 thread_manager=observatory.thread_manager
             )
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_autofocus_action(
         self, observatory, schedule_manager, server_url, temp_config
     ):
@@ -1672,6 +1680,7 @@ class TestScheduleActionTypes:
             )
             assert completed > 0, "No actions were completed"
 
+    @pytest.mark.usefixtures("requires_gaia")
     def test_autofocus_action_with_weather_alert(
         self, observatory, schedule_manager, server_url, temp_config
     ):

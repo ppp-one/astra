@@ -9,11 +9,51 @@ from unittest.mock import MagicMock, create_autospec
 
 import pytest
 import requests
+from alpaca_simulators.config import CONFIG_DIR as SIMULATOR_CONFIG_DIR
+from ruamel.yaml import YAML
 
 from astra.config import Config, ObservatoryConfig
 from astra.logger import ObservatoryLogger
 
 logger = logging.getLogger(__name__)
+
+# The simulator camera queries Gaia over TAP to draw the stars in each light
+# frame. Each entry is a cabaret tap_source name, its TAP URL, and a small
+# query to check that the service answers.
+GAIA_TAP_SOURCES = [
+    (
+        "VIZIER",
+        "https://tapvizier.cds.unistra.fr/TAPVizieR/tap",
+        'SELECT TOP 1 RA_ICRS FROM "I/355/gaiadr3"',
+    ),
+    (
+        "GAIA",
+        "https://gea.esac.esa.int/tap-server/tap",
+        "SELECT TOP 1 ra FROM gaiadr3.gaia_source",
+    ),
+]
+
+
+def find_gaia_tap_source(timeout: float = 10.0) -> str | None:
+    """Return the name of the first Gaia TAP service that answers, or None."""
+    for name, url, query in GAIA_TAP_SOURCES:
+        try:
+            response = requests.get(
+                f"{url}/sync",
+                params={
+                    "REQUEST": "doQuery",
+                    "LANG": "ADQL",
+                    "FORMAT": "csv",
+                    "QUERY": query,
+                },
+                timeout=timeout,
+            )
+            if response.status_code == 200:
+                return name
+            logger.warning(f"Gaia TAP {name} returned HTTP {response.status_code}")
+        except requests.RequestException as e:
+            logger.warning(f"Gaia TAP {name} is not reachable: {e}")
+    return None
 
 
 def set_max_safe_duration(obj, new_value):
@@ -34,7 +74,21 @@ def set_max_safe_duration(obj, new_value):
 
 
 @pytest.fixture(scope="session")
-def server_url():
+def gaia_tap_source() -> str | None:
+    """Name of a Gaia TAP service that answers now, or None if none do."""
+    return find_gaia_tap_source()
+
+
+@pytest.fixture
+def requires_gaia(gaia_tap_source):
+    """Skip a test whose simulated light frames need stars from Gaia."""
+    if gaia_tap_source is None:
+        names = ", ".join(name for name, _, _ in GAIA_TAP_SOURCES)
+        pytest.skip(f"No Gaia TAP service answers ({names})")
+
+
+@pytest.fixture(scope="session")
+def server_url(tmp_path_factory, gaia_tap_source):
     host = "localhost"
     port = 11111
     url = f"http://{host}:{port}"
@@ -48,6 +102,14 @@ def server_url():
     except requests.RequestException:
         pass
 
+    # The simulator joins --config to its own config folder, so an absolute
+    # path lets the tests use their own copy of the template.
+    yaml = YAML()
+    simulator_config = yaml.load(SIMULATOR_CONFIG_DIR / "template.yaml")
+    simulator_config["tap_source"] = gaia_tap_source
+    simulator_config_path = tmp_path_factory.mktemp("simulator") / "config.yaml"
+    yaml.dump(simulator_config, simulator_config_path)
+
     log_dir = Path(__file__).parent / "tests" / "simulator_logs"
     log_dir.mkdir(exist_ok=True)
     with (
@@ -55,7 +117,15 @@ def server_url():
         open(log_dir / "stderr.err", "wb") as stderr_log,
     ):
         proc = subprocess.Popen(
-            ["alpaca-simulators", "--host", host, "--port", str(port)],
+            [
+                "alpaca-simulators",
+                "--host",
+                host,
+                "--port",
+                str(port),
+                "--config",
+                str(simulator_config_path),
+            ],
             stdout=stdout_log,  # type: ignore
             stderr=stderr_log,  # type: ignore
             env=os.environ,
