@@ -87,14 +87,19 @@ Camera-specific parameters for cooling and imaging:
 
 - `settle_factor`: Exposure multiplier for the extra wait after a move, before the next exposure (float, default: 0.0). Astra waits `settle_factor × exptime` after each pointing correction slew, each pointing model slew, and each focus move during autofocus. Use it for cameras that capture continuously, such as SPIRIT, so that the next frame starts after the move. Set it to 1.0 to discard about one frame.
 
+**Dark Parameters:**
+
+- `dark_filter`: Filter to use for darks and bias frames, for example a blank filter for a camera without a shutter (string, optional). Astra moves the filter wheel to this filter for the darks and then back to where it was. If you do not set it, the filter does not change. The flats and the pointing model darks use it.
+
 **Sky Flat Parameters:**
 
 - `flats`: Configuration for automated flat field acquisition (dict)
   - `target_adu`: Target median ADU value for sky flat frame (int)
   - `target_adu_tolerance`: Acceptable tolerance around target ADU (int)
-  - `bias_offset`: Median bias level offset in ADU for exposure time calculations (int)
   - `lower_exptime_limit`: Minimum allowed exposure time in seconds (int)
   - `upper_exptime_limit`: Maximum allowed exposure time in seconds (int)
+
+At the start of a flats sequence, Astra takes 3 bias frames before the dome opens. The median of the master bias is the bias level for the flat exposure time calculation. If the bias frames fail, Astra uses a bias level of 0 ADU. The old `bias_offset` key is not used.
 
 **Device Associations:**
 
