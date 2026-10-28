@@ -60,14 +60,22 @@ def schedule_manager(observatory: Observatory):
     def create_test_schedule(schedule_data):
         try:
             logger.info("Creating test schedule...")
+            previous_schedule = observatory.schedule_manager.schedule
             # Create test schedule
             with open(schedule_path, "w") as f:
                 f.write(json.dumps(schedule_data) + "\n")
 
             logger.info(f"Test schedule created at {schedule_path}")
-            time.sleep(
-                3
-            )  # Give some time for the observatory to pick up the new schedule
+            # Wait for the observatory to load the new schedule. Validation looks
+            # up moving targets in JPL Horizons, which can take many seconds.
+            deadline = time.time() + 60
+            while time.time() < deadline:
+                schedule = observatory.schedule_manager.schedule
+                if schedule is not None and schedule is not previous_schedule:
+                    break
+                time.sleep(0.5)
+            else:
+                raise TimeoutError("The observatory did not load the test schedule.")
 
             yield schedule_path
 
