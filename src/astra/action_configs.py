@@ -1581,7 +1581,8 @@ class PointingModelActionConfig(BaseActionConfig):
         "n_darks": "Number of darks to take for dark subtraction.",
         "dark_filter": (
             "Filter to use while taking the darks, for example a blank filter for a "
-            "camera without a shutter. Defaults to no filter change."
+            "camera without a shutter. Defaults to the dark_filter of the camera "
+            "config, or no filter change if that is not set."
         ),
         "object": "Descriptive label for the pointing run.",
         "use_local_db": "Use local star catalog database for plate solving (faster).",

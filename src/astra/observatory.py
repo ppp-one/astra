@@ -868,7 +868,7 @@ class Observatory:
 
         except Exception as e:
             self.logger.error(
-                f"Error during error handling: {str(e)}",
+                f"Error during error handling: {e!s}",
                 exc_info=True,
                 stack_info=True,
             )
@@ -3040,7 +3040,8 @@ class Observatory:
             - ``dark_subtraction`` (`bool`, optional): Take ``n_darks`` darks first
               and subtract their median before each plate solve. Defaults to False.
             - ``dark_filter`` (`str`, optional): Filter for the darks, for example a
-              blank filter for a camera without a shutter. Defaults to None.
+              blank filter for a camera without a shutter. Defaults to the
+              ``dark_filter`` of the camera config.
             - Additional standard action parameters (``ra``, ``dec``, etc.)
 
         Process:
@@ -3128,8 +3129,7 @@ class Observatory:
             t = ts[counter] + t_shift
             # 30 degree horizon limit, and 85 degree zenith limit (telescope weird at exactly 90)
             alt = 85 - (55 * t)
-            if alt < 30:
-                alt = 30
+            alt = max(alt, 30)
             az = (360 * num_turns * t) % 360
 
             # Get current moon position
@@ -3214,8 +3214,9 @@ class Observatory:
         Take ``n`` darks and save their median as a master dark next to them.
 
         The darks are saved like the other images of the action, with
-        IMAGETYP "Dark Frame". If ``dark_filter`` is given, the filter wheel
-        moves to it for the darks and then back to where it was.
+        IMAGETYP "Dark Frame". With ``exptime`` 0 they are bias frames, and
+        the master is a master bias. If a dark filter is given, the filter
+        wheel moves to it for the darks and then back to where it was.
 
         Parameters:
             action (Action): The action the darks are for.
@@ -3226,12 +3227,16 @@ class Observatory:
             n (int): Number of darks to take.
             dark_filter (str, optional): Filter to use for the darks, for
                 example a blank filter for a camera without a shutter.
+                Defaults to ``dark_filter`` in the camera config, if set.
 
         Returns:
             Path | None: The master dark, or None if the darks could not be
                 taken. The reason is logged as a warning.
         """
-        no_dark = "Dark subtraction will not be applied."
+        kind = "bias" if exptime == 0 else "dark"
+        no_dark = f"No master {kind} will be used."
+        if dark_filter is None:
+            dark_filter = paired_devices.get_device_config("Camera").get("dark_filter")
         filter_wheel_position = None
         if dark_filter is not None:
             if "FilterWheel" not in paired_devices:
@@ -3258,7 +3263,9 @@ class Observatory:
                     sequence_counter=i,
                 )
                 if not success or filepath is None:
-                    self.logger.warning(f"Dark {i + 1}/{n} failed. {no_dark}")
+                    self.logger.warning(
+                        f"{kind.capitalize()} {i + 1}/{n} failed. {no_dark}"
+                    )
                     return None
                 darks.append(Path(filepath))
 
@@ -3268,15 +3275,16 @@ class Observatory:
             header = fits.getheader(darks[0])
             for key in ("BZERO", "BSCALE", "BLANK"):
                 header.remove(key, ignore_missing=True)
-            header["NCOMBINE"] = (n, "Number of darks median-combined")
+            header["NCOMBINE"] = (n, f"Number of {kind} frames median-combined")
             master_path = (
-                darks[0].parent / f"{camera.device_name}_master_dark_{exptime:.3f}.fits"
+                darks[0].parent
+                / f"{camera.device_name}_master_{kind}_{exptime:.3f}.fits"
             )
             fits.PrimaryHDU(master, header=header).writeto(master_path, overwrite=True)
-            self.logger.info(f"Master dark of {n} darks saved as {master_path}")
+            self.logger.info(f"Master {kind} of {n} frames saved as {master_path}")
             return master_path
         except Exception as e:
-            self.logger.warning(f"Could not take darks: {e}. {no_dark}")
+            self.logger.warning(f"Could not take {kind} frames: {e}. {no_dark}")
             return None
         finally:
             if filter_wheel_position is not None:
@@ -3288,7 +3296,8 @@ class Observatory:
                     device_name=paired_devices["FilterWheel"],
                     log_message=(
                         f"Setting FilterWheel {paired_devices['FilterWheel']} "
-                        f"back to position {filter_wheel_position} after the darks"
+                        f"back to position {filter_wheel_position} after the "
+                        f"{kind} frames"
                     ),
                     weather_sensitive=False,
                 )
@@ -3391,7 +3400,7 @@ class Observatory:
         except Exception as e:
             self.logger.warning(
                 f"Failed running pointing correction for {action_value['object']}"
-                f" with {action.device_name}: {str(e)}",
+                f" with {action.device_name}: {e!s}",
                 exc_info=True,
             )
             pointing_complete = True
@@ -3647,6 +3656,8 @@ class Observatory:
                 for the sequence (camera, telescope, filter wheel, etc.)
 
         Process:
+            0. Takes bias frames (see :meth:`take_master_dark`). The median
+               of the master bias is the bias level for the exposure times.
             1. Monitors sun altitude for optimal flat field conditions
             2. Positions telescope for uniform sky illumination
             3. Calculates optimal exposure times for target ADU levels
@@ -3680,7 +3691,7 @@ class Observatory:
         # creates folder for images, writes base header, and sets filter to first filter in list
         self.pre_sequence(action, paired_devices)
 
-        # target adu and camera offset needed for flat exposure time calculation
+        # target adu needed for flat exposure time calculation
         camera_config = paired_devices.get_device_config("Camera")
 
         config_target_adu = camera_config["flats"]["target_adu"]
@@ -3688,9 +3699,28 @@ class Observatory:
             "target_adu_tolerance", config_target_adu * 0.2
         )
         target_adu = [config_target_adu, config_target_adu_tolerance]
-        offset = camera_config["flats"]["bias_offset"]
         lower_exptime_limit = camera_config["flats"]["lower_exptime_limit"]
         upper_exptime_limit = camera_config["flats"]["upper_exptime_limit"]
+        if "bias_offset" in camera_config["flats"]:
+            self.logger.warning(
+                "flats bias_offset in the camera config is not used. The bias "
+                "level comes from bias frames taken at the start of the flats."
+            )
+
+        camera = paired_devices.camera
+        maxadu = camera.get("MaxADU")
+
+        # bias level needed for flat exposure time calculation,
+        # taken before the dome opens
+        offset = 0.0
+        master_bias = self.take_master_dark(
+            action, paired_devices, camera, 0, maxadu, n=3
+        )
+        if master_bias is None:
+            self.logger.warning("No master bias for the flats, using a bias level of 0")
+        else:
+            offset = float(np.nanmedian(fits.getdata(master_bias)))
+            self.logger.info(f"Bias level for the flats is {offset:.1f} ADU")
 
         # get location to determine if sun is up
         obs_location = self.get_image_handler(
@@ -3732,9 +3762,6 @@ class Observatory:
 
             if take_flats is False:
                 time.sleep(1)
-
-        camera = paired_devices.camera
-        maxadu = camera.get("MaxADU")
 
         # camera orignal framing  # TODO delete?
         # numx = camera.get("NumX")

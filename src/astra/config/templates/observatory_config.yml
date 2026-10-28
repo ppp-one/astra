@@ -41,10 +41,10 @@ Camera:
     temperature_tolerance: 1 # degrees Celsius
     cooling_timeout: 30 # minutes
     settle_factor: 0.0 # exposure multiplier to wait after pointing and autofocus moves (for SPIRIT like cameras)
+    # dark_filter: Dark # optional, filter for darks and bias frames (for cameras without a shutter)
     flats:
       target_adu: 31500 # ADU
       target_adu_tolerance: 10500 # ADU
-      bias_offset: 300 # ADU
       lower_exptime_limit: 1 # seconds
       upper_exptime_limit: 60 # seconds
     paired_devices:
