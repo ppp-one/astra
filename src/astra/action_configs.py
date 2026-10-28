@@ -1371,7 +1371,11 @@ class CalibrationActionConfig(BaseActionConfig):
     FIELD_DESCRIPTIONS: ClassVar[dict[str, str]] = {
         "exptime": "Exposure times (seconds) to iterate.",
         "n": "Exposure counts aligned with each exposure time.",
-        "filter": "Filter name to load before imaging.",
+        "filter": (
+            "Filter name to load before imaging. Defaults to the dark_filter of the "
+            "camera config, if set. The filter wheel then moves back after the "
+            "sequence."
+        ),
         "dir": "Base directory path for saving images.",
         "bin": "Camera binning factor.",
         "execute_parallel": "Execute action in parallel mode when supported.",

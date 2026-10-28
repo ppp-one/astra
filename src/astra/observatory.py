@@ -1528,7 +1528,7 @@ class Observatory:
             elif "calibrate_guiding" == action.action_type:
                 self.guiding_calibration_sequence(action, paired_devices)
             elif "calibration" == action.action_type:
-                self.image_sequence(action, paired_devices)
+                self.calibration_sequence(action, paired_devices)
             elif "flats" == action.action_type:
                 self.flats_sequence(action, paired_devices)
             elif "pointing_model" == action.action_type:
@@ -3018,6 +3018,44 @@ class Observatory:
         finally:
             self._sequence_teardown(guiding_enabled, paired_devices, nonsidereal)
 
+    def calibration_sequence(
+        self, action: Action, paired_devices: PairedDevices
+    ) -> None:
+        """
+        Take the bias and dark frames of a calibration action.
+
+        The frames are taken with :meth:`image_sequence`. If the action has no
+        filter and the camera config has a ``dark_filter``, the filter wheel
+        moves to the dark filter before the sequence and back to where it was
+        after it, so that the next actions do not use the dark filter.
+
+        Parameters:
+            action (Action): Schedule action with the calibration settings.
+            paired_devices (PairedDevices): Devices for the sequence.
+        """
+        dark_filter = paired_devices.get_device_config("Camera").get("dark_filter")
+        if action.action_value.get("filter") is not None or dark_filter is None:
+            self.image_sequence(action, paired_devices)
+            return
+
+        if "FilterWheel" not in paired_devices:
+            self.logger.warning(
+                f"Dark filter {dark_filter} is set, but {action.device_name} has "
+                "no filter wheel. Taking the calibration frames without it."
+            )
+            self.image_sequence(action, paired_devices)
+            return
+
+        # move before the sequence, so that the FILTER header is the dark filter
+        filter_wheel_position = paired_devices.filter_wheel.get("Position")
+        try:
+            self._configure_filter(paired_devices, {"filter": dark_filter}, 0)
+            self.image_sequence(action, paired_devices)
+        finally:
+            self._restore_filter_position(
+                paired_devices, filter_wheel_position, "the calibration frames"
+            )
+
     def pointing_model_sequence(
         self, action: Action, paired_devices: PairedDevices
     ) -> None:
@@ -3288,19 +3326,26 @@ class Observatory:
             return None
         finally:
             if filter_wheel_position is not None:
-                self.execute_and_monitor_device_task(
-                    "FilterWheel",
-                    "Position",
-                    filter_wheel_position,
-                    "Position",
-                    device_name=paired_devices["FilterWheel"],
-                    log_message=(
-                        f"Setting FilterWheel {paired_devices['FilterWheel']} "
-                        f"back to position {filter_wheel_position} after the "
-                        f"{kind} frames"
-                    ),
-                    weather_sensitive=False,
+                self._restore_filter_position(
+                    paired_devices, filter_wheel_position, f"the {kind} frames"
                 )
+
+    def _restore_filter_position(
+        self, paired_devices: PairedDevices, position: int, after: str
+    ) -> None:
+        """Move the filter wheel back to ``position`` after a dark filter was used."""
+        self.execute_and_monitor_device_task(
+            "FilterWheel",
+            "Position",
+            position,
+            "Position",
+            device_name=paired_devices["FilterWheel"],
+            log_message=(
+                f"Setting FilterWheel {paired_devices['FilterWheel']} "
+                f"back to position {position} after {after}"
+            ),
+            weather_sensitive=False,
+        )
 
     def pointing_correction(
         self,

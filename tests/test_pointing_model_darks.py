@@ -67,7 +67,7 @@ def test_master_dark_is_the_median_of_the_darks(tmp_path):
         assert hdul[0].header["NCOMBINE"] == 3
     assert [e["use_light"] for e in obs.exposures] == [False] * 3
     obs._configure_filter.assert_not_called()
-    obs.execute_and_monitor_device_task.assert_not_called()
+    obs._restore_filter_position.assert_not_called()
 
 
 def test_dark_filter_is_used_and_the_wheel_goes_back(tmp_path):
@@ -78,8 +78,7 @@ def test_dark_filter_is_used_and_the_wheel_goes_back(tmp_path):
     assert master is not None
     obs._configure_filter.assert_called_once()
     assert obs._configure_filter.call_args.args[1] == {"filter": "Dark"}
-    restore = obs.execute_and_monitor_device_task.call_args
-    assert restore.args[:4] == ("FilterWheel", "Position", 2, "Position")
+    assert obs._restore_filter_position.call_args.args[1] == 2
 
 
 def test_dark_filter_comes_from_the_camera_config(tmp_path):
@@ -118,7 +117,7 @@ def test_failed_dark_gives_no_master_and_the_wheel_goes_back(tmp_path):
 
     assert len(obs.exposures) == 2
     obs.logger.warning.assert_called_once()
-    obs.execute_and_monitor_device_task.assert_called_once()
+    obs._restore_filter_position.assert_called_once()
 
 
 def test_pointing_model_subtracts_its_own_darks(tmp_path):

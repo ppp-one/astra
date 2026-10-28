@@ -89,7 +89,7 @@ Camera-specific parameters for cooling and imaging:
 
 **Dark Parameters:**
 
-- `dark_filter`: Filter to use for darks and bias frames, for example a blank filter for a camera without a shutter (string, optional). Astra moves the filter wheel to this filter for the darks and then back to where it was. If you do not set it, the filter does not change. The flats and the pointing model darks use it.
+- `dark_filter`: Filter to use for darks and bias frames, for example a blank filter for a camera without a shutter (string, optional). Astra moves the filter wheel to this filter for the darks and then back to where it was. If you do not set it, the filter does not change. The flats, the pointing model darks and calibration actions without a `filter` use it.
 
 **Sky Flat Parameters:**
 
