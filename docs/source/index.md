@@ -15,8 +15,20 @@ such as object observations with [plate-solve](https://doi.org/10.1093/mnras/sta
 
 A [FastAPI](https://fastapi.tiangolo.com/) web interface provides a browser UI, alongside REST and WebSocket APIs for real-time status monitoring, image previews, and interaction with the [SQLite](https://sqlite.org/index.html)-backed database.
 
+## Tutorial video
 <iframe
   src="https://www.youtube.com/embed/QIElFSS1hkA?rel=0"
+  style="width:100%;aspect-ratio:16/9;border:0;"
+  allow="fullscreen"
+  loading="lazy"
+  frameborder="0"
+  referrerpolicy="strict-origin-when-cross-origin">
+</iframe>
+
+
+## Invited talk at Ubuntu Summit 26.10
+<iframe
+  src="https://www.youtube.com/embed/0yKyTEGxOyI?rel=0"
   style="width:100%;aspect-ratio:16/9;border:0;"
   allow="fullscreen"
   loading="lazy"
